@@ -1,0 +1,219 @@
+{
+  "startedAt": "2026-10-31T02:55:18.650Z",
+  "method": "Continuous production build; trusted Playwright keyboard/start and pointer-lock mouse input; read-only planner uses actor/collision observations, never writes simulation state.",
+  "stages": [
+    {
+      "label": "A:O00",
+      "clock": 0.15000000000000002,
+      "health": 100,
+      "pos": [
+        0,
+        -175
+      ],
+      "realSec": 6.539
+    },
+    {
+      "label": "A:O01",
+      "clock": 17.30000000000011,
+      "health": 100,
+      "pos": [
+        -5.2334186417223885,
+        -135.5317605537959
+      ],
+      "realSec": 24.085
+    },
+    {
+      "label": "A:O02",
+      "clock": 30.250000000000295,
+      "health": 100,
+      "pos": [
+        5.921214485556354,
+        -61.42951082723167
+      ],
+      "realSec": 36.999
+    },
+    {
+      "label": "A:O03",
+      "clock": 36.650000000000055,
+      "health": 100,
+      "pos": [
+        23.290439021387794,
+        -38.291786034124385
+      ],
+      "realSec": 43.433
+    },
+    {
+      "label": "A:C04",
+      "clock": 49.74999999999931,
+      "health": 100,
+      "pos": [
+        -24.490065585918153,
+        -15.564576357896808
+      ],
+      "realSec": 57.004
+    },
+    {
+      "label": "A:COMPLETE",
+      "clock": 59.94999999999873,
+      "health": 100,
+      "pos": [
+        -9.050183187265517,
+        34.03875229784776
+      ],
+      "realSec": 67.303
+    },
+    {
+      "label": "B:O04",
+      "clock": 60.599999999998694,
+      "health": 100,
+      "pos": [
+        -50,
+        51
+      ],
+      "realSec": 68.405
+    },
+    {
+      "label": "B:O05",
+      "clock": 160.3000000000022,
+      "health": 84,
+      "pos": [
+        -0.013708612520223457,
+        -70.01833087700318
+      ],
+      "realSec": 169.065
+    },
+    {
+      "label": "C:O06",
+      "clock": 161.10000000000238,
+      "health": 85,
+      "pos": [
+        0,
+        -72
+      ],
+      "realSec": 169.882
+    },
+    {
+      "label": "C:O07",
+      "clock": 204.95000000001235,
+      "health": 85,
+      "pos": [
+        3.748852666960697,
+        -1.1536043700483023
+      ],
+      "realSec": 213.983
+    },
+    {
+      "label": "C:O08",
+      "clock": 210.8500000000137,
+      "health": 85,
+      "pos": [
+        -0.9746280468427587,
+        0.6544030327542777
+      ],
+      "realSec": 219.99
+    },
+    {
+      "label": "C:O09",
+      "clock": 267.8500000000266,
+      "health": 85,
+      "pos": [
+        -54.966384962995114,
+        54.052405650995524
+      ],
+      "realSec": 277.26
+    }
+  ],
+  "deaths": [],
+  "errors": [],
+  "orders": [
+    {
+      "cell": "A",
+      "key": "KeyZ",
+      "type": "suppress",
+      "issuedAt": 17.30000000000011,
+      "confirmedAt": 17.85000000000012
+    },
+    {
+      "cell": "A",
+      "key": "KeyX",
+      "type": "advance",
+      "issuedAt": 19.850000000000147,
+      "confirmedAt": 19.95000000000015
+    },
+    {
+      "cell": "A",
+      "key": "KeyB",
+      "type": "flank_east",
+      "issuedAt": 21.950000000000177,
+      "confirmedAt": 22.05000000000018
+    },
+    {
+      "cell": "B",
+      "key": "KeyZ",
+      "type": "suppress",
+      "issuedAt": 60.599999999998694,
+      "confirmedAt": 61.54999999999864
+    },
+    {
+      "cell": "B",
+      "key": "KeyX",
+      "type": "advance",
+      "issuedAt": 63.69999999999852,
+      "confirmedAt": 63.84999999999851
+    },
+    {
+      "cell": "C",
+      "key": "KeyZ",
+      "type": "suppress",
+      "issuedAt": 161.10000000000238,
+      "confirmedAt": 161.6500000000025
+    },
+    {
+      "cell": "C",
+      "key": "KeyX",
+      "type": "advance",
+      "issuedAt": 163.70000000000297,
+      "confirmedAt": 163.800000000003
+    }
+  ],
+  "grenade": {
+    "clock": 1.3500000000000005,
+    "ammo": 1,
+    "projectile": "gren_1",
+    "reactors": [
+      "pl_gruca",
+      "pl_lis",
+      "pl_wierzba",
+      "pl_malek",
+      "pl_szymczak",
+      "pl_aux_01",
+      "pl_aux_02"
+    ]
+  },
+  "buildCommit": "114cd6d8f4c48a4eb7f21e131153a331cee4fd9f",
+  "last": {
+    "clock": 279.5000000000293,
+    "state": "playing",
+    "health": 85,
+    "cell": "C",
+    "objective": "O09",
+    "completed": false,
+    "ammo": {
+      "mag": 5,
+      "reserve": 40,
+      "received": 24,
+      "grenades": 1
+    },
+    "decision": {
+      "controls": {
+        "crouch": false
+      },
+      "waitingForLis": true
+    },
+    "pos": [
+      -54.966384962995114,
+      54.052405650995524
+    ],
+    "squadOrder": "advance"
+  }
+}

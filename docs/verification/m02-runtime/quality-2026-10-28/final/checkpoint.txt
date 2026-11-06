@@ -1,0 +1,1 @@
+{"passed":true,"death":{"clock":16.700000000000102,"state":"dead","health":0,"x":5.162216931827008,"z":-79.99475092076,"crouched":false,"move":true,"turn":0.00002194401534150181,"pitch":0},"saved":{"id":"cp_m02_a_preparacao","clock":0,"health":100,"x":0,"z":-175},"restoredClock":0}

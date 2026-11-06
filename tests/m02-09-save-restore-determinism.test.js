@@ -133,9 +133,11 @@ function makeDriver(routeId, { withOrders = true } = {}) {
     if (tickIndex % 23 === 11) controls.fire = true;
     if (tickIndex % 97 === 50) controls.reload = true;
     if (withOrders && tickIndex === 30) controls.orderCover = true; // D4: só há «cobrir aqui» e «avançar para ali»
-    // Fusível de 2 s (40 ticks): a 1.ª explode no tick 140 (indicador direcional ainda ativo no snapshot do tick 160),
+    // Fusível de 2 s (40 ticks): a 1.ª explode no tick 150 (indicador direcional ainda ativo no snapshot do tick 160),
     // a 2.ª ainda está em voo no snapshot e explode durante a continuação.
-    if (tickIndex === 100 || tickIndex === 150) controls.grenade = true;
+    // Merge M02 único: a granada do jogador é preparada 0,5 s (10 ticks) antes da largada e espera pelo fim de uma recarga
+    // (Codex 379f1c0b). A 2.ª passou do tick 150 (3 ticks depois da recarga do tick 147, ficava à espera) para o 145: largada no 155.
+    if (tickIndex === 100 || tickIndex === 145) controls.grenade = true;
     if (withOrders && tickIndex === 200) controls.orderAdvance = true;
     if (tickIndex === 260 || tickIndex === 300) controls.crouch = true;
     if (tickIndex % 41 === 7) controls.interact = true;

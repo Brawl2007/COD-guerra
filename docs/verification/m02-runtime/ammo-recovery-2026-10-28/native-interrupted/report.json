@@ -1,0 +1,127 @@
+{
+  "startedAt": "2026-10-28T18:19:43.204Z",
+  "method": "Continuous production build; trusted Playwright keyboard/start and pointer-lock mouse input; read-only planner uses actor/collision observations, never writes simulation state.",
+  "stages": [
+    {
+      "label": "A:O00",
+      "clock": 0.1,
+      "health": 100,
+      "pos": [
+        0,
+        -175
+      ],
+      "realSec": 5.824
+    },
+    {
+      "label": "A:O01",
+      "clock": 13.950000000000063,
+      "health": 100,
+      "pos": [
+        -4.929177529417694,
+        -146.8366197641979
+      ],
+      "realSec": 20.306
+    },
+    {
+      "label": "A:O02",
+      "clock": 29.350000000000282,
+      "health": 92,
+      "pos": [
+        5.839069246333117,
+        -61.75641484716708
+      ],
+      "realSec": 35.76
+    },
+    {
+      "label": "A:O03",
+      "clock": 34.40000000000018,
+      "health": 92,
+      "pos": [
+        23.470195606064127,
+        -38.22317847314436
+      ],
+      "realSec": 40.913
+    },
+    {
+      "label": "A:C04",
+      "clock": 40.199999999999854,
+      "health": 92,
+      "pos": [
+        36.68168421551979,
+        -25.85993687452333
+      ],
+      "realSec": 46.952
+    },
+    {
+      "label": "A:COMPLETE",
+      "clock": 52.999999999999126,
+      "health": 92,
+      "pos": [
+        -4.149213645551787,
+        32.27326375771579
+      ],
+      "realSec": 59.94
+    },
+    {
+      "label": "B:O04",
+      "clock": 53.74999999999908,
+      "health": 92,
+      "pos": [
+        -50,
+        51
+      ],
+      "realSec": 60.852
+    },
+    {
+      "label": "A:O03",
+      "clock": 40.09999999999986,
+      "health": 92,
+      "pos": [
+        36.68168421551979,
+        -25.85993687452333
+      ],
+      "realSec": 159.068
+    },
+    {
+      "label": "A:C04",
+      "clock": 40.699999999999825,
+      "health": 92,
+      "pos": [
+        36.68168421551979,
+        -25.85993687452333
+      ],
+      "realSec": 159.971
+    },
+    {
+      "label": "A:COMPLETE",
+      "clock": 52.79999999999914,
+      "health": 92,
+      "pos": [
+        -4.227932797466001,
+        32.204930763971994
+      ],
+      "realSec": 173.172
+    },
+    {
+      "label": "B:O04",
+      "clock": 53.64999999999909,
+      "health": 92,
+      "pos": [
+        -50,
+        51
+      ],
+      "realSec": 174.022
+    }
+  ],
+  "deaths": [
+    {
+      "label": "B:O04",
+      "clock": 140.24999999999764,
+      "realSec": 157.928
+    }
+  ],
+  "errors": [],
+  "buildCommit": "898b072b3a3e62356c025dba57af52ba691446f9",
+  "failure": "page.waitForFunction: Target page, context or browser has been closed",
+  "finishedAt": "2026-10-28T18:25:05.472Z"
+}

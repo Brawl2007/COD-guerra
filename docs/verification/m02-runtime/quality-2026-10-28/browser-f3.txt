@@ -1,0 +1,23 @@
+[2m[WebServer] [22m(node:29165) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 6 tests using 1 worker
+
+(node:29189) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29189) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/m02-01-quinta.spec.js:9:3 › M02-01 & M02-02 Quinta da Bzura (100x150m) — Browser Verification & Captures › Boots m02-01.html without errors, verifies doors/ballistics/routes/squad-combat/grenades/C04, captures screenshots, and records telemetry (3.0m)
+M02 audio probe {"peak":0.20123621821403503,"shots":1,"state":"running"}
+  ✓  2 tests/browser/m02-01-quinta.spec.js:276:1 › M02 reuses loaded M01 GLB rigs and viewmodel, emits audible samples, and preserves simulation on presentation (22.1s)
+  ✓  3 tests/browser/m02-mission.spec.js:4:1 › M02 subtitle and interaction fixtures remain readable together at small and desktop sizes (11.9s)
+  ✓  4 tests/browser/m02-mission.spec.js:30:1 › M02 default quality follows M01 software GPU detection and maximum remains selectable (12.7s)
+  ✓  5 tests/browser/m02-mission.spec.js:45:1 › M02 drawn terrain and shared material mask cover every streamed cell, including B/C outer edges (7.5s)
+  ✓  6 tests/browser/m02-mission.spec.js:69:1 › M02 playable entry starts C01, pauses without advancing, and resumes a persisted checkpoint (15.6s)
+
+  6 passed (4.2m)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice

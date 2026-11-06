@@ -1,0 +1,18 @@
+✔ M02 presentation adapts live roles and reload timing without changing snapshots (91.872419ms)
+✔ contextual actions cannot skip unfinished combat or manufacture supplies (20.542098ms)
+✔ resolved farm enables normal interaction to enter area B with state retained (15.857129ms)
+✔ real M01 GLB crouched adaptation preserves the lower body and weapon/hand contact without mutating clips (1330.763884ms)
+✔ M02 reloads use the full appropriate M01 timeline and automatic weapons never select a rifle bolt (45.574345ms)
+✔ the real seven-round MG clip never animates an unfired sixth round or anticipates the next fixed tick (10.013382ms)
+✔ C01 preparation positions are absolute, remain sheltered and survive save/restore (553.570508ms)
+✔ low-cover exposure changes physical line of sight predictably and reloads stop navigation (13.584787ms)
+✔ supported Lis cannot continue a queued burst or fire/reload as a combatant (129.852006ms)
+✔ a visible target above a parapet cannot be hit through the lower blocked muzzle (80.027382ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4029.96172

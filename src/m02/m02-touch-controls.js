@@ -49,6 +49,9 @@ const BUTTONS = [
   { id: 'grenade', label: 'Granada', cls: 't-grenade', action: 'grenade' },
   { id: 'crouch', label: 'Agachar', cls: 't-crouch', action: 'crouch' },
   { id: 'interact', label: '[E] Interagir', cls: 't-interact', action: 'interact', hidden: true },
+  // Contextuais trazidos da linha Codex (m02-touch.js): só aparecem quando a ação existe (C04 água; C11 retirada antecipada).
+  { id: 'water', label: 'Água', cls: 't-water', action: 'giveWater', hidden: true },
+  { id: 'withdraw', label: 'Recuar', cls: 't-withdraw', action: 'giveWater', hidden: true },
   { id: 'save', label: 'Gravar', cls: 't-save', action: 'save' },
   { id: 'load', label: 'Carregar', cls: 't-load', action: 'load' },
   { id: 'cover', label: 'Cobrir', cls: 't-cover', action: 'orderCover' },
@@ -336,6 +339,20 @@ export class M02TouchControls {
   setInteractVisible(visible) {
     const b = this.buttons.get('interact');
     if (b && b.hidden === visible) b.hidden = !visible;
+  }
+
+  /**
+   * Botões contextuais (Codex): «Água» quando o ferido de C04 pode receber água; «Recuar (n)» na casa de socorro em C11, que passa
+   * a «Confirmar» depois do primeiro toque (a retirada antecipada exige um segundo toque deliberado; m02-retreat-confirmation.js).
+   */
+  setContextual({ water = false, withdraw = null } = {}) {
+    const w = this.buttons.get('water');
+    if (w && w.hidden === Boolean(water)) w.hidden = !water;
+    const r = this.buttons.get('withdraw');
+    if (!r) return;
+    if (r.hidden === Boolean(withdraw)) r.hidden = !withdraw;
+    const text = withdraw ? (withdraw.armed ? 'Confirmar' : `Recuar (${withdraw.count})`) : 'Recuar';
+    if (r.textContent !== text) r.textContent = text;
   }
 
   toast(text, ms = 1800) {

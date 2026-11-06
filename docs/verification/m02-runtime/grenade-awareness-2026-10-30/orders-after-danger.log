@@ -1,0 +1,18 @@
+✔ a visible grenade interrupts an ally reload, produces a warning and real movement, with deterministic restore (94.977411ms)
+✔ grenades behind the observer or behind a wall cause no fabricated warning (32.192211ms)
+✔ a real nearby bounce is heard behind the observer, but not through a solid wall or beyond range (16.600734ms)
+✔ an earlier bounce retained in the event queue is not heard again on a later tick (4.456011ms)
+✔ an enemy seeing the actual grenade flees without producing an allied player warning (5.072521ms)
+✔ an observed grenade stops a real pending burst without spending its unfired rounds (7.758974ms)
+✔ a hold order yields to danger and resumes its saved position after the explosion (21.523049ms)
+✔ an escape target from a previous cell cannot drag an ally back across a transition (11.591133ms)
+✔ the C11 wounded Lis keeps his scripted evacuation instead of an armed flee action (45.530541ms)
+✔ the verification pilot can reach a real firing position when an enemy room has no direct route (299.685809ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 485.879127

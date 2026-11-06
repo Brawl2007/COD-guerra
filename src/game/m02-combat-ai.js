@@ -1,5 +1,9 @@
-import { eyePosition } from '../world/spatial.js';
+import {eyePosition,traceObstruction} from '../world/spatial.js';
 import { movePlayer, PLAYER_PHYSICS } from '../world/m01-player-physics.js';
+import {m02ExposedLastGroup} from './m02-evacuation-targets.js';
+import {m02MachineGunCover} from './m02-machinegun-team.js';
+import {m02ActorPresent} from './m02-actor-presence.js';
+import {m02ReactToGrenade,m02ClearIncapableGrenadeThreat} from './m02-grenade-awareness.js';
 import cellsBCLayout from '../../missions/m02-bzura/m02-cells-bc-layout.json' with { type: 'json' };
 
 /**
@@ -29,8 +33,8 @@ export function instantAt(clock) {
  */
 export function lastGroupTargets(sim) {
   // (C12 é uma elipse sem combate: depois do fecho o grupo já não leva fogo, e o resumo de C12 fica exato quanto aos mortos)
-  if (sim.activeCellId !== 'C' || !sim.areaC?.c10Started || sim.areaC.c12Completed) return [];
-  return sim.areaC.lastGroup.filter((lg) => lg.alive && !lg.evacuated);
+  // Uma só implementação: a regra vive em m02-evacuation-targets.js (m02ExposedLastGroup, a mesma condição nas duas linhas).
+  return m02ExposedLastGroup(sim);
 }
 
 /** C06: a janela de segurança da entrada em B ainda não terminou (EB1 «sem alerta»; um save anterior, sem `areaB.contact`, não a tem). */
@@ -83,8 +87,8 @@ export const WEAPON_PROFILES = Object.freeze({
     reloadSec: 3.2,
     range: 195,
     suppressionAdd: 0.65,
-    burstCount: 4,
-    burstGapSec: 0.11,
+    burstCount: 3,
+    burstGapSec: 0.1,
     spreadRad: 0.018,
   }),
   kar98k: Object.freeze({
@@ -114,7 +118,7 @@ export const WEAPON_PROFILES = Object.freeze({
     range: 98,
     suppressionAdd: 0.58,
     burstCount: 5,
-    burstGapSec: 0.09,
+    burstGapSec: 0.075,
     spreadRad: 0.024,
   }),
 });
@@ -534,6 +538,25 @@ export class M02DialogueDirector {
     return this.consumed.has(lineId);
   }
 
+  resolveForCurrentState(entry,sim) {
+    const def=M02_DIALOGUE_CATALOG[entry.id];
+    if(!def)return entry; // Preserve dialogue records from older checkpoints.
+    if(def.speakerId==='pl_lis'&&sim.flags?.['m02.lis_status']==='missing')return null;
+    if(entry.id==='bz39_c12_02'&&sim.flags?.['m02.lis_status']!=='missing')return null;
+    const speaker=sim.allies.find(a=>a.id===def.speakerId);
+    const liaisonDeparture=entry.id==='bz39_c08_02'&&speaker?.alive&&speaker.state!=='DOWN'&&speaker.state!=='EVACUATED';
+    if(speaker&&(!speaker.alive||speaker.state==='DOWN'||speaker.state==='EVACUATED'||speaker.detachedOutOfCell&&!liaisonDeparture))return null;
+    let text=entry.text;
+    if(entry.id==='bz39_c03_01'){
+      const available=id=>sim.allies.some(a=>a.id===id&&a.alive&&a.state!=='DOWN'&&!a.detachedOutOfCell);
+      text=available('pl_lis')&&available('pl_wierzba')?def.text:def.fallbackText;
+    }else if(entry.id==='bz39_c08_02'){
+      const lis=sim.allies.find(a=>a.id==='pl_lis');
+      text=lis&&lis.alive&&lis.state!=='DOWN'&&lis.state!=='EVACUATED'?def.text:def.fallbackText;
+    }
+    return {...entry,text};
+  }
+
   trigger(lineId, sim, { allowRepeat = false } = {}) {
     const def = M02_DIALOGUE_CATALOG[lineId];
     if (!def) return false;
@@ -548,8 +571,9 @@ export class M02DialogueDirector {
     }
 
     const speaker = sim.allies.find((a) => a.id === def.speakerId);
-    if (speaker && (!speaker.alive || speaker.state === 'DOWN' || speaker.state === 'EVACUATED' || speaker.detachedOutOfCell)) {
-      if (!def.fallbackText) return false;
+    const liaisonDeparture=lineId==='bz39_c08_02'&&speaker?.alive&&speaker.state!=='DOWN'&&speaker.state!=='EVACUATED';
+    if (speaker && (!speaker.alive || speaker.state === 'DOWN' || speaker.state === 'EVACUATED' || speaker.detachedOutOfCell&&!liaisonDeparture)) {
+      return false;
     }
 
     let resolvedText = def.text;
@@ -626,10 +650,17 @@ export class M02DialogueDirector {
       }
     }
     this.queue = kept;
-    if (!this.activeLine && this.queue.length > 0) {
+    // Continuidade (Codex 9b4f034a/7c9ad854): a linha em espera é revista contra as personagens ATUAIS antes de falar (orador
+    // caído/ausente: descartada; texto alternativo se Lis/Wierzba já não estão); Lis em ligação continua a poder falar em C08.
+    while (!this.activeLine && this.queue.length > 0) {
       const idx = this.queue.findIndex((q) => this.canSpeakNow(q, sim));
       if (idx < 0) return;
-      const next = this.queue.splice(idx, 1)[0];
+      const queued = this.queue.splice(idx, 1)[0];
+      const next = this.resolveForCurrentState(queued, sim);
+      if (!next) {
+        sim.events.push({ type: 'dialogue-line-dropped', id: queued.id, reason: 'speaker-unavailable' });
+        continue;
+      }
       this.activeLine = {
         ...next,
         startedAt: Number(sim.clock.toFixed(2)),
@@ -840,7 +871,7 @@ export function friendlyFireClear(shooter, targetPoint, friendlies, clearanceM =
   const uz = dz / len;
 
   for (const f of friendlies) {
-    if (!f || f.id === shooter.id || !f.alive) continue;
+    if (!m02ActorPresent(f) || f.id === shooter.id || !f.alive) continue;
     const fx = f.x - shooter.x;
     const fz = f.z - shooter.z;
     const proj = fx * ux + fz * uz;
@@ -852,7 +883,18 @@ export function friendlyFireClear(shooter, targetPoint, friendlies, clearanceM =
 }
 
 export function stepActorWeapon(sim, actor, dt) {
+  sim.advanceActorBurst?.(actor);
   const prof = WEAPON_PROFILES[actor.weapon] ?? WEAPON_PROFILES.wz29;
+  if(actor.reloadingUntil>0){
+    const startedAt=actor.reloadingUntil-prof.reloadSec;
+    for(const [phase,fraction] of [['seat',.45],['close',.85]]){
+      const at=startedAt+prof.reloadSec*fraction;
+      if(sim.clock-dt<at-1e-8&&sim.clock+1e-8>=at){
+        sim.events.push({type:'actor-reload-cue',shooterId:actor.id,weapon:actor.weapon,phase,
+          clock:Number(at.toFixed(3)),origin:{x:actor.x,y:actor.y??0,z:actor.z,eyeHeight:actor.eyeHeight??1.65}});
+      }
+    }
+  }
   if (actor.reloadingUntil > sim.clock) return;
   if (actor.reloadingUntil > 0 && sim.clock >= actor.reloadingUntil) {
     const needed = prof.magSize - actor.mag;
@@ -863,6 +905,8 @@ export function stepActorWeapon(sim, actor, dt) {
   }
   if (actor.mag <= 0 && actor.reserve > 0 && actor.reloadingUntil === 0) {
     actor.reloadingUntil = Number((sim.clock + prof.reloadSec).toFixed(3));
+    sim.events.push({type:'actor-reload-cue',shooterId:actor.id,weapon:actor.weapon,phase:'open',
+      clock:Number(sim.clock.toFixed(3)),origin:{x:actor.x,y:actor.y??0,z:actor.z,eyeHeight:actor.eyeHeight??1.65}});
     if (actor.id === 'pl_aux_01') {
       sim.dialogue.trigger('bz39_c03_02', sim, { allowRepeat: true });
     }
@@ -905,10 +949,12 @@ function routeToClosedDoorToward(sim, from, goal) {
 }
 
 export function stepActorNavigation(sim, actor, dt) {
+  actor.effectiveSpeed=0;
   if (!actor.alive || actor.nonCombatant || actor.state === 'DOWN' || actor.state === 'SURRENDERED' || actor.state === 'WOUNDED_UNARMED') {
     actor.moving = false;
     return;
   }
+  if(actor.reloadingUntil>sim.clock){actor.moving=false;actor.crouched=true;actor.eyeHeight=1.08;return;}
   if (!actor.goal) {
     actor.moving = false;
     return;
@@ -994,15 +1040,24 @@ export function stepActorNavigation(sim, actor, dt) {
   }
 
   // `maxSpeed`: teto de velocidade de um ator ferido (Lis em C11, J3); sem ele, a velocidade normal da secção.
-  const baseSpeed = actor.maxSpeed ?? (actor.suppressed > 0.55 ? 2.6 : 4.1);
+  // Codex: amparado sem teto próprio anda a 1,8 m/s; o último grupo usa a sua velocidade (ferido grave: até 3,8 m/s).
+  const baseSpeed =
+    actor.maxSpeed ??
+    (actor.state === 'WALKING_SUPPORTED'
+      ? 1.8
+      : actor.encounterId === 'LAST_GROUP' && Number.isFinite(actor.speed)
+        ? actor.speed
+        : actor.suppressed > 0.55
+          ? 2.6
+          : 4.1);
   const stepDist = Math.min(dist, baseSpeed * dt);
   let vx = (dx / dist) * stepDist;
   let vz = (dz / dist) * stepDist;
 
   // Gentle personal-space repulsion against other living actors so capsules never stack
-  const allActors = [...sim.allies, ...sim.enemies];
+  const allActors = [...sim.allies, ...sim.enemies,...(actor.encounterId==='LAST_GROUP'?sim.areaC.lastGroup:[])];
   for (const other of allActors) {
-    if (other.id === actor.id || !other.alive) continue;
+    if (other.id === actor.id || !other.alive || !m02ActorPresent(other)) continue;
     const ox = actor.x - other.x;
     const oz = actor.z - other.z;
     const od = Math.hypot(ox, oz);
@@ -1017,7 +1072,33 @@ export function stepActorNavigation(sim, actor, dt) {
   actor.eyeHeight = 1.65;
   actor.moving = true;
   actor.facing = Math.atan2(dz, dx);
+  const x0=actor.x,z0=actor.z;
   movePlayer(sim.world, actor, vx, vz, dt);
+  const moved=Math.hypot(actor.x-x0,actor.z-z0);
+  actor.moving=moved>1e-5;actor.effectiveSpeed=dt>0?moved/dt:0;actor.motionDistance=(actor.motionDistance??0)+moved;
+}
+
+export function updateLowCoverExposure(sim,actor){
+  if(actor.moving||!actor.goal?.crouch||actor.reloadingUntil>sim.clock||actor.role==='medic'||actor.goal.nodeId?.startsWith('prep_'))return;
+  if(sim.world.layout.buildings.some(b=>actor.x>b.bounds[0]&&actor.x<b.bounds[1]&&actor.z>b.bounds[2]&&actor.z<b.bounds[3]))return;
+  const cover=sim.world.obstacles.find(o=>o.max.y>actor.y+.8&&o.max.y<=actor.y+(actor.encounterId==='EA0'?1.65:1.4)&&o.min.y<=actor.y+.4&&Math.hypot(Math.max(o.min.x-actor.x,0,actor.x-o.max.x),Math.max(o.min.z-actor.z,0,actor.z-o.max.z))<=(actor.encounterId==='EA0'?2:1.4));
+  if(!cover)return;
+  const offset=[...actor.id].reduce((n,c)=>n+c.charCodeAt(0),0)%11*.17;
+  const phase=(sim.clock+offset)%3.2;
+  const exposed=actor.suppressed<.55&&(Boolean(actor.burst)||(phase>=1.75&&phase<2.8));
+  if(actor.coverExposure?.exposed!==exposed)actor.coverExposure={coverId:cover.id,exposed,changedAt:Number(sim.clock.toFixed(3))};
+  actor.crouched=!exposed;actor.eyeHeight=exposed?1.65:1.08;
+}
+
+// Called only after visual perception succeeds. Prefer the torso; if a solid
+// parapet hides it, aim at the actually observed eye/head rather than repeatedly
+// shooting the wall. No hidden target or renderer information enters this test.
+export function m02VisibleAimPoint(sim,shooter,target){
+  const torso={x:target.x,y:target.y+(target.crouched?.95:1.25),z:target.z};
+  // Boca da MG34 de B02 pela fonte única (layout.mgEmplacement via sim.mgMuzzle; N0-2), não o valor antigo escrito à mão.
+  const origin=shooter.id==='DE-A05'?(sim.mgMuzzle??eyePosition(shooter)):eyePosition(shooter);
+  const dx=torso.x-origin.x,dy=torso.y-origin.y,dz=torso.z-origin.z,d=Math.hypot(dx,dy,dz)||1;
+  return traceObstruction(sim.world,origin,{x:dx/d,y:dy/d,z:dz/d},Math.max(0,d-.2))?eyePosition(target):torso;
 }
 
 // ---------------------------------------------------------------------------------------------------------------------------
@@ -1738,6 +1819,8 @@ function adoptPlanGoal(sim, ally, nodeIds, stateOf) {
 
 export function updatePolishSquad(sim, dt) {
   const activeAxis = sim.flags['m02.axis'] || (sim.squadOrder?.axis ?? 'ditch');
+  // Ordens à secção: só as de D4 (cobrir aqui / avançar para ali; squadOrderGoalFor). O modo «suppress/flank_east» do Codex
+  // (holdPositions, avanço de fase do plano) não entra: D4 recusa essas ordens (ver docs/m02/M02_SINGLE_MERGE_REPORT.md).
   const mgGunner = sim.enemies.find((e) => e.id === 'DE-A05' && e.alive && !e.nonCombatant);
   // Boca da MG34 de B02 (fonte única: layout.mgEmplacement). A secção supre a abertura: ponto de vista 0,15 m fora, ponto de mira 0,20 m dentro.
   const mgMuzzle = sim.mgAperture;
@@ -1748,8 +1831,19 @@ export function updatePolishSquad(sim, dt) {
   // Assign tactical cover goals by squad state & elapsed time / progression
   for (const ally of sim.allies) {
     // Quem foi evacuado ou está ausente (Lis incapacitado antes de C11, «missing») já não age nem se desloca.
-    if (!ally.alive || ally.state === 'DOWN' || ally.state === 'EVACUATED' || ally.state === 'MISSING' || ally.detachedOutOfCell) continue;
+    if (!ally.alive || ally.state === 'DOWN' || ally.state === 'EVACUATED' || ally.state === 'MISSING' || !m02ActorPresent(ally)) {
+      if (ally.m02GrenadeThreat) m02ClearIncapableGrenadeThreat(ally);
+      continue;
+    }
     ally.suppressed = Math.max(0, ally.suppressed - dt * 0.28);
+    // Codex: ferido/amparado não continua uma rajada nem foge de granadas; os restantes reagem a uma granada que veem/ouvem.
+    if (['WOUNDED_LIAISON', 'WALKING_SUPPORTED', 'CARRIED', 'EVACUATED_B12'].includes(ally.state)) {
+      ally.burst = null;
+      delete ally.m02GrenadeThreat;
+    } else if (m02ReactToGrenade(sim, ally, 'ally')) {
+      stepActorNavigation(sim, ally, dt);
+      continue;
+    }
     stepActorWeapon(sim, ally, dt);
     // Lis ferido amparado/carregado/abrigado (J3): o percurso é do diretor da Área C (updateLisC11); a IA da secção não o move nem ele dispara.
     if (ally.state === 'WALKING_SUPPORTED' || ally.state === 'CARRIED' || ally.state === 'EVACUATED_B12') continue;
@@ -1802,6 +1896,15 @@ export function updatePolishSquad(sim, dt) {
       const c01Contact = sim.c01Contact;
       const c01Elapsed = c01Contact?.movementStartedAt == null ? 0 : sim.clock - c01Contact.movementStartedAt;
       const c01Stage = c01Elapsed < 4.5 ? 0 : c01Elapsed < 14.0 || !c01Contact?.opened ? 1 : 2;
+      // Codex (C01, preparação física): enquanto a secção não avança, cada homem fica agachado no seu lugar da vala de partida.
+      const slot = sim.world.layout.c01Corridor?.preparationSlots?.[ally.id];
+      if (c01Stage === 0 && slot) {
+        ally.goal = { x: slot.x, z: slot.z, facing: slot.facing, crouch: true, nodeId: `prep_${ally.id}` };
+        ally.crouched = true;
+        ally.eyeHeight = 1.08;
+        ally.moving = false;
+        continue;
+      }
       const c01Map = {
         pl_aux_01: ['cv_c01_p1_e', 'cv_c01_mid_e', 'cv_c01_mid_e'],
         pl_aux_02: ['cv_c01_p1_w', 'cv_c01_mid_e', 'cv_c01_mid_e'],
@@ -1864,6 +1967,7 @@ export function updatePolishSquad(sim, dt) {
 
     const prevNode = ally.reachedNodeId;
     stepActorNavigation(sim, ally, dt);
+    updateLowCoverExposure(sim,ally);
     if (!ally.moving && ally.goal?.nodeId && ally.reachedNodeId !== ally.goal.nodeId) {
       ally.reachedNodeId = ally.goal.nodeId;
       sim.combatLog.push({
@@ -1886,6 +1990,8 @@ export function updatePolishSquad(sim, dt) {
       }
     }
 
+    if(['WOUNDED_LIAISON','WALKING_SUPPORTED','EVACUATED_B12'].includes(ally.state))continue;
+
     // 2. Allied target acquisition & causal firing (no decorative shots!)
     if (ally.reloadingUntil > sim.clock || ally.mag <= 0 || sim.clock < ally.nextFireAt || isLifting(sim, ally)) {
       continue;
@@ -1895,6 +2001,7 @@ export function updatePolishSquad(sim, dt) {
       continue;
     }
 
+    const crewCover=m02MachineGunCover(sim,ally,'ally');
     let bestEnemy = null;
     let bestScore = -Infinity;
     for (const enemy of sim.enemies) {
@@ -1920,13 +2027,14 @@ export function updatePolishSquad(sim, dt) {
 
       const aimPt = isMgSuppressTarget && !hasLoS
         ? { x: cm(mgMuzzle.x + 0.2), y: cm(mgMuzzle.y - 0.04), z: mgMuzzle.z }
-        : { x: enemy.x, y: enemy.y + (enemy.crouched ? 0.92 : 1.25), z: enemy.z };
+        : m02VisibleAimPoint(sim, ally, enemy);
 
       if (!friendlyFireClear(ally, aimPt, [sim.player, ...sim.allies])) continue;
 
       let score = 200 - dist;
       if (enemy.id === 'DE-A05') score += 85; // prioritize MG34
       if (hasLoS) score += 40;
+      if (enemy.id===crewCover?.targetId && hasLoS) score += 220;
       if (score > bestScore) {
         bestScore = score;
         bestEnemy = { enemy, aimPt, isMgSuppressTarget };
@@ -1936,7 +2044,9 @@ export function updatePolishSquad(sim, dt) {
     if (bestEnemy) {
       const { enemy, aimPt } = bestEnemy;
       ally.facing = Math.atan2(aimPt.z - ally.z, aimPt.x - ally.x);
-      sim.fireActorBurst(ally, enemy, aimPt, 'ally');
+      const fired=sim.fireActorBurst(ally, enemy, aimPt, 'ally');
+      if(fired&&ally.id==='pl_aux_01')ally.m02LastEngagedTargetId=enemy.id;
+      if(fired&&enemy.id===crewCover?.targetId)fired.crewCoverFor=crewCover.gunnerId;
       if (ally.id === 'pl_lis' && (enemy.id === 'DE-A05' || enemy.encounterId === 'EA0')) {
         sim.dialogue.trigger('bz39_c02_02', sim);
       }
@@ -2028,19 +2138,44 @@ export function updateGermanGarrison(sim, dt) {
   // Detect which flank is under pressure so local reserves (DE-A12, DE-A13) can shift (J1)
   const westPressure =
     (sim.player.x < -20 && sim.player.z > -45) ||
-    sim.allies.some((a) => a.alive && a.x < -24 && a.z > -35);
+    sim.allies.some((a) => a.alive && m02ActorPresent(a) && a.x < -24 && a.z > -35);
   const eastPressure =
     (sim.player.x > 18 && sim.player.z > -45) ||
-    sim.allies.some((a) => a.alive && a.x > 18 && a.z > -35);
+    sim.allies.some((a) => a.alive && m02ActorPresent(a) && a.x > 18 && a.z > -35);
 
   for (const enemy of sim.enemies) {
-    if (!enemy.alive) continue;
+    if (!enemy.alive) {if(enemy.m02GrenadeThreat)m02ClearIncapableGrenadeThreat(enemy);continue;}
     if (sim.c01Active && enemy.encounterId !== 'EA0') continue;
     enemy.suppressed = Math.max(0, enemy.suppressed - dt * 0.25);
 
     const moraleGroup = moraleGroups.get(moraleGroupOf(enemy));
     const neutralizedCount = moraleGroup?.neutralized ?? 0;
     const groupMgDown = moraleGroupOf(enemy) === 'EA1' ? mgDown : true;
+    // The B02 loader can attempt the south door when the farm collapses.
+    // Keep this a physical, interruptible movement; a blocked route eventually
+    // ends in surrender so the player is never required to hunt him down.
+    if (enemy.m02BarnRetreat && !enemy.nonCombatant) {
+      const retreat = enemy.m02BarnRetreat;
+      if (retreat.phase === 'inside' && Math.hypot(enemy.x - 30, enemy.z + 25.3) <= 0.5) {
+        retreat.phase = 'outside';
+        enemy.goal = {x:30,z:-22,crouch:false};
+        // The coarse navigation grid cannot reliably represent this 1.2 m
+        // aperture. The final short segment still uses normal collision and
+        // door handling; it does not teleport the actor through the wall.
+      }
+      if ((retreat.phase === 'outside' && enemy.z >= -22.5 && Math.abs(enemy.x - 30) <= 0.7) || sim.clock - retreat.startedAt >= 15) {
+        enemy.state = 'SURRENDERED'; enemy.nonCombatant = true; enemy.moving = false; enemy.goal = null;
+        sim.combatLog.push({clock:Number(sim.clock.toFixed(2)),type:'enemy_surrendered',actorId:enemy.id});
+      } else {
+        if (retreat.phase === 'outside') {
+          enemy.navCorners = [{x:30,z:-22}];
+          enemy.navGoalKey = '30.00,-22.00';
+          enemy.navRevision = sim.world.revision;
+        }
+        stepActorNavigation(sim, enemy, dt);
+      }
+      continue;
+    }
 
     // Check C04 wounded non-combatant transition in southern orchard
     if (enemy.c04Candidate && !enemy.nonCombatant && (enemy.health <= 48 || (groupMgDown && neutralizedCount >= 6))) {
@@ -2050,6 +2185,7 @@ export function updateGermanGarrison(sim, dt) {
       enemy.moving = false;
       enemy.goal = null;
       enemy.health = Math.max(25, enemy.health);
+      if(enemy.m02GrenadeThreat)m02ClearIncapableGrenadeThreat(enemy);
       sim.combatLog.push({
         clock: Number(sim.clock.toFixed(2)),
         type: 'enemy_wounded_unarmed_c04',
@@ -2062,10 +2198,23 @@ export function updateGermanGarrison(sim, dt) {
 
     // Check garrison morale collapse (retreat / surrender when MG is down and >= 7 defenders of the SAME group are neutralized)
     if (!enemy.nonCombatant && groupMgDown && neutralizedCount >= 7) {
+      // Codex (C03, 82863c1b): o municiador da MG de B02 tenta sair fisicamente pela porta sul antes de se render.
+      if (sim.activeCellId === 'A' && enemy.id === 'DE-A06' && enemy.x > 12 && enemy.x < 36 && enemy.z > -38 && enemy.z < -24) {
+        enemy.state = 'RETREAT_B02';
+        enemy.m02BarnRetreat = { phase: 'inside', startedAt: instantAt(sim.clock) };
+        enemy.goal = { x: 30, z: -25.3, crouch: false };
+        enemy.burst = null;
+        enemy.reloadingUntil = 0;
+        if (enemy.m02GrenadeThreat) m02ClearIncapableGrenadeThreat(enemy);
+        sim.combatLog.push({ clock: Number(sim.clock.toFixed(2)), type: 'enemy_retreat_b02', actorId: enemy.id });
+        stepActorNavigation(sim, enemy, dt);
+        continue;
+      }
       enemy.state = 'SURRENDERED';
       enemy.nonCombatant = true;
       enemy.moving = false;
       enemy.goal = null;
+      if(enemy.m02GrenadeThreat)m02ClearIncapableGrenadeThreat(enemy);
       sim.combatLog.push({
         clock: Number(sim.clock.toFixed(2)),
         type: 'enemy_surrendered',
@@ -2074,7 +2223,7 @@ export function updateGermanGarrison(sim, dt) {
       continue;
     }
 
-    if (enemy.nonCombatant) continue;
+    if (enemy.nonCombatant) {if(enemy.m02GrenadeThreat)m02ClearIncapableGrenadeThreat(enemy);continue;}
 
     // C02 (PDF p. 12): o posto EA0 está «sem alerta» até ao contacto aberto (30-60 s depois de o jogador avançar): não vê, não
     // recorda (os ruídos que não abrem o contacto não o alertam) e não dispara. Antes via Piotr no tick 0 a ~67 m.
@@ -2105,7 +2254,11 @@ export function updateGermanGarrison(sim, dt) {
       }
     }
 
+    if(m02ReactToGrenade(sim,enemy,'enemy')){stepActorNavigation(sim,enemy,dt);continue;}
     stepActorWeapon(sim, enemy, dt);
+    if(enemy.encounterId==='EA0'&&sim.c01Active&&!enemy.goal&&!enemy.fellBack){
+      enemy.goal={x:enemy.x,z:enemy.z,crouch:true,nodeId:`ea0_guard_${enemy.id}`};
+    }
 
     // Local reserve movement (DE-A12, DE-A13 in Area A; or EC2 reserve DE-C09..DE-C20 in Area C)
     if (enemy.encounterId === 'EC2' && sim.c10Active && typeof enemy.goalX === 'number' && !enemy.goal) {
@@ -2132,10 +2285,13 @@ export function updateGermanGarrison(sim, dt) {
     }
 
     stepActorNavigation(sim, enemy, dt);
+    updateLowCoverExposure(sim,enemy);
 
     // Honest Visual Perception (AI-02: never tracks hidden targets through solid walls!)
     // (o último grupo também é alvo a partir de C10: C11, p. 14, «quem foi atingido permanece ferido ou morto»)
-    const potentialTargets = [sim.player, ...sim.allies, ...lastGroupTargets(sim)].filter((t) => t && t.alive && t.state !== 'DOWN' && !t.detachedOutOfCell);
+    // Presença (Codex 70c60315): quem está fora da célula, evacuado ou desaparecido não é alvo do combate local.
+    const potentialTargets = [sim.player, ...sim.allies, ...lastGroupTargets(sim)].filter((t) => m02ActorPresent(t) && t.alive && t.state !== 'DOWN');
+    const crewCover = m02MachineGunCover(sim, enemy, 'enemy');
     let visibleTarget = null;
     let bestTargetScore = -Infinity;
 
@@ -2152,13 +2308,13 @@ export function updateGermanGarrison(sim, dt) {
       const maxHalfCone = enemy.weapon === 'mg34' ? sim.mgState.arcHalfAngle : 1.32;
       if (angleDiff > maxHalfCone) continue;
 
-      const hasLoS = enemy.weapon === 'mg34'
+      const hasLoS = enemy.id === 'DE-A05' && sim.activeCellId === 'A'
         ? sim.evaluateMgLineOfFire(t).hasVisualLoS
         : sim.world.lineOfSight(enemy, t, { includeFoliage: true });
 
       if (!hasLoS) continue;
 
-      const score = 180 - dist + (t.id === 'piotr_sokol' ? 15 : 0);
+      const score = 180 - dist + (t.id === 'piotr_sokol' ? 15 : 0) + (t.id===crewCover?.targetId ? 220 : 0);
       if (score > bestTargetScore) {
         bestTargetScore = score;
         visibleTarget = t;
@@ -2166,12 +2322,14 @@ export function updateGermanGarrison(sim, dt) {
     }
 
     if (visibleTarget) {
+      const acquiredAim=m02VisibleAimPoint(sim,enemy,visibleTarget);
+      if(enemy.seeingTargetId!==visibleTarget.id||!Number.isFinite(enemy.targetAcquiredAt))enemy.targetAcquiredAt=sim.clock;
       enemy.state = 'ENGAGE_VISIBLE';
       enemy.seeingTargetId = visibleTarget.id;
       enemy.memory = {
         targetId: visibleTarget.id,
         x: roundNoNegZero(visibleTarget.x),
-        y: roundNoNegZero(visibleTarget.y + (visibleTarget.crouched ? 0.95 : 1.25)),
+        y: roundNoNegZero(acquiredAim.y),
         z: roundNoNegZero(visibleTarget.z),
         seenAt: Number(sim.clock.toFixed(2)),
         expiresAt: Number((sim.clock + 6.0).toFixed(2)),
@@ -2182,13 +2340,12 @@ export function updateGermanGarrison(sim, dt) {
         enemy.facing = Math.atan2(visibleTarget.z - enemy.z + 0, visibleTarget.x - enemy.x + 0);
       }
 
+      // `targetAcquiredAt` (Codex) fica como estado de apresentação (pontaria visível). O atraso fixo de reação do Codex
+      // (M01 «soldado») NÃO entra: a equidade do primeiro contacto é a regra F1 do perfil de dificuldade D6 (fireActorBurst).
       if (enemy.reloadingUntil <= sim.clock && enemy.mag > 0 && sim.clock >= enemy.nextFireAt && enemy.suppressed < 0.88) {
-        const aimPt = {
-          x: visibleTarget.x,
-          y: visibleTarget.y + (visibleTarget.crouched ? 0.95 : 1.25),
-          z: visibleTarget.z,
-        };
-        sim.fireActorBurst(enemy, visibleTarget, aimPt, 'enemy');
+        const aimPt = acquiredAim;
+        const fired=sim.fireActorBurst(enemy, visibleTarget, aimPt, 'enemy');
+        if(fired&&visibleTarget.id===crewCover?.targetId)fired.crewCoverFor=crewCover.gunnerId;
       }
     } else {
       enemy.seeingTargetId = null;

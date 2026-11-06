@@ -1,0 +1,138 @@
+import {chromium} from '@playwright/test';
+import fs from 'node:fs';
+const out=process.env.M02_PLAY_OUT??'/tmp/m02-continuous';fs.mkdirSync(out,{recursive:true});
+const browser=await chromium.launch({executablePath:process.env.CHROME_EXECUTABLE??'/usr/bin/chromium',args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+const report={startedAt:new Date().toISOString(),method:'Continuous production build; trusted Playwright keyboard/start and pointer-lock mouse input; read-only planner uses actor/collision observations, never writes simulation state.',stages:[],deaths:[],errors:[]};
+const verifyOrders=process.env.M02_ORDER_RUN==='1';
+if(verifyOrders)report.orders=[];
+const verifyGrenade=process.env.M02_GRENADE_RUN==='1';
+if(verifyGrenade)report.grenade=null;
+const verifyWater=process.env.M02_WATER_RUN==='1';
+if(verifyWater)report.water=null;
+const verifyEarlyWithdrawal=process.env.M02_EARLY_WITHDRAW_RUN==='1';
+if(verifyEarlyWithdrawal)report.earlyWithdrawal=null;
+const traceAudio=process.env.M02_AUDIO_TRACE==='1';
+report.buildCommit=process.env.M02_BUILD_SHA??null;
+const started=Date.now();
+let page;
+try{
+ page=await browser.newPage({viewport:{width:480,height:270}});
+ page.on('pageerror',e=>report.errors.push(e.stack??e.message));
+ await page.goto(`${process.env.M02_BASE_URL??'http://127.0.0.1:4290/COD-guerra'}/m02.html?quality=low&debug=1`);
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled,null,{timeout:120000});
+ await page.evaluate(async options=>{const {M02MissionPilot}=await import('/COD-guerra/tools/m02/mission-pilot.mjs');window.m02Pilot=new M02MissionPilot(options);},{offerWater:verifyWater,earlyWithdrawal:verifyEarlyWithdrawal});
+ await page.click('#mission-start');
+ await page.waitForFunction(()=>document.pointerLockElement?.id==='m02-canvas');
+ if(traceAudio)await page.evaluate(()=>{
+  const audio=window.m02Bench.renderer.presentation.audio,voice=audio._voice,fire=audio.weaponFire;
+  window.m02PilotAudioDenials=[];
+  window.m02PilotMp38={events:0,voiced:0,reused:0,sameFrame:0,delayed:0,maxDelay:0};
+  audio._voice=function(options={}){
+   const category=options.category??'fx',dropped=this.dropped,budget=this.budgetDropped,categoryDrops=this.categoryDropped[category]??0;
+   const result=voice.call(this,options);
+   if(!result){
+    const reason=this.budgetDropped>budget?'source-budget':(this.categoryDropped[category]??0)>categoryDrops?'category-limit':this.dropped>dropped?'global-limit':'unavailable';
+    window.m02PilotAudioDenials.push({clock:window.m02Bench.sim.clock,kind:options.kind??'fx',category,priority:options.priority??null,reason});
+   }
+   return result;
+  };
+  // Observe the existing Web Audio decisions; do not write gameplay state or
+  // request extra shots. The voice count is separate from authoritative ammo.
+  audio.weaponFire=function(weapon,pan,distance,options={}){
+   const previous=this.bursts.get(options.source),oldVoice=previous?.voice,oldAt=previous?.at,now=this.ctx?.currentTime??0;
+   const result=fire.call(this,weapon,pan,distance,options);
+   if(weapon==='mp38'&&options.rounds===1&&options.source){
+    const stats=window.m02PilotMp38,current=this.bursts.get(options.source);stats.events++;
+    if(result){
+     stats.voiced++;if(result===oldVoice){stats.reused++;if(Number.isFinite(oldAt)&&Math.abs(now-oldAt)<.002)stats.sameFrame++;}
+     const delay=Math.max(0,(current?.scheduledAt??now)-now);
+     if(delay>.001)stats.delayed++;stats.maxDelay=Math.max(stats.maxDelay,delay);
+    }
+   }
+   return result;
+  };
+ });
+ const held=new Set();let last='';
+ const orderSequence={A:[['KeyZ','suppress'],['KeyX','advance'],['KeyB','flank_east']],B:[['KeyZ','suppress'],['KeyX','advance']],C:[['KeyZ','suppress'],['KeyX','advance']]};
+ const orderIndex={A:0,B:0,C:0},lastOrderAt={A:-Infinity,B:-Infinity,C:-Infinity};
+ const hold=async(key,on)=>{if(on&&!held.has(key)){await page.keyboard.down(key);held.add(key);}else if(!on&&held.has(key)){await page.keyboard.up(key);held.delete(key);}};
+ for(let iteration=0;iteration<24000;iteration++){
+  const observed=await page.evaluate(()=>{
+   const sim=window.m02Bench.sim;
+   return {clock:sim.clock,state:window.m02Diagnostics().state,health:sim.player.health,cell:sim.activeCellId,objective:sim.objective.id,completed:sim.areaC.c12Completed,missionCompleted:Boolean(sim.flags['m02.completed']),waterOffered:Boolean(sim.flags['m02.pomar_wounded_water']),ammo:{mag:sim.weapon.mag,reserve:sim.weapon.reserve,received:sim.weapon.received,grenades:sim.grenadeAmmo},decision:window.m02Pilot.decide(sim),pos:[sim.player.x,sim.player.z],squadOrder:sim.squadOrder.type};
+  });
+  const label=`${observed.cell}:${observed.objective}`;
+  if(verifyWater&&!report.water&&observed.waterOffered)report.water={clock:observed.clock,cell:observed.cell,pos:observed.pos};
+  if(verifyEarlyWithdrawal&&!report.earlyWithdrawal&&observed.decision.earlyWithdrawal)report.earlyWithdrawal={clock:observed.clock,cell:observed.cell,pos:observed.pos,pending:observed.decision.pending};
+  if(label!==last){last=label;report.stages.push({label,clock:observed.clock,health:observed.health,missionCompleted:observed.missionCompleted,pos:observed.pos,realSec:(Date.now()-started)/1000});console.log(JSON.stringify(report.stages.at(-1)));await page.screenshot({path:`${out}/${report.stages.length}-${label.replace(':','-')}.png`});}
+  if(observed.missionCompleted&&!observed.completed)throw Error('M02 was marked complete before C12');
+  if(observed.completed){report.completed=true;break;}
+  if(observed.health<=0){
+    report.deaths.push({label,clock:observed.clock,realSec:(Date.now()-started)/1000});
+    if(report.deaths.length>5)throw Error('Five checkpoint retries exhausted');
+    for(const key of held)await page.keyboard.up(key);held.clear();
+    await page.waitForFunction(()=>window.m02Diagnostics().state==='dead');
+    await page.screenshot({path:`${out}/death-${report.deaths.length}.png`});
+    await page.click('#mission-restart');
+    await page.waitForFunction(()=>document.pointerLockElement?.id==='m02-canvas');
+    await page.evaluate(async ({attempt,offerWater,earlyWithdrawal})=>{const {M02MissionPilot}=await import('/COD-guerra/tools/m02/mission-pilot.mjs');window.m02Pilot=new M02MissionPilot({flankX:attempt%2?-65:-50,flankZ:attempt%2?-70:-52,offerWater,earlyWithdrawal});},{attempt:report.deaths.length,offerWater:verifyWater,earlyWithdrawal:verifyEarlyWithdrawal});
+    continue;
+  }
+  if(Date.now()-started>1800000)throw Error('Continuous run exceeded 30 minute wall budget');
+  if(report.errors.length)throw Error(report.errors.join('\n'));
+  if(verifyGrenade&&!report.grenade&&observed.cell==='A'&&observed.objective==='O00'&&observed.clock>=.1){
+    // Deliberate early throw into the open approach exercises real player
+    // input and nearby squad perception without installing simulation state.
+    await page.keyboard.press('KeyG');
+    await page.waitForFunction(before=>{
+      const s=window.m02Bench.sim;return s.grenadeAmmo===before-1&&s.allies.some(a=>a.m02GrenadeThreat);
+    },observed.ammo.grenades,{timeout:20000});
+    report.grenade=await page.evaluate(()=>{
+      const s=window.m02Bench.sim;return {clock:s.clock,ammo:s.grenadeAmmo,
+        projectile:s.grenades[0]?.id??null,reactors:s.allies.filter(a=>a.m02GrenadeThreat).map(a=>a.id)};
+    });
+  }
+  const allowedOrders=observed.cell==='A'?['O01','O02'].includes(observed.objective):observed.cell==='B'?observed.objective==='O04':['O06','O07','O08'].includes(observed.objective);
+  const sequence=orderSequence[observed.cell];
+  if(verifyOrders&&sequence&&orderIndex[observed.cell]<sequence.length&&allowedOrders&&observed.clock-lastOrderAt[observed.cell]>=2){
+    const [key,type]=sequence[orderIndex[observed.cell]++];await page.keyboard.press(key);
+    // Input is consumed by the next fixed simulation tick. A frame can have
+    // advanced between the observation and keypress, so wait for the actual
+    // order rather than mistaking that earlier frame for confirmation.
+    await page.waitForFunction(expected=>window.m02Bench.sim.squadOrder.type===expected.type&&window.m02Bench.sim.squadOrder.issuedCell===expected.cell,{type,cell:observed.cell},{timeout:20000});
+    const confirmedAt=await page.evaluate(()=>window.m02Bench.sim.clock);
+    report.orders.push({cell:observed.cell,key,type,issuedAt:observed.clock,confirmedAt});lastOrderAt[observed.cell]=confirmedAt;
+  }
+  const c=observed.decision.controls;
+  // The M01 verification harness uses the same relative mouse events because
+  // absolute headless pointer-lock motion cancels. Only the input listener runs.
+  await page.evaluate(([x,y])=>window.dispatchEvent(new MouseEvent('mousemove',{movementX:x,movementY:y})),[(c.lookX??0)/.0024,(c.lookY??0)/.0022]);
+  for(const [key,on] of [['KeyW',c.forward>0],['ShiftLeft',c.sprint],['KeyV',c.aim]])await hold(key,Boolean(on));
+  for(const [key,on] of [['KeyC',c.crouch],['KeyE',c.interact],['KeyF',c.giveWater],['KeyR',c.reload],['Space',c.fire],['KeyG',c.grenade]])if(on)await page.keyboard.press(key);
+  // Completing C12 stops the simulation clock. A withdrawal input can enter
+  // the epilogue on this very tick, so either outcome releases the pilot.
+  await page.waitForFunction(clock=>window.m02Bench.sim.clock>clock||window.m02Bench.sim.areaC.c12Completed,observed.clock,{timeout:60000});
+  if(iteration%100===0)fs.writeFileSync(`${out}/progress.json`,JSON.stringify({...report,last:observed},null,2));
+ }
+ for(const key of held)await page.keyboard.up(key);
+ if(!report.completed)throw Error('Mission not completed');
+ if(verifyOrders&&(Object.keys(orderSequence).some(cell=>orderIndex[cell]!==orderSequence[cell].length)||report.orders.length!==7))throw Error('The complete squad order sequence was not verified');
+ if(verifyGrenade&&(!report.grenade?.projectile||!report.grenade.reactors.length))throw Error('Grenade and squad reaction were not verified');
+ if(verifyWater&&!report.water)throw Error('The optional water handoff was not verified');
+ for(let i=0;i<3;i++){await page.screenshot({path:`${out}/epilogue-${i}.png`});await page.click('#mission-epilogue-next');}
+ await page.waitForFunction(()=>window.m02Diagnostics().state==='debrief');
+ report.result=await page.evaluate(()=>structuredClone(window.m02Bench.sim.m03ExportPackage));
+ if(!report.result?.completed||!report.result?.flags?.['m02.completed'])throw Error('C12 did not complete the campaign transaction');
+ if(verifyWater&&!report.result?.flags?.['m02.pomar_wounded_water'])throw Error('The water choice was lost before the campaign handoff');
+ if(verifyEarlyWithdrawal&&(!report.earlyWithdrawal||!(report.result?.m03ImportState?.lastGroupUnaccountedCount>0)))throw Error('Early withdrawal did not preserve an unaccounted group');
+ report.diagnostics=await page.evaluate(()=>window.m02Diagnostics());
+ await page.setViewportSize({width:1280,height:720});await page.screenshot({path:`${out}/debrief.png`});
+ console.log('COMPLETE',JSON.stringify(report.result));
+}catch(error){report.failure=error.message;console.log('FAILED',error.message);if(page)await page.screenshot({path:`${out}/failure.png`}).catch(()=>{});process.exitCode=1;}
+finally{
+ if(traceAudio&&page){
+  report.audioDenials=await page.evaluate(()=>window.m02PilotAudioDenials??[]).catch(()=>[]);
+  report.mp38Audio=await page.evaluate(()=>window.m02PilotMp38??null).catch(()=>null);
+ }
+ report.finishedAt=new Date().toISOString();fs.writeFileSync(`${out}/report.json`,JSON.stringify(report,null,2));await browser.close();
+}

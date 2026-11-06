@@ -831,6 +831,7 @@ export function completeC07Reorganization(sim, { skip = false } = {}) {
   // Idempotente: com o roteiro automático (C06 → C07 ao resolver a passagem) e as teclas de bancada a coincidir, as
   // consequências dos volumes (munição +15, água +10) aplicam-se uma só vez.
   if (sim.areaB.reorganizedC07) return c07Summary(sim);
+  const firstReorganization=!sim.areaB.reorganizedC07;
   sim.areaB.reorganizedC07 = true;
   sim.flags['m02.corridor_held'] = true;
   sim.horizon.setTemporalState('T2', sim);
@@ -840,11 +841,11 @@ export function completeC07Reorganization(sim, { skip = false } = {}) {
   };
 
   // Apply supply consequences without magical full heal (I1 / D6)
-  if (sim.supplies.ammoDelivered) {
+  if (firstReorganization && sim.supplies.ammoDelivered) {
     sim.weapon.reserve = Math.min(60, sim.weapon.reserve + 15);
   }
-  if (sim.supplies.waterDelivered) {
-    sim.player.health = Math.min(85, Math.max(sim.player.health, sim.player.health + 10));
+  if (firstReorganization && sim.supplies.waterDelivered) {
+    sim.player.health = Math.max(sim.player.health,Math.min(85,sim.player.health+10));
   }
 
   // Evaluate squad status for Małek & Wierzba (severely wounded are evacuated and do not reappear fit)
@@ -943,7 +944,7 @@ export function enterAreaCC09(sim, { skipTransition = false } = {}) {
   ];
   let idx = 0;
   for (const ally of sim.allies) {
-    if (ally.detachedOutOfCell || ally.state === 'EVACUATED') continue;
+    if (ally.detachedOutOfCell || ally.state === 'EVACUATED') {ally.detachedOutOfCell=true;continue;}
     const [ax, az] = allySpawns[idx++ % allySpawns.length];
     ally.x = ax;
     ally.z = az;
@@ -1162,7 +1163,7 @@ export function startC11LisAndLastGroup(sim) {
     // duplica Lis). O regresso é um PERCURSO: entra pela antecâmara (0,-60) e caminha a velocidade de ferido até ao ponto de
     // encontro junto à porta norte de B09; antes era reposto de uma vez em (-28,-22) (teleporte).
     const wasAlreadyIncapacitated = !lis.alive || lis.state === 'EVACUATED' || lis.state === 'DOWN';
-    lis.detachedOutOfCell = false;
+    lis.detachedOutOfCell = wasAlreadyIncapacitated;
     if (!wasAlreadyIncapacitated) {
       const cfg = cellsBCLayout.cells.C.lisReturn;
       lis.x = cfg.entry[0];
@@ -1170,6 +1171,8 @@ export function startC11LisAndLastGroup(sim) {
       lis.y = sim.world.heightAt(lis.x, lis.z);
       lis.health = Math.min(lis.health, 46);
       lis.state = 'WOUNDED_LIAISON';
+      lis.burst = null; // Codex: ferido na ligação, não continua uma rajada pendente nem uma recarga
+      lis.reloadingUntil = 0;
       lis.crouched = false;
       lis.maxSpeed = cfg.speedMps;
       lis.navCorners = null;
@@ -1343,7 +1346,7 @@ function updateLisC11(sim, dt) {
 }
 
 export function updateAreaC(sim, dt) {
-  if (sim.activeCellId !== 'C' || !sim.areaC?.active) return;
+  if (sim.activeCellId !== 'C' || !sim.areaC?.active || sim.areaC.c12Completed) return;
 
   // 1. Check if EC1 is cleared to advance C09 -> C10
   if (!sim.areaC.c10Started) {
@@ -1376,19 +1379,16 @@ export function updateAreaC(sim, dt) {
       continue;
     }
     allResolved = false;
+    // Codex (b89ccdde): depois da retirada antecipada quem ficou para trás está por localizar e não continua o percurso.
+    if (lg.leftBehind) {
+      lg.moving = false;
+      continue;
+    }
     if (!sim.areaC.c11Started || sim.clock < sim.areaC.c11StartedAt + lg.startDelaySec) continue;
     const wp = evacRoute[Math.min(lg.waypointIdx, evacRoute.length - 1)];
-    const dx = wp[0] - lg.x;
-    const dz = wp[1] - lg.z;
-    const dist = Math.hypot(dx, dz);
-    if (dist > 1e-4) {
-      const step = Math.min(dist, lg.speed * dt);
-      lg.x = Number((lg.x + (dx / dist) * step).toFixed(2));
-      lg.z = Number((lg.z + (dz / dist) * step).toFixed(2));
-      lg.y = sim.world.heightAt(lg.x, lg.z);
-      lg.facing = Math.atan2(dz, dx);
-      lg.moving = true;
-    }
+    lg.encounterId='LAST_GROUP';lg.state=lg.wounded?'WOUNDED_WALKING':'EVACUATING';
+    lg.goal={x:wp[0],z:wp[1],crouch:false};
+    stepActorNavigation(sim,lg,dt);
     const remDist = Math.hypot(wp[0] - lg.x, wp[1] - lg.z);
     if (remDist <= 0.65) {
       if (lg.waypointIdx < evacRoute.length - 1) {
@@ -1400,6 +1400,10 @@ export function updateAreaC(sim, dt) {
         evacuatedCount++;
       }
     }
+    // The penultimate waypoint is beyond B12's south door. Count men who
+    // have crossed the house while they continue to the final rally point;
+    // they remain vulnerable until they actually leave the scene.
+    if(!lg.evacuated&&lg.waypointIdx>=evacRoute.length-1)evacuatedCount++;
   }
 
   sim.flags['m02.last_group_survivors'] = evacuatedCount;
@@ -1430,7 +1434,7 @@ export function deriveLisOutcome(sim) {
   return 'missing';
 }
 
-export function completeC12Epilogue(sim, { lisOutcome = null } = {}) {
+export function completeC12Epilogue(sim, { lisOutcome = null, earlyWithdrawal = false } = {}) {
   if (!sim.areaC) {
     enterAreaCC09(sim, { skipTransition: true });
   }
@@ -1449,9 +1453,20 @@ export function completeC12Epilogue(sim, { lisOutcome = null } = {}) {
   // revalidam-se depois do SP03 forçado, como Piotr: nada se conclui nem exporta; o fim do lote regista a falha com o `actorId`.
   if (requiredCharacterOut(sim)) return null;
 
-  if (lisOutcome) {
+  // Codex (dcb46ec2/b89ccdde): um desfecho explícito que o jogo já resolveu (Lis já abrigado/evacuado ou já amparado depois do
+  // contacto) não é reaplicado: nada de teletransporte nem de segundo contacto.
+  const earlierEvacuation = lisOutcome === 'wounded_evacuated' && sim.allies.some((a) => a.id === 'pl_lis' && a.alive && a.state === 'EVACUATED');
+  if (earlierEvacuation) {
+    sim.flags['m02.lis_status'] = 'wounded_evacuated';
+    sim.areaC.lisSupportMode = 'wounded_evacuated';
+  }
+  const alreadyResolvedContact =
+    earlierEvacuation ||
+    (lisOutcome === 'wounded_evacuated' && sim.flags['m02.lis_status'] === 'wounded_evacuated') ||
+    (sim.areaC.lisContactedInC11 && lisOutcome === sim.flags['m02.lis_status'] && lisOutcome === 'wounded_walking');
+  if (lisOutcome && !alreadyResolvedContact) {
     assistLisInC11(sim, lisOutcome);
-  } else if (reachedByGame) {
+  } else if (reachedByGame && !lisOutcome) {
     const outcome = deriveLisOutcome(sim);
     if (outcome === 'missing') {
       markLisMissing(sim, 'game');
@@ -1462,13 +1477,35 @@ export function completeC12Epilogue(sim, { lisOutcome = null } = {}) {
       const lis = lisActor(sim);
       if (lis && sim.areaC.lisWasIncapacitated) lis.state = lis.alive ? 'EVACUATED' : lis.state;
     }
-  } else if (!sim.flags['m02.lis_status'] || sim.flags['m02.lis_status'] === 'active') {
+  } else if (!lisOutcome && (!sim.flags['m02.lis_status'] || sim.flags['m02.lis_status'] === 'active')) {
     assistLisInC11(sim, 'wounded_evacuated');
   }
 
   // Último grupo: só conta como evacuado quem CHEGOU ao ponto de evacuação; quem ainda está em trânsito continua em trânsito
   // (antes todos os vivos eram marcados evacuados aqui, sem chegar) e quem caiu fica como morto.
+  // Codex (b89ccdde): na RETIRADA ANTECIPADA (segunda confirmação; m02-player-actions.js) quem ainda não chegou fica para trás:
+  // vivo, por localizar (`leftBehind`, areaC.leftBehindIds, m02.last_group_unaccounted), parado; nunca teletransportado nem morto.
   const group = sim.areaC.lastGroup;
+  const leftBehind = [];
+  for (const lg of group) {
+    if (!lg.alive) continue;
+    if (lg.evacuated) {
+      delete lg.leftBehind;
+    } else if (earlyWithdrawal) {
+      leftBehind.push(lg.id);
+      lg.leftBehind = true;
+      lg.moving = false;
+      lg.goal = null;
+      lg.navCorners = null;
+    }
+  }
+  if (leftBehind.length) {
+    sim.areaC.leftBehindIds = leftBehind;
+    sim.flags['m02.last_group_unaccounted'] = leftBehind.length;
+  } else {
+    delete sim.areaC.leftBehindIds;
+    delete sim.flags['m02.last_group_unaccounted'];
+  }
   const evacuated = group.filter((lg) => lg.alive && lg.evacuated).length;
   sim.areaC.lastGroupSummary = {
     evacuated,
@@ -1579,6 +1616,7 @@ export function exportCampaignResultToM03(sim) {
       lastGroupSurvivorsCount: sim.flags['m02.last_group_survivors'] ?? 0,
       // C11/I4/I6: sem mínimo artificial de dez; «manter destino individual» (LG01…LG12: evacuado / morto / em trânsito, e se ficou ferido).
       lastGroup: lastGroupDestinies(sim),
+      ...(sim.flags['m02.last_group_unaccounted']?{lastGroupUnaccountedCount:sim.flags['m02.last_group_unaccounted']}:{}),
     },
   };
 

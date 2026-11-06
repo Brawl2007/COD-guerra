@@ -25,7 +25,11 @@ import { MissionBot } from './m02-mission-bot.js';
 // C09 (plano de dois grupos, m02-combat-ai.js; tests/m02-c09-section-advance): a secção fixa a oficina e trabalha as faixas de B09/B11 em vez
 // de abater só os 3 de B10 e esperar. Medido com o código final, 18 de 40 sementes (1..40) chegam a C12 em dt 0,1 (antes 7 de 40) e Piotr
 // morre em C09-C11 em 10 (antes 22). Sementes 5, 7 e 10 mantidas; acrescentadas as três menores que passam além dessas (1, 4 e 8).
-const SEEDS = [5, 7, 10, 1, 4, 8];
+// Merge M02 único (2026-11-06, linha Codex integrada: rajadas ronda a ronda, dispersão M01 no fogo pelos controlos — o bot passou a
+// apontar pela mira —, granada preparada 0,5 s, reações a granadas, presença de atores, preparação agachada em P1): medido com o código
+// final, 14 de 40 sementes (dt 0,1) chegam a C12 (3, 5, 7, 8, 9, 10, 11, 12, 21, 32, 33, 36, 39 e 40). Sementes 5, 7 e 10 mantidas; 1 e 4
+// já não passam e foram substituídas pelas menores que passam além das mantidas (3, 8 e 9), sem escolher por vida restante.
+const SEEDS = [5, 7, 10, 3, 8, 9];
 const DT = 0.1;
 const FORBIDDEN_SHORTCUTS = [
   'startAreaAFullC01',

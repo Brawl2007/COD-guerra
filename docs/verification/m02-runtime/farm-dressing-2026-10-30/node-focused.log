@@ -1,0 +1,11 @@
+✔ the original M01 lantern and crate fit the B01 table without changing simulation (39.596719ms)
+✔ farm furniture stays within the existing solid volumes without modifying simulation (27.964819ms)
+✔ M01 props sit on B05 workbench without changing navigation or duplicating after a rebuild (43.094805ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 247.230551

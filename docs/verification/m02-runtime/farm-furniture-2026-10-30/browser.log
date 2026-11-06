@@ -1,0 +1,23 @@
+[1A[2K[WebServer] (node:171222) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 3 tests using 1 worker
+
+[1A[2K(node:171247) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:171247) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/3] tests/browser/m02-mission.spec.js:5:1 › B01 furniture gives the authored solids recognisable interiors
+[1A[2K[2/3] tests/browser/m02-mission.spec.js:38:1 › real player steps use the visible farm floor and M01 interior audio
+[1A[2Ktests/browser/m02-mission.spec.js:38:1 › real player steps use the visible farm floor and M01 interior audio
+M02 surface step {"material":"earth","zone":"open","peak":0.06564655900001526,"step":{"kind":"footstep","pan":-0.1,"distance":0,"priority":28,"key":"step:1","detail":{"surface":"earth","pace":"walk","npc":false},"serial":2}}
+
+[1A[2KM02 surface step {"material":"wood","zone":"m02_B01","peak":0.05467134714126587,"step":{"kind":"footstep","pan":0.1,"distance":0,"priority":28,"key":"step:2","detail":{"surface":"wood","pace":"walk","npc":false},"serial":6}}
+
+[1A[2K[3/3] tests/browser/m02-mission.spec.js:97:1 › farm squad orders change real cover goals through normal keys and show confirmation
+[1A[2K  3 passed (1.2m)

@@ -1,0 +1,28 @@
+[1A[2K[WebServer] (node:226494) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 4 tests using 1 worker
+
+[1A[2K(node:226518) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:226518) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/4] tests/browser/m02-mission.spec.js:5:1 › G prepares the M01 hand before the grenade is physically released
+[1A[2Ktests/browser/m02-mission.spec.js:5:1 › G prepares the M01 hand before the grenade is physically released
+M02 player grenade preparation {"held":{"ammo":1,"projectiles":0,"state":{"progress":0.8999999999999999,"held":true},"visible":true,"parent":"hand_r","shared":true,"screen":[0.2401472548548327,-0.33813583100465655,0.8965205791518817]},"released":{"ammo":1,"id":"gren_1","shown":true,"held":false,"weight":0.5829903978052121},"restored":{"ammo":1,"projectiles":0,"state":{"progress":0.8999999999999999,"held":true},"held":true}}
+
+[1A[2K[2/4] tests/browser/m02-mission.spec.js:51:1 › G during reload reserves the grenade and shows that it is waiting
+[1A[2K[3/4] tests/browser/m02-mission.spec.js:431:1 › a real grenade preparation produces audible M01 handling foley
+[1A[2Ktests/browser/m02-mission.spec.js:431:1 › a real grenade preparation produces audible M01 handling foley
+M02 grenade handling audio {"peak":0.01918093115091324,"events":1,"count":1}
+
+[1A[2K[4/4] tests/browser/m02-mission.spec.js:458:1 › a physically bounced grenade produces an audible local material cue
+[1A[2Ktests/browser/m02-mission.spec.js:458:1 › a physically bounced grenade produces an audible local material cue
+M02 grenade bounce sound {"peak":0.006977962329983711,"count":1,"bounce":{"type":"grenade-bounced","grenadeId":"gren_1","point":{"x":1,"y":1.6026666666666667,"z":100},"material":"wood_thick","speed":15,"clock":0.05}}
+
+[1A[2K  4 passed (1.3m)

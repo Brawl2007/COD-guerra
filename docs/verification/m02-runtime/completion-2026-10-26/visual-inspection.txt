@@ -1,0 +1,1 @@
+{"captures":["c01-section","quinta-medium","leczyca-high","lesmierz-high","mp38-high"],"errors":[]}

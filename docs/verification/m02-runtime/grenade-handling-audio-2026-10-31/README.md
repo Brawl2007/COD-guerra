@@ -1,0 +1,9 @@
+# Som de preparação da granada — 2026-10-31
+
+`114cd6d` emite um evento quando a mão realmente começa a preparar a granada. Se `G` for premido durante recarga ou ferrolho, o som espera pela conclusão da ação existente; morte antes do início não o produz. O evento é determinado pela travessia do instante no relógio da missão, sem guardar temporizadores novos nem repetir o som ao restaurar um checkpoint após o início.
+
+A apresentação reutiliza apenas os grãos sintetizados de tecido e equipamento da M01, numa voz curta da categoria do jogador. Não existe som de pino retirado, porque essa ação ainda não é animada. [Gravação Web Audio](grenade-handling.webm): um evento real criado pela simulação numa fixture Chromium Low, isolado de outras fontes; pico medido `0,01918`. Isto demonstra saída de áudio, não audibilidade no meio de combate nem aprovação humana da mistura.
+
+[174 testes M02](node.log), [38 testes M01 de áudio partilhado](m01-audio.log), [build](build.log) e [quatro casos browser](browser.log) passaram em `114cd6d`; estes incluem espera/restauro, gravação da preparação e som do quique real. [Sem granadas](no-grenade.log), 200 passos em C01, C02, B e C mantiveram snapshots e eventos iguais a `edc2c19`; o [comparador](../grenade-preparation-2026-10-31/compare-no-grenade.mjs) explica a reprodução. Os sons continuam sintetizados e a mistura sob carga necessita de avaliação.
+
+A [passagem contínua `114cd6d`](native-114/report.json) chegou a C12/M03 sem mortes ou erros, com saúde 85, C04 e giz, água, munições, Lis evacuado e 12/12 no último grupo; Małek ficou abatido e Wierzba ferido. Confirmou sete ordens, sete aliados a reagir à granada e um evento de som de preparação. O registo de recusas contém dois passos do jogador e um de NPC, sem recusa identificada da preparação. O piloto lê atores e geometria ocultos; não substitui playtest humano. O registo de evento não prova que o som tenha sido ouvido até ao fim durante o combate.

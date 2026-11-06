@@ -1,0 +1,28 @@
+[1A[2K[WebServer] (node:132141) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 4 tests using 1 worker
+
+[1A[2K(node:132165) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:132165) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/4] tests/browser/m02-mission.spec.js:5:1 › a physically bounced grenade produces an audible local material cue
+[1A[2Ktests/browser/m02-mission.spec.js:5:1 › a physically bounced grenade produces an audible local material cue
+M02 grenade bounce sound {"peak":0.01830197498202324,"count":1,"bounce":{"type":"grenade-bounced","grenadeId":"gren_1","point":{"x":1,"y":1.6026666666666667,"z":100},"material":"wood_thick","speed":15,"clock":0.05}}
+
+[1A[2K[2/4] tests/browser/m02-mission.spec.js:30:1 › the B05 workshop uses M01 tabletop props without changing the simulation
+[1A[2K[3/4] tests/browser/m02-mission.spec.js:265:1 › a grenade thrown by the player bounces off the actual B05 wall
+[1A[2Ktests/browser/m02-mission.spec.js:265:1 › a grenade thrown by the player bounces off the actual B05 wall
+M02 grenade bounce in B05 {"wall":{"min":{"x":-34.13,"y":0,"z":-23.37},"max":{"x":-33.87,"y":3.1,"z":-21.25}},"result":{"x":-33.868007798207145,"y":1.4413048906612125,"z":-22,"vx":4.8,"vz":1.83697019872103e-15,"view":[-33.868007798207145,1.4413048906612125,-22],"ammo":1,"sounds":1}}
+
+[1A[2K[4/4] tests/browser/m02-mission.spec.js:285:1 › the normal grenade input displays the live projectile and a checkpoint removes it
+[1A[2Ktests/browser/m02-mission.spec.js:285:1 › the normal grenade input displays the live projectile and a checkpoint removes it
+M02 real grenade input {"shown":{"ammo":1,"ids":["gren_1"],"position":[2.5717582782094424e-16,1.1147500000000001,-170.8],"actual":[2.5717582782094424e-16,1.1147500000000001,-170.8],"radius":0.07,"visible":true,"unchanged":true},"handBefore":[0.7922439566926501,-0.8543425142421662,0.8482598276772638],"follow":{"startedAt":0.05,"weight":0.5829903978052126,"hand":[0.755228026719615,-0.41286707001790623,0.8578535848948194]},"restored":{"ammo":2,"active":0,"follow":{"startedAt":null,"weight":0}}}
+
+[1A[2K  4 passed (1.1m)

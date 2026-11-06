@@ -5,6 +5,18 @@ import { M02PresentationFeed, landmarksInView } from '../render/m02-presentation
 import { M02AudioPlaceholder } from '../render/m02-audio-placeholder.js';
 import { HORIZON_L3_LANDMARKS } from '../world/m02-horizon-system.js';
 import { M02TouchControls, detectTouchMode } from './m02-touch-controls.js';
+// Merge M02 único: ações do jogador da linha Codex (água em C04, retirada antecipada com segunda confirmação, munição dos caídos,
+// socorro explícito a Lis). As transições de área continuam a ser do roteiro automático desta bancada (runUpdateScript).
+import { m02PlayerAction, performM02PlayerAction, m02EarlyWithdrawalPrompt, performM02EarlyWithdrawal } from '../game/m02-player-actions.js';
+import { M02RetreatConfirmation } from './m02-retreat-confirmation.js';
+
+/** Ações contextuais [E] do Codex que esta bancada liga (as outras — área B/C, reorganizar, epílogo — já são do roteiro). */
+const M02_CONTEXT_ACTIONS = new Set(['rifle-ammo', 'assist-lis']);
+/**
+ * Áudio: o áudio M01 partilhado (renderer.presentation, Codex) toca tiros, rondas, granadas, explosões, artilharia distante, recargas,
+ * passos e água. Os pedidos placeholder desta bancada só tocam o que ele não cobre (aviso de explosão D5 e portas): um som, não dois.
+ */
+const PLACEHOLDER_ONLY_CATEGORIES = new Set(['blast_warning', 'door']);
 
 const PANORAMA_VIEWS = Object.freeze({
   SN1: { x: 0, z: -80, angle: Math.PI / 2, pitch: -0.02, label: 'SN1 · Entrada norte da bancada (0, -80)' },
@@ -45,7 +57,10 @@ for (let i = 0; i < ARROW_POOL && elDirectionRing; i++) {
 }
 let lastSubtitleKey = '';
 let lastLandmarkKey = '';
-const resumeAudio = () => audio.resume();
+const resumeAudio = () => {
+  audio.resume();
+  renderer.presentation.unlockAudio();
+};
 window.addEventListener('keydown', resumeAudio, { once: false, passive: true });
 window.addEventListener('mousedown', resumeAudio, { once: false, passive: true });
 // iOS: o WebAudio só arranca num gesto do utilizador; no modo toque o primeiro toque (pointerup/touchend/click) retoma o contexto.
@@ -88,7 +103,9 @@ let pendingSingleActions = {
   grenade: false,
   orderCover: false,
   orderAdvance: false,
+  giveWater: false, // F (Codex): dar água ao ferido em C04, ou recuar em C11 (pede segunda confirmação)
 };
+const retreatConfirmation = new M02RetreatConfirmation();
 
 /** F5 (teclado e botão «Gravar»). */
 function quickSaveCheckpoint() {
@@ -115,6 +132,7 @@ window.addEventListener('keydown', (e) => {
   if (e.code === 'KeyC') pendingSingleActions.crouch = true;
   if (e.code === 'Space') pendingSingleActions.fire = true;
   if (e.code === 'KeyG') pendingSingleActions.grenade = true;
+  if (e.code === 'KeyF') pendingSingleActions.giveWater = true;
   // D4: só duas ordens à secção, «cobrir aqui» (Z) e «avançar para ali» (X)
   if (e.code === 'KeyZ') pendingSingleActions.orderCover = true;
   if (e.code === 'KeyX') pendingSingleActions.orderAdvance = true;
@@ -165,6 +183,7 @@ const touch = touchMode
         interact: () => (pendingSingleActions.interact = true),
         orderCover: () => (pendingSingleActions.orderCover = true),
         orderAdvance: () => (pendingSingleActions.orderAdvance = true),
+        giveWater: () => (pendingSingleActions.giveWater = true),
         save: () => {
           const last = quickSaveCheckpoint();
           touch.toast(last?.ok === false && !last.skipped ? `Falhou a gravação: ${last.reason}` : 'Checkpoint gravado (F5)');
@@ -349,7 +368,7 @@ function updatePresentationHud() {
   presentation.ingestDirectorLog(sim);
   const view = presentation.view(sim);
   presentation.drainAudio(audioScratch);
-  for (const cue of audioScratch) audio.play(cue);
+  for (const cue of audioScratch) if (PLACEHOLDER_ONLY_CATEGORIES.has(cue.category)) audio.play(cue);
   audio.setTinnitus(view.tinnitusLevel);
 
   let used = 0;
@@ -465,7 +484,9 @@ function updateHud() {
     elAmmo.textContent = `${sim.weapon.mag} / ${sim.weapon.reserve}`;
   }
   if (elGrenades) {
-    elGrenades.textContent = `${sim.grenadeAmmo}`;
+    const action = sim.playerGrenadeAction;
+    const status = action ? (action.waitingForReload || sim.clock < action.startedAt ? ' · em espera' : ' · preparando') : '';
+    elGrenades.textContent = `${sim.grenadeAmmo}${status}`;
   }
   if (elLastShot) {
     const last = sim.shotLog[sim.shotLog.length - 1];
@@ -496,9 +517,21 @@ function updateHud() {
     }
   }
 
-  const prompt = sim.currentInteractPrompt()?.prompt ?? null; // o mesmo alvo (o mais próximo) que o [E] executa
+  // Mãos ocupadas (granada preparada ou água a ser dada): nenhuma ação [E] é anunciada (Codex ee686e77).
+  const handsBusy = Boolean(sim.playerGrenadeAction || sim.playerWaterAction);
+  const contextAction = handsBusy ? null : m02PlayerAction(sim);
+  const ownPrompt = handsBusy ? null : (sim.currentInteractPrompt()?.prompt ?? null); // o mesmo alvo (o mais próximo) que o [E] executa
+  const prompt = ownPrompt ?? (contextAction && M02_CONTEXT_ACTIONS.has(contextAction.id) ? contextAction : null);
+  const waterPrompt = sim.currentWoundedWaterPrompt();
+  const withdrawalPrompt = m02EarlyWithdrawalPrompt(sim);
+  const offered =
+    sim.activeCellId === 'A' && sim.enemies.find((e) => e.c04Candidate && e.c04WaterOfferedAt !== undefined && sim.clock - e.c04WaterOfferedAt < 2);
   if (touch) {
     touch.setInteractVisible(Boolean(prompt) && !sim.missionFailed);
+    touch.setContextual({
+      water: Boolean(waterPrompt) && !sim.missionFailed,
+      withdraw: withdrawalPrompt && !sim.missionFailed ? { count: withdrawalPrompt.count, armed: retreatConfirmation.armed } : null,
+    });
     touch.setStatus({
       health: p.health,
       mag: sim.weapon.mag,
@@ -509,9 +542,18 @@ function updateHud() {
     });
   }
   if (elDoorPrompt) {
-    if (prompt) {
+    const lines = [];
+    if (sim.playerWaterAction) lines.push('A oferecer água…');
+    else if (offered) lines.push('Água oferecida ao ferido');
+    if (prompt) lines.push(`${touchMode ? prompt.prompt.replace('[E]', '[Interagir]') : prompt.prompt} (${prompt.distance}m)`);
+    if (waterPrompt) lines.push(touchMode ? waterPrompt.prompt.replace('[F]', '[Água]') : waterPrompt.prompt);
+    if (withdrawalPrompt) {
+      const text = withdrawalPrompt.prompt.replace('Recuar:', retreatConfirmation.armed ? 'Confirmar retirada:' : 'Recuar:');
+      lines.push(touchMode ? text.replace('[F]', '[Recuar]') : text);
+    }
+    if (lines.length) {
       elDoorPrompt.style.display = 'block';
-      elDoorPrompt.textContent = `${prompt.prompt} (${prompt.distance}m)`;
+      elDoorPrompt.textContent = lines.join(' · ');
     } else {
       elDoorPrompt.style.display = 'none';
     }
@@ -562,6 +604,28 @@ function animate(now) {
   const simStart = performance.now();
   // D1: com a missão falhada a bancada deixa de avançar a simulação (pausa de apresentação, como um menu) e mostra a falha;
   // o roteiro e os checkpoints já param na própria simulação. Sair é uma ação explícita (botão ou F9).
+  // Retirada antecipada (Codex da6bb8ab): F na casa de socorro só arma; o segundo F deliberado (sem mover nem outra ação) confirma.
+  const interruptRetreat =
+    Math.hypot(tc?.forward ?? 0, tc?.side ?? 0, forward, side) > 0.1 ||
+    pendingSingleActions.fire ||
+    pendingSingleActions.interact ||
+    pendingSingleActions.grenade ||
+    pendingSingleActions.reload ||
+    pendingSingleActions.crouch;
+  retreatConfirmation.sync(m02EarlyWithdrawalPrompt(sim), sim.player, !sim.missionFailed && !interruptRetreat);
+  if (!sim.missionFailed && pendingSingleActions.giveWater) {
+    const withdrawal = m02EarlyWithdrawalPrompt(sim);
+    if (withdrawal) {
+      pendingSingleActions.giveWater = false;
+      if (!interruptRetreat && retreatConfirmation.request(withdrawal, sim.player)) performM02EarlyWithdrawal(sim);
+    }
+  }
+  // [E] contextual do Codex (munição dos caídos, socorro a Lis) quando o [E] desta bancada não tem alvo.
+  let contextInteract = false;
+  if (!sim.missionFailed && pendingSingleActions.interact && !sim.currentInteractPrompt()) {
+    const ctx = m02PlayerAction(sim);
+    if (ctx && M02_CONTEXT_ACTIONS.has(ctx.id)) contextInteract = performM02PlayerAction(sim);
+  }
   if (!sim.missionFailed) {
     sim.tick(dt, {
       forward: tc && Math.abs(tc.forward) > Math.abs(forward) ? tc.forward : forward,
@@ -570,13 +634,14 @@ function animate(now) {
       aim: keys.has('KeyV') || Boolean(tc?.aim),
       lookX: lookX + (tc?.lookX ?? 0),
       lookY: tc?.lookY ?? 0,
-      interact: pendingSingleActions.interact,
+      interact: pendingSingleActions.interact && !contextInteract,
       reload: pendingSingleActions.reload,
       crouch: pendingSingleActions.crouch,
       fire: pendingSingleActions.fire,
       grenade: pendingSingleActions.grenade,
       orderCover: pendingSingleActions.orderCover,
       orderAdvance: pendingSingleActions.orderAdvance,
+      giveWater: pendingSingleActions.giveWater,
     });
   }
   const simMs = performance.now() - simStart;
@@ -588,6 +653,8 @@ function animate(now) {
   pendingSingleActions.grenade = false;
   pendingSingleActions.orderCover = false;
   pendingSingleActions.orderAdvance = false;
+  pendingSingleActions.giveWater = false;
+  retreatConfirmation.sync(m02EarlyWithdrawalPrompt(sim), sim.player, !sim.missionFailed && !interruptRetreat);
 
   renderer.renderFrame(dt, simMs);
   updateHud();

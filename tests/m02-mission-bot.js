@@ -61,6 +61,8 @@ export class MissionBot extends PlayerBot {
     return {
       lookX: normalizeAngle(Math.atan2(point.z - eye.z, point.x - eye.x) - p.angle),
       lookY: p.pitch - Math.atan2(point.y - eye.y, horiz),
+      // Merge M02 único: o fogo pelos controlos tem a dispersão da M01 (Codex 702ced95); o bot aponta pela mira, como um jogador.
+      aim: true,
       fire: sim.weapon.state === 'READY' && sim.weapon.mag > 0,
       reload: sim.weapon.mag === 0 && sim.weapon.state === 'READY',
     };

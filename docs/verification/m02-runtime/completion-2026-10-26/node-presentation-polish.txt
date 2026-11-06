@@ -1,0 +1,12 @@
+✔ M02 decoration is stable, clear of buildings and collision cover, and cannot mutate gameplay (176.724686ms)
+✔ M02 presentation adapts live roles and reload timing without changing snapshots (36.755085ms)
+✔ contextual actions cannot skip unfinished combat or manufacture supplies (13.785681ms)
+✔ resolved farm enables normal interaction to enter area B with state retained (6.044808ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 605.906863

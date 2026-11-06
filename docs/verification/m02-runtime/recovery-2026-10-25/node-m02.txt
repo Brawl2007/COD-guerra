@@ -1,0 +1,49 @@
+✔ M02-01 layout catalog matches 100x150m envelope and building dimensions (B01..B04) (6.859769ms)
+✔ M02-01 simulation boundary guard: no DOM, Three.js, Math.random, or Date.now in M02 simulation/world (7.066469ms)
+✔ MAP-01 Rota A (Vala): player walks full ditch route from SN1 (0,-80) to North Gate (0,-24) with continuous floor and MG protection (4787.688967ms)
+✔ MAP-01 Rota B (Pomar) and route switching: player traverses eastern orchard flank and B03 corridor without getting stuck (3276.462988ms)
+✔ MAP-01 Interiors: player enters B01 (all 5 rooms), B02 (north gate and south door), and B04 (7947.278159ms)
+✔ MAP-02 Ballistics & Materials: walls block, open windows/doors pass, jambs/sills/lintels block, glass breaks, foliage is non-ballistic (15.331283ms)
+✔ M02-01 Snapshot / Restore preserves player, weapon, door, glass, and target states (29.942577ms)
+✔ M02-02 boundary guard: m02-combat-ai.js has no DOM, Three.js, Math.random, or Date.now (4.657801ms)
+✔ AI-01: 60 seconds with Piotr in cover produces real causal squad progress (suppression, cover capture, hits/neutralizations) (4825.148231ms)
+✔ AI-02: Honest enemy perception — enemies remember last seen/heard position, never wallhack hidden player movement, and memory expires (979.019016ms)
+✔ AI-03: Narrow doorway single-file queue and automatic door opening prevent NPC bottlenecking (707.359646ms)
+✔ AI-04 & OBJ-01: Finite 10-man EA1 garrison, zero spawns, local reserve shift, and immediate state-driven objective progression (25.169301ms)
+✔ COM-01 & COM-02: Weapon reload cycle and causal wz. 33 grenade (damages exposed enemy, blocked by solid wall, shatters glass, breaches wooden fence) (50.775892ms)
+✔ COM-03 & K2/K3: Protected literal line dlg_m02_001, C04 wounded soldier persistence, chalk marking, and Gruca priority-0 reaction to firing on wounded (13.288658ms)
+✔ SAVE-01 & SAVE-02: Semantic checkpoints preserve complete combat state and two-phase validation rejects corrupted snapshots without mutating live state (36.925587ms)
+▶ M02-03 — Área A Completa (Cena C01 + EA0 + Horizonte Vivo N2 + Transição T-AB)
+  ✔ M02-03 Boundary Guard — m02-horizon-system.js is pure deterministic simulation (no DOM, Three.js, Math.random, or Date.now) (2.549258ms)
+  ✔ C01 & EA0 — startAreaAFullC01() places Piotr at P1 (0, -175), squad engages EA0 (< 30 s), and clearing DE-A01..DE-A04 advances O00 -> O01 (2807.232745ms)
+  ✔ HZ-01 & HZ-02 — 8 angular sectors of 45° and HS-A1 promotion/demotion L2 <-> L1 with 15% hysteresis preserving ID, health, and ammo (0.639816ms)
+  ✔ HZ-03 & Acoustic Delay — HS-A2 applies d / 343 m/s sound delay, settles into persistent smoke without looping, and HS-A3 passes once (5.341448ms)
+  ✔ NAR-01 (Cena C05 / T-AB) — watching vs skipping triggerTransitionTAB produces identical semantic state and T1 night transition (20.460846ms)
+✔ M02-03 — Área A Completa (Cena C01 + EA0 + Horizonte Vivo N2 + Transição T-AB) (2851.082173ms)
+▶ M02-04 & M02-05 — Área B (Łęczyca), Área C (Leśmierz), Epílogo C12 e Ponte M02→M03
+  ✔ M02-04/05 Boundary Guard — m02-zone-streamer.js and m02-acts-director.js are pure deterministic simulation (4.481169ms)
+  ✔ STREAM-01 & PERF-02 — M02ZoneStreamer enforces <= 2 resident cells across A -> B -> C transitions and checkpoint restores (176.172474ms)
+  ✔ M02-04 (Área B · Łęczyca) — EB1 (12 defenders), B05..B08 rules, SP02 Supply Cart (2/1/0 volumes & damaged wheel), and TR02 reorganization (620.806268ms)
+  ✔ M02-05 (Área C · Leśmierz) — 46 total hostiles, C08 Lis liaison, dlg_m02_002, SP03 fixed artillery impact, dlg_m02_003, and 3 Lis outcomes into M03 (15544.591395ms)
+  ✔ HIST-TEST-01 — Historical invariant: morning of 10 September 1939 is never represented as a general retreat of Army Poznań (5.349929ms)
+✔ M02-04 & M02-05 — Área B (Łęczyca), Área C (Leśmierz), Epílogo C12 e Ponte M02→M03 (16356.545938ms)
+▶ M02-06 — Audiovisual Director, Accessibility, and Full Acceptance Matrix O2/O3
+  ✔ Boundary Guard — m02-audiovisual-director.js is pure deterministic simulation (2.201744ms)
+  ✔ AV-01: Weapon clearance kinematics lowers weapon near obstacles and recovers smoothly (136.962811ms)
+  ✔ AV-01: Material-exact acoustic cues and 3-scale spatial audio with door/wall occlusion (4.776108ms)
+  ✔ AV-02: Accessibility options mutate presentation without mutating live combat state (11.214756ms)
+  ✔ MAP-03: Stretcher and evacuation route physical scale and raycast clearance (0 collisions at ±0.45m) (61.816517ms)
+  ✔ HZ-01..03: Distant war sectors HS-B1, HS-C1, HS-C2 and artillery idempotence across restore (17.183902ms)
+  ✔ O3: 12-Seed Climax Stress Audit (19390909..19390920) completes full mission flow with 100% determinism (155.06187ms)
+✔ M02-06 — Audiovisual Director, Accessibility, and Full Acceptance Matrix O2/O3 (391.625713ms)
+✔ M02 presentation adapts live roles and reload timing without changing snapshots (58.522794ms)
+✔ contextual actions cannot skip unfinished combat or manufacture supplies (26.522246ms)
+✔ resolved farm enables normal interaction to enter area B with state retained (7.276057ms)
+ℹ tests 35
+ℹ suites 3
+ℹ pass 35
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 20315.302362

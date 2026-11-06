@@ -1,0 +1,23 @@
+[1A[2K[WebServer] (node:127820) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 2 tests using 1 worker
+
+[1A[2K(node:127844) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:127844) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/2] tests/browser/m02-mission.spec.js:5:1 › a real NPC reload produces a nearby audible M01 mechanism cue
+[1A[2Ktests/browser/m02-mission.spec.js:5:1 › a real NPC reload produces a nearby audible M01 mechanism cue
+M02 NPC reload sound {"peak":0.020038098096847534,"count":1,"cue":{"type":"actor-reload-cue","shooterId":"DE-B05","weapon":"mg34","phase":"open","clock":0.05,"origin":{"x":2,"y":0,"z":100,"eyeHeight":1.64}}}
+
+[1A[2K[2/2] tests/browser/m02-mission.spec.js:31:1 › the real wz28 team reloads and covers the same visible target
+[1A[2Ktests/browser/m02-mission.spec.js:31:1 › the real wz28 team reloads and covers the same visible target
+M02 wz28 team {"first":"DE-B01","cover":"DE-B01","visuals":[{"id":"pl_aux_02","clip":"fire_bolt"},{"id":"szymon_kowal","clip":"rkm_reload"}]}
+
+[1A[2K  2 passed (41.7s)

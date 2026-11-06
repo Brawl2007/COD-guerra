@@ -1,0 +1,20 @@
+#m02-touch{position:fixed;inset:0;z-index:10;touch-action:none;user-select:none;-webkit-user-select:none}
+#m02-touch[hidden]{display:none}
+#m02-touch button,#m02-touch .touch-move{touch-action:none;color:#fff;background:rgba(18,25,19,.66);border:1px solid rgba(232,221,185,.65);text-shadow:0 1px 3px #000;font:600 10px system-ui}
+.touch-look{position:absolute;inset:0;touch-action:none}
+.touch-move{position:absolute;left:max(16px,env(safe-area-inset-left));bottom:max(30px,env(safe-area-inset-bottom));width:112px;height:112px;border-radius:50%;display:grid;place-items:center}
+.touch-knob{width:50px;height:50px;border-radius:50%;display:grid;place-items:center;background:rgba(221,208,168,.22);border:1px solid rgba(232,221,185,.6);pointer-events:none}
+.touch-actions{position:absolute;right:max(12px,env(safe-area-inset-right));bottom:max(28px,env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(3,64px);gap:5px}
+#m02-touch .touch-actions button{height:48px;border-radius:12px;padding:3px}
+#m02-touch .touch-actions .touch-fire{background:rgba(116,42,29,.78)}
+.touch-orders{position:absolute;top:max(54px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));display:flex;gap:4px}
+#m02-touch .touch-orders button{height:34px;padding:4px 6px;font-size:9px}
+#m02-touch .touch-pause{position:absolute;top:max(8px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));width:48px;height:38px;font-size:10px}
+#m02-touch .touch-water{position:absolute;right:max(12px,env(safe-area-inset-right));bottom:135px;width:80px;height:44px;border-radius:10px}
+#m02-touch .touch-water[hidden]{display:none}
+#m02-touch .down{background:rgba(155,140,91,.8)}
+body.m02-touch-active #mission-vitals{bottom:150px}body.m02-touch-active .weapon-box{bottom:140px}
+body.m02-touch-active.m02-water-available .weapon-box{bottom:185px}
+body.m02-touch-active #mission-narration{bottom:150px;width:min(500px,calc(100vw - 36px))}
+body.m02-touch-active .controls-help{font-size:0}body.m02-touch-active .controls-help::after{content:'Arraste à esquerda para mover e no ecrã para olhar. Use os botões para disparar, mirar e interagir.';font-size:13px}
+@media(max-height:500px){body.m02-touch-active #mission-vitals{bottom:110px}body.m02-touch-active .weapon-box{bottom:110px}body.m02-touch-active #mission-narration{bottom:95px;width:min(430px,calc(100vw - 230px))}#m02-touch .touch-move{width:90px;height:90px;bottom:12px}#m02-touch .touch-actions{bottom:8px;grid-template-columns:repeat(3,60px)}#m02-touch .touch-actions button{height:42px;font-size:9px}.touch-orders{top:48px}}

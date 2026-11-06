@@ -1,0 +1,11 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+page.evaluate: TypeError: Cannot set properties of null (setting 'textContent')
+    at eval (eval at evaluate (:290:30), <anonymous>:70:59)
+    at UtilityScript.evaluate (<anonymous>:292:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+    at /workspace/COD-guerra/tools/m02/capture-mission-presentation.mjs:19:14
+
+Node.js v24.19.0

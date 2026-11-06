@@ -1,0 +1,2 @@
+{"version":"before","events":18,"rounds":[29,29,29,29,29,29],"voices":12,"dropped":0,"evicted":6,"budgetDropped":0,"liveSources":126}
+{"version":"after","events":18,"rounds":[29,29,29,29,29,29],"voices":6,"dropped":0,"evicted":0,"budgetDropped":0,"liveSources":122}

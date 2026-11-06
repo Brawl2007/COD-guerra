@@ -1,0 +1,3 @@
+A: 200 AI steps identical to 0550d50 with no grenade
+B: 200 AI steps identical to 0550d50 with no grenade
+C: 200 AI steps identical to 0550d50 with no grenade

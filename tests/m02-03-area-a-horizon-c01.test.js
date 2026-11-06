@@ -210,5 +210,6 @@ describe('M02-03 — Área A Completa (Cena C01 + EA0 + Horizonte Vivo N2 + Tran
     assert.equal(simSkip.horizon.temporalState, 'T1');
     assert.equal(simWatch.flags['m02.transicao_tab_pronta'], true);
     assert.equal(simSkip.flags['m02.transicao_tab_pronta'], true);
+    assert.equal(payloadWatched.flags['m02.completed'], false, 'C05 cannot complete the entire mission');
   });
 });

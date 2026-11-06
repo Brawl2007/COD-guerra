@@ -6,6 +6,11 @@ import { HORIZON_CAMERA_FAR_M, horizonImpostorScale } from '../world/m02-horizon
 import { M02_TERRAIN_MESH } from '../world/m02-environment-area.js';
 import { hash01 } from './m01-area-geo.js';
 import { M02Environment } from './m02-environment.js';
+// Merge M02 único: camada de apresentação da linha Codex (personagens GLB da M01, arma em primeira pessoa, gestos de granada e de
+// água, áudio M01 partilhado) e projéteis de granada visíveis. Só LEEM a simulação.
+import { M02Presentation } from './m02-presentation.js';
+import { M02Grenades } from './m02-grenades.js';
+import { m02LightingModel } from './m02-lighting.js';
 import { shadowHalfHeightM, solarFromSunPosition, sunPositionFromSolar } from './m02-solar-lighting.js';
 
 export const M02_QUALITY_PROFILES = Object.freeze({
@@ -228,6 +233,15 @@ export class M02BenchRenderer {
       cellId: this.sim.activeCellId ?? 'A',
     });
     this.frameEvents = []; // eventos da simulação drenados neste frame (reutilizado; consumidores de apresentação em m02-01-main.js)
+    // Codex: granadas em voo à escala dos projéteis da M01 e a apresentação em primeira pessoa/personagens (carregam GLB em segundo
+    // plano; até lá ficam os bonecos de caixa e a arma de caixa desta bancada).
+    this.grenadeViews = new M02Grenades(this.scene, this.materials.grenade_body);
+    this.presentation = new M02Presentation(this.scene, this.camera, sim, {
+      grenadeGeometry: this.grenadeViews.geometry,
+      grenadeMaterial: this.materials.grenade_body,
+    });
+    this.presentationLightKey = null;
+    this.presentationDaylight = 1;
     this.#buildStaticWorld();
     this.#rebuildDynamicOpenings();
     this.#buildTargets();
@@ -976,7 +990,7 @@ export class M02BenchRenderer {
       for (const lg of this.sim.areaC.lastGroup) {
         const entry = this.lastGroupMeshes.get(lg.id);
         if (!entry) continue;
-        entry.group.visible = Boolean(this.sim.areaC.c10Started && lg.alive);
+        entry.group.visible = Boolean(this.sim.areaC.c10Started && lg.alive) && !this.presentation?.hasCharacter(lg.id);
         entry.group.position.set(lg.x, lg.y ?? 0, lg.z);
         entry.group.rotation.y = -(lg.facing ?? 0) + Math.PI / 2;
       }
@@ -1018,6 +1032,8 @@ export class M02BenchRenderer {
     const events = this.sim.drainEvents();
     this.frameEvents.length = 0;
     for (const evt of events) this.frameEvents.push(evt);
+    this.presentation.consume(events, this.sim);
+    this.grenadeViews.update(this.sim);
     for (const evt of events) {
       if (evt.type === 'shot-fired' && evt.shot) {
         this.spawnShotVisual(evt.shot);
@@ -1072,9 +1088,15 @@ export class M02BenchRenderer {
 
     // Update Polish squad meshes (7 allies) and German EA1 defender meshes (10 defenders)
     const player = this.sim.player;
+    this.presentation.update(this.sim, this.qualityProfile.id);
     for (const a of this.sim.allies ?? []) {
       const entry = this.allyMeshes.get(a.id);
       if (!entry) continue;
+      // Personagem GLB da M01 carregada (Codex): o boneco de caixa fica escondido.
+      if (this.presentation.hasCharacter(a.id)) {
+        entry.group.visible = false;
+        continue;
+      }
       entry.group.visible = !a.detachedOutOfCell;
       const dist = Math.hypot(a.x - player.x, a.z - player.z);
       entry.group.userData.lodBand = selectConsumerLod('actors', dist, this.qualityProfile.lodPreset);
@@ -1101,6 +1123,11 @@ export class M02BenchRenderer {
     for (const e of this.sim.enemies ?? []) {
       const entry = this.enemyMeshes.get(e.id);
       if (!entry) continue;
+      if (this.presentation.hasCharacter(e.id)) {
+        entry.group.visible = false;
+        continue;
+      }
+      entry.group.visible = true;
       const dist = Math.hypot(e.x - player.x, e.z - player.z);
       entry.group.userData.lodBand = selectConsumerLod('actors', dist, this.qualityProfile.lodPreset);
       entry.group.position.set(e.x, e.y, e.z);
@@ -1184,8 +1211,23 @@ export class M02BenchRenderer {
     );
     this.viewModel.rotation.x = wk ? wk.recoilPitchRad - wk.lowerPitchRad : 0;
     this.environment.update(this.camera);
+    // Arma em primeira pessoa da M01 (Codex): quando está carregada substitui a arma de caixa; a luz da arma segue o preset ativo.
+    const lightKey = `${this.lightingPreset.id}:${this.sim.horizon?.temporalState}`;
+    if (lightKey !== this.presentationLightKey) {
+      this.presentationLightKey = lightKey;
+      this.presentationDaylight = m02LightingModel(this.sim.horizon?.temporalState ?? 'T0', this.lightingPreset).daylight ?? 1;
+    }
+    this.presentation.weaponLighting.sync({
+      sky: this.hemiLight,
+      sun: this.sunLight,
+      camera: this.camera,
+      daylight: this.presentationDaylight,
+      pitch: player.pitch,
+    });
+    this.viewModel.visible = !this.presentation.updateWeapon(this.sim, this.qualityProfile.id);
 
     this.renderer.render(this.scene, this.camera);
+    this.presentation.renderWeapon(this.renderer);
 
     const renderMs = performance.now() - renderStart;
     const frameTimeMs = dt * 1000;

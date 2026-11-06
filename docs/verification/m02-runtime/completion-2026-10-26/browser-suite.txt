@@ -1,0 +1,46 @@
+[2m[WebServer] [22m(node:46802) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 4 tests using 1 worker
+
+(node:46826) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:46826) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/m02-01-quinta.spec.js:9:3 › M02-01 & M02-02 Quinta da Bzura (100x150m) — Browser Verification & Captures › Boots m02-01.html without errors, verifies doors/ballistics/routes/squad-combat/grenades/C04, captures screenshots, and records telemetry (3.4m)
+M02 audio probe {"peak":0.46805375814437866,"shots":5,"state":"running"}
+  ✓  2 tests/browser/m02-01-quinta.spec.js:276:1 › M02 reuses loaded M01 GLB rigs and viewmodel, emits audible samples, and preserves simulation on presentation (58.1s)
+  ✘  3 tests/browser/m02-mission.spec.js:3:1 › M02 default quality follows M01 software GPU detection and maximum remains selectable (29.4s)
+(node:47395) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:47395) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  4 tests/browser/m02-mission.spec.js:15:1 › M02 playable entry starts C01, pauses without advancing, and resumes a persisted checkpoint (55.1s)
+
+
+  1) tests/browser/m02-mission.spec.js:3:1 › M02 default quality follows M01 software GPU detection and maximum remains selectable 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"high"[39m
+    Received: [31m"low"[39m
+
+       9 |  await page.waitForFunction(()=>window.m02Diagnostics().telemetry.qualityProfile==='high');
+      10 |  expect(await page.locator('#mission-quality').inputValue()).toBe('high');
+    > 11 |  expect(await page.evaluate(()=>window.m02Diagnostics().environment.terrain.tier)).toBe('high');
+         |                                                                                    ^
+      12 |  expect(await page.evaluate(()=>window.m02Diagnostics().clock)).toBe(0);
+      13 | });
+      14 |
+        at /workspace/COD-guerra/tests/browser/m02-mission.spec.js:11:84
+
+    Error Context: ../../tmp/m02-01-playwright-results/m02-mission-M02-default-qu-07d87--maximum-remains-selectable/error-context.md
+
+  1 failed
+    tests/browser/m02-mission.spec.js:3:1 › M02 default quality follows M01 software GPU detection and maximum remains selectable 
+  3 passed (6.1m)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice

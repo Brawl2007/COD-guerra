@@ -1,0 +1,5 @@
+{
+  "source": "/tmp/m02-browser-final-serial",
+  "sourceRevision": "f878820",
+  "note": "Original snapIfMissing cache reused for the first 12 captures. All assertions and 30 telemetry renders run again unchanged; final 4 captures are overwritten by the current run. Fresh final product inspection is recorded separately."
+}

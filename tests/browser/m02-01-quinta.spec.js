@@ -300,3 +300,48 @@ test.describe('M02-01 & M02-02 Quinta da Bzura (100x150m) — Browser Verificati
     expect(pageErrors).toEqual([]);
   });
 });
+
+test('M02 reuses loaded M01 GLB rigs and viewmodel, emits audible samples, and preserves simulation on presentation', async ({page}) => {
+  const errors=[];page.on('pageerror', e=>errors.push(e.message));
+  await page.goto('/COD-guerra/m02-01.html?quality=low');
+  await page.waitForFunction(()=>window.m02Bench?.renderer.presentation.characters.instances.size>0);
+  await page.keyboard.press('KeyV'); // trusted input unlocks Web Audio
+  await page.evaluate(async()=>{
+    const presentation=window.m02Bench.renderer.presentation;
+    await presentation.ready;
+    const destination=presentation.audio.ctx.createMediaStreamDestination();
+    presentation.audio.master.connect(destination);
+    const recorder=new MediaRecorder(destination.stream);
+    const chunks=[]; recorder.ondataavailable=event=>chunks.push(event.data);
+    window.m02AudioProbe={recorder,chunks,destination}; recorder.start();
+  });
+  await page.keyboard.press('Space'); // actual controller -> simulation event -> M01 audio
+  await page.waitForFunction(()=>window.m02Bench.renderer.presentation.audio.diagnostics.eventCounts['wz29-shot']>0);
+  const result=await page.evaluate(async()=>{
+    const {sim,renderer}=window.m02Bench, p=renderer.presentation;
+    const before=JSON.stringify(sim.snapshot());
+    renderer.renderFrame(.016,0);
+    const unchanged=before===JSON.stringify(sim.snapshot());
+    const a=p.audio, probe=window.m02AudioProbe;
+    await new Promise(r=>setTimeout(r,300));
+    await new Promise(resolve=>{probe.recorder.onstop=resolve;probe.recorder.stop();});
+    const blob=new Blob(probe.chunks,{type:probe.recorder.mimeType});
+    const buffer=await a.ctx.decodeAudioData(await blob.arrayBuffer());
+    let peak=0;
+    for(let c=0;c<buffer.numberOfChannels;c++) for(const value of buffer.getChannelData(c)) peak=Math.max(peak,Math.abs(value));
+    a.master.disconnect(probe.destination);
+    return {unchanged,peak,errors:[],ammo:sim.weapon.mag,shotLog:sim.shotLog.length,history:a.history,shots:a.diagnostics.eventCounts['wz29-shot']??0,state:a.ctx.state,models:[...p.characters.sources.keys()],clips:p.characters.clips.size,characters:p.characters.instances.size,weapon:p.weapon.stats.active,failures:p.characters.assets.failures};
+  });
+  console.log('M02 audio probe',JSON.stringify({peak:result.peak,shots:result.shots,state:result.state}));
+  expect(result.unchanged).toBe(true);
+  expect(result.state).toBe('running');
+  expect(result.shots).toBeGreaterThan(0);
+  expect(result.peak).toBeGreaterThan(.001);
+  expect(result.models).toContain('pl:0');
+  expect(result.models).toContain('de:2');
+  expect(result.clips).toBeGreaterThan(0);
+  expect(result.characters).toBeGreaterThan(0);
+  expect(result.weapon).toBe(true);
+  expect(result.failures).toEqual([]);
+  expect(errors).toEqual([]);
+});

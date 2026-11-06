@@ -1,0 +1,26 @@
+[1A[2K[WebServer] (node:168274) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 3 tests using 1 worker
+
+[1A[2K(node:168307) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:168307) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/3] tests/browser/m02-mission.spec.js:5:1 › real player steps use the visible farm floor and M01 interior audio
+[1A[2Ktests/browser/m02-mission.spec.js:5:1 › real player steps use the visible farm floor and M01 interior audio
+M02 surface step {"material":"earth","zone":"open","peak":0.45439907908439636,"step":{"kind":"footstep","pan":-0.1,"distance":0,"priority":28,"key":"step:1","detail":{"surface":"earth","pace":"walk","npc":false},"serial":4}}
+
+[1A[2KM02 surface step {"material":"wood","zone":"m02_B01","peak":0.03641542047262192,"step":{"kind":"footstep","pan":0.1,"distance":0,"priority":28,"key":"step:2","detail":{"surface":"wood","pace":"walk","npc":false},"serial":8}}
+
+[1A[2K[2/3] tests/browser/m02-mission.spec.js:43:1 › squad can hold and resume in B and C using the normal keys
+[1A[2K[3/3] tests/browser/m02-mission.spec.js:147:1 › a real NPC reload produces a nearby audible M01 mechanism cue
+[1A[2Ktests/browser/m02-mission.spec.js:147:1 › a real NPC reload produces a nearby audible M01 mechanism cue
+M02 NPC reload sound {"peak":0.014069822616875172,"count":1,"cue":{"type":"actor-reload-cue","shooterId":"DE-B05","weapon":"mg34","phase":"open","clock":0.05,"origin":{"x":2,"y":0,"z":100,"eyeHeight":1.64}}}
+
+[1A[2K  3 passed (45.5s)

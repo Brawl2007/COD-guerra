@@ -1,0 +1,21 @@
+[1A[2K[WebServer] (node:113176) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 3 tests using 1 worker
+
+[1A[2K(node:113201) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:113201) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/3] tests/browser/m02-mission.spec.js:4:1 › C12 exit warns before leaving an unrescued Lis and preserves the missing outcome
+[1A[2K[2/3] tests/browser/m02-mission.spec.js:42:1 › C11 Lis is helped by the normal interaction only when the player reaches him
+[1A[2Ktests/browser/m02-mission.spec.js:42:1 › C11 Lis is helped by the normal interaction only when the player reaches him
+M02 Lis contact {"setup":{"x":-28,"z":-22,"state":"WOUNDED_LIAISON","contact":false},"result":{"contact":true,"status":"wounded_walking","state":"WALKING_SUPPORTED","at":[-28.267024733211052,-21.63778764259958],"line":true}}
+
+[1A[2K[3/3] tests/browser/m02-mission.spec.js:387:1 › C11 wounded men use the real unarmed torso pose and retain it after a same-clock restore
+[1A[2K  3 passed (33.6s)

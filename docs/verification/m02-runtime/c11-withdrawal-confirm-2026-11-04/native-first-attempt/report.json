@@ -1,0 +1,211 @@
+{
+  "startedAt": "2026-11-04T20:00:43.541Z",
+  "method": "Continuous production build; trusted Playwright keyboard/start and pointer-lock mouse input; read-only planner uses actor/collision observations, never writes simulation state.",
+  "stages": [
+    {
+      "label": "A:O00",
+      "clock": 0,
+      "health": 100,
+      "missionCompleted": false,
+      "pos": [
+        0,
+        -175
+      ],
+      "realSec": 4.93
+    },
+    {
+      "label": "A:O01",
+      "clock": 17.000000000000107,
+      "health": 100,
+      "missionCompleted": false,
+      "pos": [
+        -6.241818298603252,
+        -128.09137686289483
+      ],
+      "realSec": 22.585
+    },
+    {
+      "label": "A:O02",
+      "clock": 29.10000000000028,
+      "health": 92,
+      "missionCompleted": false,
+      "pos": [
+        5.838129662154339,
+        -61.3870497149986
+      ],
+      "realSec": 34.68
+    },
+    {
+      "label": "A:O03",
+      "clock": 35.450000000000124,
+      "health": 92,
+      "missionCompleted": false,
+      "pos": [
+        23.35090522987283,
+        -38.11858237168427
+      ],
+      "realSec": 41.505
+    },
+    {
+      "label": "A:C04",
+      "clock": 53.64999999999909,
+      "health": 92,
+      "missionCompleted": false,
+      "pos": [
+        -24.079658148419597,
+        -15.697530884101699
+      ],
+      "realSec": 59.935
+    },
+    {
+      "label": "A:COMPLETE",
+      "clock": 66.24999999999838,
+      "health": 92,
+      "missionCompleted": false,
+      "pos": [
+        -6.900916187907905,
+        35.61736487668447
+      ],
+      "realSec": 72.677
+    },
+    {
+      "label": "B:O04",
+      "clock": 66.94999999999834,
+      "health": 92,
+      "missionCompleted": false,
+      "pos": [
+        -50,
+        51
+      ],
+      "realSec": 73.412
+    },
+    {
+      "label": "B:O05",
+      "clock": 160.7000000000023,
+      "health": 92,
+      "missionCompleted": false,
+      "pos": [
+        -0.14839519451895994,
+        -70.19195657418285
+      ],
+      "realSec": 167.568
+    },
+    {
+      "label": "C:O06",
+      "clock": 161.2000000000024,
+      "health": 92,
+      "missionCompleted": false,
+      "pos": [
+        0,
+        -72
+      ],
+      "realSec": 168.318
+    },
+    {
+      "label": "C:O07",
+      "clock": 202.00000000001168,
+      "health": 92,
+      "missionCompleted": false,
+      "pos": [
+        0.4097883601933239,
+        0.2703295357223714
+      ],
+      "realSec": 209.068
+    },
+    {
+      "label": "C:O08",
+      "clock": 207.850000000013,
+      "health": 92,
+      "missionCompleted": false,
+      "pos": [
+        -0.37782696782167224,
+        0.7360409217500593
+      ],
+      "realSec": 214.997
+    }
+  ],
+  "deaths": [],
+  "errors": [],
+  "orders": [
+    {
+      "cell": "A",
+      "key": "KeyZ",
+      "type": "suppress",
+      "issuedAt": 17.000000000000107,
+      "confirmedAt": 17.550000000000114
+    },
+    {
+      "cell": "A",
+      "key": "KeyX",
+      "type": "advance",
+      "issuedAt": 19.550000000000143,
+      "confirmedAt": 19.650000000000144
+    },
+    {
+      "cell": "A",
+      "key": "KeyB",
+      "type": "flank_east",
+      "issuedAt": 21.700000000000173,
+      "confirmedAt": 21.750000000000174
+    },
+    {
+      "cell": "B",
+      "key": "KeyZ",
+      "type": "suppress",
+      "issuedAt": 66.94999999999834,
+      "confirmedAt": 67.6999999999983
+    },
+    {
+      "cell": "B",
+      "key": "KeyX",
+      "type": "advance",
+      "issuedAt": 69.84999999999818,
+      "confirmedAt": 69.99999999999817
+    },
+    {
+      "cell": "C",
+      "key": "KeyZ",
+      "type": "suppress",
+      "issuedAt": 161.2000000000024,
+      "confirmedAt": 161.95000000000258
+    },
+    {
+      "cell": "C",
+      "key": "KeyX",
+      "type": "advance",
+      "issuedAt": 164.10000000000306,
+      "confirmedAt": 164.15000000000308
+    }
+  ],
+  "grenade": {
+    "clock": 1.4000000000000006,
+    "ammo": 1,
+    "projectile": "gren_1",
+    "reactors": [
+      "pl_lis",
+      "pl_malek",
+      "pl_szymczak",
+      "pl_aux_01"
+    ]
+  },
+  "water": {
+    "clock": 65.9999999999984,
+    "cell": "A",
+    "pos": [
+      -6.900916187907905,
+      35.61736487668447
+    ]
+  },
+  "earlyWithdrawal": {
+    "clock": 225.0000000000169,
+    "cell": "C",
+    "pos": [
+      -57.90996710507104,
+      48.79330489718003
+    ],
+    "pending": 12
+  },
+  "buildCommit": "524b128ae8389811aaaa4638d3c11a1720256bdb",
+  "failure": "page.waitForFunction: Timeout 60000ms exceeded.",
+  "finishedAt": "2026-11-04T20:05:36.229Z"
+}

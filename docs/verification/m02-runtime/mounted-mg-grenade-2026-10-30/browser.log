@@ -1,0 +1,12 @@
+[WebServer] (node:197726) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+(node:197750) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:197750) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+M02 mounted MG visual aim {"clip":"mg34_aim","muzzle":[12.018217919528484,1.4342285960373542,-30.213215248445913],"meshes":["mg34_body","mg34_feed_cover","mg34_cocking_handle","mg34_drum","mg34_belt","mg34_bipod_folded"]}
+M02 mounted MG grenade reaction {"ammo":1,"grenades":1,"state":"FLEE_GRENADE","tacticalState":"TakeCoverGrenade","crouched":true,"x":13.2,"z":-30,"clip":"m02_mg34_crouch_aim","sight":{"mgActive":true,"inArc":false,"hasVisualLoS":false,"canHitTarget":false,"blockedById":"gunner_taking_cover","blockedByMaterial":null,"distance":0}}
+···
+  3 passed (1.7m)

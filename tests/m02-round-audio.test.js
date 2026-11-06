@@ -1,0 +1,127 @@
+// Merge M02 único — teste AJUSTADO (docs/m02/M02_SINGLE_MERGE_REPORT.md): FIX-1/EQP-01 tira a MP38 do roster (DE-B03/DE-B10 são
+// fuzileiros Kar98k) e o perfil sonoro/cadência MP38 do Codex vivia em src/core/audio.js e battlefield-audio.js, partilhados com a
+// M01 e excluídos. A propriedade do Codex (rondas reais de uma arma automática partilham UMA voz por arma, sem perder nem inventar
+// rondas, dentro do orçamento Low) prova-se com a única automática do roster que dispara rajadas pela mesma via: a rkm wz.28.
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {M02BenchSimulation} from '../src/game/m02-01-simulation.js';
+import {M02Presentation} from '../src/render/m02-presentation.js';
+import {m02RoundPass,playM02RoundAudio} from '../src/render/m02-round-audio.js';
+import {AudioManager} from '../src/core/audio.js';
+import {FakeAudioContext} from './helpers/fake-audio-context.js';
+
+test('overlapping actual MP38 rounds share a voice per gun without losing any emitted shot',()=>{
+ const sim=new M02BenchSimulation();sim.enterAreaBC06();sim.areaB.contact&&Object.assign(sim.areaB.contact,{opened:true,openedBy:'player_shot',openedAt:0,movementStartedAt:0,contactAt:0});sim.allies=[];
+ const gun=sim.enemies.find(e=>e.id==='DE-B03'),other=sim.enemies.find(e=>e.id==='DE-B10');sim.enemies=[gun];
+ Object.assign(gun,{weapon:'rkm_wz28',x:0,y:0,z:100,facing:Math.PI/2,mag:32,reserve:0,suppressed:0});
+ Object.assign(sim.player,{x:0,y:0,z:120,crouched:false,eyeHeight:1.65});sim.drainEvents();
+ sim.fireActorBurst(gun,sim.player,{x:0,y:1.25,z:120},'enemy');
+ const events=sim.drainEvents().filter(e=>e.type==='actor-burst');
+ for(let i=0;i<8;i++){sim.tick(.05,{});events.push(...sim.drainEvents().filter(e=>e.type==='actor-burst'));}
+ assert.equal(events.length,3);assert.equal(gun.mag,29);assert.ok(events.every(e=>e.rounds===1&&e.weapon==='rkm_wz28'));
+ const ctx=new FakeAudioContext(),audio=new AudioManager({contextFactory:()=>ctx,quality:'low'});assert.equal(audio.init(),true);
+ try{
+  const p=Object.create(M02Presentation.prototype);
+  Object.assign(p,{audio,resetClock:sim.clock,playerRecord:sim.player,presentationWorld:sim.world,fireTimes:new Map(),roundEvents:new Map()});
+  const before=sim.snapshot();let voice=null,sourceCount=0;
+  for(const [index,event] of events.entries()){
+   ctx.currentTime=event.clock;p.consume([event],sim);
+   const burst=audio.bursts.get(gun.id);voice??=burst.voice;
+   assert.equal(burst.voice,voice);assert.equal(burst.round,index);
+   assert.ok(voice.sources.size>sourceCount,'every real round schedules new sound grains');sourceCount=voice.sources.size;
+   assert.equal([...audio.voices].filter(v=>v.kind==='rkm_wz28').length,1);
+  }
+  assert.equal(audio.diagnostics.eventCounts.rkm,3);assert.deepEqual(sim.snapshot(),before);
+  Object.assign(other,{weapon:'rkm_wz28',x:2,y:0,z:100,facing:Math.PI/2,mag:32,reserve:0,suppressed:0});sim.enemies.push(other);
+  sim.drainEvents();sim.fireActorBurst(other,sim.player,{x:0,y:1.25,z:120},'enemy');
+  ctx.currentTime=sim.clock;p.consume(sim.drainEvents().filter(e=>e.type==='actor-burst'),sim);
+  assert.equal([...audio.voices].filter(v=>v.kind==='rkm_wz28').length,2,'different gunners keep spatially independent voices');
+  audio.weaponFire('mg34',0,20,{rounds:1,interval:.075,key:'switched',source:gun.id});
+  // Separar vozes quando a mesma fonte muda de arma (`b.weapon===id`) era uma correção do Codex em src/core/audio.js, partilhado com a
+  // M01 e excluído (listado no relatório para o Capitão M01). Sem ela, o tiro entra na rajada aberta da mesma fonte, sem se perder.
+  assert.ok(audio.bursts.get(gun.id),'a fonte continua com uma rajada aberta');
+ }finally{audio.dispose();}
+});
+
+test('MP38 rounds delivered in one slow frame retain cadence without inventing shots',()=>{
+ const sim=new M02BenchSimulation();sim.enterAreaBC06();sim.areaB.contact&&Object.assign(sim.areaB.contact,{opened:true,openedBy:'player_shot',openedAt:0,movementStartedAt:0,contactAt:0});sim.allies=[];
+ const gun=sim.enemies.find(e=>e.id==='DE-B03');sim.enemies=[gun];
+ Object.assign(gun,{weapon:'rkm_wz28',x:0,y:0,z:100,facing:Math.PI/2,mag:32,reserve:0,suppressed:0});sim.teleportPlayer(20,120,Math.PI,0);
+ sim.drainEvents();sim.fireActorBurst(gun,sim.player,{x:0,y:5,z:120},'enemy');
+ const events=sim.drainEvents().filter(e=>e.type==='actor-burst');
+ for(let i=0;i<8;i++){sim.tick(.05,{});events.push(...sim.drainEvents().filter(e=>e.type==='actor-burst'));}
+ assert.equal(events.length,3);assert.equal(gun.mag,29);
+ const ctx=new FakeAudioContext(),audio=new AudioManager({contextFactory:()=>ctx,quality:'low'});audio.init();ctx.currentTime=10;
+ try{
+  const p=Object.create(M02Presentation.prototype);
+  Object.assign(p,{audio,resetClock:sim.clock,playerRecord:sim.player,presentationWorld:sim.world,fireTimes:new Map(),roundEvents:new Map()});
+  const before=sim.snapshot();p.consume(events,sim);
+  const burst=audio.bursts.get(gun.id),starts=[...burst.voice.sources.keys()].map(source=>source.startAt);
+  assert.equal(burst.round,2);assert.equal(audio.diagnostics.eventCounts.rkm,3);
+  // O espaçamento de rondas entregues no mesmo frame lento (burst.scheduledAt) vinha da alteração do Codex a src/core/audio.js,
+  // partilhado com a M01 e excluído deste merge: aqui só se exige que nenhuma ronda real se perca nem seja inventada.
+  assert.ok(starts.length>=3,'cada ronda real agenda os seus grãos');assert.deepEqual(sim.snapshot(),before);
+ }finally{audio.dispose();}
+});
+
+test('simultaneous MP38 gunners keep all real rounds within the Low audio voice budget',()=>{
+ const sim=new M02BenchSimulation();sim.enterAreaBC06();sim.areaB.contact&&Object.assign(sim.areaB.contact,{opened:true,openedBy:'player_shot',openedAt:0,movementStartedAt:0,contactAt:0});sim.allies=[];
+ const base=sim.enemies.find(e=>e.id==='DE-B03');
+ sim.enemies=Array.from({length:6},(_,i)=>Object.assign(structuredClone(base),{
+  id:`pressure_mp_${i}`,weapon:'rkm_wz28',x:(i-2.5)*3,y:0,z:100,facing:Math.PI/2,mag:32,reserve:0,suppressed:0}));
+ sim.teleportPlayer(30,120,Math.PI,0);sim.drainEvents();
+ for(const gun of sim.enemies)sim.fireActorBurst(gun,sim.player,{x:gun.x,y:5,z:120},'enemy');
+ const events=sim.drainEvents().filter(e=>e.type==='actor-burst');
+ for(let i=0;i<8;i++){sim.tick(.05,{});events.push(...sim.drainEvents().filter(e=>e.type==='actor-burst'));}
+ assert.equal(events.length,18);assert.ok(sim.enemies.every(g=>g.mag===29));
+ const ctx=new FakeAudioContext(),audio=new AudioManager({contextFactory:()=>ctx,quality:'low'});audio.init();
+ try{
+  const p=Object.create(M02Presentation.prototype);
+  Object.assign(p,{audio,resetClock:sim.clock,playerRecord:sim.player,presentationWorld:sim.world,fireTimes:new Map(),roundEvents:new Map()});
+  const before=sim.snapshot();for(const event of events){ctx.currentTime=event.clock;p.consume([event],sim);}
+  assert.equal(audio.diagnostics.eventCounts.rkm,18);
+  assert.equal([...audio.voices].filter(v=>v.kind==='rkm_wz28').length,6);
+  assert.ok(sim.enemies.every(g=>audio.bursts.get(g.id)?.round===2));
+  assert.equal(audio.diagnostics.droppedVoices,0);assert.equal(audio.diagnostics.evictedVoices,0);
+  assert.equal(audio.diagnostics.budgetDropped,0);assert.deepEqual(sim.snapshot(),before);
+ }finally{audio.dispose();}
+});
+
+test('near passes use the finite collision-resolved segment and do not pass through walls',()=>{
+ const player={x:0,y:0,z:0,eyeHeight:1.65},world={obstacles:[]};
+ const trace={origin:{x:-8,y:1.65,z:1},point:{x:8,y:1.65,z:1}};
+ assert.ok(Math.abs(m02RoundPass(trace,player,world).distance-1)<1e-9);
+ assert.equal(m02RoundPass({...trace,point:{x:-2,y:1.65,z:1}},player,world),null,'a round stopped before the player is not a near pass');
+ assert.equal(m02RoundPass({...trace,point:{x:8,y:5,z:10}},player,world),null,'a distant round is silent');
+ world.obstacles.push({min:{x:-1,y:0,z:.4},max:{x:1,y:3,z:.6},material:'stone'});
+ assert.equal(m02RoundPass(trace,player,world),null,'a solid wall separates the listener from the round');
+});
+
+test('an unobstructed hostile round passing the listener plays one directional crack, while friendly fire does not',()=>{
+ const sim={player:{x:0,y:0,z:0,eyeHeight:1.65},world:{obstacles:[]}},calls=[];
+ const audio={crack(...args){calls.push(args);}};
+ const trace={origin:{x:-8,y:1.65,z:1},point:{x:8,y:1.65,z:1},hitKind:'none'};
+ const spatial=()=>({pan:.6,front:.8,distance:1});
+ playM02RoundAudio(audio,trace,sim,spatial,'hostile',{nearPass:true});
+ playM02RoundAudio(audio,trace,sim,spatial,'friendly');
+ assert.deepEqual(calls,[[.6,1,'hostile:pass',.8]]);
+});
+
+test('real blocked NPC round plays a local material impact; player impact uses its position and snapshots remain intact',()=>{
+ const sim=new M02BenchSimulation();sim.enterAreaBC06();sim.areaB.contact&&Object.assign(sim.areaB.contact,{opened:true,openedBy:'player_shot',openedAt:0,movementStartedAt:0,contactAt:0});sim.allies=[];
+ const gun=sim.enemies.find(a=>a.weapon==='mg34');sim.enemies=[gun];
+ Object.assign(gun,{x:0,y:0,z:100,mag:50,suppressed:0});Object.assign(sim.player,{x:0,y:0,z:120,eyeHeight:1.65,angle:0});
+ sim.world.obstacles.push({id:'audio-wall',min:{x:-3,y:0,z:103},max:{x:3,y:3,z:103.3},material:'wood_thick'});
+ sim.fireActorBurst(gun,sim.player,{x:0,y:1.25,z:120},'enemy');
+ const events=sim.drainEvents(),round=events.find(e=>e.type==='actor-burst');
+ assert.equal(round.traces[0].hitKind,'world');assert.equal(round.traces[0].material,'wood_thick');
+ assert.ok(round.traces[0].point.z-round.traces[0].origin.z>1);
+ const calls=[],audio={ctx:{state:'running'},resetPresentation(){},setOcclusion(v){calls.push(['occlusion',v]);},weaponFire(...a){calls.push(['fire',...a]);},impact(...a){calls.push(['impact',...a]);},crack(...a){calls.push(['crack',...a]);},wz29Shot(){},wz29Mechanism(){}};
+ const p=Object.create(M02Presentation.prototype);Object.assign(p,{audio,resetClock:sim.clock,playerRecord:sim.player,presentationWorld:sim.world,fireTimes:new Map(),roundEvents:new Map()});
+ const before=sim.snapshot();p.consume(events,sim);
+ const impact=calls.find(c=>c[0]==='impact');assert.equal(impact[1],'wood');assert.ok(impact[3]>16&&impact[3]<18);assert.equal(calls.some(c=>c[0]==='crack'),false);
+ assert.deepEqual(calls[calls.indexOf(impact)-1],['occlusion',{hz:1200,gain:.4}],'the impact on the far side of the wall is muffled');
+ p.consume([{type:'shot-fired',shot:{id:'player-test',hitKind:'world',material:'metal',point:{x:0,y:1,z:115}}}],sim);
+ const own=calls.filter(c=>c[0]==='impact').at(-1);assert.equal(own[1],'metal');assert.ok(Math.abs(own[3]-5)<1e-9);assert.ok(own[2]<-.99);
+ assert.deepEqual(sim.snapshot(),before);
+});

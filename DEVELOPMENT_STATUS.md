@@ -37,6 +37,103 @@ Ramo local `claude/exciting-bohr-k8v5xm-r3a` (de `3c8e576d`, a candidata #80 com
 - **Golden: emenda 19** (`sapper-operation`), pela ferramenta oficial (predecessor `3c8e576d`; a 18 passa a história), **regenerada na revisão**. 1.ª diferença às 04:36:54 (tick 2348, as duas rotas) `state.mission.status`; 1.ª de comportamento o chefe no tick 2349 (`actors.1.x`). 12 objectivos, CP-A..D, eventos, bandeiras e sobreviventes idênticos; relógio real da demolição leste **+28 s** (controlo) e **+29 s** (apoio) em vez de −57 / +21 s da 1.ª versão, a mesma divergência caótica da luta do tabuleiro da emenda 18; reparo −8,6 / −7,0 s reais. 0 clipping e 0 empilhados nas 2 rotas e nas 4 do guarda de navegação. `tests/m01-animation-contract.test.js` 37 / 37 sobre o golden novo.
 - **Saves.** Nenhum registo novo (schema 2); `coverRun` opcional e validado; um save de antes, a 35 % de reparo, cai em `splice` e a missão acaba; um save no meio de cada fase restaura e continua igual.
 - **Não feito / incertezas.** Sem «ponto de tiro»; `verify` cai dentro das cenas de demolição, que não se saltam, e não se vê no jogo normal; polaco das falas por rever; apresentação estilizada (cabo de 6 cm, estacas, lâmpada com brilho, fiadas que se leem como blocos escuros); a corrida para a cobertura nunca foi vista por uma pessoa e a fiada cobre um homem deitado, não de joelhos (0,6–1,0 m sobre o chão dos lugares); a pilha da retirada está corrigida só para a regra genérica da retirada (o `moveActor` continua a não afastar homens parados a < 0,8 m, README §7.7). **Testes**: `npm test` completo em `3ec61fce` (código): **1719 testes, 1719 verdes, 0 falhas** (59 min, Node 22, x86); golden 19 `--amendment 19` sem `--write`: `check: identical`; `npm run build` OK (README §6 e §8); novos: 15 + 7 testes dos sapadores, 7 casos de falas, 5 testes da retirada (`tests/m01-retreat-slots.test.js`); re-fixados com causa datada (nunca removida uma asserção) os testes que a rota nova moveu.
+## M02 — retirada pelo celeiro C03 — 2026-11-04
+
+`82863c1` permite ao auxiliar da MG tentar sair fisicamente pela porta sul de B02 quando a posição cai, com rendição se o caminho não resultar e persistência do estado. Passaram 208 testes M02, build, [browser com captura controlada e passagem contínua à M03](docs/verification/m02-runtime/barn-retreat-2026-11-04/README.md). Ainda faltam animações dedicadas de fuga e rendição e teste em iPhone; o soldado pode já ter morrido ou saído quando a condição ocorre.
+
+## M02 — passagem com retirada antecipada — 2026-11-04
+
+`6643816` corrige o piloto quando C12 para o relógio. A [passagem contínua](docs/verification/m02-runtime/c11-withdrawal-confirm-2026-11-04/README.md) completou a transferência à M03 com 12 homens por localizar e Lis desaparecido, após dois restauros; água e abastecimentos foram preservados. Passaram 206 testes M02 e build. A primeira tentativa expirou no piloto ao chegar ao epílogo e está documentada. A retirada pelo celeiro foi desenvolvida no marco seguinte; avaliação humana e teste em iPhone continuam pendentes.
+
+## M02 — confirmação da retirada antecipada — 2026-11-04
+
+`da6bb8a` pede um segundo comando antes de retirar deixando homens por localizar e cancela a confirmação ao pausar, mover ou mudar a situação. 205 testes M02, build e [browser por teclado/toque](docs/verification/m02-runtime/c11-withdrawal-confirm-2026-11-04/README.md) passaram; falta teste em iPhone físico.
+
+## M02 — presença física da secção — 2026-11-04
+
+`70c6031` exclui aliados fora da célula de combate, fogo amigo e navegação, preservando Lis e o roster. 204 testes M02, build, três browser e passagem automatizada até à M03 passaram; [evidência e limites](docs/verification/m02-runtime/actor-presence-2026-11-04/README.md).
+
+## M02 — retirada com homens em trânsito — 2026-11-04
+
+`b89ccdd` acrescenta escolha explícita de retirada em B12, com homens não evacuados registados como por localizar e Lis ainda a caminho tratado como desaparecido. 198 testes M02, build, dois browser e uma passagem automatizada da saída normal passaram; [provas e limites](docs/verification/m02-runtime/c11-withdrawal-2026-11-04/README.md). Encenação e teste em iPhone continuam pendentes.
+
+## M02 — conclusão de campanha em C12 — 2026-11-04
+
+`a876bf3` impede a marcação prematura de conclusão na quinta/C05 e migra checkpoints anteriores; `3795507` corrige restauro de C05 repetida na bancada. 193 testes M02, build, browser e testes focados passaram; a [passagem automatizada](docs/verification/m02-runtime/completion-flag-2026-11-04/README.md) escolheu água e giz e concluiu em C12/M03. A missão continua em desenvolvimento.
+
+## M02 — escolha opcional no pomar — 2026-11-04
+
+`e2894a9` esclarece que a ajuda ao ferido é opcional e orienta à saída após dar água. Testes M02, focados, build e [browser](docs/verification/m02-runtime/c04-optional-2026-11-04/README.md) passaram. A encenação e a auditoria das restantes cenas continuam pendentes.
+
+## M02 — som da oferta de água — 2026-11-04
+
+`8227c80` liga o som de tecido e equipamento M01 ao início da oferta, sem repetir após checkpoint. 189 testes M02, build e browser com [gravação isolada](docs/verification/m02-runtime/c04-water-audio-2026-11-04/README.md) passaram. Falta validar mistura em combate e em iPhone.
+
+## M02 — gesto de água C04 — 2026-11-04
+
+`3421664` introduz gesto temporizado de oferta de água, interrompível e persistido, usando o rig M01 e cantil provisório. 187 testes M02, build e dois browser passaram; a passagem integral `ed24ac6` ofereceu água, marcou com giz e chegou à M03. [Captura e limites](docs/verification/m02-runtime/c04-handoff-2026-11-04/README.md): falta receção física pelo ferido, transição refinada e teste em iPhone.
+
+## M02 — opção de água C04 — 2026-11-04
+
+`5e8bbdb` permite escolher dar água ao ferido do pomar, preservando a opção de giz e o estado em checkpoints/áreas. 184 testes M02, build e browser com toque simulado passaram; `390fbae` ajusta a interface e concluiu percurso automatizado até M03, sem selecionar a água. [Capturas e limites](docs/verification/m02-runtime/c04-water-2026-11-04/README.md): a interação é provisória e ainda não anima a entrega física; falta verificação em iPhone real.
+
+## M02 — roteiro Astra recebido — 2026-11-04
+
+PDF de pré-produção e plantas fornecidos pelo proprietário estão em [referências/astra](docs/m02/referencias/astra/COMPARACAO_INICIAL.md). O proprietário confirmou que o PDF contém o roteiro verdadeiro da M02; usar C01–C12 como referência principal. A estrutura principal existe, mas fidelidade detalhada das cenas, duração e encenação ainda não está demonstrada; a comparação inicial aponta lacunas concretas. Auditar e implementar por cena antes de declarar a missão concluída.
+
+## M02 — joystick tátil e dois dedos — 2026-11-04
+
+`b253edb` mostra a direção do joystick e limpa a indicação ao interromper o toque; dois testes browser simulados, oito testes de input e build passaram. [Captura e limites](docs/verification/m02-runtime/touch-multifinger-2026-11-04/README.md). Falta testar num iPhone e disponibilizar uma pré-visualização acessível.
+
+## M02 — controlos táteis — 2026-11-04
+
+`3ccfb05` acrescenta movimento, olhar, combate, ações e pausa táteis reutilizando a infraestrutura M01. Testes M02, build e browser simulado passaram; [prova e limitações](docs/verification/m02-runtime/touch-2026-11-04/README.md). Falta testar em iPhone/Safari e disponibilizar um endereço de pré-visualização acessível; não houve deploy.
+
+## M02 — linha de tiro das rajadas aliadas — 2026-11-04
+
+`5140dd1` interrompe rondas pendentes quando um aliado entra na linha de tiro, preservando munição e restauro determinístico. 182 testes M02 e build passaram. A [passagem automatizada](docs/verification/m02-runtime/ally-burst-clearance-2026-11-04/README.md) chegou à M03 sem mortes do jogador ou erros, com Lis evacuado e 11/12 no último grupo. A segurança continua a usar uma aproximação horizontal; qualidade visual, animação e áudio permanecem em desenvolvimento. Main e produção intactas.
+
+## M02 — continuidade do diálogo — 2026-10-31
+
+`9b4f034` verifica novamente o emissor e as alternativas do roteiro ao iniciar uma fala em fila; `7c9ad85` preserva a fala de partida de Lis em C08. Passaram 180 testes M02, build, um caso browser e comparação de 800 passos com a candidata anterior. Uma passagem automatizada chegou a M03 sem mortes ou erros, com Lis evacuado e 12/12; [provas e limites](docs/verification/m02-runtime/dialogue-continuity-2026-10-31/README.md). A missão continua em desenvolvimento; main e produção intactas.
+
+## M02 — som da granada e clarões NPC — 2026-10-31
+
+`114cd6d` sincroniza o som de tecido e equipamento da M01 com a preparação real da granada; [gravação, testes e passagem automatizada](docs/verification/m02-runtime/grenade-handling-audio-2026-10-31/README.md). `fabe62b` aproxima o clarão do socket visual da arma quando há linha desobstruída, preservando a simulação. Passaram 176 testes M02, build e [verificação browser da MG34](docs/verification/m02-runtime/muzzle-flash-2026-10-31/README.md). A missão continua em desenvolvimento; main e produção intactas.
+
+## M02 — preparação de granada e forno B04 — 2026-10-31
+
+Na candidata `codex/m02-recovery-v1`, a granada é reservada e preparada com o rig M01 antes de ser libertada; espera por ferrolho ou recarga e mantém pausa, física e checkpoints coerentes. O forno B04 ganhou portas e molduras visuais no colisor existente. Passaram 172 testes M02, build e verificações browser; [capturas e limites da granada](docs/verification/m02-runtime/grenade-preparation-2026-10-31/README.md), [antes/depois do forno](docs/verification/m02-runtime/farm-oven-2026-10-31/README.md). A [passagem automatizada `f20faf3`](docs/verification/m02-runtime/grenade-preparation-2026-10-31/native-f20/report.json), anterior ao ajuste de interface e ao forno, chegou a C12/M03 sem mortes ou erros e com C04, Lis e 12/12. A missão e a qualidade artística continuam em desenvolvimento; main e produção intactas.
+
+## M02 — áudio MP38 — 2026-10-30
+
+Na candidata `codex/m02-recovery-v1`, as rondas reais de MP38 podem partilhar uma voz de áudio por atirador e mantêm o intervalo da arma quando chegam no mesmo frame. 162 testes M02, build e duas verificações browser de áudio passaram; também foram executados testes do áudio partilhado da M01. A [passagem `6bc11f2`](docs/verification/m02-runtime/mp38-audio-2026-10-30/native-final/report.json) chegou a C12/M03 sem mortes de Piotr ou erros, com C04, Lis evacuado e 12/12 no último grupo. [Gravação, método e limites](docs/verification/m02-runtime/mp38-audio-2026-10-30/README.md). Qualidade artística, mecânicas e restante polimento continuam em desenvolvimento; main e produção intactas.
+
+## M02 — MG34, granadas e posição B02 — 2026-10-30
+
+Na candidata `codex/m02-recovery-v1`, o artilheiro da MG34 fixa reage a granadas reais e recupera a postura se sobreviver; checkpoints não conservam a ameaça nem o destino temporário de um soldado incapacitado. A bancada usa a caixa M01 e o modelo animado substitui a arma provisória estática. 159 testes M02, build e dois casos browser passaram após `382736c`; a [passagem `e029771`](docs/verification/m02-runtime/mounted-mg-grenade-2026-10-30/native-cleanup/report.json) chegou a M03 sem mortes de Piotr nem erros, mas sem a cena do ferido C04; a [passagem anterior](docs/verification/m02-runtime/mounted-mg-grenade-2026-10-30/native-final/report.json) exercitou-a. [Estado, capturas e limitações](docs/m02/M02_EXECUTION_STATE.md). Qualidade artística, manipulação das armas e granada, apoio a Lis e restantes marcos continuam em desenvolvimento; main e produção intactas.
+
+## M02 — combate em equipa, áudio e cena — 2026-10-29
+
+Na candidata `codex/m02-recovery-v1`, as duplas cobrem o metralhador durante recargas reais; recargas NPC e quiques de granada têm som espacial; noite e bancada B05 foram melhoradas; `Z/X/B` alteram a progressão da secção na quinta. 135 testes M02, build e verificações browser focadas passaram. A build `c1b8ec9` completou C01–C12/M03 por piloto; a repetição com ordens foi registada nas continuações posteriores. [Estado e provas](docs/m02/M02_EXECUTION_STATE.md). Qualidade artística, coreografias e restante missão continuam em desenvolvimento; main e produção intactas.
+
+## M02 — chegada de Lis e decisão de retirada — 2026-10-29
+
+Na candidata `codex/m02-recovery-v1`, `dcb46ec` mantém Lis parado após chegar fisicamente ao posto e avisa quando a retirada ocorre sem o socorrer ou enquanto se desloca. 119 testes M02, build e três browser passaram. A build completou C01–C12/M03 em percurso automatizado com Lis evacuado e 12/12, sem mortes/erros; [provas e limites](docs/verification/m02-runtime/lis-station-2026-10-29/README.md). Coreografia de apoio e qualidade global permanecem em desenvolvimento; main e produção não foram alteradas.
+
+## M02 — recuperação do braço após lançamento — 2026-10-29
+
+Na candidata `codex/m02-recovery-v1`, `cc0ecfc` adapta o rig M01 para mostrar o braço a regressar depois da soltura física da granada, sem alterar física ou snapshots. 118 testes M02, build e três casos de navegador passaram. [Captura High, método e limitações](docs/verification/m02-runtime/grenade-follow-through-2026-10-29/README.md). Faltam preparação, manipulação da granada e melhoria da geometria da mão; não é animação final nem validação artística. O último percurso integral é o de `e4a4632`; main e produção não foram alteradas.
+
+## M02 — pose de feridos em C11 — 2026-10-28
+
+Lis e LG03/LG09 usam marcha/espera desarmadas derivadas dos clips e IK M01, com a mão no torso; pernas e odómetro permanecem sincronizados com a navegação M02. 87 testes M02, três casos browser e build PASS; capturas High e limites em [wounded-2026-10-28](docs/verification/m02-runtime/wounded-2026-10-28/README.md). A coreografia de apoio com acompanhante e a qualidade artística global continuam abertas. Simulação/roteiro intactos, sem novo percurso integral nesta alteração.
+
+## M02 — revisão de apresentação após avaliação do proprietário — 2026-10-28
+
+Branch `codex/m02-recovery-v1`, código `f49ecdc`. Entrada `m02.html`, bancada preservada. Sombras seguem agora o observador em todas as áreas; cascatas/grade/AO/contacto M01 integrados. Tiros usam traços reais e partículas M01, com clarões curtos, pools limitadas, CLOCK_EPS e configuração de luz estável. Malha/máscara cobrem os limites reais B/C; terreno contínuo, horizonte rural, vegetação com fade, ripas/plintos/tesouras nos edifícios. Sistemas/assets M01 não modificados.
+
+86 testes M02, 44 partilhados focados, seis browser, build/reprodução GLB PASS. Percurso congelado `d04e416` C01–C12/M03: zero mortes/erros, vida 46, giz, abastecimentos, Lis e 12/12; simulação/roteiro idênticos no refinamento posterior só da luz de disparo. Capturas High e morte/retoma no código final. A apresentação anterior foi rejeitada; arte continua em desenvolvimento, sem aprovação/superioridade demonstrada. Suite global/CI remoto não declarados verdes. [Estado e reprodução](docs/m02/M02_EXECUTION_STATE.md), [antes/depois e provas](docs/verification/m02-runtime/quality-2026-10-28/README.md). Main/produção intactas; site público não atualizado por estes commits.
 
 ## M01 R2-b: fogo polaco real e IA alemã do tabuleiro (aproximação por linhas, supressão, granada de mão, busca) — 2026-10-24
 

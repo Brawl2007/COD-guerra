@@ -248,7 +248,10 @@ describe('M02 C10-C11: snapshot, restauro e determinismo (sem estado novo: o pon
 describe('M02 C10-C11: as sementes em que Gruca caía na marcha (MissionBot, recruta, 40 sementes: 3, 28, 33, 35 e 38) já não o perdem', () => {
   // Medição de 2026-11-06 (dt 0,1, recruta): antes 5 quedas de Gruca em 40 sementes, todas na marcha para (-32, 18); depois 0. A sobrevivência de
   // Piotr continua caótica (e não é o que se prova aqui): só se afirma que Gruca nunca cai nestas sementes, com ou sem Piotr a chegar a C12.
-  for (const seed of [3, 28, 33, 35, 38]) {
+  // Merge M02 único (2026-11-06): com a linha Codex integrada o fluxo caótico do bot mudou; 28 e 38 já não chegam à marcha (morrem em
+  // C09/C06 antes dela). Mantidas 3, 33 e 35 (chegam a C10+ e Gruca não cai); 28 e 38 substituídas pelas duas menores que chegam à marcha
+  // (6 e 14). Medição: sementes 1..40, dt 0,1, recruta.
+  for (const seed of [3, 33, 35, 6, 14]) {
     it(`semente ${seed}: Gruca nunca fica fora de combate`, () => {
       const sim = new M02BenchSimulation(seed, { startScene: 'C01', difficulty: 'recruta' });
       const bot = new MissionBot(sim, { dt: 0.1 });

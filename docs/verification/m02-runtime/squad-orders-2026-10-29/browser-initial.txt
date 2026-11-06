@@ -1,0 +1,21 @@
+[1A[2K[WebServer] (node:133764) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 3 tests using 1 worker
+
+[1A[2K(node:133788) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:133788) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/3] tests/browser/m02-mission.spec.js:5:1 › farm squad orders change real cover goals through normal keys and show confirmation
+[1A[2K[2/3] tests/browser/m02-mission.spec.js:72:1 › night lighting remains active in the B05 interior at Low quality
+[1A[2K[3/3] tests/browser/m02-mission.spec.js:88:1 › a real NPC reload produces a nearby audible M01 mechanism cue
+[1A[2Ktests/browser/m02-mission.spec.js:88:1 › a real NPC reload produces a nearby audible M01 mechanism cue
+M02 NPC reload sound {"peak":0.016425784677267075,"count":1,"cue":{"type":"actor-reload-cue","shooterId":"DE-B05","weapon":"mg34","phase":"open","clock":0.05,"origin":{"x":2,"y":0,"z":100,"eyeHeight":1.64}}}
+
+[1A[2K  3 passed (38.7s)

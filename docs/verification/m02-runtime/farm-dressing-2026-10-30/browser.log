@@ -1,0 +1,18 @@
+[1A[2K[WebServer] (node:178260) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 3 tests using 1 worker
+
+[1A[2K(node:178284) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:178284) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/3] tests/browser/m02-mission.spec.js:5:1 › B01 kitchen uses the original M01 lantern and crate
+[1A[2K[2/3] tests/browser/m02-mission.spec.js:25:1 › a soldier hears a real grenade bounce behind him
+[1A[2K[3/3] tests/browser/m02-mission.spec.js:64:1 › B01 furniture gives the authored solids recognisable interiors
+[1A[2K  3 passed (1.6m)

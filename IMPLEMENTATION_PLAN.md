@@ -1,5 +1,9 @@
 # Plano de implementação
 
+## Continuação M02 autorizada pelo proprietário — 2026-10-26
+
+A candidata `codex/m02-recovery-v1` contém a missão FPS C01–C12, com sistemas de apresentação M01 partilhados e percurso contínuo validado. O [estado M02](docs/m02/M02_EXECUTION_STATE.md) identifica as entregas Gemini/Claude, commits, testes e provas. Esta entrega não altera a aprovação histórica dos marcos M01 nem promove produção; o quadro histórico abaixo conserva o seu significado na data original.
+
 ## Onze tarefas parciais aceites — 2026-10-16
 
 O lote `M01-PARTIALS-COMPLETION-INTEGRATION-V1` fecha T02/T03/T05/T06/T07/T14/T24/T26/T34/T36/T41. Fonte aceite `e377a0739906507dee63cd4006a3428efd22c56b`, branch `codex/m01-partials-browser-sampling-repair-v1`; produção idêntica à certificada `9a679c50`. Verificador independente PASS e revisão crítica ACCEPT; provas, limites e histórico no `docs/verification/m01-runtime/partials-completion-integration-v1/HANDOFF.md`. Node874/874, tooling173, build,24rotas causais,24futuros ON/OFF,299ficheiros protegidos, controlos integrais das pontes0 e44regressões acopladas passaram. A captura Stuka foi corrigida e validada separadamente; os runs anteriores42/44 e13/14 continuam FAIL, sem alegar uma execução integral44/44. O handoff contém a execução final e os resultados exatos da correção.

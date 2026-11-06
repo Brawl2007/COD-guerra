@@ -1,0 +1,27 @@
+[1A[2K[WebServer] (node:129241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 3 tests using 1 worker
+
+[1A[2K(node:129265) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:129265) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/3] tests/browser/m02-mission.spec.js:5:1 › a real NPC reload produces a nearby audible M01 mechanism cue
+[1A[2Ktests/browser/m02-mission.spec.js:5:1 › a real NPC reload produces a nearby audible M01 mechanism cue
+M02 NPC reload sound {"peak":0.016466857865452766,"count":1,"cue":{"type":"actor-reload-cue","shooterId":"DE-B05","weapon":"mg34","phase":"open","clock":0.05,"origin":{"x":2,"y":0,"z":100,"eyeHeight":1.64}}}
+
+[1A[2K[2/3] tests/browser/m02-mission.spec.js:31:1 › the real wz28 team reloads and covers the same visible target
+[1A[2Ktests/browser/m02-mission.spec.js:31:1 › the real wz28 team reloads and covers the same visible target
+M02 wz28 team {"first":"DE-B01","cover":"DE-B01","visuals":[{"id":"pl_aux_02","clip":"fire_bolt"},{"id":"szymon_kowal","clip":"rkm_reload"}],"lighting":{"preset":"night_1939_09_09","daylight":0,"exposure":1.4,"hemi":2.25}}
+
+[1A[2K[3/3] tests/browser/m02-mission.spec.js:104:1 › C11 Lis is helped by the normal interaction only when the player reaches him
+[1A[2Ktests/browser/m02-mission.spec.js:104:1 › C11 Lis is helped by the normal interaction only when the player reaches him
+M02 Lis contact {"setup":{"x":-28,"z":-22,"state":"WOUNDED_LIAISON","contact":false},"result":{"contact":true,"status":"wounded_walking","state":"WALKING_SUPPORTED","at":[-28.267024733211052,-21.63778764259958],"line":true}}
+
+[1A[2K  3 passed (50.2s)

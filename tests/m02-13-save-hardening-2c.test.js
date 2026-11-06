@@ -263,14 +263,18 @@ describe('M02-13 — 3: -0 não chega ao atan2 (estado vivo e restaurado coincid
   });
 
   it('memória visual de um alvo em z = -0,001: não guarda -0 e o facing do inimigo não depende do sinal do zero', () => {
-    const { sim, enemy } = setup(-60, 14, -0.001, { needLineOfSight: true });
+    // Merge M02 único: a física do jogador corre em todos os ticks (Codex dd8358bf); x = -74 ficava fora dos limites jogáveis
+    // (minX -60) e o primeiro tick repunha Piotr no limite. O par passa para x = -30 / -44, dentro da bancada, com o mesmo eixo.
+    const { sim, enemy } = setup(-30, 14, -0.001, { needLineOfSight: true });
     sim.tick(DT, {});
     assert.equal(enemy.seeingTargetId, 'piotr_sokol');
     for (const k of ['x', 'y', 'z']) assert.equal(Object.is(enemy.memory[k], -0), false, `memory.${k} não é -0`);
   });
 
   it('jogador em z = -0 exato à vista: o facing do inimigo ao vivo e depois de restaurar é o mesmo (+π, não -π)', () => {
-    const { sim, enemy } = setup(-60, 14, -0, { needLineOfSight: true });
+    // Merge M02 único: a física do jogador corre em todos os ticks (Codex dd8358bf); x = -74 ficava fora dos limites jogáveis
+    // (minX -60) e o primeiro tick repunha Piotr no limite. O par passa para x = -30 / -44, dentro da bancada, com o mesmo eixo.
+    const { sim, enemy } = setup(-30, 14, -0, { needLineOfSight: true });
     assert.equal(Object.is(sim.player.z, -0), true, 'a construção deixa o jogador em z = -0');
     sim.tick(DT, {});
     assert.equal(enemy.seeingTargetId, 'piotr_sokol');

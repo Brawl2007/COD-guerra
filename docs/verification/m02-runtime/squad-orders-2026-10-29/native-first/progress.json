@@ -1,0 +1,54 @@
+{
+  "startedAt": "2026-10-29T22:04:16.329Z",
+  "method": "Continuous production build; trusted Playwright keyboard/start and pointer-lock mouse input; read-only planner uses actor/collision observations, never writes simulation state.",
+  "stages": [
+    {
+      "label": "A:O00",
+      "clock": 0.1,
+      "health": 100,
+      "pos": [
+        0,
+        -175
+      ],
+      "realSec": 7.079
+    }
+  ],
+  "deaths": [],
+  "errors": [],
+  "orders": [],
+  "buildCommit": "899a8f59f734947ef25652f86aa0f03c90234021",
+  "last": {
+    "clock": 12.100000000000037,
+    "state": "playing",
+    "health": 100,
+    "cell": "A",
+    "objective": "O00",
+    "completed": false,
+    "ammo": {
+      "mag": 3,
+      "reserve": 41,
+      "received": 0,
+      "grenades": 2
+    },
+    "decision": {
+      "controls": {
+        "crouch": true,
+        "lookX": -0.16880397048429166,
+        "lookY": 0,
+        "forward": 1,
+        "sprint": true,
+        "reload": true
+      },
+      "goal": [
+        -14.2,
+        -110.4
+      ],
+      "route": 4
+    },
+    "pos": [
+      -5.4120972440466035,
+      -151.3419246495908
+    ],
+    "squadOrder": "auto"
+  }
+}

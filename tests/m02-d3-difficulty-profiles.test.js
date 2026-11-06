@@ -274,7 +274,17 @@ describe('M02 D6: o fogo inimigo muda com o perfil; o da secção e o resto do j
       shooter.aimLastAt = 0;
       const before = sim.player.health;
       const burst = fire(0);
-      assert.equal(burst.rounds, WEAPON_PROFILES.mg34.burstCount);
+      // Merge M02 único (rajadas causais, Codex 702ced95): a rajada sai ronda a ronda; esgota-se aqui a rajada pendente, ronda a ronda,
+      // no instante de cada uma. O teto «uma ferida por rajada» atravessa as rondas (a rajada pendente leva o dano já feito a Piotr).
+      let rounds = burst.rounds;
+      while (shooter.burst) {
+        sim.clock = shooter.burst.nextAt;
+        const emitted = shooter.burst.emitted;
+        sim.advanceActorBurst(shooter);
+        rounds += (shooter.burst?.emitted ?? WEAPON_PROFILES.mg34.burstCount) - emitted;
+      }
+      assert.equal(burst.burstSize, WEAPON_PROFILES.mg34.burstCount);
+      assert.equal(rounds, WEAPON_PROFILES.mg34.burstCount);
       lost[id] = before - sim.player.health;
     }
     assert.equal(lost.recruta, 5 * 8);

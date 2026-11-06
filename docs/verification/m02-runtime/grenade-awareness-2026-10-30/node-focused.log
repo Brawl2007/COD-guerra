@@ -1,0 +1,13 @@
+✔ a visible grenade interrupts an ally reload, produces a warning and real movement, with deterministic restore (44.87304ms)
+✔ grenades behind the observer or behind a wall cause no fabricated warning (6.979035ms)
+✔ an enemy seeing the actual grenade flees without producing an allied player warning (3.931924ms)
+✔ an escape target from a previous cell cannot drag an ally back across a transition (8.210827ms)
+✔ the C11 wounded Lis keeps his scripted evacuation instead of an armed flee action (11.948666ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 194.928283

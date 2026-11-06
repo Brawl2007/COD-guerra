@@ -14,6 +14,10 @@ import { M02HorizonDirector, M02_TEMPORAL_STATES } from '../world/m02-horizon-sy
 import { M02ZoneStreamer } from '../world/m02-zone-streamer.js';
 import { Wz29 } from './wz29.js';
 import { M02AudiovisualDirector } from './m02-audiovisual-director.js';
+import {m02ExposedLastGroup,updateM02EvacuationWound} from './m02-evacuation-targets.js';
+import {m02ActorPresent} from './m02-actor-presence.js';
+import {stepM02Grenade} from './m02-grenade-physics.js';
+import {m02ClearIncapableGrenadeThreat} from './m02-grenade-awareness.js';
 import {
   M02_DIFFICULTY,
   M02_DIFFICULTY_IDS,
@@ -27,6 +31,7 @@ import {
   WEAPON_PROFILES,
   M02_DIALOGUE_CATALOG,
   M02DialogueDirector,
+  friendlyFireClear,
   updatePolishSquad,
   updateGermanGarrison,
   roundNoNegZero,
@@ -113,12 +118,30 @@ const SPRINT_SPEED = 6.1;
 const CROUCH_SPEED = 2.55;
 const DOOR_INTERACT_RANGE = 2.2;
 const CHALK_INTERACT_RANGE = 4.5;
+export const M02_WATER_HANDOFF_SECONDS = 1.5;
 
 const TARGET_TO_ENEMY_SYNC = Object.freeze({
   tgt_b02_mg_gunner: 'DE-A05',
   tgt_b01_kitchen_window: 'DE-A07',
   tgt_b01_hall_door: 'DE-A08',
 });
+// The player commits one grenade on the press and releases it after the M01
+// first-person arm has had time to prepare. This is mission time, not a timer
+// owned by the renderer or browser.
+export const M02_GRENADE_PREPARE_SECONDS = 0.5;
+// Measured at the end of the shared M01 hand pose (camera-space metres).
+const M02_GRENADE_RELEASE_VIEW=Object.freeze({right:.112,up:-.090,forward:.557});
+
+function recordM02Hit(actor,clock,source,part='torso'){
+  actor.hitAt=clock;actor.hitYaw=Math.atan2(source.z-actor.z,source.x-actor.x);actor.hitPart=part;
+  if(!actor.alive){actor.diedAt=clock;actor.deathYaw=actor.facing??0;}
+}
+
+function roundNearActor(origin,direction,hit,range,actor){
+  const point=eyePosition(actor),dx=point.x-origin.x,dy=point.y-origin.y,dz=point.z-origin.z;
+  const along=Math.max(0,Math.min(hit?.distance??range,dx*direction.x+dy*direction.y+dz*direction.z));
+  return Math.hypot(dx-direction.x*along,dy-direction.y*along,dz-direction.z*along)<=3;
+}
 
 const WEAPON_STATES = Object.freeze(['READY', 'BOLT_CYCLE', 'RELOAD_CLIP', 'RELOAD_SINGLE']);
 const PLAYER_ID = 'piotr_sokol';
@@ -168,6 +191,7 @@ const ALLY_STATES = Object.freeze([
   'WALKING_SUPPORTED',
   'CARRIED',
   'MISSING',
+  'FLEE_GRENADE', // Codex (d7750293): foge de uma granada que viu/ouviu; repõe o estado anterior quando ela rebenta
 ]);
 /** Estados possíveis de um aliado com alive=false: nenhum tem arma ativa («um ator morto não pode voltar a ser dono de arma ativa», I5). */
 const ALLY_INCAPACITATED_STATES = Object.freeze(['DOWN', 'DEAD', 'EVACUATED', 'MISSING']);
@@ -182,6 +206,8 @@ const ENEMY_STATES = Object.freeze([
   'WOUNDED_UNARMED',
   'WITHDRAWING', // D2: o posto EA0 a recuar para a borda oeste (combatente, a andar)
   'WITHDRAWN', // D2: o posto EA0 retirado na borda oeste (vivo, fora de combate)
+  'FLEE_GRENADE', // Codex (d7750293): foge de uma granada que viu/ouviu
+  'RETREAT_B02', // Codex (82863c1b): o municiador da MG de B02 a sair pela porta sul (C03)
   'DEAD',
   'DOWN',
 ]);
@@ -226,6 +252,149 @@ function validateStateMap(map, label, knownIds, allowed) {
   }
   for (const id of knownIds) {
     if (!(id in map)) return `Estado de ${label} em falta no snapshot: ${id}`;
+  }
+  return null;
+}
+
+/**
+ * Merge M02 único (2026-11-06): estado ADITIVO do schema 2 trazido da linha Codex (codex/m02-recovery-v1). Todos os campos são
+ * opcionais (ausentes nos saves anteriores = nenhuma ação em curso): granada preparada, água dada em C04, rajada pendente ronda
+ * a ronda, retirada pelo celeiro, memória de granada, retirada antecipada (quem ficou para trás) e marcas de impacto/movimento.
+ * As regras são as do validador do Codex, aplicadas DEPOIS do validador estrito v2. Devolve o motivo ou null.
+ */
+function validateCodexAdditiveState(snap) {
+  if (snap.grenadeAmmo !== undefined && !isNonNegativeInteger(snap.grenadeAmmo)) return 'Munição de granadas inválida.';
+  if (snap.playerGrenadeAction !== undefined && snap.playerGrenadeAction !== null) {
+    const action = snap.playerGrenadeAction;
+    if (!isPlainObject(action) || !Number.isInteger(snap.grenadeAmmo) || snap.player?.health <= 0 || snap.player?.carryingVolumeId)
+      return 'Preparação de granada inválida.';
+    // Um toque durante a recarga reserva a granada, mas a mão só larga a espingarda quando a animação existente acaba.
+    if (action.waitingForReload === true) {
+      if (action.startedAt !== null || action.releaseAt !== null || !['RELOAD_SINGLE', 'RELOAD_CLIP'].includes(snap.weapon?.state))
+        return 'Espera da granada inválida.';
+    } else {
+      const waiting = action.startedAt > snap.clock + 1e-6;
+      if (
+        !Number.isFinite(action.startedAt) ||
+        !Number.isFinite(action.releaseAt) ||
+        action.startedAt < 0 ||
+        (waiting &&
+          (snap.weapon?.state !== 'BOLT_CYCLE' ||
+            !Number.isFinite(snap.weapon.until) ||
+            Math.abs(action.startedAt - snap.weapon.until / 1000) > 1e-6 ||
+            action.startedAt - snap.clock > 1.1)) ||
+        Math.abs(action.releaseAt - action.startedAt - M02_GRENADE_PREPARE_SECONDS) > 1e-6 ||
+        action.releaseAt <= snap.clock - 1e-6
+      )
+        return 'Preparação de granada inválida.';
+    }
+  }
+  if (snap.playerWaterAction !== undefined && snap.playerWaterAction !== null) {
+    const a = snap.playerWaterAction;
+    if (
+      !isPlainObject(a) ||
+      typeof a.actorId !== 'string' ||
+      !Number.isFinite(a.startedAt) ||
+      !Number.isFinite(a.finishAt) ||
+      a.startedAt < 0 ||
+      a.startedAt > snap.clock ||
+      a.finishAt <= snap.clock - 1e-6 ||
+      Math.abs(a.finishAt - a.startedAt - M02_WATER_HANDOFF_SECONDS) > 1e-6 ||
+      snap.activeCellId !== 'A' ||
+      snap.player?.health <= 0 ||
+      snap.player?.carryingVolumeId ||
+      snap.playerGrenadeAction ||
+      snap.weapon?.state !== 'READY' ||
+      snap.flags?.['m02.pomar_wounded_water'] ||
+      !snap.enemies?.some((e) => e.id === a.actorId && e.alive && e.c04Candidate && e.state === 'WOUNDED_UNARMED')
+    )
+      return 'Entrega de água inválida.';
+  }
+  for (const g of snap.grenades ?? []) {
+    if (g.releaseView !== undefined && (!isPlainObject(g.releaseView) || !Number.isFinite(g.releaseView.angle) || !Number.isFinite(g.releaseView.pitch) || Math.abs(g.releaseView.pitch) > 1.35))
+      return 'Granada inválida.';
+  }
+  for (const e of snap.enemies ?? []) {
+    if (
+      e.m02BarnRetreat !== undefined &&
+      (!isPlainObject(e.m02BarnRetreat) ||
+        !['inside', 'outside'].includes(e.m02BarnRetreat.phase) ||
+        !Number.isFinite(e.m02BarnRetreat.startedAt) ||
+        e.m02BarnRetreat.startedAt < 0 ||
+        e.m02BarnRetreat.startedAt > snap.clock)
+    )
+      return `Retirada do celeiro inválida no snapshot: ${e.id}`;
+  }
+  const areaC = snap.areaC ?? {};
+  const left = areaC.leftBehindIds;
+  if (
+    left !== undefined &&
+    (!Array.isArray(left) ||
+      left.length > 12 ||
+      new Set(left).size !== left.length ||
+      !areaC.c12Completed ||
+      left.some((id) => typeof id !== 'string' || !areaC.lastGroup?.some((a) => a.id === id && a.alive && !a.evacuated && a.leftBehind)))
+  )
+    return 'Grupo deixado para trás inválido.';
+  const unaccounted = snap.flags?.['m02.last_group_unaccounted'];
+  if (unaccounted !== undefined && (!Number.isInteger(unaccounted) || unaccounted < 0 || unaccounted > 12)) return 'Contagem do grupo inválida.';
+  if ((unaccounted ?? 0) !== (left?.length ?? 0)) return 'Contagem do grupo inconsistente.';
+  if (snap.flags?.['m02.pomar_wounded_water'] !== undefined && typeof snap.flags['m02.pomar_wounded_water'] !== 'boolean')
+    return 'Estado de água do ferido inválido.';
+  for (const actor of [...(snap.allies ?? []), ...(snap.enemies ?? []), ...(areaC.lastGroup ?? [])]) {
+    if (!isPlainObject(actor) || !Number.isFinite(actor.x) || !Number.isFinite(actor.z)) return 'Posição de ator inválida.';
+    if (actor.leftBehind !== undefined && typeof actor.leftBehind !== 'boolean') return `Estado de evacuação inválido: ${actor.id}`;
+    if (actor.c04WaterOfferedAt !== undefined && (!Number.isFinite(actor.c04WaterOfferedAt) || actor.c04WaterOfferedAt < 0 || actor.c04WaterOfferedAt > snap.clock))
+      return `Estado de água inválido: ${actor.id}`;
+    if (actor.m02LastEngagedTargetId !== undefined && typeof actor.m02LastEngagedTargetId !== 'string') return `Alvo de equipa inválido: ${actor.id}`;
+    if (actor.m02GrenadeThreat !== undefined) {
+      const t = actor.m02GrenadeThreat;
+      if (
+        !isPlainObject(t) ||
+        typeof t.id !== 'string' ||
+        !t.id ||
+        !M02_CELL_IDS.includes(t.cell) ||
+        !['seenX', 'seenZ', 'goalX', 'goalZ'].every((k) => Number.isFinite(t[k])) ||
+        typeof t.previousState !== 'string' ||
+        !(t.previousTacticalState === null || typeof t.previousTacticalState === 'string') ||
+        !(t.previousGoal === null || (t.previousGoal && Number.isFinite(t.previousGoal.x) && Number.isFinite(t.previousGoal.z))) ||
+        (t.previousCrouched !== undefined && typeof t.previousCrouched !== 'boolean') ||
+        (t.previousEyeHeight !== undefined && !Number.isFinite(t.previousEyeHeight))
+      )
+        return `Ameaça de granada inválida: ${actor.id}`;
+    }
+    for (const key of ['effectiveSpeed', 'motionDistance'])
+      if (actor[key] !== undefined && (!Number.isFinite(actor[key]) || actor[key] < 0)) return `Movimento inválido: ${actor.id}`;
+    for (const key of ['hitAt', 'hitYaw', 'diedAt', 'deathYaw']) if (actor[key] !== undefined && !Number.isFinite(actor[key])) return `Impacto inválido: ${actor.id}`;
+    if (actor.navCorners != null && (!Array.isArray(actor.navCorners) || actor.navCorners.some((c) => !c || !Number.isFinite(c.x) || !Number.isFinite(c.z))))
+      return `Rota inválida: ${actor.id}`;
+    const b = actor.burst;
+    if (b == null) continue; // checkpoints anteriores às rajadas causais não têm ronda pendente
+    const maxRounds = actor.weapon === 'rkm_wz28' ? Math.max(4, WEAPON_PROFILES.rkm_wz28.burstCount) : (WEAPON_PROFILES[actor.weapon]?.burstCount ?? 1);
+    if (
+      !Number.isInteger(actor.burstSequence) ||
+      actor.burstSequence < 1 ||
+      !Number.isInteger(b.totalRounds) ||
+      b.totalRounds < 2 ||
+      b.totalRounds > maxRounds ||
+      !Number.isInteger(b.remaining) ||
+      b.remaining < 1 ||
+      !Number.isInteger(b.emitted) ||
+      b.emitted < 1 ||
+      b.emitted + b.remaining !== b.totalRounds ||
+      actor.mag < b.remaining ||
+      !Number.isFinite(b.nextAt) ||
+      b.nextAt < 0 ||
+      !Number.isFinite(b.cooldownUntil) ||
+      b.cooldownUntil < 0 ||
+      (b.interval !== undefined && (!Number.isFinite(b.interval) || b.interval <= 0)) ||
+      !isPlainObject(b.aimPoint) ||
+      !['x', 'y', 'z'].every((k) => Number.isFinite(b.aimPoint[k])) ||
+      !['ally', 'enemy'].includes(b.side) ||
+      (b.targetId !== null && typeof b.targetId !== 'string') ||
+      (b.damageOnPlayer !== undefined && (!Number.isFinite(b.damageOnPlayer) || b.damageOnPlayer < 0))
+    )
+      return `Rajada pendente inválida: ${actor.id}`;
   }
   return null;
 }
@@ -723,6 +892,8 @@ export function validateM02Snapshot(snap) {
   } else if (p.carryingVolumeId) {
     return { valid: false, reason: 'Jogador transporta um volume sem carroça no snapshot.' };
   }
+  const codexReason = validateCodexAdditiveState(snap);
+  if (codexReason) return { valid: false, reason: codexReason };
   return { valid: true, reason: null };
 }
 
@@ -814,6 +985,8 @@ export class M02BenchSimulation {
     this.grenades = [];
     this.grenadeSeq = 0;
     this.grenadeAmmo = 2;
+    this.playerGrenadeAction = null;
+    this.playerWaterAction = null;
     this.squadOrder = { type: 'auto', axis: null, issuedAt: 0 };
     this.c01Active = false;
     this.c01StartedAt = 0;
@@ -1029,11 +1202,18 @@ export class M02BenchSimulation {
     this.player.y = this.world.heightAt(p1.x, p1.z);
     this.player.angle = p1.angle ?? Math.PI / 2;
     this.player.pitch = p1.pitch ?? 0;
+    this.player.crouched = true;
+    this.player.eyeHeight = 1.08;
 
     // Position the 7 Polish squad allies in the P1 preparation trench (around Z = -174..-178)
     for (const ally of this.allies) {
-      ally.z = Number((ally.z - 96.0).toFixed(2));
+      const original=this.world.layout.polishSquad.find(a=>a.id===ally.id);
+      const slot=this.world.layout.c01Corridor?.preparationSlots?.[ally.id];
+      ally.x=slot?.x??original?.x??ally.x;
+      ally.z=slot?.z??Number(((original?.z??-79)-96).toFixed(2));
+      ally.facing=slot?.facing??original?.facing??Math.PI/2;
       ally.y = this.world.heightAt(ally.x, ally.z);
+      ally.crouched=true;ally.eyeHeight=1.08;ally.moving=false;
       ally.goal = null;
       ally.reachedNodeId = null;
     }
@@ -1116,7 +1296,7 @@ export class M02BenchSimulation {
         reserve: this.weapon.reserve,
       },
       grenadeAmmo: this.grenadeAmmo,
-      flags: structuredClone(this.flags),
+      flags: {...structuredClone(this.flags),'m02.completed':false},
       squadStatuses: Object.fromEntries(
         this.allies.map((a) => [a.id, { alive: a.alive, state: a.state, health: a.health }]),
       ),
@@ -1377,6 +1557,34 @@ export class M02BenchSimulation {
     return out;
   }
 
+  /** C04 (Codex 5e8bbdbe): oferta opcional de água ao ferido desarmado, parado, ao alcance (1,8 m) e sem obstáculo entre os dois. */
+  currentWoundedWaterPrompt({duringHandoff=false}={}) {
+    if(this.activeCellId!=='A'||this.player.health<=0||this.playerGrenadeAction||this.player.carryingVolumeId||this.flags['m02.pomar_wounded_water']||
+      this.playerWaterAction&&!duringHandoff||this.weapon.reloading||this.weapon.boltCycling)return null;
+    const wounded=this.enemies.find(e=>e.c04Candidate&&e.alive&&e.state==='WOUNDED_UNARMED'&&e.c04WaterOfferedAt===undefined);
+    if(!wounded)return null;
+    const distance=Math.hypot(wounded.x-this.player.x,wounded.z-this.player.z);
+    if(distance>1.8)return null;
+    const origin=eyePosition(this.player),target={x:wounded.x,y:(wounded.y??0)+.7,z:wounded.z};
+    const dx=target.x-origin.x,dy=target.y-origin.y,dz=target.z-origin.z,length=Math.hypot(dx,dy,dz);
+    if(length>1e-8&&traceObstruction(this.world,origin,{x:dx/length,y:dy/length,z:dz/length},Math.max(0,length-.05)))return null;
+    return {actorId:wounded.id,distance:Number(distance.toFixed(2)),prompt:'[F] Dar água ao ferido'};
+  }
+
+  giveWoundedWater() {
+    const prompt=this.currentWoundedWaterPrompt();if(!prompt)return null;
+    this.playerWaterAction={actorId:prompt.actorId,startedAt:this.clock,finishAt:this.clock+M02_WATER_HANDOFF_SECONDS};
+    const event={type:'c04-water-started',actorId:prompt.actorId,clock:Number(this.clock.toFixed(2))};
+    this.events.push(event);return event;
+  }
+
+  finishWoundedWater() {
+    const action=this.playerWaterAction,prompt=this.currentWoundedWaterPrompt({duringHandoff:true});
+    if(!action||!prompt||prompt.actorId!==action.actorId||this.clock+1e-8<action.finishAt)return null;
+    const wounded=this.enemies.find(e=>e.id===action.actorId);wounded.c04WaterOfferedAt=this.clock;this.flags['m02.pomar_wounded_water']=true;this.playerWaterAction=null;
+    const event={type:'c04-wounded-water',actorId:wounded.id,clock:Number(this.clock.toFixed(2))};this.events.push(event);return event;
+  }
+
   markWoundedSoldierWithChalk() {
     const wounded = this.enemies.find((e) => e.c04Candidate && e.alive);
     if (!wounded) return null;
@@ -1444,10 +1652,13 @@ export class M02BenchSimulation {
         en.alive = false;
         en.health = 0;
         en.state = 'DEAD';
+        for(const key of ['hitAt','hitYaw','hitPart','diedAt','deathYaw'])if(tgt[key]!==undefined)en[key]=tgt[key];
       } else if (!en.alive && tgt.alive) {
         tgt.alive = false;
         tgt.health = 0;
+        for(const key of ['hitAt','hitYaw','hitPart','diedAt','deathYaw'])if(en[key]!==undefined)tgt[key]=en[key];
       }
+      if(en.m02GrenadeThreat)m02ClearIncapableGrenadeThreat(en);
     }
   }
 
@@ -1462,6 +1673,7 @@ export class M02BenchSimulation {
   }
 
   evaluateMgLineOfFire(targetActor = this.player) {
+    if(this.activeCellId!=='A'||this.c01Active)return {mgActive:false,inArc:false,hasVisualLoS:false,canHitTarget:false,blockedById:'inactive_b02',blockedByMaterial:null,distance:0};
     this.syncCalibrationAndEnemies();
     const mg = this.mgState;
     const mgTarget = this.calibrationTargets.find((t) => t.id === 'tgt_b02_mg_gunner');
@@ -1476,6 +1688,9 @@ export class M02BenchSimulation {
         blockedByMaterial: null,
         distance: 0,
       };
+    }
+    if (mgEnemy?.state==='FLEE_GRENADE' && mgEnemy.tacticalState==='TakeCoverGrenade') {
+      return {mgActive:true,inArc:false,hasVisualLoS:false,canHitTarget:false,blockedById:'gunner_taking_cover',blockedByMaterial:null,distance:0};
     }
 
     // Boca no vão oeste de B02 (fonte única: layout.mgEmplacement; PDF F3 p. 24 «MG a (12,-30)»). A mesma origem serve a
@@ -1592,7 +1807,10 @@ export class M02BenchSimulation {
       if (targetActor.health <= 0) {
         targetActor.alive = false;
         targetActor.state = 'DEAD';
+        if(this.playerWaterAction?.actorId===targetActor.id)this.playerWaterAction=null;
       }
+      if(targetActor.m02GrenadeThreat)m02ClearIncapableGrenadeThreat(targetActor);
+      recordM02Hit(targetActor,this.clock,origin,hit.part);
       this.syncCalibrationAndEnemies();
     }
 
@@ -1636,9 +1854,12 @@ export class M02BenchSimulation {
     return record;
   }
 
-  fireActorBurst(shooter, targetActor, aimPoint, side) {
+  fireActorBurst(shooter, targetActor, aimPoint, side, {continuation=false}={}) {
     const prof = WEAPON_PROFILES[shooter.weapon] ?? WEAPON_PROFILES.wz29;
-    const roundsToFire = Math.min(shooter.mag, prof.burstCount ?? 1);
+    if(!continuation&&shooter.burst)return null;
+    const pending=continuation?shooter.burst:null;
+    const planned=pending?.totalRounds??Math.min(shooter.mag,prof.burstCount??1);
+    const roundsToFire = Math.min(shooter.mag, 1); // uma ronda por chamada; as seguintes saem em advanceActorBurst
     if (roundsToFire <= 0) return null;
 
     // D6: perfil de dificuldade (configuração). Só o fogo inimigo muda: o ciclo de fogo contra qualquer alvo da secção, a precisão
@@ -1658,13 +1879,23 @@ export class M02BenchSimulation {
       if (idle || shooter.aimEngagedAt == null) shooter.aimEngagedAt = now;
       shooter.aimLastAt = now;
     }
-    let burstDamageOnPlayer = 0;
+    // Uma ferida por rajada (M01 `burstWoundCap`): com a rajada emitida ronda a ronda, o dano já feito a Piotr viaja na rajada pendente.
+    let burstDamageOnPlayer = pending?.damageOnPlayer ?? 0;
 
     shooter.mag -= roundsToFire;
     shooter.shotsFired = (shooter.shotsFired ?? 0) + roundsToFire;
     // O ciclo seguinte parte do instante nominal do disparo (shotAt), não do relógio do tick: senão o atraso 0..dt do 1.º disparo
     // propagava-se ao 2.º e a regra F1 voltava a depender do dt (FIX-CD2 P2).
-    shooter.nextFireAt = Number((shotAt + prof.cycleSec * (enemyFire ? diff.cooldownScale : 1)).toFixed(3));
+    // Rajadas causais (Codex 702ced95): uma rajada é emitida ronda a ronda, cada uma no seu tick; as rondas seguintes herdam o fim
+    // do ciclo da primeira (`burst.cooldownUntil`), por isso a cadência entre rajadas e o fator de dificuldade não mudam.
+    shooter.lastShotAt = this.clock;
+    shooter.nextFireAt = pending
+      ? pending.cooldownUntil
+      : Number((shotAt + prof.cycleSec * (enemyFire ? diff.cooldownScale : 1)).toFixed(3));
+    if (!continuation) {
+      shooter.burstSequence = (shooter.burstSequence ?? 0) + 1;
+      shooter.burstStartedAt = this.clock;
+    }
 
     const origin =
       shooter.weapon === 'mg34' && shooter.id === 'DE-A05'
@@ -1674,9 +1905,14 @@ export class M02BenchSimulation {
     // Quem está fora da célula (Lis na ligação de C08-C10, J3) não está no mundo atual: as posições dele são as da célula anterior e
     // nenhum tiro ou rajada desta célula o atinge (antes protegia-o a imunidade `essential`, que já não existe).
     // O último grupo (LG01…LG12) é alvo a partir de C10 (C11, p. 14: «quem foi atingido permanece ferido ou morto»).
-    const candidateTargets =
-      side === 'ally' ? this.enemies : [this.player, ...this.allies.filter((a) => !a.detachedOutOfCell), ...lastGroupTargets(this)];
+    // Presença (Codex 70c60315): m02ActorPresent também exclui evacuados e desaparecidos. A boca de fogo real (Codex) só serve a
+    // apresentação e o teste de obstrução junto à arma; a origem balística continua a ser o olho (ou a boca da MG34 de B02).
+    const aimYaw = Math.atan2(aimPoint.z - origin.z, aimPoint.x - origin.x);
+    const aimPitch = Math.atan2(aimPoint.y - origin.y, Math.hypot(aimPoint.x - origin.x, aimPoint.z - origin.z));
+    const muzzle = shooter.id === 'DE-A05' ? origin : muzzlePosition({ ...shooter, angle: aimYaw, pitch: aimPitch, aiming: true }, this.clock);
+    const candidateTargets = (side === 'ally' ? this.enemies : [this.player, ...this.allies, ...lastGroupTargets(this)]).filter(m02ActorPresent);
     let hitAny = false;
+    const traces=[];
 
     for (let i = 0; i < roundsToFire; i++) {
       const dx = aimPoint.x - origin.x;
@@ -1693,15 +1929,18 @@ export class M02BenchSimulation {
       const rLen = Math.hypot(rx, ry, rz) || 1;
       const dir = { x: rx / rLen, y: ry / rLen, z: rz / rLen };
 
-      const hit = traceShot(this.world, origin, dir, candidateTargets, prof.range);
+      const hit = traceShot(this.world, origin, dir, candidateTargets, prof.range,muzzle);
+      // Presentation receives the actual, spread/occlusion-resolved round. The
+      // intended aim point below remains tactical memory, never an impact FX.
+      traces.push({origin:{...muzzle},point:hit?.point?{...hit.point}:{x:origin.x+dir.x*prof.range,y:origin.y+dir.y*prof.range,z:origin.z+dir.z*prof.range},hitKind:hit?.kind??'none',hitId:hit?.kind==='actor'?hit.actor.id:null,material:hit?.kind==='actor'?'character':hit?.material??'air'});
 
       if (hit && hit.kind === 'world' && hit.material === 'glass' && hit.windowId) {
         this.world.setWindowState(hit.windowId, 'broken');
       }
 
       // Apply suppression to intended target when rounds hit or pass near their cover aperture
-      if (targetActor && targetActor.alive) {
-        targetActor.suppressed = Math.min(1, (targetActor.suppressed ?? 0) + prof.suppressionAdd / roundsToFire);
+      if (targetActor && targetActor.alive && roundNearActor(origin,dir,hit,prof.range,targetActor)) {
+        targetActor.suppressed = Math.min(1, (targetActor.suppressed ?? 0) + prof.suppressionAdd / planned);
         shooter.suppressionsInflicted = (shooter.suppressionsInflicted ?? 0) + 1;
         this.combatLog.push({
           clock: Number(this.clock.toFixed(2)),
@@ -1775,6 +2014,10 @@ export class M02BenchSimulation {
         if (side === 'enemy' && isLastGroupMember(this, victim)) {
           markLastGroupHit(this, victim, { wasAlive: victimWasAlive, shooterId: shooter.id, cause: 'fire' });
         }
+        updateM02EvacuationWound(this,victim);
+        if(victim===this.player&&victim.health<=0){this.cancelPlayerGrenade();this.playerWaterAction=null;}
+        if(victim.m02GrenadeThreat)m02ClearIncapableGrenadeThreat(victim);
+        recordM02Hit(victim,this.clock,origin,hit.part);
         this.syncCalibrationAndEnemies();
       }
     }
@@ -1790,13 +2033,54 @@ export class M02BenchSimulation {
       targetId: targetActor?.id ?? null,
       weapon: shooter.weapon,
       rounds: roundsToFire,
+      burstId: `${shooter.id}:${shooter.burstSequence}`,
+      burstSize: planned,
+      roundIndex: pending?.emitted??0,
+      interval: pending?.interval??prof.burstGapSec,
       hitAny,
-      origin,
+      traces,
+      origin:muzzle,
       target: aimPoint,
       clock: Number(this.clock.toFixed(2)),
     };
     this.events.push(evt);
+    if (pending) pending.damageOnPlayer = burstDamageOnPlayer;
+    if (!continuation && planned > 1) {
+      shooter.burst = {
+        remaining: planned - 1,
+        totalRounds: planned,
+        emitted: 1,
+        interval: prof.burstGapSec,
+        nextAt: this.clock + prof.burstGapSec,
+        cooldownUntil: shooter.nextFireAt,
+        targetId: targetActor?.id ?? null,
+        aimPoint: { ...aimPoint },
+        side,
+        damageOnPlayer: burstDamageOnPlayer,
+      };
+    }
     return evt;
+  }
+
+  advanceActorBurst(shooter){
+    const burst=shooter.burst;
+    if(!burst)return;
+    if(!shooter.alive||shooter.nonCombatant||shooter.suppressed>=.88||shooter.reloadingUntil>this.clock||shooter.mag<=0){shooter.burst=null;return;}
+    const candidates=burst.side==='ally'?this.enemies:[this.player,...this.allies,...m02ExposedLastGroup(this)];
+    const target=candidates.find(a=>a.id===burst.targetId)??null;
+    if(target&&(target.nonCombatant||!m02ActorPresent(target))){shooter.burst=null;return;}
+    // Last observed point, not the hidden target's current coordinates. Every
+    // round reuses the existing world/actor ray test at its own simulation tick.
+    while(burst.remaining>0&&this.clock+1e-8>=burst.nextAt){
+      // Teammates can move after the opening round. Apply the existing
+      // clearance rule at each actual round, before spending its ammo.
+      if(burst.side==='ally'&&!friendlyFireClear(shooter,burst.aimPoint,[this.player,...this.allies])){shooter.burst=null;return;}
+      if(!this.fireActorBurst(shooter,target,burst.aimPoint,burst.side,{continuation:true}))break;
+      burst.remaining--;burst.emitted++;
+      burst.nextAt=Number((burst.nextAt+(burst.interval??WEAPON_PROFILES[shooter.weapon]?.burstGapSec??0)).toFixed(6));
+      if(target?.nonCombatant)break;
+    }
+    if(burst.remaining<=0||target?.nonCombatant)shooter.burst=null;
   }
 
   /** Ação atómica: um checkpoint atingido por este tiro (último defensor) só é gravado depois do áudio/recuo do disparo. */
@@ -1830,11 +2114,39 @@ export class M02BenchSimulation {
     return rec;
   }
 
+  /**
+   * Granada do jogador em duas fases (Codex 379f1c0b): o toque reserva UMA granada e a mão da M01 prepara-a durante
+   * M02_GRENADE_PREPARE_SECONDS de tempo de missão (não de render); durante a recarga fica em espera e começa quando a arma acaba.
+   */
+  preparePlayerGrenade() {
+    if (this.playerGrenadeAction || this.playerWaterAction || this.grenadeAmmo <= 0 || this.player.health <= 0 || this.player.carryingVolumeId) return false;
+    this.grenadeAmmo--;
+    // C01/C06: a granada de Piotr abre o contacto já no compromisso (a iniciativa é dele), não só na largada 0,5 s depois.
+    openPendingContact(this, 'player_grenade');
+    const startedAt = this.weapon.boltCycling ? Math.max(this.clock, this.weapon.until / 1000) : this.clock;
+    this.playerGrenadeAction = this.weapon.reloading
+      ? { startedAt: null, releaseAt: null, waitingForReload: true }
+      : { startedAt, releaseAt: startedAt + M02_GRENADE_PREPARE_SECONDS };
+    this.events.push({ type: 'grenade-preparing', throwerId: this.player.id, clock: this.clock });
+    if (!this.playerGrenadeAction.waitingForReload && startedAt <= this.clock + 1e-8)
+      this.events.push({ type: 'grenade-handling-started', throwerId: this.player.id, clock: this.clock });
+    return true;
+  }
+
+  /** Cancela a granada reservada (Piotr caído ou a carregar um volume) e devolve-a à munição. */
+  cancelPlayerGrenade() {
+    if (!this.playerGrenadeAction) return false;
+    this.playerGrenadeAction = null;
+    this.grenadeAmmo++;
+    return true;
+  }
+
   // Granada do jogador (ou de teste, com origem própria): rastilho de 2 s, sem aviso. As granadas inimigas não passam por aqui:
-  // têm o aviso de 5-8 s de D5 (`throwEnemyGrenade`).
-  throwGrenade(customOrigin = null, customDir = null) {
-    if (!customOrigin && this.grenadeAmmo <= 0) return null;
-    if (!customOrigin) {
+  // têm o aviso de 5-8 s de D5 (`throwEnemyGrenade`). `reserved`: a largada da granada preparada (a munição já foi gasta).
+  throwGrenade(customOrigin = null, customDir = null, { reserved = false } = {}) {
+    if (reserved && (customOrigin || !this.playerGrenadeAction || !Number.isFinite(this.playerGrenadeAction.releaseAt) || this.clock + 1e-8 < this.playerGrenadeAction.releaseAt)) return null;
+    if (!customOrigin && !reserved && (this.playerGrenadeAction || this.grenadeAmmo <= 0)) return null;
+    if (!customOrigin && !reserved) {
       this.grenadeAmmo--;
       openPendingContact(this, 'player_grenade');
     }
@@ -1844,21 +2156,37 @@ export class M02BenchSimulation {
     const len = Math.hypot(rawDir.x, rawDir.y, rawDir.z) || 1;
     const dir = { x: rawDir.x / len, y: rawDir.y / len, z: rawDir.z / len };
     const speed = 15.0;
+    // The player release follows the hand's view-frame endpoint. The direct
+    // calibration API retains its original .45 m ray. Both paths trace from
+    // the eye so a grenade cannot spawn on the far side of a solid wall.
+    let releaseDir=dir,releaseLength=.45;
+    if(reserved){
+      const right={x:-Math.sin(this.player.angle),y:0,z:Math.cos(this.player.angle)};
+      const up={x:-Math.cos(this.player.angle)*Math.sin(this.player.pitch),y:Math.cos(this.player.pitch),z:-Math.sin(this.player.angle)*Math.sin(this.player.pitch)};
+      const offset={x:dir.x*M02_GRENADE_RELEASE_VIEW.forward+right.x*M02_GRENADE_RELEASE_VIEW.right+up.x*M02_GRENADE_RELEASE_VIEW.up,
+        y:dir.y*M02_GRENADE_RELEASE_VIEW.forward+right.y*M02_GRENADE_RELEASE_VIEW.right+up.y*M02_GRENADE_RELEASE_VIEW.up,
+        z:dir.z*M02_GRENADE_RELEASE_VIEW.forward+right.z*M02_GRENADE_RELEASE_VIEW.right+up.z*M02_GRENADE_RELEASE_VIEW.up};
+      releaseLength=Math.hypot(offset.x,offset.y,offset.z);releaseDir={x:offset.x/releaseLength,y:offset.y/releaseLength,z:offset.z/releaseLength};
+    }
+    const obstruction=traceObstruction(this.world,eye,releaseDir,releaseLength);
+    const releaseDistance=obstruction?Math.max(0,obstruction.distance-.002):releaseLength;
 
     const g = {
       id: `gren_${++this.grenadeSeq}`,
-      x: eye.x + dir.x * 0.45,
-      y: eye.y + dir.y * 0.45,
-      z: eye.z + dir.z * 0.45,
+      x: eye.x + releaseDir.x * releaseDistance,
+      y: eye.y + releaseDir.y * releaseDistance,
+      z: eye.z + releaseDir.z * releaseDistance,
       vx: dir.x * speed,
       vy: dir.y * speed + 2.8,
       vz: dir.z * speed,
       spawnedAt: Number(this.clock.toFixed(3)),
       fuseAt: Number((this.clock + 2.0).toFixed(3)),
       exploded: false,
+      ...(reserved?{releaseView:{angle:this.player.angle,pitch:this.player.pitch}}:{}),
     };
+    if(reserved)this.playerGrenadeAction=null;
     this.grenades.push(g);
-    this.events.push({ type: 'grenade-thrown', grenade: { ...g }, clock: this.clock });
+    this.events.push({ type: 'grenade-thrown', grenade: { ...g }, clock: this.clock, throwerId: customOrigin ? null : this.player.id });
     return g;
   }
 
@@ -1879,7 +2207,7 @@ export class M02BenchSimulation {
     const affectedActors = [];
     const allActors = [this.player, ...this.allies, ...lastGroupTargets(this), ...this.enemies];
     for (const actor of allActors) {
-      if (!actor || !actor.alive || actor.detachedOutOfCell) continue; // fora da célula (J3): a explosão desta célula não o alcança
+      if (!m02ActorPresent(actor) || !actor.alive) continue; // fora da célula (J3), evacuado ou desaparecido: a explosão desta célula não o alcança
       const targetPt = { x: actor.x, y: actor.y + 0.95, z: actor.z };
       const dx = targetPt.x - center.x;
       const dy = targetPt.y - center.y;
@@ -1920,11 +2248,27 @@ export class M02BenchSimulation {
         if (isLastGroupMember(this, actor)) {
           markLastGroupHit(this, actor, { wasAlive: actorWasAlive, shooterId: meta?.thrownBy ?? null, cause: 'blast' });
         }
+        updateM02EvacuationWound(this,actor);
+        if(actor===this.player&&actor.health<=0){this.cancelPlayerGrenade();this.playerWaterAction=null;}
+        if(actor.m02GrenadeThreat)m02ClearIncapableGrenadeThreat(actor);
         affectedActors.push({ id: actor.id, blockedByWall: false, damage, alive: actor.alive });
+        if(damage>0)recordM02Hit(actor,this.clock,center);
       }
     }
 
     this.syncCalibrationAndEnemies();
+    if(this.activeCellId==='B'&&this.areaB?.supplyCart){
+      const cart=this.areaB.supplyCart,dx=cart.x-center.x,dz=cart.z-center.z,distance=Math.hypot(dx,dz);
+      const blocked=distance>.2&&traceObstruction(this.world,center,{x:dx/distance,y:0,z:dz/distance},Math.max(0,distance-.2));
+      if(!blocked&&distance<radius*.75)this.damageCartWheel();
+      for(const volume of cart.volumes){
+        if(volume.delivered||volume.lost)continue;
+        const vx=volume.x-center.x,vz=volume.z-center.z,reach=Math.hypot(vx,vz);
+        const occluded=reach>.2&&traceObstruction(this.world,center,{x:vx/reach,y:0,z:vz/reach},Math.max(0,reach-.2));
+        if(!occluded&&reach<radius*.35)this.loseSupplyVolume(volume.id);
+      }
+    }
+
     const blastRecord = {
       type: 'grenade-exploded',
       center,
@@ -2046,34 +2390,18 @@ export class M02BenchSimulation {
     }
   }
 
-  updateGrenades(dt) {
+  updateGrenades(dt, justReleasedId = null) {
     for (const g of this.grenades) {
       if (g.exploded) continue;
-      const nx = g.x + g.vx * dt;
-      const ny = g.y + g.vy * dt;
-      const nz = g.z + g.vz * dt;
-      const stepDist = Math.hypot(nx - g.x, ny - g.y, nz - g.z);
-      if (stepDist > 1e-5) {
-        const dir = { x: (nx - g.x) / stepDist, y: (ny - g.y) / stepDist, z: (nz - g.z) / stepDist };
-        const obs = traceObstruction(this.world, { x: g.x, y: g.y, z: g.z }, dir, stepDist);
-        if (obs) {
-          g.vx *= -0.32;
-          g.vz *= -0.32;
-        } else {
-          g.x = nx;
-          g.z = nz;
-        }
-      }
-      const floorY = this.world.heightAt(g.x, g.z) + 0.08;
-      if (ny <= floorY) {
-        g.y = floorY;
-        g.vy = Math.abs(g.vy) * 0.25;
-        g.vx *= 0.65;
-        g.vz *= 0.65;
-      } else {
-        g.y = ny;
-        g.vy -= 9.81 * dt;
-      }
+      // The new projectile is created at this tick's end, so no part of this
+      // tick's elapsed time belongs to it. Existing and restored projectiles
+      // keep the original integration, including legacy rounded timestamps.
+      if(g.id===justReleasedId)continue;
+      const impact=stepM02Grenade(this.world,g,dt);
+      // Sub-threshold contacts include resting/settling and must not create a
+      // continuous rattle or consume the presentation's limited voice pool.
+      if(impact&&impact.speed>=1.2)this.events.push({type:'grenade-bounced',grenadeId:g.id,
+        point:impact.point,material:impact.material,speed:impact.speed,clock:Number(this.clock.toFixed(3))});
 
       if (this.clock >= g.fuseAt) {
         g.exploded = true;
@@ -2233,7 +2561,7 @@ export class M02BenchSimulation {
       // #runCheckpointBatch) e a transição já não se repete; assim o tick seguinte volta a pedi-lo, como no caminho COMPLETE (FIX-2c).
       if (!this.checkpointReachedOrPending('cp_m02_b_acesso')) due.push('cp_m02_b_acesso');
       this.objective.id = 'C04';
-      this.objective.title = 'C04 (Pomar Sul): Reagrupar junto ao poço/pomar e sinalizar o ferido [E]';
+      this.objective.title = 'C04 (Pomar Sul): Reagrupar e avançar; ajudar o ferido é opcional';
       this.objective.status = 'active';
     } else if (mgNeutralized || b01DefendersDown) {
       this.objective.id = 'O03';
@@ -2243,7 +2571,7 @@ export class M02BenchSimulation {
       this.routeProgress.activeRoute !== 'none' ||
       this.routeProgress.visitedBuildings.B01 ||
       pz > -62 ||
-      this.allies.some((a) => a.z > -62)
+      this.allies.some((a) => a.alive && m02ActorPresent(a) && a.z > -62)
     ) {
       this.objective.id = 'O02';
       this.objective.title =
@@ -2384,8 +2712,12 @@ export class M02BenchSimulation {
   }
 
   #stepBody(dt, controls) {
+    const previousClock=this.clock;
     this.clock += dt;
     const nowMs = this.clock * 1000;
+    const preparingGrenade=Boolean(this.playerGrenadeAction);
+    if(this.playerWaterAction&&(Math.hypot(controls.forward??0,controls.side??0)>.1||controls.fire||controls.grenade||
+      !this.currentWoundedWaterPrompt({duringHandoff:true})))this.playerWaterAction=null;
 
     if (controls.lookX) this.player.angle += controls.lookX;
     if (controls.lookY) {
@@ -2397,14 +2729,16 @@ export class M02BenchSimulation {
       this.player.eyeHeight = this.player.crouched ? 1.08 : EYE_HEIGHT;
     }
 
-    this.player.aiming = Boolean(controls.aim);
+    this.player.aiming = !preparingGrenade&&Boolean(controls.aim);
     const forward = controls.forward ?? 0;
     const side = controls.side ?? 0;
     const inputLen = Math.hypot(forward, side);
+    const movementStartX=this.player.x,movementStartZ=this.player.z;
     this.player.moving = inputLen > 1e-3;
     this.player.sprinting =
-      Boolean(controls.sprint) && !this.player.crouched && !this.player.aiming && forward > 0.1;
+      !preparingGrenade&&Boolean(controls.sprint) && !this.player.crouched && !this.player.aiming && forward > 0.1;
 
+    let landing;
     if (this.player.moving) {
       const nf = forward / Math.max(1, inputLen);
       const ns = side / Math.max(1, inputLen);
@@ -2417,27 +2751,55 @@ export class M02BenchSimulation {
       const sin = Math.sin(this.player.angle);
       const dx = (cos * nf - sin * ns) * speed * dt;
       const dz = (sin * nf + cos * ns) * speed * dt;
-      const landing = movePlayer(this.world, this.player, dx, dz, dt);
-      if (landing && landing.damage > 0) {
-        this.player.health = Math.max(0, this.player.health - landing.damage);
-        this.events.push({ type: 'player-landing', ...landing, clock: this.clock });
-      }
-    } else if (this.player.fall) {
-      movePlayer(this.world, this.player, 0, 0, dt);
+      landing = movePlayer(this.world, this.player, dx, dz, dt);
+    } else {
+      landing = movePlayer(this.world, this.player, 0, 0, dt);
+    }
+    if (landing && landing.damage > 0) {
+      this.player.health = Math.max(0, this.player.health - landing.damage);
+      this.events.push({ type: 'player-landing', ...landing, clock: this.clock });
     }
 
     this.weapon.update(nowMs);
-    if (controls.reload) this.weapon.reload(nowMs);
-    if (controls.sight) this.weapon.adjustSight();
-    if (controls.interact) this.interactDoor();
-    if (controls.fire) this.firePlayerWeapon(true);
-    if (controls.grenade) this.throwGrenade();
+    if (this.playerGrenadeAction?.waitingForReload && !this.weapon.reloading) {
+      this.playerGrenadeAction = { startedAt: this.clock, releaseAt: this.clock + M02_GRENADE_PREPARE_SECONDS };
+    }
+    this.player.moving = Math.hypot(this.player.x - movementStartX, this.player.z - movementStartZ) > 1e-5;
+    if (!this.player.moving) this.player.sprinting = false;
+    if (this.player.health <= 0 || this.player.carryingVolumeId) this.cancelPlayerGrenade();
+    // C04 (Codex 5e8bbdbe/34216645): dar água ao ferido é opcional, parado e de mãos livres; dura M02_WATER_HANDOFF_SECONDS.
+    if (!preparingGrenade && controls.giveWater && !controls.fire && !controls.grenade && !controls.reload && inputLen <= 0.1) this.giveWoundedWater();
+    const preparingWater = Boolean(this.playerWaterAction);
+    if (preparingWater) {
+      this.player.aiming = false;
+      this.player.sprinting = false;
+    }
+    const handsFree = !preparingGrenade && !preparingWater;
+    if (handsFree && controls.reload) this.weapon.reload(nowMs);
+    if (handsFree && controls.sight) this.weapon.adjustSight();
+    if (handsFree && controls.interact) this.interactDoor();
+    // Fogo pelos controlos: dispersão M01 (anca/mira/movimento, Codex 702ced95); o raio exato fica para a bancada de calibração.
+    const shot = handsFree && controls.fire ? this.firePlayerWeapon(false) : null;
+    if (handsFree && controls.grenade && !shot && this.preparePlayerGrenade()) {
+      this.player.aiming = false;
+      this.player.sprinting = false;
+    }
+    // A largada só acontece quando o instante reservado é atravessado no relógio da missão: uma vez só, com pausa, frames lentos
+    // ou restauro de checkpoint.
+    const action = this.playerGrenadeAction;
+    if (this.playerWaterAction && this.clock + 1e-8 >= this.playerWaterAction.finishAt) this.finishWoundedWater();
+    if (preparingGrenade && action && !action.waitingForReload && action.startedAt > previousClock + 1e-8 && action.startedAt <= this.clock + 1e-8)
+      this.events.push({ type: 'grenade-handling-started', throwerId: this.player.id, clock: this.clock });
+    const released =
+      this.playerGrenadeAction && !this.playerGrenadeAction.waitingForReload && this.clock + 1e-8 >= this.playerGrenadeAction.releaseAt
+        ? this.throwGrenade(null, null, { reserved: true })
+        : null;
     if (controls.orderCover) this.issueSquadOrder('cover');
     if (controls.orderAdvance) this.issueSquadOrder('advance');
 
     runUpdateC01Contact(this);
     runUpdateAreaBContact(this);
-    this.updateGrenades(dt);
+    this.updateGrenades(dt, released?.id);
     this.#updateHazardBlasts();
     updatePolishSquad(this, dt);
     updateGermanGarrison(this, dt);
@@ -2450,6 +2812,7 @@ export class M02BenchSimulation {
     this.dialogue.update(this);
     this.audiovisual.update(this, dt);
     this.updateTacticalContext();
+    if (this.playerWaterAction && !this.currentWoundedWaterPrompt({ duringHandoff: true })) this.playerWaterAction = null;
     this.#evaluateMissionFailure();
     runUpdateScript(this);
 
@@ -2685,6 +3048,8 @@ export class M02BenchSimulation {
       grenades: structuredClone(this.grenades),
       grenadeSeq: this.grenadeSeq,
       doorLocks: Object.fromEntries([...this.doorLocks.entries()].map(([id, lock]) => [id, { ...lock }])),
+      ...(this.playerGrenadeAction?{playerGrenadeAction:structuredClone(this.playerGrenadeAction)}:{}),
+      ...(this.playerWaterAction?{playerWaterAction:structuredClone(this.playerWaterAction)}:{}),
       c01Active: this.c01Active,
       c01StartedAt: this.c01StartedAt,
       c01Contact: structuredClone(this.c01Contact),
@@ -2756,6 +3121,9 @@ export class M02BenchSimulation {
       grenadeAmmo: snap.grenadeAmmo,
       grenades: snap.grenades,
       grenadeSeq: snap.grenadeSeq,
+      // Codex: granada preparada na mão e água a ser dada em C04 (campos aditivos; ausentes = nenhuma ação em curso).
+      playerGrenadeAction: snap.playerGrenadeAction ?? null,
+      playerWaterAction: snap.playerWaterAction ?? null,
       doorLocks: snap.doorLocks,
       c01Active: Boolean(snap.c01Active),
       c01StartedAt: snap.c01StartedAt ?? 0,
@@ -2831,6 +3199,8 @@ export class M02BenchSimulation {
     this.grenadeAmmo = p.grenadeAmmo;
     this.grenades = p.grenades;
     this.grenadeSeq = p.grenadeSeq;
+    this.playerGrenadeAction = p.playerGrenadeAction;
+    this.playerWaterAction = p.playerWaterAction;
     this.doorLocks = new Map(Object.entries(p.doorLocks));
     this.c01Active = p.c01Active;
     this.c01StartedAt = p.c01StartedAt;
