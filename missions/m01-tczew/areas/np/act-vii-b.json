@@ -274,12 +274,12 @@
       -425,
       -1052
     ],
-    "pace": 2.2,
+    "pace": 2.1,
     "runPace": 4.4,
     "maxCasualties": 2,
     "pickupM": 1.4,
     "classification": "GAMEPLAY_DRAMATIZATION",
-    "note": "Dois maqueiros fictícios, só NPC (o jogador nunca transporta ninguém): vêm do sul para o homem da linha ferido, um leva-o ao ombro (a animação de transporte existente) e ambos saem pela borda sul, onde deixam de existir. No máximo dois feridos por ato."
+    "note": "Dois maqueiros fictícios, só NPC (o jogador nunca transporta ninguém): vêm do sul para o homem da linha ferido, levantam-no numa maca e levam-no em linha (o segundo a 2 m atrás do primeiro, o ferido deitado entre os dois, nas posições onde as balas os encontram) e ambos saem pela borda sul, onde deixam de existir. No máximo dois feridos por ato. O passo do transporte (pace, m/s) é um número de jogo: 2,2 até 2026-11-04, 2,1 desde a maca em linha (README do INC-2, errata de 2026-11-05)."
   },
   "groups": [
     {
