@@ -5,6 +5,8 @@
 > Não atribui um número global de schema (PDF I5: «não atribuir um número de schema global unilateralmente»).
 > Base: branch da M02-FIX-2, a partir de `03387a3`.
 
+> **Correção para a integração das branches (2026-11-05):** a candidata `codex/m02-recovery-v1` persistiu snapshots v1 em `localStorage` na chave `cod-guerra:checkpoint:m02:v1`, embrulhados em `{version:1,id,snapshot}`. O seu snapshot atual contém `rngState`; não se pode afirmar que todos os v1 existiram apenas em memória ou que todos omitem o estado aleatório. Saves mais antigos podem omiti-lo. A loja v2 desta branch ainda os rejeita. A migração tem de verificar versão, estado aleatório, dados e diferenças entre simulações antes de restaurar; não basta renomear o schema, e a chave original tem de ser preservada mesmo em caso de erro.
+
 ## 1. Situação atual: três formatos e dois gestores
 
 | Formato | Onde | Chave de armazenamento | Forma | Carregamento |
@@ -58,7 +60,7 @@ Correção necessária antes de migrar: `exportCampaignResultToM03` **escreve** 
 
 1. **M01 schema 2 e schema 3**: continuam a carregar exatamente como hoje, com despacho por `schema` antes de qualquer simulação. O envelope comum só se aplica a **gravações novas** depois de D-M02-4. Para leitura, um adaptador `lift(raw)` embrulha o formato antigo no envelope em memória, sem reescrever os bytes guardados.
 2. **M02 `cod-guerra-m02-bench-save` v2**: adaptador que embrulha cada snapshot: `missionId:'M02'`, `actId` a partir de `activeCellId`, `checkpointId`, cópias de `rng` e `narrative`, e o snapshot em `payload`.
-3. **M02 snapshot v1** (`m02-01-bench-snapshot-v1`, desta bancada): sem suporte. Nunca foi persistido por esta bancada (os checkpoints v1 viviam só em memória). Sem o estado do gerador, um restauro v1 não é determinístico. A FIX-2 rejeita-o com um erro explícito. **Atenção:** a versão Codex da bancada gravou snapshots v1 *no navegador*; esses são outra coisa e estão protegidos (ver §8).
+3. **M02 snapshot v1** (`m02-01-bench-snapshot-v1`): a FIX-2 rejeita-o com um erro explícito. Esta bancada nunca o persistiu (os seus checkpoints v1 viviam só em memória), mas a candidata Codex gravou v1 *no navegador* (`cod-guerra:checkpoint:m02:v1`), alguns com `rngState`; resta avaliar compatibilidade e migração sem perda. Se o estado do gerador faltar, não se pode garantir uma continuação determinística. Esses saves estão protegidos e só são inspecionados em modo só-de-leitura (ver §8).
 4. **Ponte v1 → `carry`**: conversão num só sentido, só para pacotes gerados em memória (não há pacotes persistidos).
 5. **Chaves**: proposta de um namespace de campanha (`cod-guerra:campaign:<slot>` + `:previous` + `:staging`). As chaves antigas ficam só para leitura, como alternativa. Nunca são apagadas automaticamente.
 
@@ -106,6 +108,7 @@ Esta proposta favorece **A**, faseada: primeiro o `carry` puro da M02 (corrige a
 - `M02SaveStore` só lê, escreve e apaga os **três slots exatos** da v2. Nenhum caminho (gravação F5, checkpoints automáticos em lote, restauro, F9, `clear()`/`clearPersistedSaves()`, loja bloqueada) enumera ou limpa chaves por prefixo; o teste prova com um armazenamento falso que regista todos os acessos que `cod-guerra:checkpoint:m02:v1` e as chaves da M01 (`cod-guerra:checkpoint:m01:*`, `cod-guerra:checkpoint:v1`) ficam byte a byte iguais e nunca são lidas como save v2.
 - O construtor da loja recusa uma chave base no espaço `cod-guerra:checkpoint:*` (colidiria com a M01 e com o Codex).
 - `M02SaveStore.detectForeignSaves()` é a única leitura destas chaves e é **só-de-leitura**: devolve `[{ key, bytes, looksLikeV1 }]` para `cod-guerra:checkpoint:m02:*` (a chave v1 conhecida é sempre verificada pelo nome; as outras só se o armazenamento souber enumerar). `looksLikeV1` é um rótulo (formato `{version:1, id, snapshot}` ou snapshot com `schema` `…-v1` / `rngState`), não uma validação. A bancada (`src/m02/m02-01-main.js`) só faz `console.info` do resultado e expõe `detectForeignSaves()` na API de teste.
+- `src/game/m02-legacy-save-inspection.js` (`inspectCodexLegacySave(storage)`, do Codex, `tests/m02-legacy-save-inspection.test.js`) é uma segunda leitura só-de-leitura e mais fina da mesma chave: distingue `unavailable`, `missing`, `invalid`, `unsupported` e `requires-review` (com `checkpointId` e `hasRngState`). Nunca grava nem apaga; detetar não é validar nem migrar.
 - O texto de confirmação de «Limpar saves da bancada» diz que só apaga a chave `cod-guerra:m02:bench:v2` e que não toca na M01 nem noutras versões da M02.
 
 ### O que falta analisar (antes de qualquer migração)

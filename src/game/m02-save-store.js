@@ -2,9 +2,10 @@
 //   - Schema v2 do snapshot: identidade da missão, semente e estado do gerador, data narrativa, versão do layout da célula.
 //     Um snapshot v1 (`m02-01-bench-snapshot-v1`, sem `rng`) é REJEITADO com erro explícito, sem migração: o estado do
 //     gerador não pode ser reconstruído sem inventar uma continuação diferente, e nenhum save v1 DESTA bancada foi alguma vez
-//     persistido (os checkpoints v1 viviam só num Map em memória da sessão). Os snapshots v1 que a versão Codex gravou no
-//     navegador (`cod-guerra:checkpoint:m02:v1`) são de outra bancada: esta loja nunca os lê como v2 nem os toca (ver
-//     M02_CODEX_V1_SAVE_KEY e `detectForeignSaves()`, só-de-leitura).
+//     persistido (os checkpoints v1 viviam só num Map em memória da sessão). Atenção: a candidata Codex persistiu saves v1 no
+//     navegador (`cod-guerra:checkpoint:m02:v1`), alguns com `rngState`; a compatibilidade exige migração analisada e testada.
+//     Esta loja nunca os lê como v2, nunca os toca e nunca apaga a chave antiga para os substituir (ver M02_CODEX_V1_SAVE_KEY,
+//     `detectForeignSaves()` e src/game/m02-legacy-save-inspection.js, ambos só-de-leitura).
 //   - M02SaveStore: adaptador de armazenamento injetável (getItem/setItem/removeItem). No browser usa localStorage quando existe
 //     e responde; em Node usa memória (uma instância por loja, sem fugas entre simulações). Escrita em três passos:
 //     slot `:staging` → reler e validar → promover (o save confirmado anterior passa a `:previous`). Dados corrompidos são
