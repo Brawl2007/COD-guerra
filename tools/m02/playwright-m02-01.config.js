@@ -9,7 +9,7 @@ const port = process.env.PORT || '4273';
 export default defineConfig({
   testDir: path.join(repoRoot, 'tests/browser'),
   // The M02 specs run only from this config (the main playwright.config.js ignores m02-*.spec.js).
-  testMatch: ['m02-01-quinta.spec.js', 'm02-n0-captures.spec.js', 'm02-n0-route-videos.spec.js'],
+  testMatch: ['m02-01-quinta.spec.js', 'm02-n0-captures.spec.js', 'm02-n0-route-videos.spec.js', 'm02-28-save-reload.spec.js'],
   // All artefacts stay under test-results/ (ignored by version control).
   outputDir: path.join(repoRoot, 'test-results', 'm02-playwright'),
   fullyParallel: false,
