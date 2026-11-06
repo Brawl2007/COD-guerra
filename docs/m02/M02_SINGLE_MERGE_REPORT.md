@@ -150,6 +150,57 @@ vazio. `index.html`, `vite.config.js`, `src/core/audio.js`, `src/core/battlefiel
   - os sólidos de teste entram também em `sightOpaqueObstacles` (vista N0);
   - em `m02-machinegun-team` o contacto C06 abre-se no fixture.
 
-## 7. Resultados reais e pendências
+## 7. Resultados reais (código de `46b89f0f`) e pendências
 
-Ver o relatório final do agente (contagens exatas, testes ainda vermelhos e causas). Builds: `npm run build` e `npm run build:m02` OK.
+- **Builds:** `npm run build` OK e `npm run build:m02` OK, com o aviso de chunk grande que já existia.
+- **Node:** `node --test --test-concurrency=1` nas duas metades de `tests/m02-*.test.js`: **861 testes, 831 passam, 30 falham.**
+  - `m02-[0-2]*`: 362 testes, 360 passam;
+  - `m02-[a-z]*`: 499 testes, 471 passam.
+  - O conjunto continua **vermelho**, por isso a M02 única ainda não pode ser promovida.
+- **Browser:** `CI=1 CHROME_EXECUTABLE=/opt/pw-browsers/chromium PORT=4395 npx playwright test -c tools/m02/playwright-m02-01.config.js`
+  deu **8 passam e 1 falha** (15,9 min, SwiftShader).
+  - Passam, entre outros: arranque e balística, o teste do Codex «reuses loaded M01 GLB rigs and viewmodel» no renderer desta
+    linha, save/reload real, os 30 conjuntos N0, os vídeos de rota e o painel de falha por toque.
+  - Falha `m02-touch.spec.js:118`: o stick no fim do curso já não dá `sprinting`. Com o Codex, `sprinting` só fica ativo com
+    deslocação real, e o Piotr do teste estava bloqueado. Falta confirmar e ajustar.
+
+### Testes ainda vermelhos (30) e causa provável
+
+**A. Calibração D desta linha com o modelo de combate fundido (15).** O modelo inclui as rajadas ronda a ronda, a supressão só
+para rondas a ≤ 3 m do alvo, as reações a granadas e as outras regras de IA do Codex.
+
+- `m02-d4-squad-orders`: são 5 (prova de 60 s: tiros ≥ 50, impactos ≥ 4, dano > 200, Piotr abrigado vivo).
+- `m02-d4-autonomy-limits`: semente 2, a quinta cai sozinha aos 17 s.
+- `m02-d1-mission-failed`: são 5, porque o cenário em que Piotr morre a tiro já não o mata.
+- `m02-c06-entry-window` (controlo: EB1 acerta em Piotr) e `m02-c09-section-advance` (precondição da trela).
+- `m02-27-o2-com01-ammo`: a MG34 não esgota a dotação em 130 s.
+- `m02-09` n.º 6: falta a precondição «porta reservada aos 25 s».
+- **Decisão pendente do Capitão:**
+  - (a) recalibrar os cenários e limiares D com o modelo causal; ou
+  - (b) voltar a rajadas atómicas (combate D desta linha) e ajustar os testes do Codex que dependem da rajada causal (clearance
+    por ronda, áudio por ronda).
+  - Não se removeu nenhuma asserção.
+
+**B. Testes do Codex que dependem de partes não ligadas ou excluídas (15).**
+
+- **Geometria (`m02-cover-dressing`, 2):** trincheira de P1 a −0,42 m e parapeito do EA0, que não foram integrados.
+- **Iluminação (`m02-lighting`, 1):** o preset noturno do Codex (2,25) contra o TIME-01 desta linha (0,36).
+- **Contacto com Lis:**
+  - `m02-lis-contact` (2): o contacto por proximidade desta linha (J3) contra o contacto só explícito do Codex;
+  - `m02-playable-continuity` n.º 192: caminhada amparada.
+- **`m02-playable-continuity`, outros dois:**
+  - n.º 186: o atraso fixo de reação, excluído;
+  - n.º 190: um save de formato Codex com `doorLocks` em lista e a porta `portal`, recusado pelo validador v2 (correto: formato
+    estrangeiro).
+- **Personagens e recargas:**
+  - `m02-npc-reload-audio` (1) e `m02-presentation`/`m02-reconstruction` n.º 201/207: clips de recarga e cues;
+  - `m02-reconstruction` n.º 210/211/212: exposição em cobertura baixa, Lis amparado com velocidade 2,6, boca obstruída na
+    balística.
+- **`m02-completion-flag` (1):** reparação de saves antigos do Codex, cujos checkpoints intermédios marcavam `completed`.
+
+### Próxima ação recomendada
+
+1. Decisão do Capitão sobre o modelo de rajada e a calibração D (A).
+2. Para cada teste B, ligar a peça visual do Codex ao renderer, ajustando o teste com justificação, ou registar a exclusão como decisão.
+3. Ligar o ambiente/iluminação/FX do Codex. Isto exige verificação visual N0, e só depois se pode pensar no iPhone e em playtest humano.
+4. Decidir as alterações partilhadas da secção 4 com o Capitão M01.
