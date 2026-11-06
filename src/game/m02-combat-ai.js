@@ -1,5 +1,6 @@
 import { eyePosition } from '../world/spatial.js';
 import { movePlayer, PLAYER_PHYSICS } from '../world/m01-player-physics.js';
+import cellsBCLayout from '../../missions/m02-bzura/m02-cells-bc-layout.json' with { type: 'json' };
 
 /**
  * Arredonda a `digits` casas SEM devolver -0 (Number((-0.001).toFixed(2)) é -0). O JSON do save não representa -0 e o
@@ -671,7 +672,13 @@ function normalizeAngleDiff(a, b) {
  * que as guardasse é restaurado como `auto`.
  * Uma ordem escolhe uma posição âncora (um nó de cobertura do layout da Área A, longe dos hostis e alcançável por Piotr) e atribui
  * a cada elemento da equipa de assalto (Gruca, Lis, Wierzba, Małek) um nó distinto à volta dela; quem fica sem nó mantém a posição.
- * O auxiliar do rkm e o sanitário seguem o seu próprio papel. As Áreas B e C não têm nós de cobertura no layout: sem ordens aí.
+ * O auxiliar do rkm e o sanitário seguem o seu próprio papel.
+ * ÁREAS B E C (mesmo contrato): o layout de B e de C não tem `coverNodes` como a Área A, por isso as posições válidas são os NÓS DERIVADOS
+ * DA COBERTURA EXISTENTE da célula (ver ORDER_NODES): as posições do plano da secção já usadas em B (B_PLAN_NODES) e em C (C09_PLAN_NODES,
+ * C_EVAC_NODES) e, por cada cobertura baixa do layout (`covers`: muros, barricada, carroça), lugares atrás dela, do lado da entrada da
+ * célula, a 2,5 m uns dos outros (B_COVER_SLOTS/C_COVER_SLOTS). Tudo o resto é igual à Área A: «cobrir aqui» à cobertura mais próxima de
+ * Piotr, «avançar para ali» à frente da mira, posições com um hostil a menos de 6 m ou sem caminho para Piotr são recusadas, a equipa
+ * de assalto ocupa nós à volta da âncora, a ordem caduca com o que Piotr faz e ao mudar de célula (`cellId` da ordem) e vive no snapshot.
  */
 export const SQUAD_ORDER_TYPES = Object.freeze(['auto', 'cover', 'advance']);
 export const LEGACY_SQUAD_ORDER_TYPES = Object.freeze(['suppress', 'flank_east']);
@@ -701,17 +708,19 @@ export const SQUAD_ORDER_REJECTION_TEXT = Object.freeze({
   inalcancavel: 'posição inalcançável',
 });
 
-/** Posições válidas para as ordens do jogador: os nós de cobertura da Área A em uso (corredor de C01 ou quinta), sem hostis em cima. */
+/**
+ * Posições válidas para as ordens do jogador, sem hostis em cima: na Área A os nós de cobertura em uso (corredor de C01 ou quinta); em B e
+ * C os nós derivados da cobertura existente da célula (ORDER_NODES).
+ */
 export function squadOrderPositions(sim) {
-  if (sim.activeCellId !== 'A') return [];
+  const taken = (node) =>
+    sim.enemies.some((e) => e.alive && !e.nonCombatant && Math.hypot(e.x - node.x, e.z - node.z) < SQUAD_ORDER_ENEMY_CLEARANCE_M);
+  if (sim.activeCellId !== 'A') return orderNodesOf(sim.activeCellId).filter((node) => !taken(node));
   const out = [];
   for (const node of sim.coverNodesById.values()) {
     if (node.id.startsWith('cv_c01_') !== Boolean(sim.c01Active)) continue;
     if (node.id === 'cv_c01_outpost_clear') continue; // o posto EA0 ainda é dos hostis
-    const taken = sim.enemies.some(
-      (e) => e.alive && !e.nonCombatant && Math.hypot(e.x - node.x, e.z - node.z) < SQUAD_ORDER_ENEMY_CLEARANCE_M,
-    );
-    if (!taken) out.push(node);
+    if (!taken(node)) out.push(node);
   }
   return out;
 }
@@ -775,7 +784,8 @@ export function resolveSquadOrder(sim, type, target = null) {
 
   const team = SQUAD_ORDER_ASSAULT_TEAM.filter((id) => {
     const a = sim.allies.find((x) => x.id === id);
-    return a && a.alive && !['DOWN', 'EVACUATED', 'MISSING'].includes(a.state) && !a.detachedOutOfCell;
+    // (só quem está ativo: Lis ferido a regressar ou amparado em C11 tem o percurso do diretor da Área C e não obedece a ordens)
+    return a && a.alive && a.state === 'ACTIVE' && !a.detachedOutOfCell;
   });
   const around = nearestPositions(positions, anchor, SQUAD_ORDER_GROUP_M); // a âncora é a primeira (distância 0)
   const assignments = {};
@@ -784,7 +794,7 @@ export function resolveSquadOrder(sim, type, target = null) {
   });
   return {
     ok: true,
-    order: { type, axis: null, issuedAt, nodeId: anchor.id, x: anchor.x, z: anchor.z, assignments },
+    order: { type, axis: null, issuedAt, nodeId: anchor.id, x: anchor.x, z: anchor.z, assignments, cellId: sim.activeCellId },
   };
 }
 
@@ -796,7 +806,7 @@ function lapseSquadOrder(sim) {
   if (!order || order.type === 'auto') return;
   const d = Math.hypot(sim.player.x - order.x, sim.player.z - order.z);
   let reason = null;
-  if (sim.activeCellId !== 'A') reason = 'celula_mudou';
+  if ((order.cellId ?? 'A') !== sim.activeCellId) reason = 'celula_mudou'; // as ordens só valem na célula em que foram dadas
   else if (order.type === 'cover' && d > SQUAD_ORDER_SNAP_M + SQUAD_ORDER_COVER_LAPSE_EXTRA_M) reason = 'piotr_afastou_se';
   else if (order.type === 'advance' && d < SQUAD_ORDER_ARRIVED_M) reason = 'piotr_chegou';
   if (!reason) return;
@@ -812,10 +822,11 @@ function lapseSquadOrder(sim) {
  */
 function squadOrderGoalFor(sim, ally) {
   const order = sim.squadOrder;
-  if (!order || order.type === 'auto' || sim.activeCellId !== 'A' || !SQUAD_ORDER_ASSAULT_TEAM.includes(ally.id)) return null;
+  if (!order || order.type === 'auto' || (order.cellId ?? 'A') !== sim.activeCellId || !SQUAD_ORDER_ASSAULT_TEAM.includes(ally.id)) return null;
+  if (ally.state !== 'ACTIVE') return null; // Lis ferido a regressar (C11): o percurso é do diretor da Área C
   const nodeId = order.assignments?.[ally.id];
   if (!nodeId) return ORDER_HOLD;
-  const node = sim.coverNodesById.get(nodeId);
+  const node = sim.activeCellId === 'A' ? sim.coverNodesById.get(nodeId) : orderNode(sim.activeCellId, nodeId);
   if (!node) return null;
   return { x: node.x, z: node.z, facing: node.facing, crouch: node.crouch, nodeId };
 }
@@ -1049,7 +1060,7 @@ export const SECTION_SUPPORT_NODES = Object.freeze([
  *   (< C09_WOUNDED_HEALTH) não vai: fica com Gruca. Quem fica fora da trela (D4) também não: fixa e suprime onde está (`holdingFor`,
  *   `section_holding`), por isso com Piotr parado a secção fixa a oficina mas não toma o pátio nem B09/B11.
  * Mesma trela da quinta: posições de apoio a SECTION_LEASH_M de Piotr, de assalto a SECTION_ASSAULT_LEASH_M. As ordens do jogador
- * («cobrir aqui», «avançar para ali») continuam só na Área A: as Áreas B e C não têm nós de cobertura de ordem.
+ * («cobrir aqui», «avançar para ali») também valem aqui: mandam na equipa de assalto sem trela (ORDER_NODES).
  * VALORES SEM FONTE NO PDF: as coordenadas dos nós (escolhidas pelo mapa de exposição da própria geometria), a ordem das faixas e o
  * limiar de ferido (o de C07).
  */
@@ -1097,6 +1108,105 @@ export const C09_MANEUVER_TARGETS = Object.freeze({
 
 /** Nó do plano (cell A: layout; cell C: C09_PLAN_NODES). */
 const planNode = (sim, nodeId) => sim.coverNodesById.get(nodeId) ?? C09_PLAN_NODES[nodeId] ?? null;
+
+/**
+ * Posições do plano da secção na Área B (C06): avanço por lanços da entrada a sul até ao cruzamento de B05/B06. Antes literais dentro de
+ * updatePolishSquad; agora a fonte única do plano e das ordens do jogador (D4: ORDER_NODES).
+ */
+const bnode = (x, z, facing, crouch = true) => Object.freeze({ x, z, facing, crouch });
+export const B_PLAN_NODES = Object.freeze({
+  cv_b_west_wall: bnode(-18.0, 10.0, -Math.PI / 2),
+  cv_b05_south: bnode(-32.0, -12.0, -Math.PI / 2, false),
+  cv_b_south_barricade: bnode(-6.0, 50.0, -Math.PI / 2),
+  cv_b_west_wall_2: bnode(-22.0, 10.5, -Math.PI / 2),
+  cv_b07_aid: bnode(-38.0, 38.0, 0),
+  cv_b_east_cart: bnode(11.5, 6.5, -Math.PI / 2),
+  cv_b_east_cart_2: bnode(14.0, 6.8, -Math.PI / 2),
+});
+export const B_PLAN_ROLES = Object.freeze({
+  pl_gruca: 'cv_b_west_wall',
+  pl_wierzba: 'cv_b05_south',
+  pl_lis: 'cv_b_south_barricade',
+  pl_malek: 'cv_b_west_wall_2',
+  pl_szymczak: 'cv_b07_aid',
+  pl_aux_01: 'cv_b_east_cart',
+  pl_aux_02: 'cv_b_east_cart_2',
+});
+/** Posições da secção em C10-C11 (cobrir a evacuação B09 → B12). */
+export const C_EVAC_NODES = Object.freeze({
+  cv_c_evac_gruca: c9(-32, 18, 0.4),
+  cv_c_b09_east: c9(-14, -4, 0.3),
+  cv_c_evac_malek: c9(-46, 36, 0.5),
+  cv_c_b12_aid: Object.freeze({ x: -56, z: 46, facing: -Math.PI / 2, crouch: false }),
+  cv_c_yard_rkm: c9(-6, -11.5, 0.5),
+  cv_c_yard_rkm_2: c9(-4, -11.5, 0.5),
+});
+export const C_EVAC_ROLES = Object.freeze({
+  pl_gruca: 'cv_c_evac_gruca',
+  pl_wierzba: 'cv_c_b09_east',
+  pl_malek: 'cv_c_evac_malek',
+  pl_szymczak: 'cv_c_b12_aid',
+  pl_aux_01: 'cv_c_yard_rkm',
+  pl_aux_02: 'cv_c_yard_rkm_2',
+});
+/** Objetivo de plano {x, z, facing, crouch, nodeId} de um nó (objeto novo: o ator guarda-o e o snapshot copia-o). */
+const goalOfNode = (nodeId, node) => ({ x: node.x, z: node.z, facing: node.facing, crouch: node.crouch, nodeId });
+
+/**
+ * D4, Áreas B e C: lugares atrás de cada cobertura baixa do layout (`covers`, altura >= 1 m: de joelhos, ficam abrigados), do lado da
+ * entrada da célula (a posição de Piotr ao entrar), ao longo do eixo maior, a COVER_SLOT_SPACING_M uns dos outros (no máximo 3), de cara
+ * para a cobertura. Derivados dos dados do layout ao carregar o módulo: determinísticos e independentes do estado (um save guarda só o id).
+ * VALORES SEM FONTE NO PDF: 2,5 m entre lugares, 0,9 m atrás da cobertura, 3 lugares no máximo, altura mínima de 1 m.
+ */
+export const COVER_SLOT_SPACING_M = 2.5;
+export const COVER_SLOT_OFFSET_M = 0.9;
+export const COVER_SLOT_MAX = 3;
+function coverSlots(cellId) {
+  const cell = cellsBCLayout.cells[cellId];
+  const spawn = cell.playerSpawn;
+  const out = {};
+  for (const cover of cell.covers ?? []) {
+    if (!(cover.height >= 1.0)) continue;
+    const [x0, x1, z0, z1] = cover.bounds;
+    const alongX = x1 - x0 >= z1 - z0;
+    const length = alongX ? x1 - x0 : z1 - z0;
+    const n = Math.max(1, Math.min(COVER_SLOT_MAX, Math.floor((length - 1.8) / COVER_SLOT_SPACING_M) + 1));
+    const cx = (x0 + x1) / 2;
+    const cz = (z0 + z1) / 2;
+    const side = alongX ? (spawn.z < cz ? -1 : 1) : spawn.x < cx ? -1 : 1; // -1: lado de coordenadas menores (o da entrada)
+    const behind = alongX ? (side < 0 ? z0 - COVER_SLOT_OFFSET_M : z1 + COVER_SLOT_OFFSET_M) : side < 0 ? x0 - COVER_SLOT_OFFSET_M : x1 + COVER_SLOT_OFFSET_M;
+    for (let i = 0; i < n; i++) {
+      const along = (i - (n - 1) / 2) * COVER_SLOT_SPACING_M;
+      const x = Number((alongX ? cx + along : behind).toFixed(2));
+      const z = Number((alongX ? behind : cz + along).toFixed(2));
+      out[`${cover.id.replace(/^cov_/, 'cv_')}_s${i}`] = Object.freeze({
+        x,
+        z,
+        // de cara para a cobertura, a direito (a direção para onde estão os hostis do outro lado)
+        facing: alongX ? (side < 0 ? Math.PI / 2 : -Math.PI / 2) : side < 0 ? 0 : Math.PI,
+        crouch: true,
+      });
+    }
+  }
+  return Object.freeze(out);
+}
+export const B_COVER_SLOTS = coverSlots('B');
+export const C_COVER_SLOTS = coverSlots('C');
+/** Nós de ordem de cada célula (id -> {x, z, facing, crouch}): o plano da secção e os lugares atrás das coberturas do layout. */
+export const ORDER_NODES = Object.freeze({
+  B: Object.freeze({ ...B_PLAN_NODES, ...B_COVER_SLOTS }),
+  C: Object.freeze({ ...C09_PLAN_NODES, ...C_EVAC_NODES, ...C_COVER_SLOTS }),
+});
+/** Os nós de ordem de uma célula B/C como lista `{ id, x, z, facing, crouch }` (a Área A usa os coverNodes do layout). */
+export function orderNodesOf(cellId) {
+  return Object.entries(ORDER_NODES[cellId] ?? {}).map(([id, node]) => ({ id, ...node }));
+}
+export function orderNode(cellId, nodeId) {
+  const node = ORDER_NODES[cellId]?.[nodeId];
+  return node ? { id: nodeId, ...node } : null;
+}
+/** Um id de nó de ordem conhecido da célula B/C (o validador do snapshot usa-o: um save não inventa posições). */
+export const isKnownOrderNode = (cellId, nodeId) => Object.hasOwn(ORDER_NODES[cellId] ?? {}, nodeId);
 
 const isSupportNode = (nodeId) =>
   SECTION_SUPPORT_NODES.includes(nodeId) || C09_SUPPORT_NODES.includes(nodeId) || String(nodeId ?? '').startsWith('cv_c01_');
@@ -1191,38 +1301,29 @@ export function updatePolishSquad(sim, dt) {
     // Lis ferido amparado/carregado/abrigado (J3): o percurso é do diretor da Área C (updateLisC11); a IA da secção não o move nem ele dispara.
     if (ally.state === 'WALKING_SUPPORTED' || ally.state === 'CARRIED' || ally.state === 'EVACUATED_B12') continue;
 
-    // D4: a ordem do jogador (cobrir aqui / avançar para ali) manda na equipa de assalto da Área A; sem ordem, o plano base.
+    // D4: a ordem do jogador (cobrir aqui / avançar para ali) manda na equipa de assalto, em A, B e C; sem ordem, o plano base.
     const orderGoal = squadOrderGoalFor(sim, ally);
 
-    if (sim.activeCellId === 'B') {
+    if (orderGoal) {
+      if (orderGoal !== ORDER_HOLD) ally.goal = orderGoal; // ORDER_HOLD: sem nó atribuído, mantém o objetivo/posição atual
+      ally.tacticalState = sim.squadOrder.type === 'cover' ? 'HoldCover' : 'AdvanceOrder';
+    } else if (sim.activeCellId === 'B') {
       // Cell B (Łęczyca Logistics Corridor): bound from south entry toward B05 workshop & B06 shop crossroads
-      const bGoals = {
-        pl_gruca: { x: -18.0, z: 10.0, facing: -Math.PI / 2, crouch: true, nodeId: 'cv_b_west_wall' },
-        pl_wierzba: { x: -32.0, z: -12.0, facing: -Math.PI / 2, crouch: false, nodeId: 'cv_b05_south' },
-        pl_lis: { x: -6.0, z: 50.0, facing: -Math.PI / 2, crouch: true, nodeId: 'cv_b_south_barricade' },
-        pl_malek: { x: -22.0, z: 10.5, facing: -Math.PI / 2, crouch: true, nodeId: 'cv_b_west_wall_2' },
-        pl_szymczak: { x: -38.0, z: 38.0, facing: 0, crouch: true, nodeId: 'cv_b07_aid' },
-        pl_aux_01: { x: 11.5, z: 6.5, facing: -Math.PI / 2, crouch: true, nodeId: 'cv_b_east_cart' },
-        pl_aux_02: { x: 14.0, z: 6.8, facing: -Math.PI / 2, crouch: true, nodeId: 'cv_b_east_cart_2' },
-      };
-      const g = bGoals[ally.id] ?? bGoals.pl_gruca;
-      ally.goal = g;
+      const nodeId = B_PLAN_ROLES[ally.id] ?? B_PLAN_ROLES.pl_gruca;
+      ally.goal = goalOfNode(nodeId, B_PLAN_NODES[nodeId]);
       ally.tacticalState = ally.id.startsWith('pl_aux') ? 'HoldAndSuppress' : 'AdvanceOrder';
     } else if (sim.activeCellId === 'C') {
       // Cell C (Leśmierz Passage & Evacuation): secure B09/B10/B11 (C09) and then cover B09 -> B12 evacuation route (C10-C11)
       const evacPhase = sim.c10Active || sim.c11Active;
       if (evacPhase) {
         if (ally.holdingFor) ally.holdingFor = null; // o plano de C09 acabou
-        const cGoals = {
-          pl_gruca: { x: -32.0, z: 18.0, facing: 0.4, crouch: true, nodeId: 'cv_c_evac_gruca' },
-          pl_wierzba: { x: -14.0, z: -4.0, facing: 0.3, crouch: true, nodeId: 'cv_c_b09_east' },
-          pl_malek: { x: -46.0, z: 36.0, facing: 0.5, crouch: true, nodeId: 'cv_c_evac_malek' },
-          pl_szymczak: { x: -56.0, z: 46.0, facing: -Math.PI / 2, crouch: false, nodeId: 'cv_c_b12_aid' },
-          pl_aux_01: { x: -6.0, z: -11.5, facing: 0.5, crouch: true, nodeId: 'cv_c_yard_rkm' },
-          pl_aux_02: { x: -4.0, z: -11.5, facing: 0.5, crouch: true, nodeId: 'cv_c_yard_rkm_2' },
-          pl_lis: ally.goal ?? { x: -56.0, z: 50.0, facing: Math.PI / 2, crouch: false, nodeId: 'cv_c_b12_lis' },
-        };
-        ally.goal = cGoals[ally.id] ?? cGoals.pl_gruca;
+        if (ally.id === 'pl_lis') {
+          // o percurso de Lis é do diretor da Área C; sem objetivo vai para a casa de socorro
+          ally.goal = ally.goal ?? { x: -56.0, z: 50.0, facing: Math.PI / 2, crouch: false, nodeId: 'cv_c_b12_lis' };
+        } else {
+          const nodeId = C_EVAC_ROLES[ally.id] ?? C_EVAC_ROLES.pl_gruca;
+          ally.goal = goalOfNode(nodeId, C_EVAC_NODES[nodeId]);
+        }
         ally.tacticalState = ally.id.startsWith('pl_aux') ? 'HoldAndSuppress' : 'AdvanceOrder';
       } else {
         // C09: plano de dois grupos com a trela de D4 (ver C09_PLAN_NODES)
@@ -1230,9 +1331,6 @@ export function updatePolishSquad(sim, dt) {
           ally.id.startsWith('pl_aux') ? 'HoldAndSuppress' : nodeId.startsWith('cv_c_assembly') ? 'HoldCover' : 'AdvanceOrder',
         );
       }
-    } else if (orderGoal) {
-      if (orderGoal !== ORDER_HOLD) ally.goal = orderGoal; // ORDER_HOLD: sem nó atribuído, mantém o objetivo/posição atual
-      ally.tacticalState = sim.squadOrder.type === 'cover' ? 'HoldCover' : 'AdvanceOrder';
     } else if (sim.c01Active) {
       // Os tempos contam desde que o jogador começou a avançar (a preparação em P1 não gasta o relógio da secção) e a secção só
       // toma a última cobertura, à frente do posto EA0, depois do contacto aberto (C02, PDF p. 12).

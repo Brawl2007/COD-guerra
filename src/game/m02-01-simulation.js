@@ -39,6 +39,7 @@ import {
   LEGACY_SQUAD_ORDER_TYPES,
   resolveSquadOrder,
   isNonCombatantTarget,
+  isKnownOrderNode,
 } from './m02-combat-ai.js';
 import {
   createInitialAreaBState,
@@ -410,18 +411,24 @@ export function validateM02Snapshot(snap) {
     if (!isPlainObject(snap[key])) return { valid: false, reason: `Bloco ${key} ausente ou inválido no snapshot.` };
   }
   // D4: ordem à secção — `auto`, `cover` ou `advance` (as de versões anteriores, `suppress`/`flank_east`, restauram-se como `auto`).
+  // `cellId` (campo aditivo: a célula em que a ordem foi dada; ausente = Área A, como nos saves anteriores). Em B e C o nó da ordem e
+  // os atribuídos têm de ser nós de ordem conhecidos dessa célula (um save não inventa posições); na Área A vêm do layout.
   const order = snap.squadOrder;
   const orderHasTarget = order.type === 'cover' || order.type === 'advance';
+  const orderCell = order.cellId ?? 'A';
   if (
     !(SQUAD_ORDER_TYPES.includes(order.type) || LEGACY_SQUAD_ORDER_TYPES.includes(order.type)) ||
     (order.issuedAt !== undefined && !(typeof order.issuedAt === 'number' && Number.isFinite(order.issuedAt) && order.issuedAt >= 0)) ||
     (orderHasTarget &&
-      (typeof order.nodeId !== 'string' ||
+      (!M02_CELL_IDS.includes(orderCell) ||
+        typeof order.nodeId !== 'string' ||
         !order.nodeId ||
         !Number.isFinite(order.x) ||
         !Number.isFinite(order.z) ||
         !isPlainObject(order.assignments) ||
-        Object.entries(order.assignments).some(([id, node]) => typeof node !== 'string' || !snap.allies.some((a) => a.id === id))))
+        Object.entries(order.assignments).some(([id, node]) => typeof node !== 'string' || !snap.allies.some((a) => a.id === id)) ||
+        (orderCell !== 'A' &&
+          (!isKnownOrderNode(orderCell, order.nodeId) || Object.values(order.assignments).some((node) => !isKnownOrderNode(orderCell, node))))))
   ) {
     return { valid: false, reason: `Ordem à secção inválida no snapshot: ${order.type}` };
   }
