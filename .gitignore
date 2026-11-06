@@ -11,3 +11,4 @@ playwright-report/
 # Cache do Python (testes e ferramentas do sistema agentic)
 __pycache__/
 *.pyc
+dist-m02/

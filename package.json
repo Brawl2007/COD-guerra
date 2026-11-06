@@ -13,7 +13,8 @@
     "preview": "vite preview --host 127.0.0.1",
     "test:browser": "playwright test",
     "assets:m01:colliders": "node tools/assets/m01-bridges/export-colliders.mjs",
-    "test:chromebook": "node --test --test-concurrency=1 tests/*.test.js"
+    "test:chromebook": "node --test --test-concurrency=1 tests/*.test.js",
+    "build:m02": "vite build -c tools/m02/vite-m02.config.js"
   },
   "engines": {
     "node": ">=22.12.0"
