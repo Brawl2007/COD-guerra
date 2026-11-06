@@ -2069,6 +2069,8 @@ export class M02BenchSimulation {
     const candidates=burst.side==='ally'?this.enemies:[this.player,...this.allies,...m02ExposedLastGroup(this)];
     const target=candidates.find(a=>a.id===burst.targetId)??null;
     if(target&&(target.nonCombatant||!m02ActorPresent(target))){shooter.burst=null;return;}
+    // D2: a secção deixa recuar o posto EA0 (não o persegue a tiro): uma rajada aliada em curso pára quando o alvo começa a recuar.
+    if(burst.side==='ally'&&target?.state==='WITHDRAWING'){shooter.burst=null;return;}
     // Last observed point, not the hidden target's current coordinates. Every
     // round reuses the existing world/actor ray test at its own simulation tick.
     while(burst.remaining>0&&this.clock+1e-8>=burst.nextAt){

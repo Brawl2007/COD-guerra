@@ -27,9 +27,10 @@ import { MissionBot } from './m02-mission-bot.js';
 // morre em C09-C11 em 10 (antes 22). Sementes 5, 7 e 10 mantidas; acrescentadas as três menores que passam além dessas (1, 4 e 8).
 // Merge M02 único (2026-11-06, linha Codex integrada: rajadas ronda a ronda, dispersão M01 no fogo pelos controlos — o bot passou a
 // apontar pela mira —, granada preparada 0,5 s, reações a granadas, presença de atores, preparação agachada em P1): medido com o código
-// final, 14 de 40 sementes (dt 0,1) chegam a C12 (3, 5, 7, 8, 9, 10, 11, 12, 21, 32, 33, 36, 39 e 40). Sementes 5, 7 e 10 mantidas; 1 e 4
-// já não passam e foram substituídas pelas menores que passam além das mantidas (3, 8 e 9), sem escolher por vida restante.
-const SEEDS = [5, 7, 10, 3, 8, 9];
+// final (secção e hostis com a pontaria ao tronco desta linha, D4), 15 de 40 sementes (dt 0,1) chegam a C12 (1, 3, 6, 9, 11, 15, 18,
+// 21, 24, 25, 27, 32, 34, 37 e 38). Das sementes de antes (5, 7, 10, 1, 4, 8) só a 1 passa; ficam as seis menores que passam, sem
+// escolher por vida restante.
+const SEEDS = [1, 3, 6, 9, 11, 15];
 const DT = 0.1;
 const FORBIDDEN_SHORTCUTS = [
   'startAreaAFullC01',

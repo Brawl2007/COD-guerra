@@ -8,7 +8,7 @@ import {updateGermanGarrison,updatePolishSquad} from '../src/game/m02-combat-ai.
 const pushM02Solid=(world,...boxes)=>{world.obstacles.push(...boxes);if(Array.isArray(world.sightOpaqueObstacles)&&world.sightOpaqueObstacles!==world.obstacles)world.sightOpaqueObstacles.push(...boxes);};
 
 function scene(){
- const sim=new M02BenchSimulation();sim.enterAreaBC06();sim.clock=10;
+ const sim=new M02BenchSimulation();sim.enterAreaBC06();Object.assign(sim.areaB.contact,{opened:true,openedBy:'player_shot',openedAt:0,movementStartedAt:0,contactAt:0});sim.clock=10; // C06: contacto aberto no fixture
  const gunner=sim.allies.find(a=>a.id==='pl_aux_01'),assistant=sim.allies.find(a=>a.id==='pl_aux_02');
  const near=sim.enemies.find(a=>a.id==='DE-B02'),target=sim.enemies.find(a=>a.id==='DE-B01');
  Object.assign(gunner,{x:-1,y:0,z:100,mag:0,reloadingUntil:14,lastShotAt:9,m02LastEngagedTargetId:target.id,goal:null});
@@ -60,7 +60,7 @@ test('cover stops when the gunner is absent, separated, behind a wall, done relo
 });
 
 test('the German assistant covers only a target it can itself see',()=>{
- const sim=new M02BenchSimulation();sim.enterAreaBC06();sim.clock=10;
+ const sim=new M02BenchSimulation();sim.enterAreaBC06();Object.assign(sim.areaB.contact,{opened:true,openedBy:'player_shot',openedAt:0,movementStartedAt:0,contactAt:0});sim.clock=10; // C06: contacto aberto no fixture
  const gunner=sim.enemies.find(e=>e.id==='DE-B05'),assistant=sim.enemies.find(e=>e.id==='DE-B06');
  const target=sim.allies.find(a=>a.id==='pl_gruca');
  Object.assign(gunner,{x:-1,y:0,z:100,reloadingUntil:14,mag:0,seeingTargetId:target.id});

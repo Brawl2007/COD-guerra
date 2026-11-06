@@ -293,11 +293,13 @@ describe('M02 D4: prova de 60 s com Piotr abrigado — efeito causal real da sec
   const instrumentLineOfSight = (sim) => {
     const shots = [];
     const original = sim.fireActorBurst.bind(sim);
-    sim.fireActorBurst = (shooter, target, aimPoint, side) => {
-      if (side === 'ally') {
+    // Merge M02 único: fireActorBurst ganhou um 5.º argumento opcional (`{ continuation }`, rajadas ronda a ronda); o invólucro passa-o.
+    // A linha de visão conta-se no disparo de cada rajada (as rondas seguintes reutilizam o ponto observado na abertura).
+    sim.fireActorBurst = (shooter, target, aimPoint, side, options) => {
+      if (side === 'ally' && !options?.continuation) {
         shots.push({ shooter: shooter.id, target: target.id, los: sim.world.lineOfSight(shooter, target, { includeFoliage: true }) });
       }
-      return original(shooter, target, aimPoint, side);
+      return original(shooter, target, aimPoint, side, options);
     };
     return shots;
   };

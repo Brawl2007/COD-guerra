@@ -43,11 +43,15 @@ test('a visible grenade interrupts an ally reload, produces a warning and real m
 test('a player grenade overrides a real hold order only when the projectile is visible',()=>{
  const sim=new M02BenchSimulation();sim.enterAreaBC06();const actor=sim.allies.find(a=>a.id==='pl_gruca');
  sim.allies=[actor];sim.enemies=[];Object.assign(actor,{x:4,y:0,z:100,facing:Math.PI,state:'ACTIVE',goal:null,reloadingUntil:0});
- sim.teleportPlayer(0,100,0,0);sim.issueSquadOrder('suppress');sim.drainEvents();
- preparePlayerThrow(sim);assert.equal(actor.x,4);assert.equal(actor.m02GrenadeThreat,undefined);
+ sim.teleportPlayer(0,100,0,0);sim.issueSquadOrder('cover');sim.drainEvents(); // D4: «cobrir aqui» (a «suprimir» do Codex não existe)
+ // Com a ordem D4 o homem anda para o nó atribuído durante a preparação (a «suprimir» do Codex prendia-o no sítio): prova-se que
+ // ninguém reage antes da largada e que a fuga parte de onde ele está.
+ preparePlayerThrow(sim);assert.notEqual(actor.state,'FLEE_GRENADE');assert.equal(actor.m02GrenadeThreat,undefined);
+ Object.assign(actor,{x:4,z:100,facing:Math.PI,goal:null,navCorners:null}); // de volta ao ponto de observação antes da largada
+ const tacticalBefore=actor.tacticalState??null,xBefore=actor.x;
  sim.tick(.05,{});const warning=sim.drainEvents().find(e=>e.type==='grenade-warning');
  assert.equal(warning?.actorId,actor.id);assert.equal(warning.perception,'visual');assert.equal(warning.heardByPlayer,true);
- assert.equal(actor.state,'FLEE_GRENADE');assert.ok(actor.x>4);assert.equal(actor.m02GrenadeThreat.previousTacticalState,'HoldAndSuppress');
+ assert.equal(actor.state,'FLEE_GRENADE');assert.ok(actor.x>xBefore);assert.equal(actor.m02GrenadeThreat.previousTacticalState,tacticalBefore);
 });
 
 test('grenades behind the observer or behind a wall cause no fabricated warning',()=>{
@@ -88,7 +92,7 @@ test('an enemy seeing the actual grenade flees without producing an allied playe
 });
 
 test('an observed grenade stops a real pending burst without spending its unfired rounds',()=>{
- const {sim,actor}=setup('enemy');Object.assign(actor,{weapon:'mp38',mag:5,reserve:0,reloadingUntil:0,nextFireAt:0});
+ const {sim,actor}=setup('enemy');Object.assign(actor,{weapon:'rkm_wz28',mag:5,reserve:0,reloadingUntil:0,nextFireAt:0}); // FIX-1: sem MP38; a rkm wz.28 também rajada de 3
  const shot=sim.fireActorBurst(actor,sim.player,{x:sim.player.x,y:1.4,z:sim.player.z},'enemy');
  assert.equal(shot.rounds,1);assert.equal(actor.mag,4);assert.equal(actor.burst.remaining,2);sim.drainEvents();
  sim.tick(.05,{});assert.equal(actor.burst,null);assert.equal(actor.mag,4);assert.equal(actor.shotsFired,1);
@@ -210,11 +214,14 @@ test('older grenade-threat checkpoints without posture fields remain valid',()=>
 });
 
 test('a hold order yields to danger and resumes its saved position after the explosion',()=>{
- const {sim,actor}=setup();Object.assign(actor,{mag:5,reserve:0,reloadingUntil:0});sim.issueSquadOrder('suppress');
- const anchor=sim.squadOrder.holdPositions[actor.id];let farthest=actor.x;
+ // Merge M02 único (D4): sem `holdPositions` («suprimir» não existe); a âncora é a posição de partida do homem com uma ordem D4.
+ const {sim,actor}=setup();Object.assign(actor,{mag:5,reserve:0,reloadingUntil:0});sim.issueSquadOrder('cover');
+ const anchor={x:actor.x,z:actor.z};let farthest=actor.x;
  for(let i=0;i<50;i++){sim.tick(.05,{});farthest=Math.max(farthest,actor.x);}
  assert.equal(sim.grenades.length,0);assert.ok(farthest>anchor.x+2,'the order cannot pin a man beside a grenade');
- assert.equal(actor.goal.nodeId,'order_hold_pl_gruca');assert.ok(actor.x<farthest-1,'the actor returns through normal movement');
+ // Sem `holdPositions` (D4) não há posição gravada a que voltar: prova-se que o perigo acaba e o comportamento normal é retomado.
+ assert.ok(!String(actor.goal?.nodeId??'').startsWith('grenade_'),'no leftover escape goal');
+ assert.notEqual(actor.state,'FLEE_GRENADE');assert.equal(actor.m02GrenadeThreat,undefined);
  assert.equal(actor.health,100);
 });
 

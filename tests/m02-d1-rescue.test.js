@@ -587,6 +587,9 @@ describe('M02 D1 socorro: Lis em C11 (retoma o percurso) e a exportação para a
     sim.teleportPlayer(EVAC[0], EVAC[1], 0); // Piotr afasta-se
     for (const a of sim.allies) if (a.id !== 'pl_lis' && a.id !== 'pl_gruca') Object.assign(a, { alive: false, state: 'DOWN', health: 0, rescue: null }); // ninguém por perto
     place(sim, ally(sim, 'pl_gruca'), EVAC[0] + 10, EVAC[1] - 10);
+    // Merge M02 único: o último grupo evacua agora com navegação física (Codex 21f8d67b) e chegava ao ponto de encontro dentro da
+    // janela, fechando C12 antes da asserção; aqui só interessa a janela de Lis, por isso o grupo só parte depois dela.
+    for (const lg of sim.areaC.lastGroup) lg.startDelaySec = RESCUE_WINDOW_SEC + 30;
     run(sim, RESCUE_WINDOW_SEC + 1);
     assert.equal(lis.rescue ?? null, null);
     assert.equal(lis.state, 'DOWN');

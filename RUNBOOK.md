@@ -2,7 +2,7 @@
 
 ## M02 — Batalha do Bzura
 
-No checkout existente, usar `npm run dev -- --port 5173`; entrada de produto `/COD-guerra/m02.html`, bancada `/COD-guerra/m02-01.html`. `node --test tests/m02*.test.js` e `npm run build` verificam o alvo M02. O percurso contínuo de produção é reproduzível com `M02_PLAY_OUT=/tmp/m02-native bash tools/m02/run-native-playthrough.sh` (Chromium, porta 4291 livre, um browser por vez). O script usa controlos reais e conserva um relatório com SHA; inspeções por fixtures são separadas. Ver [estado e provas M02](docs/m02/M02_EXECUTION_STATE.md) para comandos browser, configuração do ambiente, saves e limites de desempenho. Não promover main ou produção automaticamente.
+No checkout existente, usar `npm run dev -- --port 5173`; **entrada única da M02: `/COD-guerra/m02-01.html`** (merge M02 único, 2026-11-06: a entrada `m02.html` da linha Codex não foi integrada; ver `docs/m02/M02_SINGLE_MERGE_REPORT.md`). Texto da linha Codex a seguir, histórico: `node --test tests/m02*.test.js` e `npm run build` verificam o alvo M02. O percurso contínuo de produção é reproduzível com `M02_PLAY_OUT=/tmp/m02-native bash tools/m02/run-native-playthrough.sh` (Chromium, porta 4291 livre, um browser por vez). O script usa controlos reais e conserva um relatório com SHA; inspeções por fixtures são separadas. Ver [estado e provas M02](docs/m02/M02_EXECUTION_STATE.md) para comandos browser, configuração do ambiente, saves e limites de desempenho. Não promover main ou produção automaticamente.
 
 ## Onze tarefas parciais aceites — 2026-10-16
 

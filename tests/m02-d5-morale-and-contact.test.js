@@ -178,6 +178,9 @@ describe('M02 C02: o posto EA0 deteta quem chega perto (bug: quem corria para o 
 
   it('um jogador que corre (sprint) para o posto abre o contacto por proximidade a ≤ 25 m, muito antes do temporizador, e é alvejado', () => {
     const sim = c01();
+    // Merge M02 único: C01 começa agachado na vala de partida (preparação física, Codex 9da102bc); para correr, Piotr levanta-se primeiro.
+    sim.tick(0.05, { crouch: true });
+    assert.equal(sim.player.crouched, false);
     const bot = new PlayerBot(sim);
     const opened = () => sim.c01Contact.opened;
     assert.equal(bot.walkTo(POST_NEAR, { tol: 1.0, maxSec: 40, sprint: true, until: opened }), true);

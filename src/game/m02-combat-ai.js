@@ -1040,7 +1040,8 @@ export function stepActorNavigation(sim, actor, dt) {
   }
 
   // `maxSpeed`: teto de velocidade de um ator ferido (Lis em C11, J3); sem ele, a velocidade normal da secção.
-  // Codex: amparado sem teto próprio anda a 1,8 m/s; o último grupo usa a sua velocidade (ferido grave: até 3,8 m/s).
+  // Codex: amparado sem teto próprio anda a 1,8 m/s; o último grupo, agora com navegação física (Codex 21f8d67b), mantém a sua
+  // velocidade de layout (`speed`, a mesma do antigo movimento em linha reta desta linha); ferido grave: até 3,8 m/s.
   const baseSpeed =
     actor.maxSpeed ??
     (actor.state === 'WALKING_SUPPORTED'
@@ -2027,7 +2028,9 @@ export function updatePolishSquad(sim, dt) {
 
       const aimPt = isMgSuppressTarget && !hasLoS
         ? { x: cm(mgMuzzle.x + 0.2), y: cm(mgMuzzle.y - 0.04), z: mgMuzzle.z }
-        : m02VisibleAimPoint(sim, ally, enemy);
+        : // D4 (autonomia limitada, PDF p. 17): a secção aponta ao tronco, como antes. A pontaria à cabeça visível (m02VisibleAimPoint,
+          // Codex) fica só para os hostis: na secção fazia-a tomar a quinta sozinha em 13 s (tests/m02-d4-autonomy-limits).
+          { x: enemy.x, y: enemy.y + (enemy.crouched ? 0.92 : 1.25), z: enemy.z };
 
       if (!friendlyFireClear(ally, aimPt, [sim.player, ...sim.allies])) continue;
 
@@ -2322,7 +2325,9 @@ export function updateGermanGarrison(sim, dt) {
     }
 
     if (visibleTarget) {
-      const acquiredAim=m02VisibleAimPoint(sim,enemy,visibleTarget);
+      // Pontaria ao tronco, como antes do merge (D4: Piotr agachado no abrigo tem de sobreviver; tests/m02-d4-*). A pontaria à cabeça
+      // visível do Codex (m02VisibleAimPoint) fica disponível, sem uso no combate, até a calibração D ser refeita com ela.
+      const acquiredAim = { x: visibleTarget.x, y: visibleTarget.y + (visibleTarget.crouched ? 0.95 : 1.25), z: visibleTarget.z };
       if(enemy.seeingTargetId!==visibleTarget.id||!Number.isFinite(enemy.targetAcquiredAt))enemy.targetAcquiredAt=sim.clock;
       enemy.state = 'ENGAGE_VISIBLE';
       enemy.seeingTargetId = visibleTarget.id;

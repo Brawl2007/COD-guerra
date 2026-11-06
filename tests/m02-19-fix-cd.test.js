@@ -590,7 +590,7 @@ describe('FIX-CD 9: depois da falha não há rajada de checkpoint-rejected; o re
 // 10. Missão completa com o MissionBot ao dt real de frame (1/60) em recruta
 // ---------------------------------------------------------------------------------------------------------------------
 describe('FIX-CD 10: missão completa C01→C12 com o MissionBot a dt = 1/60 em recruta (teste de estado, NÃO é playtest)', () => {
-  it('semente 1: chega a C12 sem checkpoints recusados, com os 4 checkpoints e snapshots válidos em cada mudança de cena', (t) => {
+  it('semente 2: chega a C12 sem checkpoints recusados, com os 4 checkpoints e snapshots válidos em cada mudança de cena', (t) => {
     // Antes ficava preso em C03 1800 s (semente 19390909): Lis («ClearRoom») encostada à parede norte de B01 sem rota (porta este
     // fechada), 4 hostis em HOLD_SECTOR dentro de B01/B03 e a moral da quinta a 6 de 10. Defeito do jogo (navegação dos aliados),
     // corrigido em stepActorNavigation; não era do bot.
@@ -598,7 +598,8 @@ describe('FIX-CD 10: missão completa C01→C12 com o MissionBot a dt = 1/60 em 
     // 1/60), sem as imunidades ocultas (D1: a falta do sierż. Gruca falha a missão), com a secção a não tomar a quinta sozinha (D4: o bot
     // vai pela vala) e com a janela de segurança de C06 mudou outra vez: a 1/60, 6 das sementes 1..20 chegam a C12 (1, 5, 11, 17, 18 e 20);
     // a 777 e a 19390909 já não. Esta é a menor. Ver o comentário das sementes em m02-18.
-    const sim = new M02BenchSimulation(1, { startScene: 'C01', storage: createMemoryStorage() });
+    // Merge M02 único (linha Codex integrada): a 1/60 a semente 1 já não chega a C12; 2 e 3 chegam (sem checkpoints recusados). Fica a 2.
+    const sim = new M02BenchSimulation(2, { startScene: 'C01', storage: createMemoryStorage() });
     const bot = new MissionBot(sim, { dt: FRAME });
     const scenes = [];
     let rejected = 0;

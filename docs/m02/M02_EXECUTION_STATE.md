@@ -1,3 +1,5 @@
+> **Nota do merge M02 único (2026-11-06):** documento histórico da linha Codex. A M02 é agora uma só (branch de integração `m02-single`): entrada única `m02-01.html`, um só gestor de save (loja v2). Ver `docs/m02/M02_SINGLE_MERGE_REPORT.md`.
+
 # M02 — candidata jogável e continuidade
 
 ## Continuação — retirada física em C03, 2026-11-04
