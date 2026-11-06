@@ -2,6 +2,8 @@
 
 Ler isto primeiro em cada sessão; atualizar só com factos verificados pelo Git. A política está no `AGENTS.md`, secção «uma IA entrega, um jogo recebe».
 
+**Integração na candidata #80 — 2026-11-06 (autorizada pelo proprietário):** merge `--no-ff` `c187620b` de `claude/dreamy-ramanujan-6v62vr` em `claude/quirky-heisenberg-9l4m7b` (a árvore resultante é igual à da linha: a #80 só tinha o merge `8b9a29e6`, já contido). Pré-visualização Vercel do commit: estado «Deployment has completed»; link da branch https://codguerram01-git-claude-quirky-heisenberg-9l4m7b-tarcio3.vercel.app (Ato I; `?acts=1` cadeia completa; `?act=vii-a|vii-b|vii-c`). `main` intocada; sem deploy de produção. Estado: **INTEGRADA SEM VALIDAÇÃO DE JOGO** — próximo passo: playtest do proprietário.
+
 **M01 R4 completa no ramo + pacote 2 do Ato I + emenda 22 — 2026-11-05:** ramo `claude/dreamy-ramanujan-6v62vr` @ `738eeb2e` (sequência `--first-parent 57ba50f3..738eeb2e`). **Não é a #80; nada disto está na #80 nem na `main`; sem deploy.** `acts.enabled=false`: o jogo distribuído só muda no Ato I (pacote 2, emenda 22) e na apresentação; QA dos atos novos com `?act=vii-a|vii-b|vii-c` ou `?acts=1`. Estado de todos os itens abaixo: **INTEGRADA SEM VALIDAÇÃO DE JOGO** (sem playtest humano, sem FPS no PC de referência).
 
 - **VII-a ronda 2** (`bb367a73`; `docs/verification/m01-runtime/vii-a-duration-pkg1-2026-11-04/`): CP-F na pausa; fogo de supressão das MG34 (corrigido em `2b71a67e` para suprimir mais do que matar); 2.ª vaga 16 + 2 em dois grupos; piloto ativo ≥ 110 s em 45/45 rotas (15 sementes × 3 níveis) e 60/60 em sementes de controlo.
