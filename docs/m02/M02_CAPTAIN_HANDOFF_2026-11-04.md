@@ -407,7 +407,7 @@ Esta tarefa foi refeita depois de um reinício do contentor. O patch parcial do 
 **O que mudou:**
 - **C11 (pp. 14, 17):** o Gruca avança por lanços abrigados até (-32,18). Só dá o lanço seguinte se no máximo 1 hostil não suprimido vir a rota.
 - **D1, socorro quando seguro (p. 16):**
-  - Quando o Gruca, o Lis, o Szymczak, o Wierzba ou o Małek caem a tiro, abre-se uma janela de socorro de 60 s.
+  - Quando o Gruca, o Lis ou o Szymczak caem a tiro, abre-se uma janela de socorro de 60 s (D1 p. 16). O Wierzba e o Małek ficam com consequência persistente: caídos, não se levantam (revisão adversarial GP2, item 5).
   - O local conta como seguro se nenhum hostil tiver linha de vista até 120 m.
   - O socorro é feito pelo Piotr ([E], 4 s) ou por um aliado. O ferido levanta-se com 25 de vida e só pode ser socorrido uma vez.
   - `required_character_incapacitated` só dispara sem socorro possível.

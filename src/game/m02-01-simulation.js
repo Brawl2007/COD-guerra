@@ -59,6 +59,8 @@ import {
   loseSupplyVolume as runLoseSupplyVolume,
   updateAreaB as runUpdateAreaB,
   completeC07Reorganization as runCompleteC07Reorganization,
+  resolveCasualtiesForTransition as runResolveCasualtiesForTransition,
+  markTransitionCasualty as runMarkTransitionCasualty,
   enterAreaCC09 as runEnterAreaCC09,
   unlockC09GateLatch as runUnlockC09GateLatch,
   startC10OrderChanges as runStartC10OrderChanges,
@@ -1099,6 +1101,8 @@ export class M02BenchSimulation {
     // m02.completed não é escrito aqui: «só após conclusão transacional» (PDF I4, p. 34), que é C12 (FIX-2b).
     this.flags['m02.transicao_tab_pronta'] = true;
 
+    // I2 (p. 33): as janelas de socorro e os feridos resolvem-se ANTES do payload (que regista o estado final aplicado).
+    const casualties = runResolveCasualtiesForTransition(this);
     this.transitionTABPayload = {
       transitionId: 'T-AB',
       fromCell: 'A',
@@ -1117,6 +1121,8 @@ export class M02BenchSimulation {
         this.allies.map((a) => [a.id, { alive: a.alive, state: a.state, health: a.health }]),
       ),
     };
+
+    for (const r of casualties) runMarkTransitionCasualty(this, r);
 
     this.objective = {
       id: 'T-AB',
@@ -2112,11 +2118,11 @@ export class M02BenchSimulation {
     // Update campaign squad health flags
     const malek = this.allies.find((a) => a.id === 'pl_malek');
     if (malek) {
-      this.flags['m02.malek_status'] = !malek.alive || malek.state === 'DOWN' ? 'down' : malek.health < 70 ? 'shaken' : 'fit';
+      this.flags['m02.malek_status'] = malek.state === 'EVACUATED' ? 'evacuated' : !malek.alive || malek.state === 'DOWN' ? 'down' : malek.health < 70 ? 'shaken' : 'fit';
     }
     const wierzba = this.allies.find((a) => a.id === 'pl_wierzba');
     if (wierzba) {
-      this.flags['m02.wierzba_status'] = !wierzba.alive || wierzba.state === 'DOWN' ? 'down' : wierzba.health < 65 ? 'wounded' : 'fit';
+      this.flags['m02.wierzba_status'] = wierzba.state === 'EVACUATED' ? 'evacuated' : !wierzba.alive || wierzba.state === 'DOWN' ? 'down' : wierzba.health < 65 ? 'wounded' : 'fit';
     }
 
     const mgStatus = this.evaluateMgLineOfFire(this.player);

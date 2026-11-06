@@ -1028,13 +1028,15 @@ export function stepActorNavigation(sim, actor, dt) {
  * canónico se tornar impossível, apresentar falha clara e restaurar o checkpoint. Esta convenção deve ser visível, não imunidade oculta.»
  * C11 (p. 14): «O socorrista procura abrigo e só atravessa com oportunidade real»; D6 (p. 18) e C7 (pp. 14-15): sem cura total («água e material
  * sanitário não são poções de regeneração instantânea»). Regras desta bancada (tudo o que não é do PDF está marcado):
- *  - QUEM: Gruca, Lis, Szymczak, Wierzba e Małek (RESCUE_ELIGIBLE: as três do PDF e as duas «consequência persistente conforme K/I»). Os
- *    auxiliares «podem morrer sem reiniciar» (D1) e quem MORRE (DEAD: rebentado por uma explosão) não tem socorro.
+ *  - QUEM: só Gruca, Lis e Szymczak (RESCUE_ELIGIBLE: D1 p. 16, «Ferimento incapacitante de Gruca/Lis/Szymczak … admite socorro quando seguro»).
+ *    Małek e Wierzba «admitem consequência persistente conforme K/I»: caídos, não abrem janela nem se levantam (ficam DOWN e, como todo o
+ *    ferido grave, são evacuados em TR01/C07: `m02.*_status` evacuated). Os auxiliares «podem morrer sem reiniciar» (D1) e quem MORRE
+ *    (DEAD: rebentado por uma explosão) não tem socorro.
  *  - QUANDO: um aliado elegível derrubado a TIRO (DOWN) abre uma janela de socorro de RESCUE_WINDOW_SEC (`ally.rescue`, visível na bancada).
  *  - SEGURO: o local do caído está seguro quando nenhum hostil combatente vivo com ele ao alcance da sua arma, até RESCUE_SAFE_RADIUS_M,
  *    tem linha de vista para ele (a mesma visão com que os hostis escolhem alvo, de joelhos); ver rescueSpotIsSafe.
  *  - POR QUEM: pelo jogador ([E] ao lado do caído, a ≤ RESCUE_REACH_M) ou por um aliado: o sanitário Szymczak (D4: «escolhe rota de socorro») e,
- *    se ele não pode, o mais próximo de Wierzba, Małek e Lis. Só vai quando o local está seguro e desiste se deixar de estar. Levantar leva
+ *    se ele não pode, o mais próximo de Wierzba, Małek e Lis (como socorristas, não como socorridos). Só vai quando o local está seguro e desiste se deixar de estar. Levantar leva
  *    RESCUE_LIFT_SEC com o socorrista ao lado e o local seguro.
  *  - RESULTADO: levanta-se com RESCUE_HEALTH de vida (valor limitado: o próximo tiro volta a derrubá-lo), de joelhos. Cada um só tem direito a
  *    RESCUE_MAX_PER_CHARACTER socorros (sem imunidade oculta): a segunda queda é definitiva.
@@ -1044,7 +1046,7 @@ export function stepActorNavigation(sim, actor, dt) {
  * VALORES SEM FONTE NO PDF: 120 m (o limite do combate principal de D1, p. 16, «entre 15 e 120 m»), 2,2 m (o alcance de interação da bancada),
  * 4 s para levantar, 60 s de janela, 25 de vida, um socorro por pessoa.
  */
-export const RESCUE_ELIGIBLE = Object.freeze(['pl_gruca', 'pl_lis', 'pl_szymczak', 'pl_wierzba', 'pl_malek']);
+export const RESCUE_ELIGIBLE = Object.freeze(['pl_gruca', 'pl_lis', 'pl_szymczak']);
 /** Nome curto (português) para o ecrã. */
 export const RESCUE_NAMES = Object.freeze({
   pl_gruca: 'Sgt. Gruca',
@@ -1066,7 +1068,7 @@ export const RESCUE_MEDIC = 'pl_szymczak';
 export const RESCUE_ASSISTANTS = Object.freeze(['pl_wierzba', 'pl_malek', 'pl_lis']);
 /** Estados que o caído tinha antes de cair e a que volta ao levantar-se (Lis ferido a regressar ou amparado em C11 retoma o seu percurso). */
 export const RESCUE_PREV_STATES = Object.freeze(['ACTIVE', 'WOUNDED_LIAISON', 'WALKING_SUPPORTED', 'CARRIED', 'EVACUATED_B12']);
-export const RESCUE_ABORT_REASONS = Object.freeze(['unsafe', 'rescuer_lost', 'rescuer_far']);
+export const RESCUE_ABORT_REASONS = Object.freeze(['unsafe', 'rescuer_lost', 'rescuer_far', 'transition']);
 const PLAYER_ACTOR_ID = 'piotr_sokol';
 
 /** A janela de socorro de um aliado (ou de um snapshot dele) está aberta no instante `clock`? Só dados: serve a simulação e o validador. */
@@ -1130,12 +1132,19 @@ function rescuerOf(sim, casualty) {
   return by === PLAYER_ACTOR_ID ? sim.player : (sim.allies.find((a) => a.id === by) ?? null);
 }
 
-function abortRescue(sim, casualty, reason) {
+export function abortRescue(sim, casualty, reason) {
   const byId = casualty.rescue.by;
   casualty.rescue.by = null;
   casualty.rescue.liftStartedAt = null;
   sim.combatLog.push({ clock: Number(sim.clock.toFixed(2)), type: 'rescue_aborted', actorId: casualty.id, byId, reason });
   sim.events.push({ type: 'rescue-aborted', actorId: casualty.id, byId, reason, clock: sim.clock });
+}
+
+/** Fecha a janela de um caído que a transição evacua (I2): mesmo evento do prazo esgotado, com a razão. */
+export function closeRescueForTransition(sim, casualty, reason) {
+  casualty.rescue = null;
+  sim.combatLog.push({ clock: Number(sim.clock.toFixed(2)), type: 'rescue_window_expired', actorId: casualty.id, reason });
+  sim.events.push({ type: 'rescue-window-expired', actorId: casualty.id, reason, clock: sim.clock });
 }
 
 function completeRescue(sim, casualty) {

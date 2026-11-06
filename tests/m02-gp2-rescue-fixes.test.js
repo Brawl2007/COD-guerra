@@ -64,3 +64,80 @@ describe('GP2-1: checkpoint de uma só vez pedido com Gruca caído não se perde
     assert.equal(sim.checkpointsReached.includes('cp_m02_c_reorganizacao'), false);
   });
 });
+
+describe('GP2-2: a janela de socorro não atravessa TR01 (I2, p. 33: resolver explicitamente as ações em curso e evacuar feridos)', () => {
+  function casualtyInA(id, { rescuer = false } = {}) {
+    const sim = new M02BenchSimulation(5, { startScene: 'C01', storage: createMemoryStorage() });
+    for (const a of sim.allies) Object.assign(a, { mag: 0, reserve: 0 });
+    const shooter = sim.enemies.find((e) => e.weapon === 'kar98k');
+    for (const e of sim.enemies) if (e !== shooter) kill(e);
+    const c = ally(sim, id);
+    Object.assign(c, { x: 30, z: -60, y: sim.world.heightAt(30, -60), crouched: false });
+    dropByBurst(sim, shooter, c, 60); // um hostil a ver o caído: o local é inseguro, a janela fica aberta
+    run(sim, 1);
+    if (rescuer) Object.assign(c.rescue, { by: 'pl_wierzba', liftStartedAt: null }); // um socorro em curso no instante da transição
+    sim.drainEvents();
+    return { sim, c, shooter };
+  }
+
+  it('Szymczak caído com a janela aberta e um socorrista a caminho: na transição é evacuado (EVACUATED), a janela fecha-se, o socorro interrompe-se (transition) e o payload T-AB diz o mesmo', () => {
+    const { sim, c } = casualtyInA('pl_szymczak', { rescuer: true });
+    assert.ok(c.rescue?.by);
+    sim.enterAreaBC06();
+    assert.equal(c.state, 'EVACUATED');
+    assert.equal(c.rescue, null);
+    const st = sim.transitionTABPayload.squadStatuses.pl_szymczak;
+    assert.deepEqual({ state: st.state, alive: st.alive, rescue: st.rescue }, { state: 'EVACUATED', alive: false, rescue: { resolution: 'evacuated' } });
+    const ev = sim.drainEvents();
+    assert.ok(ev.some((e) => e.type === 'rescue-aborted' && e.actorId === 'pl_szymczak' && e.reason === 'transition'));
+    assert.ok(ev.some((e) => e.type === 'rescue-window-expired' && e.actorId === 'pl_szymczak' && e.reason === 'transition_evacuated'));
+    assert.equal(sim.combatLog.filter((e) => e.type === 'casualty_evacuated' && e.actorId === 'pl_szymczak').length, 1);
+    // na Área B nunca é levantado
+    sim.enemies.forEach(kill);
+    run(sim, 20);
+    assert.equal(c.alive, false);
+    assert.equal(c.state, 'EVACUATED');
+    assert.equal(sim.combatLog.filter((e) => e.type === 'ally_rescued').length, 0);
+  });
+
+  it('Wierzba caído (sem socorro, D1 p. 16) também é evacuado na transição e o estado de campanha diz-o', () => {
+    const { sim, c } = casualtyInA('pl_wierzba');
+    assert.equal(c.rescue ?? null, null);
+    sim.enterAreaBC06();
+    assert.equal(c.state, 'EVACUATED');
+    assert.equal(sim.flags['m02.wierzba_status'], 'evacuated');
+    run(sim, 2);
+    assert.equal(sim.flags['m02.wierzba_status'], 'evacuated', 'o contexto tático não o repõe em «down»');
+    assert.equal(sim.transitionTABPayload.squadStatuses.pl_wierzba.state, 'EVACUATED');
+  });
+
+  it('caído depois de o payload T-AB estar feito (C05): a entrada em B resolve-o e atualiza o payload', () => {
+    const sim = new M02BenchSimulation(5, { startScene: 'C01', storage: createMemoryStorage() });
+    for (const a of sim.allies) Object.assign(a, { mag: 0, reserve: 0 });
+    sim.triggerTransitionTAB({ skip: true });
+    assert.equal(sim.transitionTABPayload.squadStatuses.pl_lis.state, 'ACTIVE');
+    const shooter = sim.enemies.find((e) => e.weapon === 'kar98k');
+    for (const e of sim.enemies) if (e !== shooter) kill(e);
+    const lis = ally(sim, 'pl_lis');
+    dropByBurst(sim, shooter, lis, 60);
+    assert.ok(lis.rescue);
+    sim.enterAreaBC06();
+    assert.equal(lis.state, 'EVACUATED');
+    assert.equal(lis.rescue, null);
+    assert.equal(sim.transitionTABPayload.squadStatuses.pl_lis.state, 'EVACUATED');
+    assert.deepEqual(sim.transitionTABPayload.squadStatuses.pl_lis.rescue, { resolution: 'evacuated' });
+  });
+
+  it('Gruca (exigido) com a janela aberta não é evacuado (seria falha): mantém o caído e o prazo absoluto; o socorro em curso suspende-se e o payload regista kept_open', () => {
+    const { sim, c } = casualtyInA('pl_gruca', { rescuer: true });
+    const deadline = c.rescue.deadlineAt;
+    sim.enterAreaBC06();
+    assert.equal(c.state, 'DOWN');
+    assert.equal(c.rescue.deadlineAt, deadline, 'o prazo é absoluto');
+    assert.equal(c.rescue.by, null);
+    assert.equal(c.rescue.liftStartedAt, null);
+    assert.deepEqual(sim.transitionTABPayload.squadStatuses.pl_gruca.rescue, { resolution: 'kept_open', deadlineAt: deadline });
+    assert.ok(sim.drainEvents().some((e) => e.type === 'rescue-aborted' && e.actorId === 'pl_gruca' && e.reason === 'transition'));
+    assert.equal(sim.missionFailed, null);
+  });
+});
