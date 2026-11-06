@@ -462,3 +462,29 @@ Os 6 P2 foram corrigidos (`c0ebba93`…`52728298`):
 **Sem fonte no PDF:** passo de 3 m na amostragem da rota e sonda de pé.
 
 **Em curso:** provas N0 (vídeo das rotas) e N1 (log causal AI-01, tabela de cobertura O2).
+
+### Provas N0/N1, merge `f7fce58f`
+
+Evidência apenas. **Nenhum portão foi aprovado.**
+
+**N0, vídeo das rotas**, em `docs/verification/m02-claude/routes-2026-11-06/` (6,1 MB):
+- `route-vala.webm`: 58,1 s de vídeo para 38,4 s simulados.
+- `route-pomar.webm`: 90,2 s de vídeo para 50,1 s simulados.
+- 960×540, SwiftShader, perfil `low`, com entradas reais de teclado e rato.
+- Os dois chegam ao C04, com 5/5 waypoints e 0 erros de consola.
+- O vídeo corre em câmara lenta, porque o passo da bancada está limitado a 0,05 s por frame.
+- Em medium/high no SwiftShader a simulação anda a cerca de 0,1× do tempo real. Não há FPS medido.
+- O condutor é automático: **não substitui o percurso humano (O4)**.
+
+**N1, registo causal**, em `docs/verification/m02-claude/n1-2026-11-06/`:
+- 4 sementes × 2 modos.
+- 17 tipos de ligação ação → efeito, classificados por força (`direct`, `confounded`, `temporal`, `measured`).
+- Determinista: as 8 corridas dão o mesmo sha256 quando repetidas.
+- `O2-coverage.md` tem o estado honesto de cada ID entre AI-01 e SAVE-02.
+
+**Testes:**
+- `tests/m02-*.test.js`: **670/670**.
+- Build: OK.
+- Browser M02 com a config completa (4 specs): **4 passed (9,3 min)**, corrido pelo agente.
+
+**Em curso:** fechar as lacunas PENDENTE da O2: AI-03, COM-01, COM-02 e SAVE-01 no browser.
