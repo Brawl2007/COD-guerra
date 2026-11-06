@@ -272,4 +272,14 @@ Os quatro dependem da mesma geometria v3 do corredor C01: trincheira P1, talude 
 
 ### Resultados
 
-Os números finais (Node, builds, browser, verificações M01 e da chave v1) estão no relatório de entrega do agente, com os SHAs.
+Medido no código de `0abacc1a`; os commits seguintes só mudam documentação.
+
+- **Node:** `node --test --test-concurrency=1` sobre todos os `tests/m02-*.test.js`, em duas metades: **861 testes, 857 passam,
+  0 falham e 4 `todo`** (os da trincheira v3).
+- **Builds:** `npm run build` OK e `npm run build:m02` OK.
+- **Browser:** `CI=1 CHROME_EXECUTABLE=/opt/pw-browsers/chromium PORT=4395 npx playwright test -c tools/m02/playwright-m02-01.config.js`
+  passou os **9 de 9** (14,4 min, SwiftShader).
+- **Invariância da M01:** o diff de `2810dcbc` até HEAD sobre os ficheiros M01/partilhados está vazio.
+- **Chave v1 do Codex:** `cod-guerra:checkpoint:m02:v1` só é lida em modo só-de-leitura. Nada a grava (m02-25 e
+  `m02-legacy-save-inspection` verdes; `m02-session` prova que fica `null`).
+- Não houve playtest humano nem verificação no iPhone.
