@@ -1,0 +1,4732 @@
+{
+ "schemaVersion": 1,
+ "missionId": "m01_tczew",
+ "generated": "2026-11-06 (V-1)",
+ "rule": "Princípio do proprietário (docs/direction/M01_VIBE_FIDELITY_PLAN.md): ≥ 80 % do que o jogador vive, por ato e no total, é DOCUMENTED ou RECONSTRUCTED.",
+ "classificationLegend": {
+  "DOCUMENTED": "Afirmado por fontes (IDs de research/SOURCES.md).",
+  "RECONSTRUCTED": "Deduzido de fontes: posições, formas, tarefas plausíveis.",
+  "GAMEPLAY_DRAMATIZATION": "Inventado para o jogo; sem fonte como facto."
+ },
+ "weighting": {
+  "unit": "segundos reais vividos pelo jogador",
+  "routes": {
+   "act_bw_0430_0705": "tests/helpers/m01-route.js route(19390901), sem piloto de apoio (rota do golden de jogo)",
+   "act_vii_a_north": "actRoute active, seed 19390901, recruta",
+   "act_vii_b_north_day": "actBRoute active, seed 19390901, recruta",
+   "act_vii_c_withdrawal": "actCRoute prompt, seed 19390901, recruta"
+  },
+  "measuredBy": "tools/verification/m01-fidelity-measure.mjs (node tools/verification/m01-fidelity-audit.mjs --measure compara)",
+  "layers": {
+   "action": 1,
+   "speech": 1,
+   "text": 1,
+   "display": 0.25,
+   "presence": 0.25
+  },
+  "layersNote": "Fidelidade = Σ peso·fator(camada) das entradas DOCUMENTED+RECONSTRUCTED / Σ peso·fator(camada). Presença (grupos, veículos, setores) e mostradores (relógio, rótulos) acompanham o ato inteiro mas não são o foco: entram com 1/4. A ferramenta também imprime a fidelidade sem fatores.",
+  "mixedShare": 0.5,
+  "mixedNote": "Elementos com classe mista nos dados («X (facto) / Y (jogo)») são duas entradas (#facto/#jogo) com metade do peso cada (splitOf/share).",
+  "eventBeatCapSec": 30,
+  "eventNote": "Um evento pesa min(30 s, tempo até ao evento seguinte); as consequências duradouras pesam nos grupos, veículos e objetivos.",
+  "skippedScenes": "A rota de controlo salta cs_m01_intro, cs_m01_roll_call e os cartões dos atos; para esses o peso é a duração dos dados (weightEstimated:true)."
+ },
+ "entries": [
+  {
+   "id": "evt_m01_intro_card",
+   "kind": "event",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#events/evt_m01_intro_card"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: o peso está na cartela/nos parágrafos",
+   "note": "Cartela de abertura; o texto da cartela tem entrada própria (card_m01_intro)."
+  },
+  {
+   "id": "evt_m01_prelude_start",
+   "kind": "event",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#events/evt_m01_prelude_start"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 8,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: min(30 s, tempo real até ao evento seguinte) a partir de 0.1 s",
+   "note": "Início do prelúdio jogável 04:30–04:34 (dramatização, HISTORICAL_RESEARCH §3.1)."
+  },
+  {
+   "id": "evt_m01_railway_worker_report",
+   "kind": "event",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#events/evt_m01_railway_worker_report"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [
+    "T13"
+   ],
+   "certainty": "n/a",
+   "playWeightSec": 1.8,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: min(30 s, tempo real até ao evento seguinte) a partir de 16 s",
+   "note": "Aviso do ferroviário às 04:31: inspirado no aviso de Szymankowo (T13), mas a cena e a hora são do jogo.",
+   "conflict": "GAMEPLAY_DRAMATIZATION com fonte T13 nos dados: T13 apoia o aviso de Szymankowo, não a cena das 04:31."
+  },
+  {
+   "id": "evt_m01_planes_heard",
+   "kind": "event",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#events/evt_m01_planes_heard"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T12",
+    "C01",
+    "H01-PDF"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 30,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: min(30 s, tempo real até ao evento seguinte) a partir de 17.8 s",
+   "note": "Som dos Ju 87 antes das 04:34 (descolagem 04:26 em T11/T12; luz C01)."
+  },
+  {
+   "id": "evt_m01_bombing_0434",
+   "kind": "event",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#events/evt_m01_bombing_0434"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "H02",
+    "T08",
+    "T10",
+    "T12",
+    "H01-PDF"
+   ],
+   "certainty": "ALTA",
+   "playWeightSec": 1.1,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: min(30 s, tempo real até ao evento seguinte) a partir de 67.7 s",
+   "note": "Bombardeamento das 04:34 (H02, T10; T12 dá 04:35)."
+  },
+  {
+   "id": "evt_m01_forward_post_bombed",
+   "kind": "event",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#events/evt_m01_forward_post_bombed"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T10"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 2.9,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: min(30 s, tempo real até ao evento seguinte) a partir de 69.9 s",
+   "note": "Bomba no posto avançado: alvos na margem oeste junto às pontes (T10); o posto é do jogo."
+  },
+  {
+   "id": "evt_m01_nowicki_lost",
+   "kind": "event",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#events/evt_m01_nowicki_lost"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 20.7,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: min(30 s, tempo real até ao evento seguinte) a partir de 72.8 s",
+   "note": "Destino de Nowicki (personagem fictícia)."
+  },
+  {
+   "id": "evt_m01_cable_cut",
+   "kind": "event",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#events/evt_m01_cable_cut"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T12",
+    "H01-PDF"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 1.1,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: min(30 s, tempo real até ao evento seguinte) a partir de 67.7 s",
+   "note": "Cabos de ignição atingidos (T12, H01-PDF «versão disputada»).",
+   "conflict": "HISTORICAL_RESEARCH.md §3.1 marca o reparo dos cabos como DOCUMENTED (T12, sem hora); os dados, SOURCE_CHECK §3.3 e db_01 tratam-no como RECONSTRUCTED/«versão disputada». Mantido RECONSTRUCTED."
+  },
+  {
+   "id": "evt_m01_wounded_dragged",
+   "kind": "event",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#events/evt_m01_wounded_dragged"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 30,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: min(30 s, tempo real até ao evento seguinte) a partir de 93.5 s",
+   "note": "Ferido arrastado na estação: cena do jogo."
+  },
+  {
+   "id": "evt_m01_second_air_pass",
+   "kind": "event",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#events/evt_m01_second_air_pass"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T11"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 30,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: min(30 s, tempo real até ao evento seguinte) a partir de 170.7 s",
+   "note": "Segunda passagem: ataque de ~10 min (T11, certeza baixa)."
+  },
+  {
+   "id": "evt_m01_train963_arrives",
+   "kind": "event",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#events/evt_m01_train963_arrives"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T01",
+    "T07",
+    "T08",
+    "H01-PDF"
+   ],
+   "certainty": "ALTA",
+   "playWeightSec": 30,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: min(30 s, tempo real até ao evento seguinte) a partir de 256.4 s",
+   "note": "Comboio de carga 963 na cabeça de ponte leste às ~04:45."
+  },
+  {
+   "id": "evt_m01_panzerzug_arrives",
+   "kind": "event",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#events/evt_m01_panzerzug_arrives"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T01",
+    "T07",
+    "T14",
+    "T20",
+    "H01-PDF"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 30,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: min(30 s, tempo real até ao evento seguinte) a partir de 303.1 s",
+   "note": "Panzerzug 7 atrás do comboio; hora de chegada imprecisa (04:52 é do jogo).",
+   "conflict": "HISTORICAL_RESEARCH.md §5 dá a existência do Panzerzug 7 como DOCUMENTED; os dados dão RECONSTRUCTED (hora 04:52 do jogo). Coerente se a classe se refere à hora; mantido RECONSTRUCTED."
+  },
+  {
+   "id": "evt_m01_repair_complete",
+   "kind": "event",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#events/evt_m01_repair_complete"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T12",
+    "H01-PDF"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 30,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: min(30 s, tempo real até ao evento seguinte) a partir de 414.6 s",
+   "note": "Fim do reparo dos cabos (sem hora nas fontes)."
+  },
+  {
+   "id": "evt_m01_order_demolish",
+   "kind": "event",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#events/evt_m01_order_demolish"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T01",
+    "T09",
+    "H01-PDF"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 15,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: min(30 s, tempo real até ao evento seguinte) a partir de 461.9 s",
+   "note": "Ordem de demolir às 05:30 (T01/T09); H01-PDF situa a decisão às ~06:00.",
+   "conflict": "HISTORICAL_RESEARCH.md §3.1 marca a ordem das 05:30 como DOCUMENTED (T01, T09); os dados marcam RECONSTRUCTED e SOURCE_CHECK P1 regista que H01-PDF descreve a decisão às ~06:00. Mantido RECONSTRUCTED."
+  },
+  {
+   "id": "evt_m01_bombing_0530",
+   "kind": "event",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#events/evt_m01_bombing_0530"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "H01-PDF"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 15,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: min(30 s, tempo real até ao evento seguinte) a partir de 461.9 s",
+   "note": "Raide adicional às 05:30 (H01-PDF, revisão do PR #10)."
+  },
+  {
+   "id": "evt_m01_runner_pressure_report",
+   "kind": "event",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#events/evt_m01_runner_pressure_report"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T01",
+    "T08",
+    "H01-PDF"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 25,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: min(30 s, tempo real até ao evento seguinte) a partir de 508 s",
+   "note": "Mensageiro relata pressão na cabeça de ponte leste."
+  },
+  {
+   "id": "evt_m01_north_contact_distant",
+   "kind": "event",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#events/evt_m01_north_contact_distant"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [
+    "T03",
+    "T16"
+   ],
+   "certainty": "n/a",
+   "playWeightSec": 30,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: min(30 s, tempo real até ao evento seguinte) a partir de 533 s",
+   "note": "Combate distante a norte às 05:50: hora e momento são do jogo.",
+   "conflict": "Classificado GAMEPLAY_DRAMATIZATION mas com fontes T03/T16 nos dados: as fontes apoiam o setor norte, não a hora 05:50."
+  },
+  {
+   "id": "evt_m01_east_platoon_withdraws",
+   "kind": "event",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#events/evt_m01_east_platoon_withdraws"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T01",
+    "T08",
+    "H01-PDF"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 30,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: min(30 s, tempo real até ao evento seguinte) a partir de 563 s",
+   "note": "Pelotão leste recua ~06:00 (T01, T08, H01-PDF)."
+  },
+  {
+   "id": "evt_m01_bak_wounded",
+   "kind": "event",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#events/evt_m01_bak_wounded"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 7.5,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: min(30 s, tempo real até ao evento seguinte) a partir de 593 s",
+   "note": "Bąk ferido (personagem fictícia)."
+  },
+  {
+   "id": "evt_m01_germans_on_east_spans",
+   "kind": "event",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#events/evt_m01_germans_on_east_spans"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T04",
+    "T07"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 30,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: min(30 s, tempo real até ao evento seguinte) a partir de 600.5 s",
+   "note": "Alemães no tabuleiro leste após a retirada (T04, T07)."
+  },
+  {
+   "id": "evt_m01_east_demolition",
+   "kind": "event",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#events/evt_m01_east_demolition"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T01",
+    "T04",
+    "T07",
+    "T09",
+    "T25",
+    "G01",
+    "H01-PDF"
+   ],
+   "certainty": "ALTA",
+   "playWeightSec": 28.2,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: min(30 s, tempo real até ao evento seguinte) a partir de 955.4 s",
+   "note": "Demolição leste às 06:10."
+  },
+  {
+   "id": "evt_m01_dudek_retrieves_bak",
+   "kind": "event",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#events/evt_m01_dudek_retrieves_bak"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 30,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: min(30 s, tempo real até ao evento seguinte) a partir de 983.6 s",
+   "note": "Dudek recolhe Bąk (personagens fictícias)."
+  },
+  {
+   "id": "evt_m01_west_demolition",
+   "kind": "event",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#events/evt_m01_west_demolition"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "G01",
+    "H01-PDF",
+    "T01",
+    "T04",
+    "T07",
+    "T09"
+   ],
+   "certainty": "ALTA",
+   "playWeightSec": 15,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: min(30 s, tempo real até ao evento seguinte) a partir de 1262.9 s",
+   "note": "Demolição oeste às 06:45 (H01-PDF; 06:40 nas secundárias)."
+  },
+  {
+   "id": "evt_m01_kozliny_attack_distant",
+   "kind": "event",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#events/evt_m01_kozliny_attack_distant"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T08"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: min(30 s, tempo real até ao evento seguinte) a partir de 1277.9 s",
+   "note": "Ataque vindo do norte às ~07:00 (fonte única T08), só som."
+  },
+  {
+   "id": "evt_m01_roll_call",
+   "kind": "event",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#events/evt_m01_roll_call"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: min(30 s, tempo real até ao evento seguinte) a partir de 1277.9 s",
+   "note": "Chamada no abrigo: cena do jogo."
+  },
+  {
+   "id": "evt_m01_debrief",
+   "kind": "event",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#events/evt_m01_debrief"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T03",
+    "T09"
+   ],
+   "certainty": "ALTA",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: o peso está na cartela/nos parágrafos",
+   "note": "Abertura do debrief; os parágrafos têm entradas próprias.",
+   "conflict": "O evento cita T03/T09, mas os parágrafos citam H01-PDF/H02/T23; a classe do debrief conta-se por parágrafo."
+  },
+  {
+   "id": "obj_m01_deliver_message",
+   "kind": "objective",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#objectives/obj_m01_deliver_message"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 17.7,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com o objetivo ativo",
+   "note": "Prelúdio do café e da mensagem (HISTORICAL_RESEARCH §3.1: dramatização)."
+  },
+  {
+   "id": "obj_m01_take_cover#facto",
+   "kind": "objective",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#objectives/obj_m01_take_cover"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "H02",
+    "T10",
+    "T12"
+   ],
+   "certainty": "ALTA",
+   "playWeightSec": 1.3,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com o objetivo ativo",
+   "note": "O bombardeamento das 04:34 é facto.",
+   "splitOf": "obj_m01_take_cover",
+   "share": 0.5
+  },
+  {
+   "id": "obj_m01_take_cover#jogo",
+   "kind": "objective",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#objectives/obj_m01_take_cover"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 1.3,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com o objetivo ativo",
+   "note": "Papel de Wrona e da secção fictícia (historicalCertainty.summary: «Personagens e ações da secção: GAMEPLAY_DRAMATIZATION»).",
+   "splitOf": "obj_m01_take_cover",
+   "share": 0.5
+  },
+  {
+   "id": "obj_m01_follow_sergeant",
+   "kind": "objective",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#objectives/obj_m01_follow_sergeant"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 29.1,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com o objetivo ativo",
+   "note": "Reorganização da secção fictícia."
+  },
+  {
+   "id": "obj_m01_find_sappers#facto",
+   "kind": "objective",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#objectives/obj_m01_find_sappers"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T12",
+    "H01-PDF"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 9.1,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com o objetivo ativo",
+   "note": "Os sapadores reparam os cabos (RECONSTRUCTED).",
+   "splitOf": "obj_m01_find_sappers",
+   "share": 0.5
+  },
+  {
+   "id": "obj_m01_find_sappers#jogo",
+   "kind": "objective",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#objectives/obj_m01_find_sappers"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 9.1,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com o objetivo ativo",
+   "note": "Papel de Wrona e da secção fictícia (historicalCertainty.summary: «Personagens e ações da secção: GAMEPLAY_DRAMATIZATION»).",
+   "splitOf": "obj_m01_find_sappers",
+   "share": 0.5
+  },
+  {
+   "id": "obj_m01_fetch_material#facto",
+   "kind": "objective",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#objectives/obj_m01_fetch_material"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T12",
+    "H01-PDF"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 48,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com o objetivo ativo",
+   "note": "Material para o reparo dos cabos (RECONSTRUCTED).",
+   "splitOf": "obj_m01_fetch_material",
+   "share": 0.5
+  },
+  {
+   "id": "obj_m01_fetch_material#jogo",
+   "kind": "objective",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#objectives/obj_m01_fetch_material"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 48,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com o objetivo ativo",
+   "note": "Papel de Wrona e da secção fictícia (historicalCertainty.summary: «Personagens e ações da secção: GAMEPLAY_DRAMATIZATION»).",
+   "splitOf": "obj_m01_fetch_material",
+   "share": 0.5
+  },
+  {
+   "id": "obj_m01_cover_repair#facto",
+   "kind": "objective",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#objectives/obj_m01_cover_repair"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T12",
+    "H01-PDF"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 100.6,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com o objetivo ativo",
+   "note": "Reparo dos cabos sob fogo do leste (RECONSTRUCTED).",
+   "splitOf": "obj_m01_cover_repair",
+   "share": 0.5
+  },
+  {
+   "id": "obj_m01_cover_repair#jogo",
+   "kind": "objective",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#objectives/obj_m01_cover_repair"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 100.6,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com o objetivo ativo",
+   "note": "Papel de Wrona e da secção fictícia (historicalCertainty.summary: «Personagens e ações da secção: GAMEPLAY_DRAMATIZATION»).",
+   "splitOf": "obj_m01_cover_repair",
+   "share": 0.5
+  },
+  {
+   "id": "obj_m01_hold_access#facto",
+   "kind": "objective",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#objectives/obj_m01_hold_access"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T01",
+    "T08",
+    "H01-PDF"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 50.6,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com o objetivo ativo",
+   "note": "O pelotão leste segurou a cabeça de ponte até ~06:00.",
+   "splitOf": "obj_m01_hold_access",
+   "share": 0.5
+  },
+  {
+   "id": "obj_m01_hold_access#jogo",
+   "kind": "objective",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#objectives/obj_m01_hold_access"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 50.6,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com o objetivo ativo",
+   "note": "Papel de Wrona e da secção fictícia (historicalCertainty.summary: «Personagens e ações da secção: GAMEPLAY_DRAMATIZATION»).",
+   "splitOf": "obj_m01_hold_access",
+   "share": 0.5
+  },
+  {
+   "id": "obj_m01_cover_withdrawal#facto",
+   "kind": "objective",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#objectives/obj_m01_cover_withdrawal"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T01",
+    "T08",
+    "H01-PDF"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 196.3,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com o objetivo ativo",
+   "note": "Retirada do pelotão leste pela ponte ~06:00.",
+   "splitOf": "obj_m01_cover_withdrawal",
+   "share": 0.5
+  },
+  {
+   "id": "obj_m01_cover_withdrawal#jogo",
+   "kind": "objective",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#objectives/obj_m01_cover_withdrawal"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 196.3,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com o objetivo ativo",
+   "note": "Papel de Wrona e da secção fictícia (historicalCertainty.summary: «Personagens e ações da secção: GAMEPLAY_DRAMATIZATION»).",
+   "splitOf": "obj_m01_cover_withdrawal",
+   "share": 0.5
+  },
+  {
+   "id": "obj_m01_rescue_bak",
+   "kind": "objective",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#objectives/obj_m01_rescue_bak"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 390.7,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com o objetivo ativo",
+   "note": "Opcional: Bąk é fictício. No HUD durante toda a retirada (a rota não o cumpre; Dudek recolhe-o)."
+  },
+  {
+   "id": "obj_m01_leave_bridge#facto",
+   "kind": "objective",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#objectives/obj_m01_leave_bridge"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T01",
+    "T04",
+    "T07",
+    "T09",
+    "H01-PDF"
+   ],
+   "certainty": "ALTA",
+   "playWeightSec": 25.8,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com o objetivo ativo",
+   "note": "Demolição leste às 06:10.",
+   "splitOf": "obj_m01_leave_bridge",
+   "share": 0.5
+  },
+  {
+   "id": "obj_m01_leave_bridge#jogo",
+   "kind": "objective",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#objectives/obj_m01_leave_bridge"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 25.8,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com o objetivo ativo",
+   "note": "Papel de Wrona e da secção fictícia (historicalCertainty.summary: «Personagens e ações da secção: GAMEPLAY_DRAMATIZATION»).",
+   "splitOf": "obj_m01_leave_bridge",
+   "share": 0.5
+  },
+  {
+   "id": "obj_m01_hold_corridor#facto",
+   "kind": "objective",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#objectives/obj_m01_hold_corridor"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "H01-PDF",
+    "T01",
+    "T04",
+    "T07",
+    "T09"
+   ],
+   "certainty": "ALTA",
+   "playWeightSec": 128.1,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com o objetivo ativo",
+   "note": "Demolição oeste às 06:45; posto de disparo na estação (P12, T08/T27).",
+   "splitOf": "obj_m01_hold_corridor",
+   "share": 0.5
+  },
+  {
+   "id": "obj_m01_hold_corridor#jogo",
+   "kind": "objective",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#objectives/obj_m01_hold_corridor"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 128.1,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com o objetivo ativo",
+   "note": "Papel de Wrona e da secção fictícia (historicalCertainty.summary: «Personagens e ações da secção: GAMEPLAY_DRAMATIZATION»).",
+   "splitOf": "obj_m01_hold_corridor",
+   "share": 0.5
+  },
+  {
+   "id": "obj_m01_reach_shelter",
+   "kind": "objective",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#objectives/obj_m01_reach_shelter"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 14.3,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com o objetivo ativo",
+   "note": "Ida para o abrigo da chamada (cena do jogo)."
+  },
+  {
+   "id": "cs_m01_intro",
+   "kind": "cutscene",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#cutscenes/cs_m01_intro"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 75,
+   "weightEstimated": true,
+   "weightBasis": "maxDurationSec (a rota de controlo salta a cena)",
+   "note": "Prelúdio no posto: café, mapa, mensagem (dramatização)."
+  },
+  {
+   "id": "cs_m01_bombing",
+   "kind": "cutscene",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#cutscenes/cs_m01_bombing"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "H02",
+    "T10",
+    "T12"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 14,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com a cena ativa",
+   "note": "Cena jogável do 04:34: o raide é facto; os impactos e o posto são reconstrução."
+  },
+  {
+   "id": "cs_m01_order",
+   "kind": "cutscene",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#cutscenes/cs_m01_order"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T01",
+    "T09",
+    "H01-PDF"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 12,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com a cena ativa",
+   "note": "Ordem trazida por Pawlak (forma do jogo; ordem RECONSTRUCTED)."
+  },
+  {
+   "id": "cs_m01_east_blast",
+   "kind": "cutscene",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#cutscenes/cs_m01_east_blast"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T01",
+    "T04",
+    "T07",
+    "T09",
+    "T25",
+    "C02"
+   ],
+   "certainty": "ALTA",
+   "playWeightSec": 12,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com a cena ativa",
+   "note": "Demolição leste no antigo encontro (pilar 6, P13 parcial); atraso do som C02."
+  },
+  {
+   "id": "cs_m01_west_blast",
+   "kind": "cutscene",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#cutscenes/cs_m01_west_blast"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "H01-PDF",
+    "T01",
+    "T04",
+    "T07",
+    "T09"
+   ],
+   "certainty": "ALTA",
+   "playWeightSec": 15,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com a cena ativa",
+   "note": "Demolição oeste às 06:45."
+  },
+  {
+   "id": "cs_m01_roll_call",
+   "kind": "cutscene",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#cutscenes/cs_m01_roll_call"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 110,
+   "weightEstimated": true,
+   "weightBasis": "maxDurationSec (a rota de controlo salta a cena)",
+   "note": "Chamada no abrigo (cena do jogo)."
+  },
+  {
+   "id": "card_m01_intro",
+   "kind": "card",
+   "act": "act_bw_0430_0705",
+   "layer": "display",
+   "refs": [
+    "mission.json#cutscenes/cs_m01_intro",
+    "mission.json#events/evt_m01_intro_card"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "H01-PDF",
+    "T02",
+    "T03"
+   ],
+   "certainty": "ALTA",
+   "playWeightSec": 8,
+   "weightEstimated": true,
+   "weightBasis": "timeline do cs_m01_intro: cartelas de t=3 a t=11 s",
+   "note": "«TCZEW, POLÓNIA — 1 DE SETEMBRO DE 1939 — 04:30» e «2.º Batalhão de Fuzileiros · OW „Tczew” · Exército „Pomorze”»."
+  },
+  {
+   "id": "card_m01_roll_call",
+   "kind": "card",
+   "act": "act_bw_0430_0705",
+   "layer": "display",
+   "refs": [
+    "mission.json#cutscenes/cs_m01_roll_call"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "H01-PDF"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 3,
+   "weightEstimated": true,
+   "weightBasis": "cartela «Chamada no abrigo · Tczew — 07:05» (src/ui/m01-hud.js)",
+   "note": "Hora 07:05 do fim do ato (depois da demolição oeste das 06:45); local do abrigo reconstruído."
+  },
+  {
+   "id": "clock_seg_prelude",
+   "kind": "hour",
+   "act": "act_bw_0430_0705",
+   "layer": "display",
+   "refs": [
+    "mission.json#clock/segments/seg_prelude"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "H02",
+    "H01-PDF",
+    "T01",
+    "T08"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 67.7,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com o relógio do HUD neste segmento",
+   "note": "Relógio do HUD 04:30:00–04:34:00: as horas dos eventos são as das fontes; os minutos intermédios são interpolados e a escala 1× é do jogo."
+  },
+  {
+   "id": "clock_seg_bombing",
+   "kind": "hour",
+   "act": "act_bw_0430_0705",
+   "layer": "display",
+   "refs": [
+    "mission.json#clock/segments/seg_bombing"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "H02",
+    "H01-PDF",
+    "T01",
+    "T08"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 188.6,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com o relógio do HUD neste segmento",
+   "note": "Relógio do HUD 04:34:00–04:45:00: as horas dos eventos são as das fontes; os minutos intermédios são interpolados e a escala 3.5× é do jogo."
+  },
+  {
+   "id": "clock_seg_repair",
+   "kind": "hour",
+   "act": "act_bw_0430_0705",
+   "layer": "display",
+   "refs": [
+    "mission.json#clock/segments/seg_repair"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "H02",
+    "H01-PDF",
+    "T01",
+    "T08"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 205.5,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com o relógio do HUD neste segmento",
+   "note": "Relógio do HUD 04:45:00–05:30:00: as horas dos eventos são as das fontes; os minutos intermédios são interpolados e a escala 9× é do jogo."
+  },
+  {
+   "id": "label_seg_repair_ready",
+   "kind": "card",
+   "act": "act_bw_0430_0705",
+   "layer": "display",
+   "refs": [
+    "mission.json#clock/segments/seg_repair"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 5,
+   "weightEstimated": true,
+   "weightBasis": "estimativa: tempo de leitura do rótulo",
+   "note": "«Mais tarde…» — Reparo concluído. A secção espera a ordem do tenente. (a «ordem do tenente» não tem fonte; recurso de ritmo)."
+  },
+  {
+   "id": "clock_seg_hold",
+   "kind": "hour",
+   "act": "act_bw_0430_0705",
+   "layer": "display",
+   "refs": [
+    "mission.json#clock/segments/seg_hold"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "H02",
+    "H01-PDF",
+    "T01",
+    "T08"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 493.6,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com o relógio do HUD neste segmento",
+   "note": "Relógio do HUD 05:30:00–06:10:00: as horas dos eventos são as das fontes; os minutos intermédios são interpolados e a escala 8× é do jogo."
+  },
+  {
+   "id": "label_seg_hold_compress",
+   "kind": "card",
+   "act": "act_bw_0430_0705",
+   "layer": "display",
+   "refs": [
+    "mission.json#clock/segments/seg_hold"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T01",
+    "T08",
+    "H01-PDF"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 5,
+   "weightEstimated": true,
+   "weightBasis": "estimativa: tempo de leitura do rótulo",
+   "note": "«Mais tarde…» — Em posição no tabuleiro. O pelotão leste aguenta a cabeça de ponte até à ordem de retirada."
+  },
+  {
+   "id": "clock_seg_climax",
+   "kind": "hour",
+   "act": "act_bw_0430_0705",
+   "layer": "display",
+   "refs": [
+    "mission.json#clock/segments/seg_climax"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "H02",
+    "H01-PDF",
+    "T01",
+    "T08"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 307.6,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com o relógio do HUD neste segmento",
+   "note": "Relógio do HUD 06:10:00–06:45:00: as horas dos eventos são as das fontes; os minutos intermédios são interpolados e a escala 8.5× é do jogo."
+  },
+  {
+   "id": "clock_seg_aftermath",
+   "kind": "hour",
+   "act": "act_bw_0430_0705",
+   "layer": "display",
+   "refs": [
+    "mission.json#clock/segments/seg_aftermath"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "H02",
+    "H01-PDF",
+    "T01",
+    "T08"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 15,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com o relógio do HUD neste segmento",
+   "note": "Relógio do HUD 06:45:00–07:05:00: as horas dos eventos são as das fontes; os minutos intermédios são interpolados e a escala 1× é do jogo."
+  },
+  {
+   "id": "interlude_obj_m01_deliver_message",
+   "kind": "card",
+   "act": "act_bw_0430_0705",
+   "layer": "display",
+   "refs": [
+    "mission.json#pacing/interludes/0"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 49.9,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos entre o objetivo anterior e o evento seguinte (texto do painel)",
+   "note": "«Mensagem entregue. Fique com o posto — aviões a norte»"
+  },
+  {
+   "id": "interlude_obj_m01_cover_repair",
+   "kind": "card",
+   "act": "act_bw_0430_0705",
+   "layer": "display",
+   "refs": [
+    "mission.json#pacing/interludes/1"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T01",
+    "T09"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 47.3,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos entre o objetivo anterior e o evento seguinte (texto do painel)",
+   "note": "«Reparo concluído. Aguarde a ordem com a secção»"
+  },
+  {
+   "id": "cue_repair",
+   "kind": "card",
+   "act": "act_bw_0430_0705",
+   "layer": "display",
+   "refs": [
+    "mission.json#continuityCues/0"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T12",
+    "H01-PDF"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 16,
+   "weightEstimated": true,
+   "weightBasis": "estimativa: 4 mensagens × 4 s (objetivo obj_m01_cover_repair ativo 201.2 s, intervalo 55 s)",
+   "note": "«Sapadores na linha. Proteja o reparo; observe os portões de Lisewo.»"
+  },
+  {
+   "id": "cue_hold",
+   "kind": "card",
+   "act": "act_bw_0430_0705",
+   "layer": "display",
+   "refs": [
+    "mission.json#continuityCues/1"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T01",
+    "T08",
+    "H01-PDF"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 8,
+   "weightEstimated": true,
+   "weightBasis": "estimativa: 2 mensagens × 4 s (objetivo obj_m01_hold_access ativo 101.1 s, intervalo 55 s)",
+   "note": "«Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte.»"
+  },
+  {
+   "id": "cue_withdrawal",
+   "kind": "card",
+   "act": "act_bw_0430_0705",
+   "layer": "display",
+   "refs": [
+    "mission.json#continuityCues/2"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T01",
+    "T08",
+    "H01-PDF"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 36,
+   "weightEstimated": true,
+   "weightBasis": "estimativa: 9 mensagens × 4 s (objetivo obj_m01_cover_withdrawal ativo 392.5 s, intervalo 45 s)",
+   "note": "«O pelotão atravessa. Conte os nossos e cubra os últimos homens.»"
+  },
+  {
+   "id": "cue_corridor",
+   "kind": "card",
+   "act": "act_bw_0430_0705",
+   "layer": "display",
+   "refs": [
+    "mission.json#continuityCues/3"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T01",
+    "T08",
+    "H01-PDF"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 20,
+   "weightEstimated": true,
+   "weightBasis": "estimativa: 5 mensagens × 4 s (objetivo obj_m01_hold_corridor ativo 256.1 s, intervalo 55 s)",
+   "note": "«Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores.»"
+  },
+  {
+   "id": "grp_squad#facto",
+   "kind": "group",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#groups/grp_squad"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "H01-PDF",
+    "T03",
+    "T08",
+    "T27"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 639,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com algum membro ativo e vivo",
+   "note": "Uma secção do 2.º Batalhão de Fuzileiros na cabeça de ponte oeste (posto documentado T08/T27).",
+   "splitOf": "grp_squad",
+   "share": 0.5
+  },
+  {
+   "id": "grp_squad#jogo",
+   "kind": "group",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#groups/grp_squad"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 639,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com algum membro ativo e vivo",
+   "note": "Seis homens com nomes e destinos fictícios (db_07; historicalCertainty.summary: «Personagens e ações da secção: GAMEPLAY_DRAMATIZATION»).",
+   "splitOf": "grp_squad",
+   "share": 0.5
+  },
+  {
+   "id": "grp_sappers#facto",
+   "kind": "group",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#groups/grp_sappers"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T09",
+    "H01-PDF"
+   ],
+   "certainty": "ALTA",
+   "playWeightSec": 639,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com algum membro ativo e vivo",
+   "note": "Pelotão de sapadores do subtenente Juchtman (T09, H01-PDF p. 127).",
+   "splitOf": "grp_sappers",
+   "share": 0.5
+  },
+  {
+   "id": "grp_sappers#jogo",
+   "kind": "group",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#groups/grp_sappers"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 639,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com algum membro ativo e vivo",
+   "note": "Três sapadores fictícios (Krawiec e dois sem nome).",
+   "splitOf": "grp_sappers",
+   "share": 0.5
+  },
+  {
+   "id": "grp_ckm_crew",
+   "kind": "group",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#groups/grp_ckm_crew"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T26",
+    "T34"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 1278,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com algum membro ativo e vivo",
+   "note": "Guarnição de ckm wz.30 (T47 nos dados): posição e fogo reconstruídos."
+  },
+  {
+   "id": "grp_east_platoon#facto",
+   "kind": "group",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#groups/grp_east_platoon"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T26",
+    "H01-PDF",
+    "T01",
+    "T08"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 510.8,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com algum membro ativo e vivo",
+   "note": "Pelotão da cabeça de ponte leste (Faterkowski) com metralhadoras pesadas.",
+   "splitOf": "grp_east_platoon",
+   "share": 0.5
+  },
+  {
+   "id": "grp_east_platoon#jogo",
+   "kind": "group",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#groups/grp_east_platoon"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 510.8,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com algum membro ativo e vivo",
+   "note": "Efetivo 24 e 12–18 sobreviventes são números do jogo (SOURCE_CHECK P8).",
+   "splitOf": "grp_east_platoon",
+   "share": 0.5
+  },
+  {
+   "id": "grp_de_east#facto",
+   "kind": "group",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#groups/grp_de_east"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T07",
+    "T08",
+    "H01-PDF"
+   ],
+   "certainty": "ALTA",
+   "playWeightSec": 510.8,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com algum membro ativo e vivo",
+   "note": "Pioneiros do comboio 963 e Grenzwacht na cabeça de ponte leste (T08; P7 aberto).",
+   "splitOf": "grp_de_east",
+   "share": 0.5
+  },
+  {
+   "id": "grp_de_east#jogo",
+   "kind": "group",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#groups/grp_de_east"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 510.8,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com algum membro ativo e vivo",
+   "note": "«Tamanho visível é valor de gameplay»: 40 homens e as duplas de MG34 (grp_mg34_loaders) são do jogo.",
+   "splitOf": "grp_de_east",
+   "share": 0.5
+  },
+  {
+   "id": "grp_de_spans#facto",
+   "kind": "group",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#groups/grp_de_spans"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T04",
+    "T07"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 338.8,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com algum membro ativo e vivo",
+   "note": "Alemães avançam no tabuleiro leste após a retirada.",
+   "splitOf": "grp_de_spans",
+   "share": 0.5
+  },
+  {
+   "id": "grp_de_spans#jogo",
+   "kind": "group",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#groups/grp_de_spans"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 338.8,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com algum membro ativo e vivo",
+   "note": "Dez homens, táticas de assalto e o tiro de apoio da emenda 22 (HISTORICAL_RESEARCH §5: não é facto).",
+   "splitOf": "grp_de_spans",
+   "share": 0.5
+  },
+  {
+   "id": "grp_de_stukas",
+   "kind": "group",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#groups/grp_de_stukas"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T12",
+    "T29",
+    "H02"
+   ],
+   "certainty": "ALTA",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: o peso está em veh_ju87",
+   "note": "3 Ju 87 B da 3./StG 1 (T12; T11 dá outro número)."
+  },
+  {
+   "id": "grp_railway_workers#facto",
+   "kind": "group",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#groups/grp_railway_workers"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T07",
+    "T08",
+    "T23"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 639,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com algum membro ativo e vivo",
+   "note": "Ferroviários polacos na estação de Tczew.",
+   "splitOf": "grp_railway_workers",
+   "share": 0.5
+  },
+  {
+   "id": "grp_railway_workers#jogo",
+   "kind": "group",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#groups/grp_railway_workers"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 639,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com algum membro ativo e vivo",
+   "note": "Lipski e três figurantes fictícios.",
+   "splitOf": "grp_railway_workers",
+   "share": 0.5
+  },
+  {
+   "id": "west_garrison",
+   "kind": "group",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#westGarrison",
+    "mission.json#westGarrisonNote"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T08",
+    "T27",
+    "T10"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 1278,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com algum dos seis homens ativo",
+   "note": "Seis soldados sem nome da guarnição oeste (presença RECONSTRUCTED).",
+   "conflict": "westGarrison.presence = RECONSTRUCTED mas westGarrison.certainty = GAMEPLAY_DRAMATIZATION (campo de certeza com valor de classe). Usado presence."
+  },
+  {
+   "id": "yard_life",
+   "kind": "group",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#yardLife"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 1278,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos com algum figurante do pátio ativo",
+   "note": "Vida do pátio da estação (figurantes e tarefas do jogo)."
+  },
+  {
+   "id": "opening_life",
+   "kind": "scene",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#openingLife"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 67.7,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos do prelúdio até às 04:34",
+   "note": "Homens do prelúdio com rotinas próprias (R1-b)."
+  },
+  {
+   "id": "squad_retreat",
+   "kind": "scene",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#retreat"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 60,
+   "weightEstimated": true,
+   "weightBasis": "estimativa: lanços da secção depois da demolição leste",
+   "note": "Retirada da secção por lanços até ao ponto de retirada (R3-a)."
+  },
+  {
+   "id": "deck_support_fire",
+   "kind": "scene",
+   "act": "act_bw_0430_0705",
+   "layer": "action",
+   "refs": [
+    "mission.json#groups/grp_de_spans/deckAssault/tactics/support"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 30,
+   "weightEstimated": true,
+   "weightBasis": "nuvem de 30 s do tiro de apoio (emenda 22)",
+   "note": "Um tiro de apoio alemão à frente da retaguarda: sem fonte (HISTORICAL_RESEARCH §5)."
+  },
+  {
+   "id": "raid_targets_0434",
+   "kind": "scene",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#raidTargets0434"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 33,
+   "weightEstimated": true,
+   "weightBasis": "estimativa: 11 impactos × 3 s",
+   "note": "Onze impactos adicionais do raide de 04:34–04:44: horas e locais do jogo; a duração (~10 min) é de T11."
+  },
+  {
+   "id": "raid_targets_0530",
+   "kind": "scene",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#raidTargets"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 18,
+   "weightEstimated": true,
+   "weightBasis": "estimativa: 6 impactos × 3 s",
+   "note": "Alvos estimados do raide das 05:30; o raide é DOCUMENTED (H01-PDF), os alvos não."
+  },
+  {
+   "id": "veh_train_963",
+   "kind": "vehicle",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#events/evt_m01_train963_arrives"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T07",
+    "T08",
+    "H01-PDF"
+   ],
+   "certainty": "ALTA",
+   "playWeightSec": 1021.6,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: da chegada (04:45) ao fim do ato",
+   "note": "Comboio 963 com 65 vagões; locomotiva e vagões genéricos (P16 aberto)."
+  },
+  {
+   "id": "veh_panzerzug_7",
+   "kind": "vehicle",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#events/evt_m01_panzerzug_arrives"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T01",
+    "T07",
+    "T14",
+    "T20",
+    "H01-PDF"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 974.9,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: da chegada (04:52) ao fim do ato",
+   "note": "Panzerzug 7 (existência DOCUMENTED); só MGs no jogo, calibres de T20 não usados (P6)."
+  },
+  {
+   "id": "veh_ju87",
+   "kind": "vehicle",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#groups/grp_de_stukas",
+    "mission.json#events/evt_m01_bombing_0434",
+    "mission.json#events/evt_m01_bombing_0530"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T12",
+    "T29",
+    "H02",
+    "H01-PDF"
+   ],
+   "certainty": "ALTA",
+   "playWeightSec": 182.9,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: dos aviões ouvidos à 2.ª passagem, mais 30 s estimados do raide das 05:30",
+   "note": "Ju 87 B da 3./StG 1; três numa passagem principal (HISTORICAL_RESEARCH §3.2)."
+  },
+  {
+   "id": "s1_west_bridgehead",
+   "kind": "sector",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#sectors/s1_west_bridgehead"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T08",
+    "T27"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 1278,
+   "weightEstimated": false,
+   "weightBasis": "setor de som/fundo ativo durante todo o ato",
+   "note": "Setor «Cabeça de ponte oeste e aterro» (classe dos dados)."
+  },
+  {
+   "id": "s2_east_bridgehead",
+   "kind": "sector",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#sectors/s2_east_bridgehead"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T01",
+    "T07",
+    "T08",
+    "H01-PDF"
+   ],
+   "certainty": "ALTA",
+   "playWeightSec": 1278,
+   "weightEstimated": false,
+   "weightBasis": "setor de som/fundo ativo durante todo o ato",
+   "note": "Setor «Cabeça de ponte leste (Lisewo)» (classe dos dados)."
+  },
+  {
+   "id": "s3_station_yard",
+   "kind": "sector",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#sectors/s3_station_yard"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T24"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 1278,
+   "weightEstimated": false,
+   "weightBasis": "setor de som/fundo ativo durante todo o ato",
+   "note": "Setor «Estação de Tczew e pátio» (classe dos dados)."
+  },
+  {
+   "id": "s4_north_perimeter",
+   "kind": "sector",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#sectors/s4_north_perimeter"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T03",
+    "T16"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 1278,
+   "weightEstimated": false,
+   "weightBasis": "setor de som/fundo ativo durante todo o ato",
+   "note": "Setor «Perímetro norte (2.ª e 3.ª companhias)» (classe dos dados)."
+  },
+  {
+   "id": "s5_sky_east",
+   "kind": "sector",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#sectors/s5_sky_east"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T12",
+    "T13"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 1278,
+   "weightEstimated": false,
+   "weightBasis": "setor de som/fundo ativo durante todo o ato",
+   "note": "Setor «Céu a leste e linha para Szymankowo/Malbork» (classe dos dados)."
+  },
+  {
+   "id": "cast_jan_wrona",
+   "kind": "cast",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#cast/jan_wrona"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos, falas e eventos",
+   "note": "Jan Wrona (strzelec (soldado)): personagem fictícia (db_07)."
+  },
+  {
+   "id": "cast_marek_zielinski",
+   "kind": "cast",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#cast/marek_zielinski"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos, falas e eventos",
+   "note": "Marek Zieliński (sierżant (sargento)): personagem fictícia (db_07)."
+  },
+  {
+   "id": "cast_pawel_krawiec",
+   "kind": "cast",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#cast/pawel_krawiec"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos, falas e eventos",
+   "note": "Paweł Krawiec (kapral saper (cabo sapador)): personagem fictícia (db_07)."
+  },
+  {
+   "id": "cast_tadeusz_nowicki",
+   "kind": "cast",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#cast/tadeusz_nowicki"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos, falas e eventos",
+   "note": "Tadeusz Nowicki (strzelec): personagem fictícia (db_07)."
+  },
+  {
+   "id": "cast_szymon_kowal",
+   "kind": "cast",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#cast/szymon_kowal"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos, falas e eventos",
+   "note": "Szymon Kowal (starszy strzelec (soldado de 1.ª classe)): personagem fictícia (db_07)."
+  },
+  {
+   "id": "cast_jozef_bak",
+   "kind": "cast",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#cast/jozef_bak"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos, falas e eventos",
+   "note": "Józef Bąk (strzelec): personagem fictícia (db_07)."
+  },
+  {
+   "id": "cast_leon_dudek",
+   "kind": "cast",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#cast/leon_dudek"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos, falas e eventos",
+   "note": "Leon Dudek (sanitariusz (padioleiro-socorrista)): personagem fictícia (db_07)."
+  },
+  {
+   "id": "cast_staszek_pawlak",
+   "kind": "cast",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#cast/staszek_pawlak"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos, falas e eventos",
+   "note": "Stanisław „Staszek” Pawlak (strzelec, goniec (mensageiro)): personagem fictícia (db_07)."
+  },
+  {
+   "id": "cast_franciszek_lipski",
+   "kind": "cast",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#cast/franciszek_lipski"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos, falas e eventos",
+   "note": "Franciszek Lipski (civil — ferroviário (dyżurny ruchu)): personagem fictícia (db_07)."
+  },
+  {
+   "id": "cast_sapper_2",
+   "kind": "cast",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#cast/sapper_2"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos, falas e eventos",
+   "note": "Sapador (sem nome) (saper): personagem fictícia (db_07)."
+  },
+  {
+   "id": "cast_sapper_3",
+   "kind": "cast",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#cast/sapper_3"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos, falas e eventos",
+   "note": "Sapador (sem nome) (saper): personagem fictícia (db_07)."
+  },
+  {
+   "id": "cast_east_platoon_voice",
+   "kind": "cast",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#cast/east_platoon_voice"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos, falas e eventos",
+   "note": "Soldado do pelotão leste (strzelec): personagem fictícia (db_07)."
+  },
+  {
+   "id": "cast_generic_rifleman",
+   "kind": "cast",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#cast/generic_rifleman"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos, falas e eventos",
+   "note": "Soldado (strzelec): personagem fictícia (db_07)."
+  },
+  {
+   "id": "cast_ckm_gunner",
+   "kind": "cast",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#cast/ckm_gunner"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos, falas e eventos",
+   "note": "Atirador da ckm (strzelec (celowniczy)): personagem fictícia (db_07)."
+  },
+  {
+   "id": "cast_ckm_loader",
+   "kind": "cast",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#cast/ckm_loader"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos, falas e eventos",
+   "note": "Municiador da ckm (strzelec (amunicyjny)): personagem fictícia (db_07)."
+  },
+  {
+   "id": "cast_ckm_reserve",
+   "kind": "cast",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#cast/ckm_reserve"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos, falas e eventos",
+   "note": "Soldado da ckm (strzelec): personagem fictícia (db_07)."
+  },
+  {
+   "id": "hist_janik",
+   "kind": "cast",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#historicalPersonsOffscreen/hist_janik"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T02",
+    "T03",
+    "H01-PDF"
+   ],
+   "certainty": "ALTA",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: fora de cena; o nome aparece no debrief",
+   "note": "Stanisław Janik: comandante do 2.º Batalhão de Fuzileiros / OW „Tczew”."
+  },
+  {
+   "id": "hist_juchtman",
+   "kind": "cast",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#historicalPersonsOffscreen/hist_juchtman"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T09",
+    "H01-PDF"
+   ],
+   "certainty": "ALTA",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: fora de cena; o nome aparece no debrief",
+   "note": "Norbert Juchtman: oficial do pelotão de sapadores."
+  },
+  {
+   "id": "hist_faterkowski",
+   "kind": "cast",
+   "act": "act_bw_0430_0705",
+   "layer": "presence",
+   "refs": [
+    "mission.json#historicalPersonsOffscreen/hist_faterkowski"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T26",
+    "H01-PDF"
+   ],
+   "certainty": "ALTA",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: fora de cena; o nome aparece no debrief",
+   "note": "Walenty Faterkowski: comandante do pelotão da cabeça de ponte leste (1939); mais tarde capitão, morreu em 2013."
+  },
+  {
+   "id": "dlg_m01_prelude",
+   "kind": "dialogue",
+   "act": "act_bw_0430_0705",
+   "layer": "speech",
+   "refs": [
+    "mission.json#dialogue/dlg_m01_001",
+    "mission.json#dialogue/dlg_m01_002",
+    "mission.json#dialogue/dlg_m01_003",
+    "mission.json#dialogue/dlg_m01_004",
+    "mission.json#dialogue/dlg_m01_005",
+    "mission.json#dialogue/dlg_m01_006",
+    "mission.json#dialogue/dlg_m01_007",
+    "mission.json#dialogue/dlg_m01_008",
+    "mission.json#dialogue/dlg_m01_009",
+    "mission.json#dialogue/dlg_m01_010",
+    "mission.json#dialogue/dlg_m01_011",
+    "mission.json#dialogue/dlg_m01_210",
+    "mission.json#dialogue/dlg_m01_211",
+    "mission.json#dialogue/dlg_m01_212",
+    "mission.json#callouts/lines/co_m01_opening_order",
+    "mission.json#callouts/lines/co_m01_opening_alert"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 10.4,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos de legenda das falas da categoria",
+   "note": "Prelúdio 04:30–04:34: conversa da secção, Lipski e o telefone mudo (dramatização)."
+  },
+  {
+   "id": "dlg_m01_fact_reports",
+   "kind": "dialogue",
+   "act": "act_bw_0430_0705",
+   "layer": "speech",
+   "refs": [
+    "mission.json#dialogue/dlg_m01_012",
+    "mission.json#dialogue/dlg_m01_013",
+    "mission.json#dialogue/dlg_m01_016",
+    "mission.json#dialogue/dlg_m01_025",
+    "mission.json#dialogue/dlg_m01_027",
+    "mission.json#dialogue/dlg_m01_033",
+    "mission.json#dialogue/dlg_m01_034",
+    "mission.json#dialogue/dlg_m01_036",
+    "mission.json#dialogue/dlg_m01_037",
+    "mission.json#dialogue/dlg_m01_038",
+    "mission.json#dialogue/dlg_m01_039",
+    "mission.json#dialogue/dlg_m01_040",
+    "mission.json#dialogue/dlg_m01_044",
+    "mission.json#dialogue/dlg_m01_045",
+    "mission.json#dialogue/dlg_m01_046",
+    "mission.json#dialogue/dlg_m01_050",
+    "mission.json#dialogue/dlg_m01_061",
+    "mission.json#dialogue/dlg_m01_129",
+    "mission.json#dialogue/dlg_m01_135",
+    "mission.json#dialogue/dlg_m01_152",
+    "mission.json#dialogue/dlg_m01_172"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T01",
+    "T07",
+    "T08",
+    "T12",
+    "T14",
+    "H01-PDF",
+    "C01"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 52.5,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos de legenda das falas da categoria",
+   "note": "Falas inventadas que relatam factos: aviões, aterro atingido, comboio 963, Panzerzug, ordem, retirada, demolições, ataque a norte.",
+   "conflict": "dlg_m01_037 «Perderam uma metralhadora» não tem fonte no repositório (T26/H01-PDF só dizem «perdas significativas»)."
+  },
+  {
+   "id": "dlg_m01_sappers",
+   "kind": "dialogue",
+   "act": "act_bw_0430_0705",
+   "layer": "speech",
+   "refs": [
+    "mission.json#dialogue/dlg_m01_021",
+    "mission.json#dialogue/dlg_m01_022",
+    "mission.json#dialogue/dlg_m01_023",
+    "mission.json#dialogue/dlg_m01_024",
+    "mission.json#dialogue/dlg_m01_031",
+    "mission.json#dialogue/dlg_m01_032",
+    "mission.json#dialogue/dlg_m01_125",
+    "mission.json#dialogue/dlg_m01_126",
+    "mission.json#dialogue/dlg_m01_127",
+    "mission.json#dialogue/dlg_m01_144",
+    "mission.json#dialogue/dlg_m01_200",
+    "mission.json#dialogue/dlg_m01_201",
+    "mission.json#dialogue/dlg_m01_202",
+    "mission.json#dialogue/dlg_m01_203",
+    "mission.json#dialogue/dlg_m01_204",
+    "mission.json#dialogue/dlg_m01_205",
+    "mission.json#dialogue/dlg_m01_206",
+    "mission.json#dialogue/dlg_m01_207"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T09",
+    "T12",
+    "H01-PDF"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 33.7,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos de legenda das falas da categoria",
+   "note": "Sapadores no reparo dos cabos (RECONSTRUCTED); a falha determinista do 1.º teste (204) é do jogo."
+  },
+  {
+   "id": "dlg_m01_ckm_crew",
+   "kind": "dialogue",
+   "act": "act_bw_0430_0705",
+   "layer": "speech",
+   "refs": [
+    "mission.json#dialogue/dlg_m01_110",
+    "mission.json#dialogue/dlg_m01_111",
+    "mission.json#dialogue/dlg_m01_112",
+    "mission.json#dialogue/dlg_m01_113",
+    "mission.json#dialogue/dlg_m01_114",
+    "mission.json#dialogue/dlg_m01_115",
+    "mission.json#dialogue/dlg_m01_116",
+    "mission.json#dialogue/dlg_m01_117",
+    "mission.json#dialogue/dlg_m01_118",
+    "mission.json#dialogue/dlg_m01_119",
+    "mission.json#dialogue/dlg_m01_185"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T26",
+    "T34"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 5,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos de legenda das falas da categoria",
+   "note": "Guarnição da ckm wz.30 (grupo RECONSTRUCTED)."
+  },
+  {
+   "id": "dlg_m01_east_platoon_voice",
+   "kind": "dialogue",
+   "act": "act_bw_0430_0705",
+   "layer": "speech",
+   "refs": [
+    "mission.json#dialogue/dlg_m01_168",
+    "mission.json#dialogue/dlg_m01_173",
+    "mission.json#dialogue/dlg_m01_175",
+    "mission.json#dialogue/dlg_m01_177",
+    "mission.json#dialogue/dlg_m01_179",
+    "mission.json#dialogue/dlg_m01_181",
+    "mission.json#dialogue/dlg_m01_183",
+    "mission.json#dialogue/dlg_m01_197"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T26",
+    "H01-PDF"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 22.6,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos de legenda das falas da categoria",
+   "note": "Voz anónima do pelotão leste a reagir ao combate."
+  },
+  {
+   "id": "dlg_m01_section_combat",
+   "kind": "dialogue",
+   "act": "act_bw_0430_0705",
+   "layer": "speech",
+   "refs": [
+    "mission.json#dialogue/dlg_m01_066",
+    "mission.json#dialogue/dlg_m01_067",
+    "mission.json#dialogue/dlg_m01_014",
+    "mission.json#dialogue/dlg_m01_015",
+    "mission.json#dialogue/dlg_m01_015a",
+    "mission.json#dialogue/dlg_m01_015b",
+    "mission.json#dialogue/dlg_m01_015c",
+    "mission.json#dialogue/dlg_m01_015d",
+    "mission.json#dialogue/dlg_m01_018",
+    "mission.json#dialogue/dlg_m01_019",
+    "mission.json#dialogue/dlg_m01_020",
+    "mission.json#dialogue/dlg_m01_026",
+    "mission.json#dialogue/dlg_m01_028",
+    "mission.json#dialogue/dlg_m01_029",
+    "mission.json#dialogue/dlg_m01_030",
+    "mission.json#dialogue/dlg_m01_035",
+    "mission.json#dialogue/dlg_m01_100",
+    "mission.json#dialogue/dlg_m01_101",
+    "mission.json#dialogue/dlg_m01_102",
+    "mission.json#dialogue/dlg_m01_103",
+    "mission.json#dialogue/dlg_m01_105",
+    "mission.json#dialogue/dlg_m01_106",
+    "mission.json#dialogue/dlg_m01_107",
+    "mission.json#dialogue/dlg_m01_120",
+    "mission.json#dialogue/dlg_m01_121",
+    "mission.json#dialogue/dlg_m01_122",
+    "mission.json#dialogue/dlg_m01_123",
+    "mission.json#dialogue/dlg_m01_124",
+    "mission.json#dialogue/dlg_m01_128",
+    "mission.json#dialogue/dlg_m01_130",
+    "mission.json#dialogue/dlg_m01_131",
+    "mission.json#dialogue/dlg_m01_132",
+    "mission.json#dialogue/dlg_m01_133",
+    "mission.json#dialogue/dlg_m01_134",
+    "mission.json#dialogue/dlg_m01_136",
+    "mission.json#dialogue/dlg_m01_137",
+    "mission.json#dialogue/dlg_m01_138",
+    "mission.json#dialogue/dlg_m01_139",
+    "mission.json#dialogue/dlg_m01_140",
+    "mission.json#dialogue/dlg_m01_141",
+    "mission.json#dialogue/dlg_m01_142",
+    "mission.json#dialogue/dlg_m01_143",
+    "mission.json#dialogue/dlg_m01_145",
+    "mission.json#dialogue/dlg_m01_153",
+    "mission.json#dialogue/dlg_m01_154",
+    "mission.json#dialogue/dlg_m01_163",
+    "mission.json#dialogue/dlg_m01_164",
+    "mission.json#dialogue/dlg_m01_165",
+    "mission.json#dialogue/dlg_m01_166",
+    "mission.json#dialogue/dlg_m01_167",
+    "mission.json#dialogue/dlg_m01_169",
+    "mission.json#dialogue/dlg_m01_170",
+    "mission.json#dialogue/dlg_m01_171",
+    "mission.json#dialogue/dlg_m01_174",
+    "mission.json#dialogue/dlg_m01_176",
+    "mission.json#dialogue/dlg_m01_178",
+    "mission.json#dialogue/dlg_m01_180",
+    "mission.json#dialogue/dlg_m01_182",
+    "mission.json#dialogue/dlg_m01_184",
+    "mission.json#dialogue/dlg_m01_186",
+    "mission.json#dialogue/dlg_m01_187",
+    "mission.json#dialogue/dlg_m01_188",
+    "mission.json#dialogue/dlg_m01_189",
+    "mission.json#dialogue/dlg_m01_190",
+    "mission.json#dialogue/dlg_m01_191",
+    "mission.json#dialogue/dlg_m01_192",
+    "mission.json#dialogue/dlg_m01_193",
+    "mission.json#dialogue/dlg_m01_194",
+    "mission.json#dialogue/dlg_m01_195",
+    "mission.json#dialogue/dlg_m01_196",
+    "mission.json#dialogue/dlg_m01_198",
+    "mission.json#dialogue/dlg_m01_199",
+    "mission.json#callouts/lines/co_m01_enemy_mg_fire_on_squad",
+    "mission.json#callouts/lines/co_m01_enemy_group_suppressed",
+    "mission.json#callouts/lines/co_m01_ally_hit",
+    "mission.json#callouts/lines/co_m01_cover_rotation",
+    "mission.json#callouts/lines/npc_reloading",
+    "mission.json#callouts/lines/player_reloading_near_ally",
+    "mission.json#callouts/lines/sun_glare_player_facing_east"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 155.1,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos de legenda das falas da categoria",
+   "note": "Ordens e gritos táticos da secção fictícia (historicalCertainty.summary: «Personagens e ações da secção: GAMEPLAY_DRAMATIZATION»)."
+  },
+  {
+   "id": "dlg_m01_wounded_first_aid",
+   "kind": "dialogue",
+   "act": "act_bw_0430_0705",
+   "layer": "speech",
+   "refs": [
+    "mission.json#dialogue/dlg_m01_017",
+    "mission.json#dialogue/dlg_m01_220",
+    "mission.json#dialogue/dlg_m01_221",
+    "mission.json#dialogue/dlg_m01_222",
+    "mission.json#dialogue/dlg_m01_223",
+    "mission.json#dialogue/dlg_m01_224",
+    "mission.json#dialogue/dlg_m01_225",
+    "mission.json#dialogue/dlg_m01_226"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 5,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos de legenda das falas da categoria",
+   "note": "Feridos da guarnição oeste e Dudek (cena do jogo)."
+  },
+  {
+   "id": "dlg_m01_bak_dudek",
+   "kind": "dialogue",
+   "act": "act_bw_0430_0705",
+   "layer": "speech",
+   "refs": [
+    "mission.json#dialogue/dlg_m01_041",
+    "mission.json#dialogue/dlg_m01_042",
+    "mission.json#dialogue/dlg_m01_043",
+    "mission.json#dialogue/dlg_m01_104",
+    "mission.json#dialogue/dlg_m01_108",
+    "mission.json#dialogue/dlg_m01_109",
+    "mission.json#dialogue/dlg_m01_146",
+    "mission.json#dialogue/dlg_m01_147",
+    "mission.json#dialogue/dlg_m01_148",
+    "mission.json#dialogue/dlg_m01_149",
+    "mission.json#dialogue/dlg_m01_151",
+    "mission.json#dialogue/dlg_m01_160",
+    "mission.json#dialogue/dlg_m01_161",
+    "mission.json#dialogue/dlg_m01_162",
+    "mission.json#dialogue/dlg_m01_056a",
+    "mission.json#dialogue/dlg_m01_056b",
+    "mission.json#dialogue/dlg_m01_056c",
+    "mission.json#dialogue/dlg_m01_057a",
+    "mission.json#dialogue/dlg_m01_057b"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 20.4,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos de legenda das falas da categoria",
+   "note": "Ferimento de Bąk, resgate e escolta (fictícios)."
+  },
+  {
+   "id": "dlg_m01_corridor_count",
+   "kind": "dialogue",
+   "act": "act_bw_0430_0705",
+   "layer": "speech",
+   "refs": [
+    "mission.json#dialogue/dlg_m01_047",
+    "mission.json#dialogue/dlg_m01_048",
+    "mission.json#dialogue/dlg_m01_049",
+    "mission.json#dialogue/dlg_m01_150"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 7.6,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos de legenda das falas da categoria",
+   "note": "Contagem dos sobreviventes no corredor (12–18 é número do jogo, P8)."
+  },
+  {
+   "id": "dlg_m01_squad_bounds",
+   "kind": "dialogue",
+   "act": "act_bw_0430_0705",
+   "layer": "speech",
+   "refs": [
+    "mission.json#dialogue/dlg_m01_155",
+    "mission.json#dialogue/dlg_m01_156",
+    "mission.json#dialogue/dlg_m01_157",
+    "mission.json#dialogue/dlg_m01_158",
+    "mission.json#dialogue/dlg_m01_159"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 10,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos de legenda das falas da categoria",
+   "note": "Lanços da secção após a demolição leste (retreat: dramatização)."
+  },
+  {
+   "id": "dlg_m01_shelter",
+   "kind": "dialogue",
+   "act": "act_bw_0430_0705",
+   "layer": "speech",
+   "refs": [
+    "mission.json#dialogue/dlg_m01_051",
+    "mission.json#dialogue/dlg_m01_052",
+    "mission.json#dialogue/dlg_m01_053",
+    "mission.json#dialogue/dlg_m01_054",
+    "mission.json#dialogue/dlg_m01_055",
+    "mission.json#dialogue/dlg_m01_058",
+    "mission.json#dialogue/dlg_m01_059",
+    "mission.json#dialogue/dlg_m01_060",
+    "mission.json#dialogue/dlg_m01_062",
+    "mission.json#dialogue/dlg_m01_063",
+    "mission.json#dialogue/dlg_m01_064",
+    "mission.json#dialogue/dlg_m01_065"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 5,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo: segundos de legenda das falas da categoria",
+   "note": "Avisos pessoais e chamada no abrigo (cena do jogo)."
+  },
+  {
+   "id": "db_01",
+   "kind": "debrief",
+   "act": "act_bw_0430_0705",
+   "layer": "text",
+   "refs": [
+    "mission.json#debrief/paragraphs/db_01"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "H01-PDF",
+    "H02"
+   ],
+   "certainty": "ALTA",
+   "playWeightSec": 7,
+   "weightEstimated": true,
+   "weightBasis": "estimativa: 21 palavras a 3 palavras/s",
+   "note": "Às 04:34, bombardeiros alemães atacaram Tczew. O dano nos cabos e o reparo representados n…"
+  },
+  {
+   "id": "db_02",
+   "kind": "debrief",
+   "act": "act_bw_0430_0705",
+   "layer": "text",
+   "refs": [
+    "mission.json#debrief/paragraphs/db_02"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "H01-PDF"
+   ],
+   "certainty": "ALTA",
+   "playWeightSec": 10.7,
+   "weightEstimated": true,
+   "weightBasis": "estimativa: 32 palavras a 3 palavras/s",
+   "note": "Por volta das 04:45, um comboio de carga com sapadores alemães escondidos chegou à cabeça …"
+  },
+  {
+   "id": "db_03",
+   "kind": "debrief",
+   "act": "act_bw_0430_0705",
+   "layer": "text",
+   "refs": [
+    "mission.json#debrief/paragraphs/db_03"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "H01-PDF"
+   ],
+   "certainty": "ALTA",
+   "playWeightSec": 8.7,
+   "weightEstimated": true,
+   "weightBasis": "estimativa: 26 palavras a 3 palavras/s",
+   "note": "O roteiro adopta demolições às 06:10 e 06:45, conforme H01-PDF; outras fontes dão 06:40 pa…"
+  },
+  {
+   "id": "db_04",
+   "kind": "debrief",
+   "act": "act_bw_0430_0705",
+   "layer": "text",
+   "refs": [
+    "mission.json#debrief/paragraphs/db_04"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "H01-PDF"
+   ],
+   "certainty": "ALTA",
+   "playWeightSec": 9,
+   "weightEstimated": true,
+   "weightBasis": "estimativa: 27 palavras a 3 palavras/s",
+   "note": "A guarnição continuou a combater e retirou-se de Tczew até às 20:00. A campanha continuou.…"
+  },
+  {
+   "id": "db_05",
+   "kind": "debrief",
+   "act": "act_bw_0430_0705",
+   "layer": "text",
+   "refs": [
+    "mission.json#debrief/paragraphs/db_05"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "H01-PDF"
+   ],
+   "certainty": "ALTA",
+   "playWeightSec": 6,
+   "weightEstimated": true,
+   "weightBasis": "estimativa: 18 palavras a 3 palavras/s",
+   "note": "Stanisław Janik comandava o 2.º Batalhão de Fuzileiros. O pelotão de sapadores era comanda…"
+  },
+  {
+   "id": "db_05b",
+   "kind": "debrief",
+   "act": "act_bw_0430_0705",
+   "layer": "text",
+   "refs": [
+    "mission.json#debrief/paragraphs/db_05b"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "H01-PDF"
+   ],
+   "certainty": "ALTA",
+   "playWeightSec": 6.7,
+   "weightEstimated": true,
+   "weightBasis": "estimativa: 20 palavras a 3 palavras/s",
+   "note": "O pelotão da cabeça de ponte leste, que recuou pela ponte antes da primeira explosão, era …"
+  },
+  {
+   "id": "db_06",
+   "kind": "debrief",
+   "act": "act_bw_0430_0705",
+   "layer": "text",
+   "refs": [
+    "mission.json#debrief/paragraphs/db_06"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T23"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 8,
+   "weightEstimated": true,
+   "weightBasis": "estimativa: 24 palavras a 3 palavras/s",
+   "note": "Em Szymankowo, ferroviários e aduaneiros polacos avisaram Tczew e atrasaram o plano alemão…"
+  },
+  {
+   "id": "db_07",
+   "kind": "debrief",
+   "act": "act_bw_0430_0705",
+   "layer": "text",
+   "refs": [
+    "mission.json#debrief/paragraphs/db_07"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 5,
+   "weightEstimated": true,
+   "weightBasis": "estimativa: 15 palavras a 3 palavras/s",
+   "note": "Declaração de que a secção é fictícia: não é facto histórico (conta como dramatização)."
+  },
+  {
+   "id": "clock_act_vii_a_north#facto",
+   "kind": "hour",
+   "act": "act_vii_a_north",
+   "layer": "display",
+   "refs": [
+    "areas/np/act.json#clock"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T08"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 100.5,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: rótulo de hora no HUD durante todo o ato",
+   "note": "Rótulo «MANHÃ · ~07:00» (DOCUMENTED (hora aproximada, fonte única) / GAMEPLAY_DRAMATIZATION (duração do ato)).",
+   "splitOf": "clock_act_vii_a_north",
+   "share": 0.5
+  },
+  {
+   "id": "clock_act_vii_a_north#jogo",
+   "kind": "hour",
+   "act": "act_vii_a_north",
+   "layer": "display",
+   "refs": [
+    "areas/np/act.json#clock"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 100.5,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: rótulo de hora no HUD durante todo o ato",
+   "note": "Hora interna do ato (só luz e som) e duração do ato.",
+   "splitOf": "clock_act_vii_a_north",
+   "share": 0.5
+  },
+  {
+   "id": "cs_np_entry",
+   "kind": "card",
+   "act": "act_vii_a_north",
+   "layer": "display",
+   "refs": [
+    "areas/np/act.json#cards/entry"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T08"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 9,
+   "weightEstimated": true,
+   "weightBasis": "seconds do cartão (a rota de controlo salta-o ao fim de ~1 s)",
+   "note": "Perímetro norte de Tczew / 1 de setembro de 1939 · manhã, pouco depois da chamada / O ataque de ~07:00 vindo do norte continua · hora de fonte única (T08) / Reforço da secção, duas vagas e a pausa ent"
+  },
+  {
+   "id": "cs_np_end",
+   "kind": "card",
+   "act": "act_vii_a_north",
+   "layer": "display",
+   "refs": [
+    "areas/np/act.json#cards/end"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T08",
+    "T16"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 9,
+   "weightEstimated": true,
+   "weightBasis": "seconds do cartão (a rota de controlo salta-o ao fim de ~1 s)",
+   "note": "Ataque vindo do norte repelido / Fonte única (T08): um veículo blindado destruído por canhão AT / Infantaria detida pelo fogo: dramatização / Os ataques a norte continuaram durante o dia (T16) · tipo "
+  },
+  {
+   "id": "obj_np_reach_trench",
+   "kind": "objective",
+   "act": "act_vii_a_north",
+   "layer": "action",
+   "refs": [
+    "areas/np/act.json#objectives/obj_np_reach_trench"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 13.4,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com o objetivo ativo",
+   "note": "Junte-se à secção no parapeito norte"
+  },
+  {
+   "id": "obj_np_hold_north#facto",
+   "kind": "objective",
+   "act": "act_vii_a_north",
+   "layer": "action",
+   "refs": [
+    "areas/np/act.json#objectives/obj_np_hold_north"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T08"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 89.3,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com o objetivo ativo",
+   "note": "DOCUMENTED (ataque repelido, T08)",
+   "splitOf": "obj_np_hold_north",
+   "share": 0.5
+  },
+  {
+   "id": "obj_np_hold_north#jogo",
+   "kind": "objective",
+   "act": "act_vii_a_north",
+   "layer": "action",
+   "refs": [
+    "areas/np/act.json#objectives/obj_np_hold_north"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 89.3,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com o objetivo ativo",
+   "note": "GAMEPLAY_DRAMATIZATION (papel do jogador)",
+   "splitOf": "obj_np_hold_north",
+   "share": 0.5
+  },
+  {
+   "id": "evt_np_wave#facto",
+   "kind": "event",
+   "act": "act_vii_a_north",
+   "layer": "action",
+   "refs": [
+    "areas/np/act.json#events/evt_np_wave"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T08"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 15,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: min(30 s, até ao fim) a partir de 14.5 s",
+   "note": "DOCUMENTED (ataque)",
+   "splitOf": "evt_np_wave",
+   "share": 0.5
+  },
+  {
+   "id": "evt_np_wave#jogo",
+   "kind": "event",
+   "act": "act_vii_a_north",
+   "layer": "action",
+   "refs": [
+    "areas/np/act.json#events/evt_np_wave"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 15,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: min(30 s, até ao fim) a partir de 14.5 s",
+   "note": "GAMEPLAY_DRAMATIZATION (momento)",
+   "splitOf": "evt_np_wave",
+   "share": 0.5
+  },
+  {
+   "id": "evt_np_wave_2",
+   "kind": "event",
+   "act": "act_vii_a_north",
+   "layer": "action",
+   "refs": [
+    "areas/np/act.json#events/evt_np_wave_2"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 30,
+   "weightEstimated": true,
+   "weightBasis": "golden do ato (rota ativa): 2.ª vaga entra; batida de 30 s",
+   "note": "Momento do ato (dramatização)."
+  },
+  {
+   "id": "wave1_act_vii_a_north#facto",
+   "kind": "scene",
+   "act": "act_vii_a_north",
+   "layer": "action",
+   "refs": [
+    "areas/np/act.json#groups/grp_np_de/assault",
+    "areas/np/act.json#history/h_np_attack"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T08"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 11.4,
+   "weightEstimated": false,
+   "weightBasis": "golden do ato, rota ativa: 1.ª vaga da entrada à quebra",
+   "note": "Ataque vindo do norte às ~07:00 (T08).",
+   "splitOf": "wave1_act_vii_a_north",
+   "share": 0.5
+  },
+  {
+   "id": "wave1_act_vii_a_north#jogo",
+   "kind": "scene",
+   "act": "act_vii_a_north",
+   "layer": "action",
+   "refs": [
+    "areas/np/act.json#groups/grp_np_de/assault",
+    "areas/np/act.json#history/h_np_attack"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 11.4,
+   "weightEstimated": false,
+   "weightBasis": "golden do ato, rota ativa: 1.ª vaga da entrada à quebra",
+   "note": "Efetivo, faixas, momento e limiar de quebra da 1.ª vaga.",
+   "splitOf": "wave1_act_vii_a_north",
+   "share": 0.5
+  },
+  {
+   "id": "lull_act_vii_a_north",
+   "kind": "scene",
+   "act": "act_vii_a_north",
+   "layer": "action",
+   "refs": [
+    "areas/np/act.json#events/evt_np_wave_2",
+    "areas/np/act.json#history/h_np_echelons"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 42.9,
+   "weightEstimated": false,
+   "weightBasis": "golden do ato, rota ativa: da quebra da 1.ª vaga à entrada da 2.ª",
+   "note": "Pausa de ~40 s entre vagas (h_np_echelons)."
+  },
+  {
+   "id": "wave2_act_vii_a_north",
+   "kind": "scene",
+   "act": "act_vii_a_north",
+   "layer": "action",
+   "refs": [
+    "areas/np/act.json#groups/grp_np_de/assault/echelons/second",
+    "areas/np/act.json#history/h_np_echelons"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 99.9,
+   "weightEstimated": false,
+   "weightBasis": "golden do ato, rota ativa: 2.ª vaga da entrada à quebra",
+   "note": "Segunda vaga/investida: sem fonte (número de vagas, efetivo e horas não constam)."
+  },
+  {
+   "id": "grp_np_line@act_vii_a_north#facto",
+   "kind": "group",
+   "act": "act_vii_a_north",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act.json#groups/grp_np_line"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T03"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 100.5,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com algum membro ativo e vivo",
+   "note": "DOCUMENTED (2.ª/3.ª companhias a norte, T03)",
+   "splitOf": "grp_np_line@act_vii_a_north",
+   "share": 0.5
+  },
+  {
+   "id": "grp_np_line@act_vii_a_north#jogo",
+   "kind": "group",
+   "act": "act_vii_a_north",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act.json#groups/grp_np_line"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 100.5,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com algum membro ativo e vivo",
+   "note": "GAMEPLAY_DRAMATIZATION (homens, número)",
+   "splitOf": "grp_np_line@act_vii_a_north",
+   "share": 0.5
+  },
+  {
+   "id": "grp_np_section@act_vii_a_north",
+   "kind": "group",
+   "act": "act_vii_a_north",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act.json#groups/grp_np_section"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 201,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com algum membro ativo e vivo",
+   "note": "Secção de Zieliński (chega com o jogador)"
+  },
+  {
+   "id": "grp_np_ckm@act_vii_a_north#facto",
+   "kind": "group",
+   "act": "act_vii_a_north",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act.json#groups/grp_np_ckm"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T08",
+    "T03"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 100.5,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com algum membro ativo e vivo",
+   "note": "DOCUMENTED (metralhadoras repelem a infantaria, T08; pelotões de mtr, T03)",
+   "splitOf": "grp_np_ckm@act_vii_a_north",
+   "share": 0.5,
+   "conflict": "A classe cita «metralhadoras repelem a infantaria, T08» como DOCUMENTED, mas grp_np_de.echelonsNote e db_np_01 dizem que «metralhadoras é dramatização» (o resumo de T08 em SOURCES.md não as refere; HISTORICAL_RESEARCH §3.1 sim)."
+  },
+  {
+   "id": "grp_np_ckm@act_vii_a_north#jogo",
+   "kind": "group",
+   "act": "act_vii_a_north",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act.json#groups/grp_np_ckm"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T08",
+    "T03"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 100.5,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com algum membro ativo e vivo",
+   "note": "RECONSTRUCTED (posição)",
+   "splitOf": "grp_np_ckm@act_vii_a_north",
+   "share": 0.5,
+   "conflict": "A classe cita «metralhadoras repelem a infantaria, T08» como DOCUMENTED, mas grp_np_de.echelonsNote e db_np_01 dizem que «metralhadoras é dramatização» (o resumo de T08 em SOURCES.md não as refere; HISTORICAL_RESEARCH §3.1 sim)."
+  },
+  {
+   "id": "grp_np_de@act_vii_a_north#facto",
+   "kind": "group",
+   "act": "act_vii_a_north",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act.json#groups/grp_np_de"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T08",
+    "T16"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 96.5,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com algum membro ativo e vivo",
+   "note": "DOCUMENTED (ataque do norte, T08/T16)",
+   "splitOf": "grp_np_de@act_vii_a_north",
+   "share": 0.5
+  },
+  {
+   "id": "grp_np_de@act_vii_a_north#jogo",
+   "kind": "group",
+   "act": "act_vii_a_north",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act.json#groups/grp_np_de"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 96.5,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com algum membro ativo e vivo",
+   "note": "GAMEPLAY_DRAMATIZATION (efetivo, movimentos, as duas vagas e a pausa entre elas)",
+   "splitOf": "grp_np_de@act_vii_a_north",
+   "share": 0.5
+  },
+  {
+   "id": "positions@act_vii_a_north",
+   "kind": "scene",
+   "act": "act_vii_a_north",
+   "layer": "presence",
+   "refs": [
+    "areas/np/layout.json#classification",
+    "areas/np/act.json#history/h_np_positions_place"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T03",
+    "T08"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 201,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: o parapeito e as posições estão sempre à vista",
+   "note": "Parapeito, ninho da ckm e posições: reconstrução sem mapa de 1939 (P4)."
+  },
+  {
+   "id": "wreck@act_vii_a_north#facto",
+   "kind": "vehicle",
+   "act": "act_vii_a_north",
+   "layer": "presence",
+   "refs": [
+    "areas/np/layout.json#wreck",
+    "areas/np/act.json#history/h_np_attack"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T08"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 100.5,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: destroço à vista durante o ato",
+   "note": "Um veículo destruído por canhão AT (T08, fonte única).",
+   "splitOf": "wreck@act_vii_a_north",
+   "share": 0.5
+  },
+  {
+   "id": "wreck@act_vii_a_north#jogo",
+   "kind": "vehicle",
+   "act": "act_vii_a_north",
+   "layer": "presence",
+   "refs": [
+    "areas/np/layout.json#wreck",
+    "areas/np/act.json#history/h_np_attack"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T08"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 100.5,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: destroço à vista durante o ato",
+   "note": "Forma genérica e sítio do destroço (tipo de veículo desconhecido).",
+   "splitOf": "wreck@act_vii_a_north",
+   "share": 0.5
+  },
+  {
+   "id": "history@act_vii_a_north",
+   "kind": "history",
+   "act": "act_vii_a_north",
+   "layer": "text",
+   "refs": [
+    "areas/np/act.json#history/h_np_attack",
+    "areas/np/act.json#history/h_np_heimwehr",
+    "areas/np/act.json#history/h_np_positions",
+    "areas/np/act.json#history/h_np_positions_place",
+    "areas/np/act.json#history/h_np_arrival",
+    "areas/np/act.json#history/h_np_echelons",
+    "areas/np/act.json#history/h_np_suppress"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T08",
+    "T16",
+    "T03"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: notas de dados, não aparecem ao jogador (o arquivo histórico é o V0)",
+   "note": "Notas históricas do ato; as entradas de dramatização (h_np_arrival, h_np_echelons, h_np_suppress) estão nas cenas/grupos."
+  },
+  {
+   "id": "cast_marek_zielinski@act_vii_a_north",
+   "kind": "cast",
+   "act": "act_vii_a_north",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act.json#cast/marek_zielinski"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos e falas",
+   "note": "Zieliński: personagem fictícia."
+  },
+  {
+   "id": "cast_staszek_pawlak@act_vii_a_north",
+   "kind": "cast",
+   "act": "act_vii_a_north",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act.json#cast/staszek_pawlak"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos e falas",
+   "note": "Pawlak: personagem fictícia."
+  },
+  {
+   "id": "cast_szymon_kowal@act_vii_a_north",
+   "kind": "cast",
+   "act": "act_vii_a_north",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act.json#cast/szymon_kowal"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos e falas",
+   "note": "Kowal: personagem fictícia."
+  },
+  {
+   "id": "cast_ckm_gunner@act_vii_a_north",
+   "kind": "cast",
+   "act": "act_vii_a_north",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act.json#cast/ckm_gunner"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos e falas",
+   "note": "Atirador da ckm: personagem fictícia."
+  },
+  {
+   "id": "cast_ckm_loader@act_vii_a_north",
+   "kind": "cast",
+   "act": "act_vii_a_north",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act.json#cast/ckm_loader"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos e falas",
+   "note": "Municiador da ckm: personagem fictícia."
+  },
+  {
+   "id": "callouts_staging@act_vii_a_north",
+   "kind": "dialogue",
+   "act": "act_vii_a_north",
+   "layer": "speech",
+   "refs": [
+    "areas/np/act.json#callouts/np_001",
+    "areas/np/act.json#callouts/np_013",
+    "areas/np/act.json#callouts/np_014",
+    "areas/np/act.json#callouts/np_015",
+    "areas/np/act.json#callouts/np_016"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 18.5,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos de legenda",
+   "note": "Chegada, pausa entre vagas, barragens, maqueiros, 2.ª vaga: arrive_card_end, lull, lull_quiet, echelon_seen, final_break."
+  },
+  {
+   "id": "callouts_fight@act_vii_a_north#facto",
+   "kind": "dialogue",
+   "act": "act_vii_a_north",
+   "layer": "speech",
+   "refs": [
+    "areas/np/act.json#callouts/np_002",
+    "areas/np/act.json#callouts/np_003",
+    "areas/np/act.json#callouts/np_004",
+    "areas/np/act.json#callouts/np_005",
+    "areas/np/act.json#callouts/np_006",
+    "areas/np/act.json#callouts/np_007",
+    "areas/np/act.json#callouts/np_008",
+    "areas/np/act.json#callouts/np_009",
+    "areas/np/act.json#callouts/np_010",
+    "areas/np/act.json#callouts/np_011",
+    "areas/np/act.json#callouts/np_012"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T08"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 35.8,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos de legenda",
+   "note": "Falas do combate contra um ataque documentado.",
+   "splitOf": "callouts_fight@act_vii_a_north",
+   "share": 0.5
+  },
+  {
+   "id": "callouts_fight@act_vii_a_north#jogo",
+   "kind": "dialogue",
+   "act": "act_vii_a_north",
+   "layer": "speech",
+   "refs": [
+    "areas/np/act.json#callouts/np_002",
+    "areas/np/act.json#callouts/np_003",
+    "areas/np/act.json#callouts/np_004",
+    "areas/np/act.json#callouts/np_005",
+    "areas/np/act.json#callouts/np_006",
+    "areas/np/act.json#callouts/np_007",
+    "areas/np/act.json#callouts/np_008",
+    "areas/np/act.json#callouts/np_009",
+    "areas/np/act.json#callouts/np_010",
+    "areas/np/act.json#callouts/np_011",
+    "areas/np/act.json#callouts/np_012"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 35.8,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos de legenda",
+   "note": "Texto e momento das falas, da secção fictícia.",
+   "splitOf": "callouts_fight@act_vii_a_north",
+   "share": 0.5
+  },
+  {
+   "id": "db_np_01",
+   "kind": "debrief",
+   "act": "act_vii_a_north",
+   "layer": "text",
+   "refs": [
+    "areas/np/act.json#debrief/paragraphs/db_np_01"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T08",
+    "T16"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 29.3,
+   "weightEstimated": true,
+   "weightBasis": "estimativa: 88 palavras a 3 palavras/s",
+   "note": "Às ~07:00 — hora de uma única fonte —, um ataque alemão vindo do norte, com veículos blind…",
+   "conflict": "O parágrafo chama «reconstrução para o jogo» a elementos que os dados classificam como GAMEPLAY_DRAMATIZATION (h_np_arrival, h_np_echelons, h_np_suppress): o texto ao jogador subestima a dramatização."
+  },
+  {
+   "id": "clock_act_vii_b_north_day#facto",
+   "kind": "hour",
+   "act": "act_vii_b_north_day",
+   "layer": "display",
+   "refs": [
+    "areas/np/act-vii-b.json#clock"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T16"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 119.2,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: rótulo de hora no HUD durante todo o ato",
+   "note": "Rótulo «DURANTE O DIA» (DOCUMENTED (ataques durante o dia, T16, BAIXA) / GAMEPLAY_DRAMATIZATION (a hora interna de 13:00)).",
+   "splitOf": "clock_act_vii_b_north_day",
+   "share": 0.5
+  },
+  {
+   "id": "clock_act_vii_b_north_day#jogo",
+   "kind": "hour",
+   "act": "act_vii_b_north_day",
+   "layer": "display",
+   "refs": [
+    "areas/np/act-vii-b.json#clock"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 119.2,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: rótulo de hora no HUD durante todo o ato",
+   "note": "Hora interna do ato (só luz e som) e duração do ato.",
+   "splitOf": "clock_act_vii_b_north_day",
+   "share": 0.5
+  },
+  {
+   "id": "cs_npb_entry",
+   "kind": "card",
+   "act": "act_vii_b_north_day",
+   "layer": "display",
+   "refs": [
+    "areas/np/act-vii-b.json#cards/entry"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T16"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 9,
+   "weightEstimated": true,
+   "weightBasis": "seconds do cartão (a rota de controlo salta-o ao fim de ~1 s)",
+   "note": "Mais tarde… / Perímetro norte · 1 de setembro de 1939, durante o dia / Os ataques vindos do norte continuaram, com apoio de artilharia (T16, certeza baixa) / Quantos e a que horas: desconhecido / Posi",
+   "conflict": "Cita «apoio de artilharia (T16)», mas o resumo de T16 em research/SOURCES.md não fala de artilharia nem de «durante o dia»; vem de HISTORICAL_RESEARCH §3.1 (o próprio brg_npb_1.note o diz). Rebaixado a RECONSTRUCTED até se ler T16."
+  },
+  {
+   "id": "cs_npb_end",
+   "kind": "card",
+   "act": "act_vii_b_north_day",
+   "layer": "display",
+   "refs": [
+    "areas/np/act-vii-b.json#cards/end"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T03"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 9,
+   "weightEstimated": true,
+   "weightBasis": "seconds do cartão (a rota de controlo salta-o ao fim de ~1 s)",
+   "note": "Ataques repelidos durante o dia / A guarnição manteve as posições até à ordem da tarde (T03) / Calibre e posição da artilharia alemã: desconhecidos"
+  },
+  {
+   "id": "obj_npb_resupply",
+   "kind": "objective",
+   "act": "act_vii_b_north_day",
+   "layer": "action",
+   "refs": [
+    "areas/np/act-vii-b.json#objectives/obj_npb_resupply"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 20.5,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com o objetivo ativo",
+   "note": "Reabasteça-se e ocupe o flanco oeste do parapeito"
+  },
+  {
+   "id": "obj_npb_take_cover",
+   "kind": "objective",
+   "act": "act_vii_b_north_day",
+   "layer": "action",
+   "refs": [
+    "areas/np/act-vii-b.json#objectives/obj_npb_take_cover"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 56,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com o objetivo ativo",
+   "note": "Abrigue-se atrás do parapeito"
+  },
+  {
+   "id": "obj_npb_hold#facto",
+   "kind": "objective",
+   "act": "act_vii_b_north_day",
+   "layer": "action",
+   "refs": [
+    "areas/np/act-vii-b.json#objectives/obj_npb_hold"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T16"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 84.6,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com o objetivo ativo",
+   "note": "DOCUMENTED (ataques repelidos durante o dia, T16)",
+   "splitOf": "obj_npb_hold",
+   "share": 0.5
+  },
+  {
+   "id": "obj_npb_hold#jogo",
+   "kind": "objective",
+   "act": "act_vii_b_north_day",
+   "layer": "action",
+   "refs": [
+    "areas/np/act-vii-b.json#objectives/obj_npb_hold"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 84.6,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com o objetivo ativo",
+   "note": "GAMEPLAY_DRAMATIZATION (papel do jogador)",
+   "splitOf": "obj_npb_hold",
+   "share": 0.5
+  },
+  {
+   "id": "evt_npb_day",
+   "kind": "event",
+   "act": "act_vii_b_north_day",
+   "layer": "action",
+   "refs": [
+    "areas/np/act-vii-b.json#events/evt_npb_day"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "não observado como evento consumido na rota; peso no cenário/onda correspondente",
+   "note": "Marcador da hora interna (só luz e som)."
+  },
+  {
+   "id": "evt_npb_wave#facto",
+   "kind": "event",
+   "act": "act_vii_b_north_day",
+   "layer": "action",
+   "refs": [
+    "areas/np/act-vii-b.json#events/evt_npb_wave"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T16"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 15,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: min(30 s, até ao fim) a partir de 67.2 s",
+   "note": "DOCUMENTED (ataques do norte com apoio de artilharia, T16)",
+   "splitOf": "evt_npb_wave",
+   "share": 0.5
+  },
+  {
+   "id": "evt_npb_wave#jogo",
+   "kind": "event",
+   "act": "act_vii_b_north_day",
+   "layer": "action",
+   "refs": [
+    "areas/np/act-vii-b.json#events/evt_npb_wave"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 15,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: min(30 s, até ao fim) a partir de 67.2 s",
+   "note": "GAMEPLAY_DRAMATIZATION (momento)",
+   "splitOf": "evt_npb_wave",
+   "share": 0.5
+  },
+  {
+   "id": "evt_npb_wave_2",
+   "kind": "event",
+   "act": "act_vii_b_north_day",
+   "layer": "action",
+   "refs": [
+    "areas/np/act-vii-b.json#events/evt_npb_wave_2"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 30,
+   "weightEstimated": true,
+   "weightBasis": "golden do ato (rota ativa): 2.ª vaga entra; batida de 30 s",
+   "note": "Momento do ato (dramatização)."
+  },
+  {
+   "id": "wave1_act_vii_b_north_day#facto",
+   "kind": "scene",
+   "act": "act_vii_b_north_day",
+   "layer": "action",
+   "refs": [
+    "areas/np/act-vii-b.json#groups/grp_np_de/assault",
+    "areas/np/act-vii-b.json#history/h_npb_day_attacks"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T16"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 20.9,
+   "weightEstimated": false,
+   "weightBasis": "golden do ato, rota ativa: 1.ª vaga da entrada à quebra",
+   "note": "Ataques vindos do norte durante o dia (T16).",
+   "splitOf": "wave1_act_vii_b_north_day",
+   "share": 0.5
+  },
+  {
+   "id": "wave1_act_vii_b_north_day#jogo",
+   "kind": "scene",
+   "act": "act_vii_b_north_day",
+   "layer": "action",
+   "refs": [
+    "areas/np/act-vii-b.json#groups/grp_np_de/assault",
+    "areas/np/act-vii-b.json#history/h_npb_day_attacks"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 20.9,
+   "weightEstimated": false,
+   "weightBasis": "golden do ato, rota ativa: 1.ª vaga da entrada à quebra",
+   "note": "Efetivo, faixas, momento e limiar de quebra da 1.ª vaga.",
+   "splitOf": "wave1_act_vii_b_north_day",
+   "share": 0.5
+  },
+  {
+   "id": "lull_act_vii_b_north_day",
+   "kind": "scene",
+   "act": "act_vii_b_north_day",
+   "layer": "action",
+   "refs": [
+    "areas/np/act-vii-b.json#events/evt_npb_wave_2",
+    "areas/np/act-vii-b.json#history/h_npb_dramatization"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 45.2,
+   "weightEstimated": false,
+   "weightBasis": "golden do ato, rota ativa: da quebra da 1.ª vaga à entrada da 2.ª",
+   "note": "Pausa de ~30 s com a 2.ª barragem (h_npb_dramatization)."
+  },
+  {
+   "id": "wave2_act_vii_b_north_day",
+   "kind": "scene",
+   "act": "act_vii_b_north_day",
+   "layer": "action",
+   "refs": [
+    "areas/np/act-vii-b.json#groups/grp_np_de/assault/echelons/second",
+    "areas/np/act-vii-b.json#history/h_npb_dramatization"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 68.4,
+   "weightEstimated": false,
+   "weightBasis": "golden do ato, rota ativa: 2.ª vaga da entrada à quebra",
+   "note": "Segunda vaga/investida: sem fonte (número de vagas, efetivo e horas não constam)."
+  },
+  {
+   "id": "grp_np_line@act_vii_b_north_day#facto",
+   "kind": "group",
+   "act": "act_vii_b_north_day",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act-vii-b.json#groups/grp_np_line"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T03"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 119.2,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com algum membro ativo e vivo",
+   "note": "DOCUMENTED (2.ª/3.ª companhias a norte, T03)",
+   "splitOf": "grp_np_line@act_vii_b_north_day",
+   "share": 0.5
+  },
+  {
+   "id": "grp_np_line@act_vii_b_north_day#jogo",
+   "kind": "group",
+   "act": "act_vii_b_north_day",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act-vii-b.json#groups/grp_np_line"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 119.2,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com algum membro ativo e vivo",
+   "note": "GAMEPLAY_DRAMATIZATION (homens, número)",
+   "splitOf": "grp_np_line@act_vii_b_north_day",
+   "share": 0.5
+  },
+  {
+   "id": "grp_np_section@act_vii_b_north_day",
+   "kind": "group",
+   "act": "act_vii_b_north_day",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act-vii-b.json#groups/grp_np_section"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 238.4,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com algum membro ativo e vivo",
+   "note": "Secção de Zieliński (já nos postos)"
+  },
+  {
+   "id": "grp_np_ckm@act_vii_b_north_day#facto",
+   "kind": "group",
+   "act": "act_vii_b_north_day",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act-vii-b.json#groups/grp_np_ckm"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T08",
+    "T03"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 119.2,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com algum membro ativo e vivo",
+   "note": "DOCUMENTED (metralhadoras repelem a infantaria, T08; pelotões de mtr, T03)",
+   "splitOf": "grp_np_ckm@act_vii_b_north_day",
+   "share": 0.5,
+   "conflict": "A classe cita «metralhadoras repelem a infantaria, T08» como DOCUMENTED, mas grp_np_de.echelonsNote e db_np_01 dizem que «metralhadoras é dramatização» (o resumo de T08 em SOURCES.md não as refere; HISTORICAL_RESEARCH §3.1 sim)."
+  },
+  {
+   "id": "grp_np_ckm@act_vii_b_north_day#jogo",
+   "kind": "group",
+   "act": "act_vii_b_north_day",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act-vii-b.json#groups/grp_np_ckm"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T08",
+    "T03"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 119.2,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com algum membro ativo e vivo",
+   "note": "RECONSTRUCTED (posição)",
+   "splitOf": "grp_np_ckm@act_vii_b_north_day",
+   "share": 0.5,
+   "conflict": "A classe cita «metralhadoras repelem a infantaria, T08» como DOCUMENTED, mas grp_np_de.echelonsNote e db_np_01 dizem que «metralhadoras é dramatização» (o resumo de T08 em SOURCES.md não as refere; HISTORICAL_RESEARCH §3.1 sim)."
+  },
+  {
+   "id": "grp_np_de@act_vii_b_north_day#facto",
+   "kind": "group",
+   "act": "act_vii_b_north_day",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act-vii-b.json#groups/grp_np_de"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T16"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 115.2,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com algum membro ativo e vivo",
+   "note": "DOCUMENTED (ataques do norte durante o dia, T16)",
+   "splitOf": "grp_np_de@act_vii_b_north_day",
+   "share": 0.5
+  },
+  {
+   "id": "grp_np_de@act_vii_b_north_day#jogo",
+   "kind": "group",
+   "act": "act_vii_b_north_day",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act-vii-b.json#groups/grp_np_de"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 115.2,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com algum membro ativo e vivo",
+   "note": "GAMEPLAY_DRAMATIZATION (efetivo, movimentos, as duas investidas e a pausa entre elas)",
+   "splitOf": "grp_np_de@act_vii_b_north_day",
+   "share": 0.5
+  },
+  {
+   "id": "medics@act_vii_b_north_day",
+   "kind": "group",
+   "act": "act_vii_b_north_day",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act-vii-b.json#medics"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 75.6,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com um maqueiro ativo",
+   "note": "Dois maqueiros fictícios levam o ferido da linha."
+  },
+  {
+   "id": "brg_npb_1",
+   "kind": "scene",
+   "act": "act_vii_b_north_day",
+   "layer": "action",
+   "refs": [
+    "areas/np/act-vii-b.json#barrages/brg_npb_1"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 46,
+   "weightEstimated": false,
+   "weightBasis": "durationSec dos dados",
+   "note": "Barragem de artilharia sem calibre nem posição.",
+   "conflict": "h_npb_day_attacks e o cartão de entrada dão «apoio de artilharia» como T16 (BAIXA); a nota da própria barragem diz que o resumo de T16 não fala de artilharia."
+  },
+  {
+   "id": "brg_npb_2",
+   "kind": "scene",
+   "act": "act_vii_b_north_day",
+   "layer": "action",
+   "refs": [
+    "areas/np/act-vii-b.json#barrages/brg_npb_2"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 20,
+   "weightEstimated": false,
+   "weightBasis": "durationSec dos dados",
+   "note": "Barragem de artilharia sem calibre nem posição.",
+   "conflict": "h_npb_day_attacks e o cartão de entrada dão «apoio de artilharia» como T16 (BAIXA); a nota da própria barragem diz que o resumo de T16 não fala de artilharia."
+  },
+  {
+   "id": "positions@act_vii_b_north_day",
+   "kind": "scene",
+   "act": "act_vii_b_north_day",
+   "layer": "presence",
+   "refs": [
+    "areas/np/layout.json#classification",
+    "areas/np/act-vii-b.json#history/h_npb_positions"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T03",
+    "T08"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 238.4,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: o parapeito e as posições estão sempre à vista",
+   "note": "Parapeito, ninho da ckm e posições: reconstrução sem mapa de 1939 (P4)."
+  },
+  {
+   "id": "wreck@act_vii_b_north_day#facto",
+   "kind": "vehicle",
+   "act": "act_vii_b_north_day",
+   "layer": "presence",
+   "refs": [
+    "areas/np/layout.json#wreck",
+    "areas/np/act.json#history/h_np_attack"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T08"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 119.2,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: destroço à vista durante o ato",
+   "note": "Um veículo destruído por canhão AT (T08, fonte única).",
+   "splitOf": "wreck@act_vii_b_north_day",
+   "share": 0.5
+  },
+  {
+   "id": "wreck@act_vii_b_north_day#jogo",
+   "kind": "vehicle",
+   "act": "act_vii_b_north_day",
+   "layer": "presence",
+   "refs": [
+    "areas/np/layout.json#wreck",
+    "areas/np/act.json#history/h_np_attack"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T08"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 119.2,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: destroço à vista durante o ato",
+   "note": "Forma genérica e sítio do destroço (tipo de veículo desconhecido).",
+   "splitOf": "wreck@act_vii_b_north_day",
+   "share": 0.5
+  },
+  {
+   "id": "history@act_vii_b_north_day",
+   "kind": "history",
+   "act": "act_vii_b_north_day",
+   "layer": "text",
+   "refs": [
+    "areas/np/act-vii-b.json#history/h_npb_day_attacks",
+    "areas/np/act-vii-b.json#history/h_npb_composition",
+    "areas/np/act-vii-b.json#history/h_npb_positions",
+    "areas/np/act-vii-b.json#history/h_npb_dramatization"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T16",
+    "T03"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: notas de dados, não aparecem ao jogador (o arquivo histórico é o V0)",
+   "note": "Notas históricas do ato; as entradas de dramatização (h_npb_dramatization) estão nas cenas/grupos."
+  },
+  {
+   "id": "cast_marek_zielinski@act_vii_b_north_day",
+   "kind": "cast",
+   "act": "act_vii_b_north_day",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act-vii-b.json#cast/marek_zielinski"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos e falas",
+   "note": "Zieliński: personagem fictícia."
+  },
+  {
+   "id": "cast_staszek_pawlak@act_vii_b_north_day",
+   "kind": "cast",
+   "act": "act_vii_b_north_day",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act-vii-b.json#cast/staszek_pawlak"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos e falas",
+   "note": "Pawlak: personagem fictícia."
+  },
+  {
+   "id": "cast_szymon_kowal@act_vii_b_north_day",
+   "kind": "cast",
+   "act": "act_vii_b_north_day",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act-vii-b.json#cast/szymon_kowal"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos e falas",
+   "note": "Kowal: personagem fictícia."
+  },
+  {
+   "id": "cast_ckm_gunner@act_vii_b_north_day",
+   "kind": "cast",
+   "act": "act_vii_b_north_day",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act-vii-b.json#cast/ckm_gunner"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos e falas",
+   "note": "Atirador da ckm: personagem fictícia."
+  },
+  {
+   "id": "cast_ckm_loader@act_vii_b_north_day",
+   "kind": "cast",
+   "act": "act_vii_b_north_day",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act-vii-b.json#cast/ckm_loader"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos e falas",
+   "note": "Municiador da ckm: personagem fictícia."
+  },
+  {
+   "id": "callouts_staging@act_vii_b_north_day",
+   "kind": "dialogue",
+   "act": "act_vii_b_north_day",
+   "layer": "speech",
+   "refs": [
+    "areas/np/act-vii-b.json#callouts/npb_001",
+    "areas/np/act-vii-b.json#callouts/npb_002",
+    "areas/np/act-vii-b.json#callouts/npb_003",
+    "areas/np/act-vii-b.json#callouts/npb_004",
+    "areas/np/act-vii-b.json#callouts/npb_016",
+    "areas/np/act-vii-b.json#callouts/npb_017",
+    "areas/np/act-vii-b.json#callouts/npb_018",
+    "areas/np/act-vii-b.json#callouts/npb_019"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 35.6,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos de legenda",
+   "note": "Chegada, pausa entre vagas, barragens, maqueiros, 2.ª vaga: arrive_card_end, barrage_warn, barrage_over, medic_call, lull, lull_quiet, echelon_seen, final_break."
+  },
+  {
+   "id": "callouts_fight@act_vii_b_north_day#facto",
+   "kind": "dialogue",
+   "act": "act_vii_b_north_day",
+   "layer": "speech",
+   "refs": [
+    "areas/np/act-vii-b.json#callouts/npb_005",
+    "areas/np/act-vii-b.json#callouts/npb_006",
+    "areas/np/act-vii-b.json#callouts/npb_007",
+    "areas/np/act-vii-b.json#callouts/npb_008",
+    "areas/np/act-vii-b.json#callouts/npb_009",
+    "areas/np/act-vii-b.json#callouts/npb_010",
+    "areas/np/act-vii-b.json#callouts/npb_011",
+    "areas/np/act-vii-b.json#callouts/npb_012",
+    "areas/np/act-vii-b.json#callouts/npb_013",
+    "areas/np/act-vii-b.json#callouts/npb_014",
+    "areas/np/act-vii-b.json#callouts/npb_015"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T16"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 34.2,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos de legenda",
+   "note": "Falas do combate contra um ataque documentado.",
+   "splitOf": "callouts_fight@act_vii_b_north_day",
+   "share": 0.5
+  },
+  {
+   "id": "callouts_fight@act_vii_b_north_day#jogo",
+   "kind": "dialogue",
+   "act": "act_vii_b_north_day",
+   "layer": "speech",
+   "refs": [
+    "areas/np/act-vii-b.json#callouts/npb_005",
+    "areas/np/act-vii-b.json#callouts/npb_006",
+    "areas/np/act-vii-b.json#callouts/npb_007",
+    "areas/np/act-vii-b.json#callouts/npb_008",
+    "areas/np/act-vii-b.json#callouts/npb_009",
+    "areas/np/act-vii-b.json#callouts/npb_010",
+    "areas/np/act-vii-b.json#callouts/npb_011",
+    "areas/np/act-vii-b.json#callouts/npb_012",
+    "areas/np/act-vii-b.json#callouts/npb_013",
+    "areas/np/act-vii-b.json#callouts/npb_014",
+    "areas/np/act-vii-b.json#callouts/npb_015"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 34.2,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos de legenda",
+   "note": "Texto e momento das falas, da secção fictícia.",
+   "splitOf": "callouts_fight@act_vii_b_north_day",
+   "share": 0.5
+  },
+  {
+   "id": "db_npb_01",
+   "kind": "debrief",
+   "act": "act_vii_b_north_day",
+   "layer": "text",
+   "refs": [
+    "areas/np/act-vii-b.json#debrief/paragraphs/db_npb_01"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T16",
+    "T03"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 16,
+   "weightEstimated": true,
+   "weightBasis": "estimativa: 48 palavras a 3 palavras/s",
+   "note": "Durante o dia, novos ataques vindos do norte, com apoio de artilharia, foram repelidos. As…",
+   "conflict": "O parágrafo chama «reconstrução para o jogo» a elementos que os dados classificam como GAMEPLAY_DRAMATIZATION (h_npb_dramatization): o texto ao jogador subestima a dramatização."
+  },
+  {
+   "id": "clock_act_vii_c_withdrawal#facto",
+   "kind": "hour",
+   "act": "act_vii_c_withdrawal",
+   "layer": "display",
+   "refs": [
+    "areas/np/act-vii-c.json#clock"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T03",
+    "C01"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 94.6,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: rótulo de hora no HUD durante todo o ato",
+   "note": "Rótulo «ANOITECER» (DOCUMENTED (a ordem e a retirada ao anoitecer, T03) / GAMEPLAY_DRAMATIZATION (a hora interna de 19:00)).",
+   "splitOf": "clock_act_vii_c_withdrawal",
+   "share": 0.5
+  },
+  {
+   "id": "clock_act_vii_c_withdrawal#jogo",
+   "kind": "hour",
+   "act": "act_vii_c_withdrawal",
+   "layer": "display",
+   "refs": [
+    "areas/np/act-vii-c.json#clock"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 94.6,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: rótulo de hora no HUD durante todo o ato",
+   "note": "Hora interna do ato (só luz e som) e duração do ato.",
+   "splitOf": "clock_act_vii_c_withdrawal",
+   "share": 0.5
+  },
+  {
+   "id": "cs_npc_order",
+   "kind": "card",
+   "act": "act_vii_c_withdrawal",
+   "layer": "display",
+   "refs": [
+    "areas/np/act-vii-c.json#cards/order"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T03"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 9,
+   "weightEstimated": true,
+   "weightBasis": "seconds do cartão (a rota de controlo salta-o ao fim de ~1 s)",
+   "note": "Por volta das 17:00 / Ordem do comandante do batalhão: deixar Tczew ao anoitecer, rumo a Swarożyn–Starogard / (T03, resumo, certeza média) · quem a transmitiu, por onde e a ordem de marcha: desconheci"
+  },
+  {
+   "id": "cs_npc_dusk",
+   "kind": "card",
+   "act": "act_vii_c_withdrawal",
+   "layer": "display",
+   "refs": [
+    "areas/np/act-vii-c.json#cards/entry"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "C01"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 6,
+   "weightEstimated": true,
+   "weightBasis": "seconds do cartão (a rota de controlo salta-o ao fim de ~1 s)",
+   "note": "Ao anoitecer / Perímetro norte · 1 de setembro de 1939 / A luz do crepúsculo: cálculo astronómico (C01) · a retirada: reconstrução e dramatização"
+  },
+  {
+   "id": "cs_npc_end",
+   "kind": "card",
+   "act": "act_vii_c_withdrawal",
+   "layer": "display",
+   "refs": [
+    "areas/np/act-vii-c.json#cards/end"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T03",
+    "C01"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 9,
+   "weightEstimated": true,
+   "weightBasis": "seconds do cartão (a rota de controlo salta-o ao fim de ~1 s)",
+   "note": "O 2.º Batalhão deixou Tczew / Retirada entre as 18:00 e as 20:00 (T03, resumo, certeza média) / Pôr do sol às 18:39 (C01) · itinerário e ruas: desconhecidos (sem mapa de 1939) / O mensageiro, a retagu"
+  },
+  {
+   "id": "obj_npc_cover",
+   "kind": "objective",
+   "act": "act_vii_c_withdrawal",
+   "layer": "action",
+   "refs": [
+    "areas/np/act-vii-c.json#objectives/obj_npc_cover"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 101.4,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com o objetivo ativo",
+   "note": "Cubra a saída da linha"
+  },
+  {
+   "id": "obj_npc_withdraw#facto",
+   "kind": "objective",
+   "act": "act_vii_c_withdrawal",
+   "layer": "action",
+   "refs": [
+    "areas/np/act-vii-c.json#objectives/obj_npc_withdraw"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T03"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 39.3,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com o objetivo ativo",
+   "note": "DOCUMENTED (retirada ao anoitecer, T03)",
+   "splitOf": "obj_npc_withdraw",
+   "share": 0.5
+  },
+  {
+   "id": "obj_npc_withdraw#jogo",
+   "kind": "objective",
+   "act": "act_vii_c_withdrawal",
+   "layer": "action",
+   "refs": [
+    "areas/np/act-vii-c.json#objectives/obj_npc_withdraw"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 39.3,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com o objetivo ativo",
+   "note": "GAMEPLAY_DRAMATIZATION (papel do jogador, caminho e saída)",
+   "splitOf": "obj_npc_withdraw",
+   "share": 0.5
+  },
+  {
+   "id": "evt_npc_dusk",
+   "kind": "event",
+   "act": "act_vii_c_withdrawal",
+   "layer": "action",
+   "refs": [
+    "areas/np/act-vii-c.json#events/evt_npc_dusk"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "não observado como evento consumido na rota; peso no cenário/onda correspondente",
+   "note": "Marcador da hora interna (só luz e som)."
+  },
+  {
+   "id": "evt_npc_order#facto",
+   "kind": "event",
+   "act": "act_vii_c_withdrawal",
+   "layer": "action",
+   "refs": [
+    "areas/np/act-vii-c.json#events/evt_npc_order"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T03"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 15,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: min(30 s, até ao fim) a partir de 31.2 s",
+   "note": "DOCUMENTED (a ordem por volta das 17:00, T03)",
+   "splitOf": "evt_npc_order",
+   "share": 0.5
+  },
+  {
+   "id": "evt_npc_order#jogo",
+   "kind": "event",
+   "act": "act_vii_c_withdrawal",
+   "layer": "action",
+   "refs": [
+    "areas/np/act-vii-c.json#events/evt_npc_order"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 15,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: min(30 s, até ao fim) a partir de 31.2 s",
+   "note": "GAMEPLAY_DRAMATIZATION (o mensageiro e o momento)",
+   "splitOf": "evt_npc_order",
+   "share": 0.5
+  },
+  {
+   "id": "evt_npc_line_out",
+   "kind": "event",
+   "act": "act_vii_c_withdrawal",
+   "layer": "action",
+   "refs": [
+    "areas/np/act-vii-c.json#events/evt_npc_line_out"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 30,
+   "weightEstimated": true,
+   "weightBasis": "batida de 30 s estimada",
+   "note": "Momento do ato (dramatização)."
+  },
+  {
+   "id": "grp_np_line@act_vii_c_withdrawal#facto",
+   "kind": "group",
+   "act": "act_vii_c_withdrawal",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act-vii-c.json#groups/grp_np_line"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T03"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 51.7,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com algum membro ativo e vivo",
+   "note": "DOCUMENTED (2.ª/3.ª companhias a norte, T03)",
+   "splitOf": "grp_np_line@act_vii_c_withdrawal",
+   "share": 0.5
+  },
+  {
+   "id": "grp_np_line@act_vii_c_withdrawal#jogo",
+   "kind": "group",
+   "act": "act_vii_c_withdrawal",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act-vii-c.json#groups/grp_np_line"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 51.7,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com algum membro ativo e vivo",
+   "note": "GAMEPLAY_DRAMATIZATION (homens, número)",
+   "splitOf": "grp_np_line@act_vii_c_withdrawal",
+   "share": 0.5
+  },
+  {
+   "id": "grp_np_section@act_vii_c_withdrawal",
+   "kind": "group",
+   "act": "act_vii_c_withdrawal",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act-vii-c.json#groups/grp_np_section"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 182,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com algum membro ativo e vivo",
+   "note": "Secção de Zieliński (no posto de comando; sobe ao parapeito com a ordem e fica de retaguarda)"
+  },
+  {
+   "id": "grp_np_ckm@act_vii_c_withdrawal#facto",
+   "kind": "group",
+   "act": "act_vii_c_withdrawal",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act-vii-c.json#groups/grp_np_ckm"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T03"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 49.6,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com algum membro ativo e vivo",
+   "note": "DOCUMENTED (pelotões de metralhadoras, T03)",
+   "splitOf": "grp_np_ckm@act_vii_c_withdrawal",
+   "share": 0.5
+  },
+  {
+   "id": "grp_np_ckm@act_vii_c_withdrawal#jogo",
+   "kind": "group",
+   "act": "act_vii_c_withdrawal",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act-vii-c.json#groups/grp_np_ckm"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T03"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 49.6,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com algum membro ativo e vivo",
+   "note": "RECONSTRUCTED (posição)",
+   "splitOf": "grp_np_ckm@act_vii_c_withdrawal",
+   "share": 0.5
+  },
+  {
+   "id": "withdrawal@act_vii_c_withdrawal",
+   "kind": "scene",
+   "act": "act_vii_c_withdrawal",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act-vii-c.json#withdrawal",
+    "areas/np/act-vii-c.json#history/h_npc_withdrawal"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 78.5,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com obj_npc_withdraw ativo",
+   "note": "Saída por lanços da linha e da ckm, retaguarda da secção, faixa de saída."
+  },
+  {
+   "id": "messenger@act_vii_c_withdrawal",
+   "kind": "group",
+   "act": "act_vii_c_withdrawal",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act-vii-c.json#withdrawal/messenger",
+    "areas/np/act-vii-c.json#cast/np_mensageiro"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 62.1,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos com o mensageiro ativo",
+   "note": "Mensageiro que traz a ordem: forma do jogo (a ordem é T03)."
+  },
+  {
+   "id": "probe@act_vii_c_withdrawal",
+   "kind": "scene",
+   "act": "act_vii_c_withdrawal",
+   "layer": "action",
+   "refs": [
+    "areas/np/act-vii-c.json#withdrawal/probe"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: desligado (enabled:false)",
+   "note": "D-5: sonda alemã sem fonte, não construída; fica BLOQUEADA."
+  },
+  {
+   "id": "positions@act_vii_c_withdrawal",
+   "kind": "scene",
+   "act": "act_vii_c_withdrawal",
+   "layer": "presence",
+   "refs": [
+    "areas/np/layout.json#classification",
+    "areas/np/act-vii-c.json#history/h_npc_withdrawal"
+   ],
+   "classification": "RECONSTRUCTED",
+   "sources": [
+    "T03",
+    "T08"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 189.1,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: o parapeito e as posições estão sempre à vista",
+   "note": "Parapeito, ninho da ckm e posições: reconstrução sem mapa de 1939 (P4)."
+  },
+  {
+   "id": "history@act_vii_c_withdrawal",
+   "kind": "history",
+   "act": "act_vii_c_withdrawal",
+   "layer": "text",
+   "refs": [
+    "areas/np/act-vii-c.json#history/h_npc_order",
+    "areas/np/act-vii-c.json#history/h_npc_withdrawal",
+    "areas/np/act-vii-c.json#history/h_npc_sunset",
+    "areas/np/act-vii-c.json#history/h_npc_dramatization"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T03",
+    "C01"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: notas de dados, não aparecem ao jogador (o arquivo histórico é o V0)",
+   "note": "Notas históricas do ato; as entradas de dramatização (h_npc_dramatization) estão nas cenas/grupos."
+  },
+  {
+   "id": "cast_marek_zielinski@act_vii_c_withdrawal",
+   "kind": "cast",
+   "act": "act_vii_c_withdrawal",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act-vii-c.json#cast/marek_zielinski"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos e falas",
+   "note": "Zieliński: personagem fictícia."
+  },
+  {
+   "id": "cast_staszek_pawlak@act_vii_c_withdrawal",
+   "kind": "cast",
+   "act": "act_vii_c_withdrawal",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act-vii-c.json#cast/staszek_pawlak"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos e falas",
+   "note": "Pawlak: personagem fictícia."
+  },
+  {
+   "id": "cast_szymon_kowal@act_vii_c_withdrawal",
+   "kind": "cast",
+   "act": "act_vii_c_withdrawal",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act-vii-c.json#cast/szymon_kowal"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos e falas",
+   "note": "Kowal: personagem fictícia."
+  },
+  {
+   "id": "cast_ckm_gunner@act_vii_c_withdrawal",
+   "kind": "cast",
+   "act": "act_vii_c_withdrawal",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act-vii-c.json#cast/ckm_gunner"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos e falas",
+   "note": "Atirador da ckm: personagem fictícia."
+  },
+  {
+   "id": "cast_ckm_loader@act_vii_c_withdrawal",
+   "kind": "cast",
+   "act": "act_vii_c_withdrawal",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act-vii-c.json#cast/ckm_loader"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos e falas",
+   "note": "Municiador da ckm: personagem fictícia."
+  },
+  {
+   "id": "cast_np_mensageiro@act_vii_c_withdrawal",
+   "kind": "cast",
+   "act": "act_vii_c_withdrawal",
+   "layer": "presence",
+   "refs": [
+    "areas/np/act-vii-c.json#cast/np_mensageiro"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 0,
+   "weightEstimated": false,
+   "weightBasis": "0: a presença conta nos grupos e falas",
+   "note": "Mensageiro: personagem fictícia."
+  },
+  {
+   "id": "callouts_staging@act_vii_c_withdrawal",
+   "kind": "dialogue",
+   "act": "act_vii_c_withdrawal",
+   "layer": "speech",
+   "refs": [
+    "areas/np/act-vii-c.json#callouts/npc_001"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 4.6,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos de legenda",
+   "note": "Chegada, pausa entre vagas, barragens, maqueiros, 2.ª vaga: arrive_card_end."
+  },
+  {
+   "id": "callouts_fight@act_vii_c_withdrawal#facto",
+   "kind": "dialogue",
+   "act": "act_vii_c_withdrawal",
+   "layer": "speech",
+   "refs": [
+    "areas/np/act-vii-c.json#callouts/npc_002",
+    "areas/np/act-vii-c.json#callouts/npc_003",
+    "areas/np/act-vii-c.json#callouts/npc_004",
+    "areas/np/act-vii-c.json#callouts/npc_005",
+    "areas/np/act-vii-c.json#callouts/npc_006",
+    "areas/np/act-vii-c.json#callouts/npc_007"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T03"
+   ],
+   "certainty": "BAIXA",
+   "playWeightSec": 10.9,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos de legenda",
+   "note": "Falas da ordem e da retirada (facto T03).",
+   "splitOf": "callouts_fight@act_vii_c_withdrawal",
+   "share": 0.5
+  },
+  {
+   "id": "callouts_fight@act_vii_c_withdrawal#jogo",
+   "kind": "dialogue",
+   "act": "act_vii_c_withdrawal",
+   "layer": "speech",
+   "refs": [
+    "areas/np/act-vii-c.json#callouts/npc_002",
+    "areas/np/act-vii-c.json#callouts/npc_003",
+    "areas/np/act-vii-c.json#callouts/npc_004",
+    "areas/np/act-vii-c.json#callouts/npc_005",
+    "areas/np/act-vii-c.json#callouts/npc_006",
+    "areas/np/act-vii-c.json#callouts/npc_007"
+   ],
+   "classification": "GAMEPLAY_DRAMATIZATION",
+   "sources": [],
+   "certainty": "n/a",
+   "playWeightSec": 10.9,
+   "weightEstimated": false,
+   "weightBasis": "rota de controlo do ato: segundos de legenda",
+   "note": "Texto e momento das falas, da secção fictícia.",
+   "splitOf": "callouts_fight@act_vii_c_withdrawal",
+   "share": 0.5
+  },
+  {
+   "id": "db_npc_01",
+   "kind": "debrief",
+   "act": "act_vii_c_withdrawal",
+   "layer": "text",
+   "refs": [
+    "areas/np/act-vii-c.json#debrief/paragraphs/db_npc_01"
+   ],
+   "classification": "DOCUMENTED",
+   "sources": [
+    "T03",
+    "C01"
+   ],
+   "certainty": "MÉDIA",
+   "playWeightSec": 19.7,
+   "weightEstimated": true,
+   "weightBasis": "estimativa: 59 palavras a 3 palavras/s",
+   "note": "Por volta das 17:00 chegou a ordem de deixar Tczew ao anoitecer, rumo a Swarożyn–Starogard…",
+   "conflict": "O parágrafo chama «reconstrução para o jogo» a elementos que os dados classificam como GAMEPLAY_DRAMATIZATION (h_npc_dramatization): o texto ao jogador subestima a dramatização."
+  }
+ ]
+}
