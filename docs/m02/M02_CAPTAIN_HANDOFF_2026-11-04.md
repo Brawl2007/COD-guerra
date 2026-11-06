@@ -530,3 +530,18 @@ Não houve alterações a `src/`: o jogo já cumpria os quatro requisitos.
   2. calibração da letalidade e da duração. O alvo é 29–34 min; a simulação dá cerca de 11–13 min;
   3. recuperação de atores presos;
   4. recuo dos aliados sem munição.
+
+### iPhone: controlos de toque e página de teste
+
+**Controlos de toque:** merge `47748c68` (`2b5b2d22`, `b284f034`).
+- Joystick, olhar por arrasto, botões de ação, painel «☰ Bancada», desbloqueio do WebAudio e safe areas.
+- Testes: `tests/m02-*.test.js` 683/683; build OK.
+- Browser M02: 8 specs verdes, incluindo `m02-touch.spec.js` em emulação iPhone 13. Não foi testado num iPhone real.
+
+**Build estático só da bancada:** `npm run build:m02` gera `dist-m02/` (`tools/m02/vite-m02.config.js`). O build principal não muda.
+
+**Publicação:**
+- O Vercel recusou a criação do projeto e o token não foi aceite. O proprietário não quer tratar de tokens.
+- A bancada ficou publicada como **página privada no claude.ai**: https://claude.ai/artifact/XGJaU7YnWuRpYfnYzA8GzS
+- Não é deploy de produção.
+- Conteúdo verificado antes de publicar: os módulos são só ficheiros deste repositório e o three.js, sem hosts externos nem segredos.
