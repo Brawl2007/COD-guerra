@@ -488,3 +488,45 @@ Evidência apenas. **Nenhum portão foi aprovado.**
 - Browser M02 com a config completa (4 specs): **4 passed (9,3 min)**, corrido pelo agente.
 
 **Em curso:** fechar as lacunas PENDENTE da O2: AI-03, COM-01, COM-02 e SAVE-01 no browser.
+
+### Lacunas O2 fechadas por testes, merge `2c4a2f6e`
+
+Não houve alterações a `src/`: o jogo já cumpria os quatro requisitos.
+
+**Testes novos:**
+- AI-03: `tests/m02-27-o2-ai03-cover-leader.test.js`.
+- COM-01: `tests/m02-27-o2-com01-ammo.test.js`.
+- COM-02: `tests/m02-27-o2-gaps.test.js`.
+- SAVE-01:
+  - em Node, `tests/m02-28-o2-save01-four-checkpoints.test.js`: os 4 checkpoints de uma missão completa restauram com igualdade total;
+  - no browser, `tests/browser/m02-28-save-reload.spec.js`: com `localStorage` real, recarregar e F9 dão igualdade estrita. `cod-guerra:checkpoint:m02:v1` e uma chave M01 ficam **byte a byte iguais**.
+
+**Testes:**
+- `tests/m02-*.test.js`: **680/680**.
+- Build: OK.
+- Browser M02 com a config completa (5 specs): **5 passed (9,8 min)**, corrido pelo agente.
+
+**Lacunas que restam** (detalhe em `docs/verification/m02-claude/n1-2026-11-06/O2-coverage.md`):
+- Não há sucessão de liderança. A regra é a D1: o Gruca é obrigatório.
+- Os aliados não recuam quando ficam sem munição.
+- Atores encostados à parede numa partida forçada ficam presos; não acontece no arranque normal.
+- O teste de browser só cobre o cp_b e o F5.
+- Só há cercas na célula A.
+
+## 9. Estado no fim desta continuação (2026-11-06)
+
+- **Branch:** `claude/elegant-wright-m9l1ws`.
+- **Último merge de código:** `2c4a2f6e`.
+- **M01:** intacta. Os módulos `m01-*` só são importados.
+- **Saves do Codex** (`cod-guerra:checkpoint:m02:v1`): nunca escritos nem apagados. Só há deteção, e só de leitura. **A compatibilidade com os v1 continua por analisar**: é trabalho da branch `codex/m02-integracao-unica`.
+- **A missão NÃO está aprovada.** Os portões N0, N1 e N6 não estão aprovados. Falta a avaliação humana.
+- **Ordem recomendada para o humano:**
+  1. ler as 120 capturas N0 e os 2 vídeos;
+  2. jogar as duas rotas e a missão completa em recruta, soldado e veterano;
+  3. decidir os valores sem fonte listados nas secções 5 e 8;
+  4. decidir D-M02-1…7.
+- **Próximo trabalho técnico:**
+  1. integração com o Codex, com um gestor de save único;
+  2. calibração da letalidade e da duração. O alvo é 29–34 min; a simulação dá cerca de 11–13 min;
+  3. recuperação de atores presos;
+  4. recuo dos aliados sem munição.
