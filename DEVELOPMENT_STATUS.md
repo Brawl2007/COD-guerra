@@ -2,13 +2,14 @@
 
 ## M01 R4 completa no ramo, pacote 2 do Ato I e emenda 22 (fora da #80) — 2026-11-05
 
-Ramo `claude/dreamy-ramanujan-6v62vr` @ `4a4366ae` ou posterior; resumo e SHAs no topo de `docs/direction/M01_INTEGRATION_LEDGER.md`. **Nada disto está na #80 nem na `main`; sem deploy; sem playtest humano; FPS não medido.**
+Ramo `claude/dreamy-ramanujan-6v62vr` @ `738eeb2e` ou posterior; resumo e SHAs no topo de `docs/direction/M01_INTEGRATION_LEDGER.md`. **Nada disto está na #80 nem na `main`; sem deploy; sem playtest humano; FPS não medido.**
 
 - **Atos novos (atrás de `acts.enabled=false`):** VII-a (duas vagas, pausa com CP-F, fogo de supressão das MG34), VII-b (barragens que nunca ferem o jogador, maqueiros com maca, duas investidas, CP-I/CP-I2), VII-c (ordem «Por volta das 17:00», retirada por lanços ao anoitecer, CP-J/CP-K, luzes de guia). QA: `?act=vii-a|vii-b|vii-c`, `?acts=1`. «Continuar» já não abre saves velhos dos atos.
 - **Ato I (jogo distribuído):** pacote 2 (pó que tapa a vista da IA e agora desenhado com a mesma espessura, socorro por Dudek, granadas alemãs reais, saves antigos compatíveis) e emenda 22 (textos do `mission.json` em PT-PT, Pawlak mensageiro, tiro de apoio alemão e busca com movimento no assalto do tabuleiro). Goldens: emenda 22 `check: identical`.
 - **Apresentação:** alça da kb wz.29 com entalhe, mãos procedurais, campo/árvores/berma da área, desempenho do renderer da área (níveis, libertação de recursos, reutilização entre atos), áudio provisório dos atos da área.
 - **M02:** entrega da outra IA integrada só com ficheiros novos; auditoria e plano em `docs/direction/M02_BZURA_DESIGN.md`; o trabalho da M02 segue noutra conversa.
-- **Por fazer:** verificação final (`npm test` completo, suite de browser) em curso; playtest humano (`docs/direction/M01_PLAYTEST_GUIDE.md`); FPS no PC de referência; revisão nativa do polaco; decisões do proprietário listadas no ledger; fontes da tarde de 1/9 bloqueadas pela rede desta sessão.
+- **Verificação final:** `npm test` completo 2042/2042 e browser 216/233 em `7b282723` (15 falhas de ambiente e 1 instável, todas a passar sozinhas com a configuração certa; 1 regressão real em correção: `m01-german-retreat` 06:12); 16 achados confirmados da revisão crítica corrigidos.
+- **Por fazer:** playtest humano (`docs/direction/M01_PLAYTEST_GUIDE.md`); FPS no PC de referência; revisão nativa do polaco; decisões do proprietário listadas no ledger; fontes da tarde de 1/9 bloqueadas pela rede desta sessão.
 
 ## M01 R4 INC-1: condutor de atos e Ato VII-a «Perímetro norte, manhã» (atrás de `acts.enabled=false`) — 2026-10-25
 
