@@ -82,6 +82,9 @@ export const M02_LIGHTING_PRESETS = Object.freeze({
     // fase e posição por fazer). A direção abaixo é arbitrária e fixa; não representa nenhum azimute histórico.
     lightSource: 'moon_placeholder',
     moonLabel: 'lua não calculada (placeholder)',
+    // Preenchimento de luar do Codex (d4bc202e/7bc58191) sobre o T1 desta linha: luz de leitura (placeholder, sem lua calculada),
+    // usada pelo modelo de iluminação M02 (m02LightingModel). Não altera o ambiente TIME-01 acima.
+    moonFill: Object.freeze({ hemiSky: 0x8ea1bd, hemiGround: 0x3f4653, hemiIntensity: 2.25 }),
     solar: Object.freeze({ source: 'TIME-01', momentCET: '1939-09-09T23:00', sunBelowHorizon: true }),
     sunColor: 0x8aa8d6,
     sunIntensity: 0.4,

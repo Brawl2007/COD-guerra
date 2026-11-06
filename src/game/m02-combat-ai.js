@@ -1,6 +1,9 @@
 import {eyePosition,traceObstruction} from '../world/spatial.js';
 import { movePlayer, PLAYER_PHYSICS } from '../world/m01-player-physics.js';
 import {m02ExposedLastGroup} from './m02-evacuation-targets.js';
+import { M01_DIFFICULTY } from './m01-difficulty.js';
+/** Intervalo entre um hostil passar a ver Piotr e o 1.º tiro apontado a ele (M01 «soldado», o perfil por omissão da M01; Codex). */
+export const M02_ENEMY_REACTION_SEC = M01_DIFFICULTY.soldado.reactionGraceSec;
 import {m02MachineGunCover} from './m02-machinegun-team.js';
 import {m02ActorPresent} from './m02-actor-presence.js';
 import {m02ReactToGrenade,m02ClearIncapableGrenadeThreat} from './m02-grenade-awareness.js';
@@ -1838,14 +1841,16 @@ export function updatePolishSquad(sim, dt) {
     }
     ally.suppressed = Math.max(0, ally.suppressed - dt * 0.28);
     // Codex: ferido/amparado não continua uma rajada nem foge de granadas; os restantes reagem a uma granada que veem/ouvem.
+    // Ferido/amparado também não recarrega como combatente (Codex, tests/m02-reconstruction).
     if (['WOUNDED_LIAISON', 'WALKING_SUPPORTED', 'CARRIED', 'EVACUATED_B12'].includes(ally.state)) {
       ally.burst = null;
       delete ally.m02GrenadeThreat;
     } else if (m02ReactToGrenade(sim, ally, 'ally')) {
       stepActorNavigation(sim, ally, dt);
       continue;
+    } else {
+      stepActorWeapon(sim, ally, dt);
     }
-    stepActorWeapon(sim, ally, dt);
     // Lis ferido amparado/carregado/abrigado (J3): o percurso é do diretor da Área C (updateLisC11); a IA da secção não o move nem ele dispara.
     if (ally.state === 'WALKING_SUPPORTED' || ally.state === 'CARRIED' || ally.state === 'EVACUATED_B12') continue;
 
@@ -2345,9 +2350,10 @@ export function updateGermanGarrison(sim, dt) {
         enemy.facing = Math.atan2(visibleTarget.z - enemy.z + 0, visibleTarget.x - enemy.x + 0);
       }
 
-      // `targetAcquiredAt` (Codex) fica como estado de apresentação (pontaria visível). O atraso fixo de reação do Codex
-      // (M01 «soldado») NÃO entra: a equidade do primeiro contacto é a regra F1 do perfil de dificuldade D6 (fireActorBurst).
-      if (enemy.reloadingUntil <= sim.clock && enemy.mag > 0 && sim.clock >= enemy.nextFireAt && enemy.suppressed < 0.88) {
+      // Codex (playable continuity): a aquisição de Piotr é visível antes do 1.º tiro apontado — o intervalo de reação humana por
+      // omissão da M01 (M02_ENEMY_REACTION_SEC). É perceção, não dificuldade: a regra F1 do perfil D6 continua em fireActorBurst.
+      const reacted = visibleTarget.id !== sim.player.id || sim.clock - enemy.targetAcquiredAt >= M02_ENEMY_REACTION_SEC - 1e-9;
+      if (reacted && enemy.reloadingUntil <= sim.clock && enemy.mag > 0 && sim.clock >= enemy.nextFireAt && enemy.suppressed < 0.88) {
         const aimPt = acquiredAim;
         const fired=sim.fireActorBurst(enemy, visibleTarget, aimPt, 'enemy');
         if(fired&&visibleTarget.id===crewCover?.targetId)fired.crewCoverFor=crewCover.gunnerId;

@@ -95,7 +95,7 @@ describe('M02 C11: contacto e percurso amparado/carregado a velocidade limitada'
     runRecording(sim, 40); // chega ao ponto de encontro
     assert.equal(sim.areaC.lisPhase, 'waiting');
     sim.teleportPlayer(lis.x + 1.5, lis.z, 0, 0); // Piotr chega ao pé dele
-    sim.tick(DT, {});
+    sim.tick(DT, { interact: true }); // [E] junto a Lis: o contacto é deliberado (merge M02 único, Codex e4a46327)
     assert.equal(sim.areaC.lisContactedInC11, true);
     assert.equal(sim.dialogue.hasTriggered('dlg_m02_003'), true);
     assert.equal(sim.areaC.lisPhase, 'supported');
@@ -115,7 +115,7 @@ describe('M02 C11: contacto e percurso amparado/carregado a velocidade limitada'
     const lis = lisOf(sim);
     runRecording(sim, 40);
     sim.teleportPlayer(lis.x + 1.5, lis.z, 0, 0);
-    sim.tick(DT, {});
+    sim.tick(DT, { interact: true }); // [E] junto a Lis: o contacto é deliberado (merge M02 único, Codex e4a46327)
     assert.equal(sim.areaC.lisPhase, 'supported');
     runRecording(sim, 3, { follow: true });
     const here = [lis.x, lis.z];
@@ -132,7 +132,7 @@ describe('M02 C11: contacto e percurso amparado/carregado a velocidade limitada'
     runRecording(sim, 40);
     lis.health = 30;
     sim.teleportPlayer(lis.x + 1.5, lis.z, 0, 0);
-    sim.tick(DT, {});
+    sim.tick(DT, { interact: true }); // [E] junto a Lis: o contacto é deliberado (merge M02 único, Codex e4a46327)
     assert.equal(sim.areaC.lisSupportMode, 'wounded_evacuated');
     assert.equal(lis.state, 'CARRIED');
     assert.equal(sim.flags['m02.lis_status'], null);
@@ -153,7 +153,7 @@ describe('M02 C12: lis_status pelos três estados, só quando a condição respe
     runRecording(sim, 40);
     if (health) lis.health = health;
     sim.teleportPlayer(lis.x + 1.5, lis.z, 0, 0);
-    sim.tick(DT, {});
+    sim.tick(DT, { interact: true }); // [E] junto a Lis: o contacto é deliberado (merge M02 único, Codex e4a46327)
     runRecording(sim, 400, { follow: true });
     return sim;
   }
@@ -194,7 +194,7 @@ describe('M02 C12: lis_status pelos três estados, só quando a condição respe
     const lis = lisOf(sim);
     runRecording(sim, 40);
     sim.teleportPlayer(lis.x + 1.5, lis.z, 0, 0);
-    sim.tick(DT, {});
+    sim.tick(DT, { interact: true }); // [E] junto a Lis: o contacto é deliberado (merge M02 único, Codex e4a46327)
     runRecording(sim, 5, { follow: true });
     assert.equal(sim.areaC.lisPhase, 'supported');
     const pkg = sim.completeC12Epilogue();
@@ -394,7 +394,7 @@ describe('M02 I4/I6: Lis fora de combate e a exportação para a M03 coerente', 
     runRecording(sim, 40);
     lis.health = 30;
     sim.teleportPlayer(lis.x + 1.5, lis.z, 0, 0);
-    sim.tick(DT, {});
+    sim.tick(DT, { interact: true }); // [E] junto a Lis: o contacto é deliberado (merge M02 único, Codex e4a46327)
     runRecording(sim, 400, { follow: true });
     assert.equal(sim.flags['m02.lis_status'], 'wounded_evacuated');
     assert.equal(sim.areaC.lisPhase, 'sheltered');

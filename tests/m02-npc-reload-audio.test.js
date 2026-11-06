@@ -6,7 +6,8 @@ import {AudioManager} from '../src/core/audio.js';
 import {FakeAudioContext} from './helpers/fake-audio-context.js';
 
 function reloadScene(){
- const sim=new M02BenchSimulation();sim.enterAreaBC06();sim.allies=[];
+ // Merge M02 único: a entrada em B tem a janela de segurança C06 (EB1 «sem alerta»); o fixture abre o contacto.
+ const sim=new M02BenchSimulation();sim.enterAreaBC06();Object.assign(sim.areaB.contact,{opened:true,openedBy:'player_shot',openedAt:0,movementStartedAt:0,contactAt:0});sim.allies=[];
  const gun=sim.enemies.find(e=>e.id==='DE-B05');sim.enemies=[gun];
  Object.assign(gun,{x:0,y:0,z:100,mag:0,reserve:50,reloadingUntil:0,nextFireAt:1000,suppressed:0});
  Object.assign(sim.player,{x:-1000,y:0,z:100});sim.drainEvents();return {sim,gun};

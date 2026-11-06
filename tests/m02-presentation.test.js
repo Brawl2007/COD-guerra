@@ -12,7 +12,7 @@ import {M02Characters} from '../src/render/m02-character-adapter.js';
 test('same-clock same-cell restore drops old character blends and viewmodel history without changing the snapshot',async()=>{
  const source=await viewModelFixture(),characters=new M02Characters(new THREE.Scene(),{ik:false});
  characters.sources=source.sources;characters.clips=source.clips;characters.prepareM02Clips();
- const actor={id:'reload-fixture',team:'ally',active:true,alive:true,state:'GUARD',role:'RIFLEMAN',weapon:'mp38',x:0,y:0,z:0,facing:0,crouched:false,moving:false,suppressed:0,shot:0,motion:{speed:0}};
+ const actor={id:'reload-fixture',team:'ally',active:true,alive:true,state:'GUARD',role:'RIFLEMAN',weapon:'wz29',x:0,y:0,z:0,facing:0,crouched:false,moving:false,suppressed:0,shot:0,motion:{speed:0}};
  const player={x:2,y:0,z:2};
  try{
   characters.update([actor],10,player,'low');
@@ -22,7 +22,7 @@ test('same-clock same-cell restore drops old character blends and viewmodel hist
   assert.equal(p.visualWorld,null);assert.equal(characters.anim.size,0);
   const reloading={...actor,crouched:true,posture:'crouch',reload:{startedAt:9.2,durationSec:2.7}};
   characters.update([reloading],10,player,'low');const v=characters.instances.get(actor.id);
-  assert.equal(v.sampleClip,'m02_mp38_reload');assert.equal(v.dBlend.length,1);assert.equal(v.dBlend[0].weight,1);
+  assert.equal(v.sampleClip,'m02_rifle_crouch_reload'); // FIX-1/EQP-01: sem MP38; fuzileiro agachado a recarregarassert.equal(v.dBlend.length,1);assert.equal(v.dBlend[0].weight,1);
   assert.ok(v.root.getObjectByName('hips').position.y<.6,'a restored crouched reload must not retain the standing aim');
   assert.deepEqual(sim.snapshot(),before);
  }finally{characters.dispose();}

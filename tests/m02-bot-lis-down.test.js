@@ -34,7 +34,7 @@ function downLisIn(sim, phase) {
   const lis = lisOf(sim);
   if (phase === 'supported') {
     sim.teleportPlayer(lis.x + 1.5, lis.z, 0);
-    sim.tick(DT, {});
+    sim.tick(DT, { interact: true }); // [E] junto a Lis: o contacto é deliberado (merge M02 único, Codex e4a46327)
     assert.equal(sim.areaC.lisPhase, 'supported');
     for (let i = 0; i < 100; i++) sim.tick(DT, {}); // anda um pouco amparado, ao lado de Piotr
     sim.teleportPlayer(lis.x + 1.5, lis.z, 0);
@@ -71,7 +71,7 @@ describe('M02 C11: um Lis caído não prende a missão', () => {
     const sim = c11();
     const lis = lisOf(sim);
     sim.teleportPlayer(lis.x + 1.5, lis.z, 0);
-    sim.tick(DT, {});
+    sim.tick(DT, { interact: true }); // [E] junto a Lis: o contacto é deliberado (merge M02 único, Codex e4a46327)
     assert.equal(sim.areaC.lisPhase, 'supported');
     for (const lg of sim.areaC.lastGroup) Object.assign(lg, { evacuated: true, arrivedAt: Number(sim.clock.toFixed(2)), moving: false });
     Object.assign(lis, { x: EVAC[0] + 2, z: EVAC[1] + 2, y: sim.world.heightAt(EVAC[0] + 2, EVAC[1] + 2) });

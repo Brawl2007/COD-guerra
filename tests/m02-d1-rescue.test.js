@@ -530,7 +530,7 @@ describe('M02 D1 socorro: Lis em C11 (retoma o percurso) e a exportação para a
     sim.detonateC10FixedArtillery();
     const lis = ally(sim, 'pl_lis');
     sim.teleportPlayer(lis.x + 1.5, lis.z, 0);
-    sim.tick(DT, {});
+    sim.tick(DT, { interact: true }); // [E] junto a Lis: o contacto é deliberado (merge M02 único, Codex e4a46327)
     assert.equal(sim.areaC.lisPhase, 'supported');
     return { sim, lis };
   }

@@ -10,7 +10,10 @@ export function m02LightingModel(temporalState,preset){
   const model=lightingModel(night?-12:morning?7:14,morning?95:255);
   if(night||preset.id==='neutral_review'){
     const rgb=hex=>new THREE.Color(hex).toArray();
-    model.hemi={color:rgb(preset.hemiSky),groundColor:rgb(preset.hemiGround),intensity:preset.hemiIntensity};
+    // Merge M02 único: a noite TIME-01 (T1, lua placeholder) guarda à parte o preenchimento de luar do Codex (`moonFill`), para a
+    // leitura de fardas e coberturas; o ambiente físico da noite continua o de TIME-01 (hemiIntensity ≤ 0,4).
+    const fill=night&&preset.moonFill?preset.moonFill:preset;
+    model.hemi={color:rgb(fill.hemiSky),groundColor:rgb(fill.hemiGround),intensity:fill.hemiIntensity};
     model.sun={...model.sun,color:rgb(preset.sunColor),intensity:preset.sunIntensity,keyDir:new THREE.Vector3(...preset.sunPosition).normalize().toArray()};
     model.fog.color=rgb(preset.fogColor);model.exposure=night?1.4:1.04;
     if(night){model.daylight=0;model.sky.zenith=[.008,.015,.035];model.sky.horizon=model.fog.color;model.sky.glow=.1;model.sky.discStrength=0;}

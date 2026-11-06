@@ -27,9 +27,10 @@ export function m02PlayerAction(sim) {
       : sim.flags['m02.lis_status']==='wounded_walking'?'Recuar — Lis ainda a caminho; ficará para trás':'Romper contacto e seguir para Varsóvia';
     return action('epilogue',prompt,{distance:Number(Math.hypot(player.x+55,player.z-54).toFixed(1))});
   }
-  if(sim.activeCellId==='C'&&sim.areaC?.c11Started&&!sim.areaC.lisContactedInC11&&!player.carryingVolumeId){
-    const lis=sim.allies.find(a=>a.id==='pl_lis'&&a.alive&&!a.detachedOutOfCell&&a.state==='WOUNDED_LIAISON');
-    if(lis&&near(lis.x,lis.z,2)&&canReachActor(sim,lis,.95))return action('assist-lis','Socorrer Lis',{distance:Number(Math.hypot(lis.x-player.x,lis.z-player.z).toFixed(1))});
+  // Merge M02 único: a regra do contacto (alcance 2 m, mãos livres, sem sólido entre os dois) é a da simulação (lisContactPrompt).
+  if(sim.currentLisContactPrompt?.()){
+    const lis=sim.allies.find(a=>a.id==='pl_lis');
+    return action('assist-lis','Socorrer Lis',{distance:Number(Math.hypot(lis.x-player.x,lis.z-player.z).toFixed(1))});
   }
   if(sim.currentDoorPrompt())return null;
   if (sim.activeCellId==='A' && sim.objective.id==='COMPLETE') {
@@ -86,7 +87,7 @@ export function performM02PlayerAction(sim) {
     case 'reorganize': sim.completeC07Reorganization(); break;
     case 'area-c': sim.enterAreaCC09(); break;
     case 'epilogue': sim.completeC12Epilogue({lisOutcome:playerLisOutcome(sim)}); break;
-    case 'assist-lis': sim.assistLisInC11('wounded_walking'); break;
+    case 'assist-lis': if(!sim.contactLisInC11())return false; break; // amparo físico (sem o atalho de bancada assistLisInC11)
     case 'rifle-ammo': {
       const actor=sim.enemies.find(e=>e.id===action.actorId),given=sim.weapon.resupply(actor.mag+actor.reserve);
       const reserve=Math.min(actor.reserve,given);actor.reserve-=reserve;actor.mag-=given-reserve;

@@ -17,11 +17,14 @@ function scene(){
 test('Lis needs a deliberate reachable interaction; proximity alone cannot trigger his rescue',()=>{
  const {sim,lis}=scene();sim.tick(.05,{});
  assert.equal(sim.areaC.lisContactedInC11,false);assert.equal(lis.state,'WOUNDED_LIAISON');
- const action=m02PlayerAction(sim);assert.equal(action?.id,'assist-lis');assert.equal(action.distance,1.5);
- const save=sim.snapshot();sim.drainEvents();assert.equal(performM02PlayerAction(sim),true);
+ // Na linha Claude Lis regressa a pé ao ponto de encontro (J3) até ao contacto: a prova de «sem teletransporte» é sobre a posição
+ // imediatamente antes da ação.
+ const action=m02PlayerAction(sim);assert.equal(action?.id,'assist-lis');assert.ok(Math.abs(action.distance-1.5)<.2);
+ const atContact=[lis.x,lis.z];const save=sim.snapshot();sim.drainEvents();assert.equal(performM02PlayerAction(sim),true);
  assert.equal(sim.areaC.lisContactedInC11,true);assert.equal(lis.state,'WALKING_SUPPORTED');
- assert.equal(sim.flags['m02.lis_status'],'wounded_walking');assert.equal(sim.dialogue.hasTriggered('dlg_m02_003'),true);
- assert.deepEqual([lis.x,lis.z],[0,100]);assert.notEqual(m02PlayerAction(sim)?.id,'assist-lis');
+ // I4 desta linha: o enum final só é escrito no abrigo; no contacto fica o modo de apoio.
+ assert.equal(sim.areaC.lisSupportMode,'wounded_walking');assert.equal(sim.dialogue.hasTriggered('dlg_m02_003'),true);
+ assert.deepEqual([lis.x,lis.z],atContact);assert.notEqual(m02PlayerAction(sim)?.id,'assist-lis');
  const expected=sim.snapshot(),events=sim.drainEvents();sim.restoreSnapshot(save);sim.drainEvents();performM02PlayerAction(sim);
  assert.deepEqual(sim.snapshot(),expected);assert.deepEqual(sim.drainEvents(),events);
 });

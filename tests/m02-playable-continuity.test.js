@@ -4,7 +4,8 @@ import {M02BenchSimulation} from '../src/game/m02-01-simulation.js';
 import {updateGermanGarrison} from '../src/game/m02-combat-ai.js';
 
 test('B MG acquires from its own position and gives the M01 reaction interval before aimed fire',()=>{
- const s=new M02BenchSimulation();s.enterAreaBC06();s.allies=[];
+ // Merge M02 único: a entrada em B tem a janela de segurança C06; o fixture abre o contacto (antes dele EB1 não vê ninguém).
+ const s=new M02BenchSimulation();s.enterAreaBC06();Object.assign(s.areaB.contact,{opened:true,openedBy:'player_shot',openedAt:0,movementStartedAt:0,contactAt:0});s.allies=[];
  const mg=s.enemies.find(e=>e.weapon==='mg34');s.enemies=[mg];
  Object.assign(mg,{x:0,y:0,z:100,facing:Math.PI/2,nextFireAt:0,seeingTargetId:null});
  Object.assign(s.player,{x:0,y:0,z:120,crouched:false,eyeHeight:1.65});
@@ -50,14 +51,16 @@ test('EC2 reserves do not inherit the defeated EA1 farm garrison morale',()=>{
 test('mid-grenade RNG and portal locks survive exact continuation; old saves remain readable',()=>{
  const s=new M02BenchSimulation();s.tick(.1,{grenade:true});for(let i=0;i<10;i++)s.tick(.05,{});
  assert.equal(s.grenades.length,1,'this checkpoint must contain a grenade already in flight');
- s.doorLocks.set('portal',{actorId:'pl_lis',expiresAt:1});
+ // Merge M02 único: o validador v2 só aceita fechaduras de portas que existem no layout (FIX-2b); usa-se uma porta real de B01.
+ s.doorLocks.set('door_b01_north_service',{actorId:'pl_lis',expiresAt:1});
  const snapshot=s.snapshot();
  for(let i=0;i<45;i++)s.tick(.05,{});
  const final=s.snapshot();s.restoreSnapshot(snapshot);
  for(let i=0;i<45;i++)s.tick(.05,{});
  assert.deepEqual(s.snapshot(),final);
  const legacy=structuredClone(snapshot);
- for(const key of ['rngState','worldRevision','grenades','grenadeSeq','doorLocks'])delete legacy[key];
+ // Saves anteriores desta linha (schema 2) não têm os campos aditivos do Codex: continuam legíveis sem eles.
+ for(const key of ['playerGrenadeAction','playerWaterAction'])delete legacy[key];for(const g of legacy.grenades)delete g.releaseView;
  assert.doesNotThrow(()=>s.restoreSnapshot(legacy));
  const before=s.snapshot(),bad=structuredClone(before);bad.player.x=NaN;
  assert.throws(()=>s.restoreSnapshot(bad),/inválido/);assert.deepEqual(s.snapshot(),before);
@@ -75,29 +78,27 @@ test('C12 exit interaction takes precedence over a nearby B12 door; leaving Lis 
 });
 
 test('contact with Lis starts a physical supported walk; it does not teleport him to B12',()=>{
- const s=new M02BenchSimulation();s.enterAreaCC09();s.detonateC10FixedArtillery();
+ // Merge M02 único (ajuste justificado em M02_SINGLE_MERGE_REPORT.md): o contacto é o [E] deliberado de Piotr e o amparo é o percurso J3
+ // desta linha (Lis só avança com Piotr ao pé). O desfecho I4 só é escrito no abrigo e diz COMO Lis saiu (amparado = wounded_walking);
+ // assistLisInC11 é o atalho de bancada que impõe o desfecho. O que o Codex provava mantém-se: sem teletransporte, chegada determinista,
+ // Lis abrigado não volta a uma posição de combate e o epílogo não o move.
+ const s=new M02BenchSimulation();s.enterAreaCC09();s.startC10OrderChanges();s.detonateC10FixedArtillery();
  for(const e of s.enemies){e.alive=false;e.health=0;}
- const lis=s.allies.find(a=>a.id==='pl_lis'),before=[lis.x,lis.z];
- s.assistLisInC11('wounded_walking');assert.deepEqual([lis.x,lis.z],before);
- assert.deepEqual([lis.goal.x,lis.goal.z],[-58,52]);
- for(let i=0;i<1400&&s.flags['m02.lis_status']!=='wounded_evacuated';i++)s.tick(.1,{});
- assert.equal(s.flags['m02.lis_status'],'wounded_evacuated');
- assert.ok(Math.hypot(lis.x+58,lis.z-52)<.65);
- assert.equal(lis.moving,false);assert.equal(lis.effectiveSpeed,0);assert.equal(lis.goal,null);
- const arrived=[lis.x,lis.z],saved=s.snapshot();
+ const lisNow=()=>s.allies.find(a=>a.id==='pl_lis');
+ for(let i=0;i<900&&!s.currentLisContactPrompt();i++){const l=lisNow();s.teleportPlayer(l.x+1.2,l.z,0,0);s.tick(.1,{});}
+ assert.ok(s.currentLisContactPrompt(),'contacto disponível ao alcance');
+ const before=[lisNow().x,lisNow().z];
+ s.tick(.1,{interact:true});
+ assert.equal(s.areaC.lisPhase,'supported');assert.ok(Math.hypot(lisNow().x-before[0],lisNow().z-before[1])<.5,'sem teletransporte');
+ for(let i=0;i<4000&&s.areaC.lisPhase!=='sheltered';i++){const l=lisNow();s.teleportPlayer(l.x+1.0,l.z,0,0);s.tick(.1,{});}
+ assert.equal(s.areaC.lisPhase,'sheltered');assert.equal(s.flags['m02.lis_status'],s.areaC.lisSupportMode);
+ const arrived=[lisNow().x,lisNow().z],saved=s.snapshot();
  for(let i=0;i<50;i++)s.tick(.1,{});
- assert.deepEqual([lis.x,lis.z],arrived,'evacuated Lis must not walk back to a combat position');
- assert.equal(lis.state,'EVACUATED_B12');assert.equal(lis.goal,null);
+ assert.deepEqual([lisNow().x,lisNow().z],arrived,'evacuated Lis must not walk back to a combat position');
  const expected=s.snapshot();s.restoreSnapshot(saved);for(let i=0;i<50;i++)s.tick(.1,{});
  assert.deepEqual(s.snapshot(),expected,'arrival remains deterministic after checkpoint restore');
- const legacy=structuredClone(saved),legacyLis=legacy.allies.find(a=>a.id==='pl_lis');
- legacyLis.goal={x:-56,z:50,crouch:false,nodeId:'cv_c_b12_lis'};legacyLis.moving=true;
- s.restoreSnapshot(legacy);s.tick(.1,{});
- const restoredLis=s.allies.find(a=>a.id==='pl_lis');
- assert.deepEqual([restoredLis.x,restoredLis.z],arrived,'stale goals in earlier saves cannot restart the walk');
- assert.equal(restoredLis.moving,false);assert.equal(restoredLis.goal,null);
- s.completeC12Epilogue({lisOutcome:'wounded_evacuated'});
- assert.deepEqual([restoredLis.x,restoredLis.z],arrived,'normal epilogue must not teleport an already evacuated Lis');
+ s.completeC12Epilogue();
+ assert.deepEqual([lisNow().x,lisNow().z],arrived,'normal epilogue must not teleport an already sheltered Lis');
 });
 
 test('the exit warns whether Lis has not been rescued or is still on his way',()=>{

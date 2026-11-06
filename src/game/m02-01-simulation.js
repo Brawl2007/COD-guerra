@@ -72,6 +72,8 @@ import {
   detonateC10FixedArtillery as runDetonateC10FixedArtillery,
   startC11LisAndLastGroup as runStartC11LisAndLastGroup,
   assistLisInC11 as runAssistLisInC11,
+  lisContactPrompt as runLisContactPrompt,
+  contactLisInC11 as runContactLisInC11,
   updateAreaC as runUpdateAreaC,
   completeC12Epilogue as runCompleteC12Epilogue,
   exportCampaignResultToM03 as runExportCampaignResultToM03,
@@ -1368,6 +1370,16 @@ export class M02BenchSimulation {
     return this.#runCheckpointBatch(() => runStartC11LisAndLastGroup(this));
   }
 
+  /** C11: [E] junto a Lis (ação deliberada, ao alcance e sem obstáculo; Codex e4a46327). null se não há contacto possível. */
+  currentLisContactPrompt() {
+    return runLisContactPrompt(this);
+  }
+
+  /** C11: o contacto com Lis pela ação do jogador (amparo físico, sem teletransporte). Devolve true se começou. */
+  contactLisInC11() {
+    return this.#runCheckpointBatch(() => runContactLisInC11(this));
+  }
+
   assistLisInC11(mode = 'wounded_evacuated') {
     return this.#runCheckpointBatch(() => runAssistLisInC11(this, mode));
   }
@@ -1522,6 +1534,7 @@ export class M02BenchSimulation {
    */
   currentInteractPrompt() {
     const candidates = [
+      ['lis', this.currentLisContactPrompt()],
       ['rescue', this.currentRescuePrompt()],
       ['chalk', this.currentChalkPrompt()],
       ['volume', this.currentVolumePrompt()],
@@ -1619,6 +1632,7 @@ export class M02BenchSimulation {
         return r.safe && !r.lifting && !r.allyLifting && !r.busy ? beginPlayerRescue(this, r.actorId) : null;
       }
       if (target?.kind === 'chalk') return this.markWoundedSoldierWithChalk();
+      if (target?.kind === 'lis') return runContactLisInC11(this) ? { type: 'lis-contact', actorId: target.prompt.actorId } : null;
       if (target?.kind === 'volume' && runPickupSupplyVolume(this, target.prompt.volumeId)) {
         const evt = { type: 'supply-volume-picked', volumeId: target.prompt.volumeId, clock: this.clock };
         this.events.push(evt);
@@ -3231,6 +3245,8 @@ export class M02BenchSimulation {
     // Migração explícita de saves v2 anteriores ao FIX-2b (PDF I5: «migrar com regra explícita»): marcavam m02.completed já
     // na Área A/C05; a flag só é verdadeira depois de C12 (I4, p. 34).
     if (this.flags['m02.completed'] && !this.areaC?.c12Completed) this.flags['m02.completed'] = false;
+    // Codex (a876bf3a): a T-AB é sempre uma transição intermédia, também nos saves antigos (cópia preparada; o save não muda).
+    if (this.transitionTABPayload?.flags?.['m02.completed']) this.transitionTABPayload.flags['m02.completed'] = false;
     this.squadOrder = p.squadOrder;
     this.dialogue.restore(p.dialogue);
     this.horizon.restore(p.horizon);

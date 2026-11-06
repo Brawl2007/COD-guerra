@@ -199,7 +199,9 @@ export class MissionBot extends PlayerBot {
           const nextPt = route.find(([x, z]) => z > lis.z + 1 && Math.hypot(x - lis.x, z - lis.z) > 3) ?? route.at(-1);
           return this.walkStep({ x: nextPt[0], z: nextPt[1] }, 0.5);
         }
-        return this.walkStep({ x: lis.x, z: lis.z }, 2.0);
+        // Merge M02 único: o contacto com Lis é o [E] deliberado de Piotr (alcance 2 m, sem obstáculo; Codex e4a46327).
+        if (sim.currentLisContactPrompt()) return this.tick({ interact: true });
+        return this.walkStep({ x: lis.x, z: lis.z }, 1.2);
       }
       default: // C05, C07, C08, C12: elipses/cartelas, o jogador espera
         return this.tick({});

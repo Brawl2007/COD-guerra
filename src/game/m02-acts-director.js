@@ -2,6 +2,7 @@ import cellsBCLayout from '../../missions/m02-bzura/m02-cells-bc-layout.json' wi
 import { PLAYER_PHYSICS } from '../world/m01-player-physics.js';
 import { EYE_HEIGHT } from '../config.js';
 import { M01Navigator } from '../world/m01-navigation.js';
+import { eyePosition, traceObstruction } from '../world/spatial.js';
 import { stepActorNavigation, WEAPON_PROFILES, instantAt, lastGroupTargets, isLastGroupMember, isRescueWindowOpen, closeRescueWindow, abortRescue, closeRescueForTransition } from './m02-combat-ai.js';
 
 export const M02_TR_CARTELAS = Object.freeze({
@@ -215,6 +216,12 @@ export const LIS_PHASES = Object.freeze(['liaison_outside', 'returning', 'waitin
 export const LIS_OUTCOME_SOURCES = Object.freeze(['game', 'forced']);
 /** Distância (m) de contacto com Lis em C11 (dlg_m02_003 «no contacto»). */
 export const LIS_CONTACT_RANGE_M = 3.5;
+/**
+ * C11 (merge M02 único, Codex e4a46327): o contacto com Lis é uma ação deliberada de Piotr ([E]), ao alcance do braço, de mãos
+ * livres e sem sólido entre os dois — a proximidade sozinha já não o socorre (nem através de uma parede). 2 m é o alcance da ação
+ * do Codex; LIS_CONTACT_RANGE_M (3,5 m) continua a ser o raio em que o diálogo/aviso de Lis faz sentido para o bot e a bancada.
+ */
+export const LIS_CONTACT_REACH_M = 2.0;
 /** Raio de chegada ao ponto de evacuação (-85,105) para o jogador e o último grupo (m). */
 export const EVAC_ARRIVE_RADIUS_M = 1.5;
 
@@ -1280,6 +1287,34 @@ export function assistLisInC11(sim, mode = 'wounded_evacuated') {
 }
 
 /** Contacto com Lis em C11: o modo depende da lesão (≥ walkMinHealth caminha amparado; abaixo é carregado até à maca). */
+/** Prompt [E] do contacto com Lis em C11 (null se não há contacto possível agora). Só leitura. */
+export function lisContactPrompt(sim) {
+  const a = sim.areaC;
+  const lis = lisActor(sim);
+  if (sim.activeCellId !== 'C' || !a?.c11Started || !lis || !lis.alive || lis.detachedOutOfCell) return null;
+  if (a.lisPhase !== 'returning' && a.lisPhase !== 'waiting') return null;
+  if (lis.state === 'DOWN' || lis.state === 'DEAD') return null;
+  const p = sim.player;
+  if (p.alive === false || !(p.health > 0) || p.carryingVolumeId || sim.playerGrenadeAction || sim.playerWaterAction) return null;
+  const d = Math.hypot(p.x - lis.x, p.z - lis.z);
+  if (d > LIS_CONTACT_REACH_M) return null;
+  const origin = eyePosition(p);
+  const target = { x: lis.x, y: (lis.y ?? 0) + 0.95, z: lis.z };
+  const dx = target.x - origin.x;
+  const dy = target.y - origin.y;
+  const dz = target.z - origin.z;
+  const len = Math.hypot(dx, dy, dz);
+  if (len > 1e-8 && traceObstruction(sim.world, origin, { x: dx / len, y: dy / len, z: dz / len }, Math.max(0, len - 0.05))) return null;
+  return { actorId: lis.id, distance: Number(d.toFixed(2)), prompt: '[E] Socorrer Lis' };
+}
+
+/** [E] junto a Lis em C11: começa o amparo/transporte (sem teletransporte). false se o contacto não é possível agora. */
+export function contactLisInC11(sim) {
+  if (!lisContactPrompt(sim)) return false;
+  beginLisSupport(sim, lisActor(sim));
+  return true;
+}
+
 function beginLisSupport(sim, lis) {
   const a = sim.areaC;
   const cfg = cellsBCLayout.cells.C.lisReturn;
@@ -1309,9 +1344,7 @@ function updateLisC11(sim, dt) {
   if (a.lisPhase === 'returning' && Math.hypot(lis.x - cfg.rendezvous[0], lis.z - cfg.rendezvous[1]) <= 0.6) {
     a.lisPhase = 'waiting';
   }
-  if ((a.lisPhase === 'returning' || a.lisPhase === 'waiting') && dPlayer <= LIS_CONTACT_RANGE_M) {
-    beginLisSupport(sim, lis);
-  }
+  // O contacto já não é automático por proximidade: é o [E] de Piotr (contactLisInC11; Codex e4a46327).
   if (a.lisPhase === 'supported') {
     const path = lisSupportPath(a.lisSupportMode);
     lis.moving = false;
