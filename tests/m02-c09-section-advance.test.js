@@ -14,6 +14,7 @@ import {
   C09_LANES,
   C09_MANEUVER_TARGETS,
   C09_WOUNDED_HEALTH,
+  C_BOUND_PLAN,
   SECTION_LEASH_M,
   SECTION_ASSAULT_LEASH_M,
 } from '../src/game/m02-combat-ai.js';
@@ -315,8 +316,12 @@ describe('M02 C09: snapshot, restauro e validador do plano', () => {
     run(sim, 2);
     assert.equal(sim.c10Active, true);
     assert.equal(ally(sim, 'pl_wierzba').holdingFor, null);
-    assert.equal(ally(sim, 'pl_gruca').goal.nodeId, 'cv_c_evac_gruca');
+    // Gruca, o elemento exigido, avança agora por lanços abrigados (C_BOUND_PLAN, tests/m02-c11-gruca-march): sem hostis, o objetivo
+    // é o lanço seguinte do plano e, passado o percurso, a posição final de sempre
+    assert.ok(C_BOUND_PLAN.pl_gruca.includes(ally(sim, 'pl_gruca').goal.nodeId), ally(sim, 'pl_gruca').goal.nodeId);
     assert.equal(ally(sim, 'pl_aux_01').goal.nodeId, 'cv_c_yard_rkm');
     assert.equal(ally(sim, 'pl_wierzba').goal.nodeId, 'cv_c_b09_east');
+    run(sim, 40);
+    assert.equal(ally(sim, 'pl_gruca').goal.nodeId, 'cv_c_evac_gruca');
   });
 });

@@ -1406,6 +1406,9 @@ export const B_PLAN_ROLES = Object.freeze({
 /** Posições da secção em C10-C11 (cobrir a evacuação B09 → B12). */
 export const C_EVAC_NODES = Object.freeze({
   cv_c_evac_gruca: c9(-32, 18, 0.4),
+  // lanços abrigados de Gruca (C_BOUND_PLAN): a nave de B09 (porta norte de B09 a oeste, paredes de tijolo a este e a sul) e atrás da porta sul
+  cv_c_b09_nave: c9(-26, -9, 0.3),
+  cv_c_b09_south: c9(-30.5, -4, Math.PI / 2),
   cv_c_b09_east: c9(-14, -4, 0.3),
   cv_c_evac_malek: c9(-46, 36, 0.5),
   cv_c_b12_aid: Object.freeze({ x: -56, z: 46, facing: -Math.PI / 2, crouch: false }),
@@ -1422,6 +1425,107 @@ export const C_EVAC_ROLES = Object.freeze({
 });
 /** Objetivo de plano {x, z, facing, crouch, nodeId} de um nó (objeto novo: o ator guarda-o e o snapshot copia-o). */
 const goalOfNode = (nodeId, node) => ({ x: node.x, z: node.z, facing: node.facing, crouch: node.crouch, nodeId });
+
+/**
+ * C10-C11 (PDF p. 14: «Segurem esta passagem. Só até eles saírem.»; C11: «O socorrista procura abrigo e só atravessa com oportunidade real»;
+ * D4: «Dois elementos alternam apoio e deslocação»). Gruca, o único elemento EXIGIDO (D1/K1), conduz a evacuação por LANÇOS ABRIGADOS em vez
+ * de correr ao seu ponto final: do parapeito do pátio pela nave de B09 até atrás da porta sul e daí à posição que cobre a rota (-32,18).
+ * Só dá o lanço seguinte quando ele está ABERTO: no máximo BOUND_MAX_EXPOSURE (1) hostil combatente que não esteja suprimido vê, dentro do
+ * alcance da sua arma, um homem de pé em algum ponto da rota desse lanço (amostras de BOUND_SAMPLE_M em BOUND_SAMPLE_M, a mesma vista com
+ * que os hostis escolhem alvo): um atirador isolado não abate ninguém num lanço de 20 m (32 de vida por tiro), foram 3 a 6 fuzis a abater
+ * Gruca nas 5 quedas medidas. A supressão da secção abre o lanço: quem tem supressão >= BOUND_SUPPRESSED_CLEAR (precisão e exposição
+ * reduzidas, D3) já não conta.
+ * Fechado, Gruca fica no abrigo onde está (registo `section_bound_held`, uma vez por lanço, e `holdingFor`); aberto, avança. Sem estado
+ * novo: o ponto em que está e o objetivo que já tem decidem (`goal.nodeId`), por isso um lanço começado acaba-se e o snapshot repõe-no.
+ * Os outros elementos mantêm os pontos finais de C_EVAC_ROLES: são quem avança, atrai o fogo da reserva e a suprime (a secção inteira
+ * retida, medida em 40 sementes, deixava a reserva viva e Piotr morria em mais sementes).
+ * Medido (MissionBot, recruta, sementes 1-40): Gruca caía em 5 (todas na marcha para (-32,18), a 4-10 s do início de C10, a 3-6 fuzis da
+ * reserva EC2 oeste); agora em 0.
+ * VALORES SEM FONTE NO PDF: as coordenadas dos nós (escolhidas pelo mapa de exposição da própria geometria: 0 das 12 posições finais da
+ * reserva veem a nave nem a porta sul), a tolerância (1 hostil; 0 também deixa Gruca a salvo em 40 sementes mas muda o desfecho do
+ * MissionBot em m02-18, semente 8, por pura sorte de RNG: com 0, 1, 2 ou 3 as medições de 40 sementes dão o mesmo, 21 em C12 e 0 quedas),
+ * o limiar de supressão (o mesmo ponto em que a precisão cai, D3), o passo das amostras e o raio de «estar num nó».
+ */
+export const C_BOUND_PLAN = Object.freeze({
+  pl_gruca: Object.freeze(['cv_c_yard_parapet', 'cv_c_b09_nave', 'cv_c_b09_south', 'cv_c_evac_gruca']),
+});
+export const BOUND_MAX_EXPOSURE = 1;
+export const BOUND_SUPPRESSED_CLEAR = 0.65;
+export const BOUND_SAMPLE_M = 4;
+export const BOUND_AT_NODE_M = 1.2;
+
+/** Nó de um plano de lanços (Área A: layout; Área C: plano de C09 e de evacuação). */
+const boundNode = (sim, nodeId) => planNode(sim, nodeId) ?? C_EVAC_NODES[nodeId];
+
+/**
+ * Exposição de um lanço: o maior número de hostis combatentes (não suprimidos) com linha de vista e alcance a um homem de pé em algum
+ * ponto da rota do navegador de `from` a `to`. 0 = lanço aberto.
+ */
+export function boundHopExposure(sim, from, to) {
+  const hostiles = sim.enemies.filter((e) => e.alive && !e.nonCombatant && (e.suppressed ?? 0) < BOUND_SUPPRESSED_CLEAR);
+  if (hostiles.length === 0) return 0;
+  const start = { x: from.x, y: sim.world.heightAt(from.x, from.z), z: from.z, radius: PLAYER_PHYSICS.radius };
+  const route = sim.navigator.route(start, { x: to.x, z: to.z });
+  const points = [[from.x, from.z], ...(route ?? [[to.x, to.z]])];
+  let worst = 0;
+  for (let i = 1; i < points.length; i++) {
+    const [x0, z0] = points[i - 1];
+    const [x1, z1] = points[i];
+    const steps = Math.max(1, Math.ceil(Math.hypot(x1 - x0, z1 - z0) / BOUND_SAMPLE_M));
+    for (let k = 1; k <= steps; k++) {
+      const x = x0 + ((x1 - x0) * k) / steps;
+      const z = z0 + ((z1 - z0) * k) / steps;
+      const probe = { space: 'metres', x, y: sim.world.heightAt(x, z), z, crouched: false, eyeHeight: 1.65 };
+      let seen = 0;
+      for (const e of hostiles) {
+        if (Math.hypot(e.x - x, e.z - z) > (WEAPON_PROFILES[e.weapon]?.range ?? 160)) continue;
+        if (sim.world.lineOfSight(e, probe, { includeFoliage: true })) seen += 1;
+      }
+      worst = Math.max(worst, seen);
+      if (worst > BOUND_MAX_EXPOSURE) return worst; // já fechado: não é preciso o resto
+    }
+  }
+  return worst;
+}
+
+/**
+ * Objetivo de um elemento que avança por lanços (ver C_BOUND_PLAN): num nó, o seguinte se o lanço está aberto, senão fica; a meio de um
+ * lanço continua para o nó que já tinha; sem nó de partida (C10 por atalho, depois de um socorro) vai ao nó mais próximo.
+ */
+function adoptBoundGoal(sim, ally, nodeIds) {
+  const last = nodeIds.length - 1;
+  const dist = (id) => Math.hypot(boundNode(sim, id).x - ally.x, boundNode(sim, id).z - ally.z);
+  const here = nodeIds.findIndex((id) => dist(id) <= BOUND_AT_NODE_M);
+  const committed = nodeIds.indexOf(ally.goal?.nodeId);
+  let target;
+  let held = null;
+  if (here < 0) {
+    target = committed >= 0 ? committed : nodeIds.reduce((best, id, i) => (dist(id) < dist(nodeIds[best]) ? i : best), 0);
+  } else if (here === last) {
+    target = here;
+  } else {
+    const exposure = boundHopExposure(sim, boundNode(sim, nodeIds[here]), boundNode(sim, nodeIds[here + 1]));
+    target = exposure <= BOUND_MAX_EXPOSURE ? here + 1 : here;
+    if (target === here) held = { exposure, atNodeId: nodeIds[here], wanted: nodeIds[here + 1] };
+  }
+  ally.goal = goalOfNode(nodeIds[target], boundNode(sim, nodeIds[target]));
+  ally.tacticalState = target === last ? 'AdvanceOrder' : 'HoldCover';
+  if (!held) {
+    if (ally.holdingFor) ally.holdingFor = null;
+    return;
+  }
+  if (ally.holdingFor !== held.wanted) {
+    ally.holdingFor = held.wanted;
+    sim.combatLog.push({
+      clock: Number(sim.clock.toFixed(2)),
+      type: 'section_bound_held',
+      actorId: ally.id,
+      nodeId: held.wanted,
+      atNodeId: held.atNodeId,
+      exposure: held.exposure,
+    });
+  }
+}
 
 /**
  * D4, Áreas B e C: lugares atrás de cada cobertura baixa do layout (`covers`, altura >= 1 m: de joelhos, ficam abrigados), do lado da
@@ -1595,15 +1699,20 @@ export function updatePolishSquad(sim, dt) {
       // Cell C (Leśmierz Passage & Evacuation): secure B09/B10/B11 (C09) and then cover B09 -> B12 evacuation route (C10-C11)
       const evacPhase = sim.c10Active || sim.c11Active;
       if (evacPhase) {
-        if (ally.holdingFor) ally.holdingFor = null; // o plano de C09 acabou
-        if (ally.id === 'pl_lis') {
-          // o percurso de Lis é do diretor da Área C; sem objetivo vai para a casa de socorro
-          ally.goal = ally.goal ?? { x: -56.0, z: 50.0, facing: Math.PI / 2, crouch: false, nodeId: 'cv_c_b12_lis' };
+        if (C_BOUND_PLAN[ally.id]) {
+          // Gruca: lanços abrigados, só com o lanço aberto (ver C_BOUND_PLAN); `holdingFor` é dele
+          adoptBoundGoal(sim, ally, C_BOUND_PLAN[ally.id]);
         } else {
-          const nodeId = C_EVAC_ROLES[ally.id] ?? C_EVAC_ROLES.pl_gruca;
-          ally.goal = goalOfNode(nodeId, C_EVAC_NODES[nodeId]);
+          if (ally.holdingFor) ally.holdingFor = null; // o plano de C09 acabou
+          if (ally.id === 'pl_lis') {
+            // o percurso de Lis é do diretor da Área C; sem objetivo vai para a casa de socorro
+            ally.goal = ally.goal ?? { x: -56.0, z: 50.0, facing: Math.PI / 2, crouch: false, nodeId: 'cv_c_b12_lis' };
+          } else {
+            const nodeId = C_EVAC_ROLES[ally.id] ?? C_EVAC_ROLES.pl_gruca;
+            ally.goal = goalOfNode(nodeId, C_EVAC_NODES[nodeId]);
+          }
+          ally.tacticalState = ally.id.startsWith('pl_aux') ? 'HoldAndSuppress' : 'AdvanceOrder';
         }
-        ally.tacticalState = ally.id.startsWith('pl_aux') ? 'HoldAndSuppress' : 'AdvanceOrder';
       } else {
         // C09: plano de dois grupos com a trela de D4 (ver C09_PLAN_NODES)
         adoptPlanGoal(sim, ally, c09NodeIds(sim, ally), (nodeId) =>
