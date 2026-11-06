@@ -207,6 +207,20 @@ describe('M02 D1 socorro: por Piotr ([E]) quando seguro', () => {
     assert.equal(sim.currentRescuePrompt(), null, 'já não há ninguém por socorrer');
   });
 
+  it('pelo controlo do tick (a tecla E da bancada): `interact` socorre ao lado do caído e é o jogador, não o sanitário, quem levanta', () => {
+    const { sim, shooter } = field();
+    const gruca = fall(sim, shooter, 'pl_gruca');
+    silence(shooter);
+    place(sim, ally(sim, 'pl_szymczak'), gruca.x, gruca.z + 30); // o sanitário vive mas está longe: Piotr é quem chega primeiro
+    sim.teleportPlayer(gruca.x - 1.5, gruca.z, 0);
+    sim.tick(DT, { interact: true });
+    assert.equal(gruca.rescue.by, 'piotr_sokol');
+    assert.notEqual(gruca.rescue.liftStartedAt, null);
+    run(sim, RESCUE_LIFT_SEC + 0.3);
+    assert.equal(gruca.alive, true);
+    assert.equal(ofType(sim, 'ally_rescued')[0].byId, 'piotr_sokol');
+  });
+
   it('só ao alcance: a mais de RESCUE_REACH_M não há aviso nem efeito; se Piotr se afasta a meio, o socorro interrompe-se (rescuer_far) e recomeça do zero', () => {
     const { sim, shooter } = field();
     const gruca = fall(sim, shooter, 'pl_gruca');
