@@ -11,7 +11,9 @@ import { M02BenchSimulation, validateM02Snapshot } from '../src/game/m02-01-simu
 import { createMemoryStorage } from '../src/game/m02-save-store.js';
 import { MissionBot } from './m02-mission-bot.js';
 
-const SEED = 1; // uma das sementes de tests/m02-18 que chega a C12 só com entradas de tick (merge M02 único: a 5 já não chega)
+// Merge M02 único: medido com o código final na missão alterada deste teste, 2, 3, 6 e 11 chegam a C12 (1 fica em C10; a 5 já não
+// chegava). Fica a 2.
+const SEED = 2;
 const IDS = ['cp_m02_a_preparacao', 'cp_m02_b_acesso', 'cp_m02_c_reorganizacao', 'cp_m02_d_cobertura_retirada'];
 const FENCE = 'cov_south_fence_west';
 
