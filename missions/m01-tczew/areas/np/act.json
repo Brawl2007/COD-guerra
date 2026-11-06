@@ -3,7 +3,7 @@
   "id": "act_vii_a_north",
   "area": "np",
   "title": "VII-a · Perímetro norte, manhã",
-  "status": "INC-1 (R4 WP-0 + WP-1). Só corre com acts.enabled (mission.json) ou com ?acts=1 / ?act=vii-a (QA). Nada aqui está VALIDADO em jogo.",
+  "status": "INC-1 (R4 WP-0 + WP-1) + duração do combate (2026-11-03: 2.ª vaga depois de uma pausa; 2026-11-04: CP-F na pausa, fogo de supressão das MG34 e vagas mais robustas, decisões do Capitão). Só corre com acts.enabled (mission.json) ou com ?acts=1 / ?act=vii-a (QA). Nada aqui está VALIDADO em jogo.",
   "classificationLegend": {
     "DOCUMENTED": "Facto com fonte no repositório (pode ser fonte única: a certeza vai indicada).",
     "RECONSTRUCTED": "Lugar, forma ou posição construída a partir de fontes indiretas.",
@@ -12,7 +12,7 @@
   "history": [
     {
       "id": "h_np_attack",
-      "text": "Por volta das 07:00, ataque alemão vindo do norte (Koźlin/Koźliny): uma companhia com veículos blindados; um veículo destruído por um canhão AT; a infantaria repelida por metralhadoras.",
+      "text": "Por volta das 07:00, ataque alemão vindo do norte (Koźlin/Koźliny): uma companhia com veículos blindados; um veículo destruído por um canhão AT; a infantaria repelida (T08 e T16 dizem repelido; «por metralhadoras» não vem dos resumos de research/SOURCES.md).",
       "classification": "DOCUMENTED",
       "certainty": "BAIXA (fonte única)",
       "sources": [
@@ -37,9 +37,21 @@
     },
     {
       "id": "h_np_positions",
-      "text": "Posições de campo a norte e noroeste: 2.ª e 3.ª companhias, pelotões de metralhadoras, pelotão AT (Bofors wz.36), morteiros.",
+      "text": "Composição do batalhão em posições de campo a norte e noroeste: 2.ª e 3.ª companhias, pelotões de metralhadoras, pelotão AT (sem tipo de arma nas fontes), morteiros.",
       "classification": "DOCUMENTED",
-      "certainty": "MÉDIA (composição); posições pendentes (P4)",
+      "certainty": "MÉDIA (resumo de T03)",
+      "sources": [
+        "T03"
+      ],
+      "gaps": [
+        "tipo do canhão AT («Bofors wz.36» é identificação do jogo, não do resumo de T03 em research/SOURCES.md)"
+      ]
+    },
+    {
+      "id": "h_np_positions_place",
+      "text": "Onde ficam as posições (o parapeito, a ckm, o ponto do canhão AT) é reconstrução: as fontes não dão coordenadas.",
+      "classification": "RECONSTRUCTED",
+      "certainty": "posições pendentes (P4: sem mapa de 1939)",
       "sources": [
         "T03",
         "T08"
@@ -48,6 +60,18 @@
     {
       "id": "h_np_arrival",
       "text": "A secção de Zieliński e Wrona chega da cabeça de ponte como reforço.",
+      "classification": "GAMEPLAY_DRAMATIZATION",
+      "sources": []
+    },
+    {
+      "id": "h_np_echelons",
+      "text": "O ataque em duas vagas, a pausa de ~40 s entre elas (as metralhadoras da orla mantêm os postos) e o efetivo de cada vaga são dramatização para a duração do combate: o resumo da fonte única (T08, research/SOURCES.md) diz apenas que uma companhia com veículos blindados atacou e que um deles foi destruído por canhão AT; a infantaria detida por metralhadoras é dramatização; não dá vagas, pausas nem números.",
+      "classification": "GAMEPLAY_DRAMATIZATION",
+      "sources": []
+    },
+    {
+      "id": "h_np_suppress",
+      "text": "As MG34 da orla disparam rajadas curtas de supressão sobre o sítio onde viram o último clarão de um atirador polaco (na pausa e quando os atiradores presos se escondem): dramatização para o ritmo do combate; o resumo da fonte única (T08, research/SOURCES.md) não dá o fogo das metralhadoras.",
       "classification": "GAMEPLAY_DRAMATIZATION",
       "sources": []
     }
@@ -67,7 +91,7 @@
         "Perímetro norte de Tczew",
         "1 de setembro de 1939 · manhã, pouco depois da chamada",
         "O ataque de ~07:00 vindo do norte continua · hora de fonte única (T08)",
-        "Reforço da secção: dramatização · trincheira e posições: reconstrução"
+        "Reforço da secção, duas vagas e a pausa entre elas: dramatização · trincheira e posições: reconstrução"
       ]
     },
     "end": {
@@ -76,7 +100,8 @@
       "skippable": true,
       "lines": [
         "Ataque vindo do norte repelido",
-        "Fonte única (T08): um veículo blindado destruído por canhão AT; infantaria repelida por metralhadoras",
+        "Fonte única (T08): um veículo blindado destruído por canhão AT",
+        "Infantaria detida pelo fogo: dramatização",
         "Os ataques a norte continuaram durante o dia (T16) · tipo dos veículos e lugar exato: desconhecidos"
       ]
     }
@@ -103,7 +128,14 @@
       "label": "CP-E",
       "name": "Perímetro norte — chegada",
       "trigger": "end of cs_np_entry",
-      "note": "O plano R4 chama CP-F à chegada; a ordem do INC-1 fixa CP-E. Um só checkpoint neste incremento."
+      "note": "Decisão do Capitão (2026-11-04, reversível): este é o checkpoint da chegada. O plano R4 chamava CP-F à chegada; a ordem do INC-1 fixou CP-E e a de 2026-11-04 fixa CP-F na pausa (abaixo)."
+    },
+    {
+      "id": "cp_np_f_pausa",
+      "label": "CP-F",
+      "name": "Perímetro norte — pausa",
+      "trigger": "a 1.ª vaga quebra e a pausa começa (fim do tique em que quebra; o jogador vivo e dentro dos limites)",
+      "note": "Decisão do Capitão (2026-11-04, reversível: apagar este checkpoint e a chave `checkpoint` da 2.ª vaga): morrer na 2.ª vaga repõe a pausa (com a 1.ª vaga já fora do campo), não a chegada. Guarda-se pelo mesmo envelope de esquema 3 do CP-E. Com `hpOnCheckpoint` (soldado, veterano) a vida volta a 100 ao guardar, como nos outros checkpoints."
     }
   ],
   "events": [
@@ -115,12 +147,28 @@
       },
       "alsoWhen": "o jogador chega ao parapeito (obj_np_reach_trench)",
       "results": [
-        "a vaga alemã entra pela orla norte"
+        "a 1.ª vaga alemã (já na orla, ao fundo) avança por lanços"
       ],
       "certainty": "DOCUMENTED (ataque) / GAMEPLAY_DRAMATIZATION (momento)",
       "sources": [
         "T08"
       ]
+    },
+    {
+      "id": "evt_np_wave_2",
+      "trigger": {
+        "type": "afterEchelon",
+        "echelon": "first",
+        "lullSec": 40
+      },
+      "results": [
+        "a 1.ª vaga quebrou e saiu do campo; as metralhadoras da orla mantêm os postos durante a pausa (disparam sobre o que veem e, sem alvo à vista, rajadas curtas de supressão sobre o último clarão que viram; presas ao solo, às cegas e mais devagar)",
+        "40 s depois, a 2.ª vaga entra da orla das árvores, em colunas, por quatro caminhos e em dois grupos (o lado oeste primeiro, o lado leste 36 s depois do começo da vaga), com duas MG34 próprias",
+        "a quebra da 2.ª vaga leva também as metralhadoras: o ataque está repelido"
+      ],
+      "certainty": "GAMEPLAY_DRAMATIZATION",
+      "sources": [],
+      "note": "Dramatização para a duração do combate. A fonte única (T08) não dá vagas nem pausas; ver h_np_echelons."
     }
   ],
   "groups": [
@@ -309,7 +357,8 @@
     {
       "id": "grp_np_de",
       "name": "Tropas alemãs vindas do norte (sem insígnias)",
-      "classification": "DOCUMENTED (ataque do norte, T08/T16) / GAMEPLAY_DRAMATIZATION (efetivo, movimentos)",
+      "classification": "DOCUMENTED (ataque do norte, T08/T16) / GAMEPLAY_DRAMATIZATION (efetivo, movimentos, as duas vagas e a pausa entre elas)",
+      "echelonsNote": "DRAMATIZAÇÃO, não história: o resumo da fonte única (T08, research/SOURCES.md) diz que uma companhia com veículos blindados atacou do norte e que um deles foi destruído por canhão AT; a infantaria detida por metralhadoras é dramatização; não diz quantas vagas, nem pausas, nem quantos homens. As duas vagas (a 1.ª já na orla, a 2.ª a entrar das árvores 40 s depois de a 1.ª ter saído do campo), os 9 + 4 e os 16 + 2 homens e os limiares de quebra servem a duração do combate (a 1.ª vaga sozinha quebrava aos 30-60 s) e podem mudar com o playtest. Decisão do Capitão (2026-11-04, reversível): para o combate durar pelo menos 110 s com o piloto ativo em 90 % das sementes de teste (a revisão encontrara 11 de 26 percursos abaixo de 120 s), a pausa passou de 30 para 40 s, a 2.ª vaga entra em dois grupos de duas colunas (o lado oeste primeiro, o lado leste 36 s depois do começo da vaga: ver `delaySec` das faixas), a 2.ª vaga quebra aos 14 caídos (eram 12; a 1.ª continua a quebrar aos 7: com mais, quase ninguém da sua assalto sobrava para recuar) e o relógio de cada vaga (`maxSec`) baixou de 200 para 120 s para o piloto passivo, que não dispara, acabar o ato em menos de 6 minutos.",
       "uniformNote": "Modelo alemão genérico do jogo; sem insígnias SS nem nome de unidade até haver fonte de uniformes de 1939 (D-2).",
       "assault": {
         "version": 1,
@@ -399,6 +448,131 @@
           -1210
         ],
         "limitStation": 3,
+        "echelons": [
+          {
+            "id": "second",
+            "lullSec": 40,
+            "overwatch": [
+              {
+                "id": "de_np_29",
+                "weapon": "mg34",
+                "node": [
+                  -546,
+                  -1330
+                ]
+              },
+              {
+                "id": "de_np_30",
+                "weapon": "mg34",
+                "node": [
+                  -326,
+                  -1332
+                ]
+              }
+            ],
+            "lanes": [
+              {
+                "id": "far_west",
+                "men": [
+                  "de_np_13",
+                  "de_np_14",
+                  "de_np_15",
+                  "de_np_16"
+                ],
+                "x": [
+                  -573,
+                  -567,
+                  -561,
+                  -555
+                ],
+                "delaySec": [
+                  0,
+                  4,
+                  8,
+                  12
+                ]
+              },
+              {
+                "id": "west_mid",
+                "men": [
+                  "de_np_17",
+                  "de_np_18",
+                  "de_np_19",
+                  "de_np_20"
+                ],
+                "x": [
+                  -485,
+                  -479,
+                  -473,
+                  -467
+                ],
+                "delaySec": [
+                  6,
+                  10,
+                  14,
+                  18
+                ]
+              },
+              {
+                "id": "east_mid",
+                "men": [
+                  "de_np_21",
+                  "de_np_22",
+                  "de_np_23",
+                  "de_np_24"
+                ],
+                "x": [
+                  -415,
+                  -409,
+                  -403,
+                  -397
+                ],
+                "delaySec": [
+                  36,
+                  40,
+                  44,
+                  48
+                ]
+              },
+              {
+                "id": "far_east",
+                "men": [
+                  "de_np_25",
+                  "de_np_26",
+                  "de_np_27",
+                  "de_np_28"
+                ],
+                "x": [
+                  -315,
+                  -309,
+                  -303,
+                  -297
+                ],
+                "delaySec": [
+                  42,
+                  46,
+                  50,
+                  54
+                ]
+              }
+            ],
+            "stations": [
+              -1352,
+              -1324,
+              -1298,
+              -1274,
+              -1252,
+              -1232,
+              -1212
+            ],
+            "limitStation": 5,
+            "closeAfterSec": 45,
+            "breakPinnedSec": 90,
+            "breakOut": 14,
+            "maxSec": 120,
+            "checkpoint": "cp_np_f_pausa"
+          }
+        ],
         "cover": {
           "widthM": 2.2,
           "depthM": 0.9,
@@ -409,6 +583,7 @@
         "walkSpeed": 2.2,
         "rushSpeed": 4.6,
         "fallbackSpeed": 5.2,
+        "fallbackStallSec": 30,
         "coverSec": [
           1.5,
           4
@@ -421,7 +596,7 @@
         "pinnedWaitMaxSec": 4,
         "breakPinnedSec": 75,
         "breakOut": 7,
-        "maxSec": 200,
+        "maxSec": 120,
         "fire": {
           "assaultPauseSec": 6,
           "overwatchPauseSec": 8,
@@ -449,6 +624,25 @@
               2.6,
               1.6
             ]
+          },
+          "suppress": {
+            "weapon": "mg34",
+            "memorySec": 30,
+            "rounds": [
+              3,
+              5
+            ],
+            "pauseSec": [
+              4,
+              8
+            ],
+            "pinnedPauseFactor": 2,
+            "hitChance": {
+              "cover": 0.1,
+              "exposed": 0.5
+            },
+            "pinSec": 1.5,
+            "note": "Decisão do Capitão (2026-11-04, reversível: apagar `suppress`): GAMEPLAY_DRAMATIZATION. Uma MG34 sem alvo à vista dispara rajadas curtas (rondas reais, o modelo de qualquer ronda alemã, a mesma tabela D35 de ferimentos) sobre o sítio onde viu o último clarão de um polaco ou do jogador (até `memorySec` depois), uma rajada a cada `pauseSec` s; presa ao solo dispara às cegas com a pausa multiplicada por `pinnedPauseFactor`. Só atinge o que as rondas atravessam (parapeito, terra, ar por cima dele). Sorteios só do fluxo próprio do homem. Correção de equilíbrio (INC-2, passo 0, 2026-11-04, reversível: apagar `hitChance` e `pinSec`): o fogo às cegas devia sobretudo abafar, raramente matar. Uma ronda sua que atravessa um homem da linha (não os nomeados) só o fere com a probabilidade `hitChance` conforme a postura (`cover`: ajoelhado atrás do parapeito; `exposed`: levantado para disparar), por uma função pura dos dois ids (sem sorteio); as outras acabam na terra a seu lado. Quem está a menos de 3 m do fim de uma ronda sua fica em baixo `pinSec` s (as rondas apontadas continuam a 4 s): sem isto a linha ficava presa quase todo o tempo, disparava menos e perdia a linha inteira com o piloto passivo, e a ckm disparava metade das rajadas."
           }
         },
         "playerWeight": {
@@ -456,7 +650,8 @@
           "soldado": 1.5,
           "veterano": 2
         },
-        "note": "Generalização do assalto do tabuleiro (m01-deck-assault.js: fases advance/cover/hold/fallback/clear, registo `deck` com as mesmas chaves) a uma linha de aproximação norte → sul: lanços entre estações, abrigo atrás de terra revolvida, linha de apoio com duas MG34, recuo quando as baixas ou a supressão o impõem."
+        "note": "Generalização do assalto do tabuleiro (m01-deck-assault.js: fases advance/cover/hold/fallback/clear, registo `deck` com as mesmas chaves) a uma linha de aproximação norte → sul: lanços entre estações, abrigo atrás de terra revolvida, linha de apoio com duas MG34, recuo quando as baixas ou a supressão o impõem.",
+        "echelonsHow": "A 1.ª vaga é este bloco (apoio, faixas, estações, limiares: sem `echelons` o assalto é este só). `echelons` lista as vagas seguintes: cada uma entra da linha de entrada `lullSec` depois de a anterior ter saído do campo (caídos ou fora); durante a pausa o apoio (as MG34 da orla) mantém os postos: dispara sobre o que vê e, sem alvo à vista, rajadas curtas de supressão sobre o último clarão que viu (`fire.suppress`; presa ao solo pelo fogo da linha dispara às cegas e mais devagar). Cada vaga traz faixas próprias (`delaySec`: segundos depois do começo da vaga em que o homem ou a faixa entra; uma lista dá um atraso por homem, coluna em fila), pode trazer apoio próprio (`overwatch`, que entra com ela) e tem os seus limiares (`breakOut`: caídos da própria vaga, contando o seu apoio; `breakPinnedSec`; `maxSec`; `closeAfterSec`), e opcionalmente `stations`/`limitStation` e `checkpoint` (o checkpoint que se guarda quando a vaga anterior quebra e a pausa que leva a esta começa: CP-F, decisão do Capitão de 2026-11-04). `delaySec` pode agrupar as colunas: a 2.ª vaga entra em dois grupos. O apoio de todas as vagas fica na orla até a ÚLTIMA vaga quebrar, e então todos recuam. A fábrica (makeApproachPlan) valida tudo, incluindo que nenhum caminho cruze terra, destroço ou parapeito."
       }
     }
   ],
@@ -470,7 +665,7 @@
     {
       "id": "staszek_pawlak",
       "name": "Pawlak",
-      "role": "RADIO_OPERATOR",
+      "role": "MESSENGER",
       "essential": true
     },
     {
@@ -577,6 +772,34 @@
       "speaker": "ckm_loader",
       "text": "Fita nova!",
       "cooldownSec": 30
+    },
+    {
+      "id": "np_013",
+      "on": "lull",
+      "speaker": "marek_zielinski",
+      "text": "Recuaram… mas não acabou. A metralhadora deles ainda está lá. Cabeças baixas!",
+      "cooldownSec": 999
+    },
+    {
+      "id": "np_014",
+      "on": "lull_quiet",
+      "speaker": "marek_zielinski",
+      "text": "Recuaram… e as metralhadoras calaram-se. Mas não acabou. Munições, depressa!",
+      "cooldownSec": 999
+    },
+    {
+      "id": "np_015",
+      "on": "echelon_seen",
+      "speaker": "marek_zielinski",
+      "text": "Outra vaga! Saem da orla das árvores, em colunas, pelos flancos!",
+      "cooldownSec": 999
+    },
+    {
+      "id": "np_016",
+      "on": "final_break",
+      "speaker": "marek_zielinski",
+      "text": "Recuam todos, até as metralhadoras! Não os deixem reagrupar.",
+      "cooldownSec": 999
     }
   ],
   "speakers": {
@@ -602,7 +825,7 @@
           "T08",
           "T16"
         ],
-        "text": "Por volta das 07:00 — hora de uma única fonte —, um ataque alemão vindo do norte, com veículos blindados, foi detido no perímetro norte de Tczew: um veículo foi destruído por um canhão anticarro e a infantaria foi repelida por metralhadoras. O tipo dos veículos, o lugar exato e a posição do canhão não estão confirmados; o parapeito, a chegada da secção e o combate de Wrona são reconstrução para o jogo."
+        "text": "Às ~07:00 — hora de uma única fonte —, um ataque alemão vindo do norte, com veículos blindados, foi detido no perímetro norte de Tczew: um veículo foi destruído por um canhão anticarro e a infantaria foi repelida (a fonte única não diz como; metralhadoras é dramatização). O tipo dos veículos, o lugar exato e a posição do canhão não estão confirmados; o parapeito, a chegada da secção, as duas vagas de ataque e a pausa entre elas, e o combate de Wrona são reconstrução para o jogo."
       }
     ]
   }

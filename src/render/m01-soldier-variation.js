@@ -50,6 +50,9 @@ export class SoldierVisualVariations {
   constructor(){this.geometries=new Map();this.materials=new Map();this.shells=new WeakMap();this.disposed=false;this.rim=createRimState();}
   /** Live fog colour (linear rgb) for the German distance rim (m01-actor-legibility.js); one shared uniform, no per-actor state. */
   setFog(fog){setRimFog(this.rim,fog);}
+  /** VII-a visual package: a value lift of the German bodies' material colour (1 = the act's own look). The uniform is the material's own `color`: no shader change, no new
+   * program, no per-actor state; nothing reads it but the renderer. Used only where the drawn ground is as light as a stubble field (M01Characters.setAreaLegibility). */
+  setLift(lift){if(this.lift===lift)return;this.lift=lift;for(const m of this.materials.values())if(m.userData.m01De)m.color.setScalar(lift);}
   apply(root,actor,key,variant=soldierVisualVariant(actor)){
     root.traverse(mesh=>{
       if(!mesh.isMesh||!mesh.visible||!mesh.geometry.getAttribute('position'))return;
@@ -57,7 +60,7 @@ export class SoldierVisualVariations {
       if(!(name==='body'||name==='gear'||name.startsWith('helmet_')||name==='sapper'||head&&!NAMED[actor.id]))return;
       const source=mesh.geometry,cacheKey=`${key}|${variant.profile}${variant.civilian?'c':''}|${name}|${name==='gear'&&variant.shovel?'full':'light'}`;
       if(!this.geometries.has(cacheKey))this.geometries.set(cacheKey,this.geometry(source,mesh,variant));
-      if(!this.materials.has(mesh.material)){const material=mesh.material.clone();material.vertexColors=true;if(variant.nation==='de')patchRimMaterial(material,this.rim);this.materials.set(mesh.material,material);}
+      if(!this.materials.has(mesh.material)){const material=mesh.material.clone();material.vertexColors=true;if(variant.nation==='de'){patchRimMaterial(material,this.rim);material.userData.m01De=true;material.color.setScalar(this.lift??1);}this.materials.set(mesh.material,material);}
       mesh.geometry=this.geometries.get(cacheKey);mesh.material=this.materials.get(mesh.material);
     });
     return variant;

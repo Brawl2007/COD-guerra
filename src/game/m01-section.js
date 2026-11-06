@@ -175,7 +175,7 @@ function watch(sim,q){
   for(const a of sim.actors){
     if(a.team!=='enemy'||a.displayOnly||!a.alive||!a.active||a.group==='grp_de_spans'||!(clock-a.firedAt<SECTION.noticeSec))continue;
     const kind=kindOf(a),key=keyOf(a,kind);
-    if(clock-(q.seen[key]??-1e9)<SECTION.repeatSec[kind]||dist(w,a)>SECTION.rangeM||!sim.world.lineOfSight(w,a))continue;
+    if(clock-(q.seen[key]??-1e9)<SECTION.repeatSec[kind]||dist(w,a)>SECTION.rangeM||!sim.sees(w,a))continue;
     if(!best||(a.id===rk&&best.a.id!==rk)||(a.id!==rk&&best.a.id!==rk&&a.firedAt>best.a.firedAt))best={a,kind,key};
   }
   if(best)callout(sim,q,w,best.kind,best.a,best.key);
@@ -195,7 +195,7 @@ const deckSignature=sim=>DECK_ASSAULT.assault.map(id=>{const m=sim.actor(id);ret
 function watchDeck(sim,q,w){
   const clock=sim.clock,men=DECK_ASSAULT.assault.map(id=>sim.actor(id)).filter(m=>m&&m.alive&&m.active&&m.deck).sort((a,b)=>a.x-b.x);
   if(!men.length)return false;
-  const lead=men.find(m=>dist(w,m)<=SECTION.deckRangeM&&sim.world.lineOfSight(w,m));
+  const lead=men.find(m=>dist(w,m)<=SECTION.deckRangeM&&sim.sees(w,m));
   if(!lead)return false;
   const sig=deckSignature(sim),before=q.deckSig;q.deckSig=sig;
   let fall=false,down=false,rush=false;
@@ -245,7 +245,7 @@ function queueShots(q,clock,id,target){
 }
 /** He can answer: a rifle with rounds, not reloading, on his feet where he is, and a line of sight to the German from his eyes standing. */
 function canFire(sim,q,a,target){
-  return a.id!==SECTION.rkm&&a.id!==SECTION.leader&&a.rounds>0&&!a.reload&&!walking(a)&&!q.post[a.id]?.moving&&dist(a,target)<=reach(sim,target)&&sim.world.lineOfSight(standing(a),target)&&!(target.group==='grp_de_spans'&&realOn(sim)&&sim.clock<a.suppressedUntil);
+  return a.id!==SECTION.rkm&&a.id!==SECTION.leader&&a.rounds>0&&!a.reload&&!walking(a)&&!q.post[a.id]?.moving&&dist(a,target)<=reach(sim,target)&&sim.sees(standing(a),target)&&!(target.group==='grp_de_spans'&&realOn(sim)&&sim.clock<a.suppressedUntil);
 }
 /** How far a section rifleman answers a German: the real rounds' reach for the deck from the deck assault on, else R2-a's display range. */
 const reach=(sim,target)=>target.group==='grp_de_spans'&&realOn(sim)?SECTION.real.rangeM:SECTION.rangeM;
@@ -274,7 +274,7 @@ function realTarget(sim,a){
   const eye=standing(a);let best=null,bd=Infinity;
   for(const m of sim.actors){
     if(m.group!=='grp_de_spans'||m.deck===undefined||!m.alive||!m.active||m.carriedBy)continue;
-    const d=dist(a,m);if(d>SECTION.real.rangeM||d>=bd||!sim.world.lineOfSight(eye,m))continue;
+    const d=dist(a,m);if(d>SECTION.real.rangeM||d>=bd||!sim.sees(eye,m))continue;
     best=m;bd=d;
   }
   return best;
@@ -417,7 +417,7 @@ export function sectionAfter(sim){
     const s=q.shots[i],a=sim.actor(s.id),t=sim.actor(s.target);
     if(!present(a)||!t||!t.alive||!t.active||q.post[s.id]?.moving||walking(a)){q.shots.splice(i,1);settle(sim,q,s.id);continue;}
     if(clock<s.at){i++;continue;}
-    if(!(a.rounds>0)||a.reload||!sim.world.lineOfSight(standing(a),t)||(clock<a.suppressedUntil&&t.group==='grp_de_spans'&&realOn(sim))){q.shots.splice(i,1);settle(sim,q,s.id);continue;}   // (R2-b: a man pinned by the deck's fire keeps his head down)
+    if(!(a.rounds>0)||a.reload||!sim.sees(standing(a),t)||(clock<a.suppressedUntil&&t.group==='grp_de_spans'&&realOn(sim))){q.shots.splice(i,1);settle(sim,q,s.id);continue;}   // (R2-b: a man pinned by the deck's fire keeps his head down)
     if(!shoot(sim,q,a,t)){q.shots.splice(i,1);settle(sim,q,s.id,true);continue;}   // (a friend in the line of fire: no round, no ammunition; he tries again soon)
     q.n.shots++;
     if(--s.left>0){s.at=t3(clock+between(q,s.id,SECTION.fire.boltSec));i++;}else{q.shots.splice(i,1);settle(sim,q,s.id);}

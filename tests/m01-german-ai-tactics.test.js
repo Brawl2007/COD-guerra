@@ -9,7 +9,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {M01Simulation,validateM01Snapshot} from '../src/game/m01-simulation.js';
-import {DECK_SAFE_X,deckLines,deckLimitNode,deckLineNumber} from '../src/game/m01-deck-assault.js';
+import {DECK_SAFE_X,DECK_LINE_MARGIN_M,deckLines,deckLimitNode,deckLineNumber} from '../src/game/m01-deck-assault.js';
 import {M01_DIFFICULTY} from '../src/game/m01-difficulty.js';
 import {validateM01AudioEvent} from '../src/game/m01-audio-events.js';
 import {newBarkState} from '../src/game/m01-barks.js';
@@ -197,8 +197,8 @@ test('the search: a man in cover on his way to his line who lost sight of the Po
     ({s,man}=searcher({seenAgo:ago}));assert.equal(s.deckSearch(man),ok,`seen ${ago} s ago`);
   }
   ({s,man}=searcher({seenAgo:null}));assert.equal(s.deckSearch(man),false,'a man who saw nobody has nothing to look for');
-  // only in cover: a man who is running, holding his line, falling back or gone does not
-  for(const phase of ['advance','hold','fallback','clear']){({s,man}=searcher({phase}));assert.equal(s.deckSearch(man),false,phase);assert.equal(man.deck.phase,phase);}
+  // only in cover (and, since golden amendment 22, holding a line that is not his deepest: the next test): a man who is running, falling back or gone does not
+  for(const phase of ['advance','fallback','clear']){({s,man}=searcher({phase}));assert.equal(s.deckSearch(man),false,phase);assert.equal(man.deck.phase,phase);}
   // never past his limit: on the last station of line 0 there is no station to go to; one station before it, the limit is the one he may take; a station beyond it is not looked at
   const limit=P.lines[0][0];
   ({s,man}=searcher({node:limit,wallX:null}));assert.equal(s.deckSearch(man),false,'at his limit');
@@ -206,6 +206,49 @@ test('the search: a man in cover on his way to his line who lost sight of the Po
   ({s,man}=searcher({node:limit-1,wallX:440}));assert.equal(s.deckSearch(man),false,'the station that would see it (438) lies beyond line 0');
   // with line 1 as his limit the same station is his to take
   ({s,man}=searcher({node:limit,wallX:440,lim:P.lines[0][1]}));assert.equal(s.deckSearch(man),true);assert.equal(man.deck.node,limit+1);assert.equal(deckLineNumber(man),1);
+});
+
+// Golden amendment 22 (2026-11-05): a man who HOLDS a line that is not his deepest searches too (tactics.search.hold). Package 2's README §5.4 found why the search stayed at 0 in 24 routes: the cloud that hides a whole
+// line of Poles comes when the squad already holds its lines, where «never past the limit» left the search nowhere to go. The bound now goes to the NEXT line (the first station that sees the place, at most rushStations
+// from where he is, never past that line), exactly as if the pressure had opened it. The wall hides the place (x 300) from the stations east of it.
+test('the search of a man who holds a line: on to the next closing line, the first station that sees the place, at most one bound, never past that line; not on the deepest line, not just after a casualty',()=>{
+  const L=P.lines[0],limit=L[0];   // line 0 .. the deepest
+  assert.equal(T.search.hold,true,'the data turns it on');
+  // line 0 held at its node: the wall at 430 hides the place from stations 23 (458) and 24 (438); station 25 (414) sees it: that is where he goes, and the next line (node L[1]) is his limit from now on
+  let {s,man}=searcher({node:limit,phase:'hold',wallX:430});
+  const closeBefore=s.deckExtraSec();
+  assert.equal(s.deckSearch(man),true);
+  assert.deepEqual([man.deck.node,man.deck.phase,man.deck.lim,man.deck.since,man.deck.until,man.ai.peek,man.crouched],[limit+2,'advance',L[1],s.clock,s.clock,0,false]);
+  assert.equal(deckLineNumber(man),1);assert.deepEqual(tactic(eventsOf(s,1)).map(e=>[e.kind,e.by,e.line]),[['search','de_spans_4',1]]);
+  assert.equal(closeBefore,0);assert.equal(s.deckExtraSec(),T.closeExtraSec,'the squad\'s deadline grows as for any man on a closing line');
+  assert.doesNotThrow(()=>validateM01Snapshot(json(s.snapshot())),'and the record is one the validator accepts');
+  // he gets there (the wall was only there to hide the place), kneels in cover on the way to the line (his node is short of it) and goes on to hold it
+  s.world.obstacles.pop();
+  for(let i=0;i<20*40&&!(man.deck.phase==='hold'&&man.deck.node===L[1]);i++){s.tick(.05);s.drainEvents();}
+  assert.deepEqual([man.deck.phase,man.deck.node],['hold',L[1]]);
+  // no wall: the first station ahead sees it (node limit+1), and that is where he goes (not two)
+  ({s,man}=searcher({node:limit,phase:'hold',wallX:null}));assert.equal(s.deckSearch(man),true);assert.equal(man.deck.node,limit+1);
+  // the wall hides the two stations of the bound (24, 25): he stays where he is, holding
+  ({s,man}=searcher({node:limit,phase:'hold',wallX:410}));assert.equal(s.deckSearch(man),false);assert.deepEqual([man.deck.node,man.deck.phase,man.deck.lim],[limit,'hold',undefined]);
+  // the memory is the one of the cover search
+  for(const [ago,ok] of [[T.search.afterSec-.1,false],[T.search.afterSec,true],[T.search.memorySec,true],[T.search.memorySec+.1,false]]){
+    ({s,man}=searcher({node:limit,phase:'hold',wallX:430,seenAgo:ago}));assert.equal(s.deckSearch(man),ok,`seen ${ago} s ago`);
+  }
+  ({s,man}=searcher({node:limit,phase:'hold',wallX:430,seenAgo:null}));assert.equal(s.deckSearch(man),false);
+  // line 1 held: the bound goes to line 2 (the deepest) and stops there, never one station beyond (the path ends there)
+  ({s,man}=searcher({node:L[1],phase:'hold',wallX:null,lim:L[1]}));assert.equal(s.deckSearch(man),true);assert.equal(man.deck.node,L[1]+1);assert.equal(man.deck.lim,L[2]);
+  ({s,man}=searcher({node:L[2]-1,phase:'hold',wallX:null,lim:L[1]}));assert.equal(s.deckSearch(man),true);assert.equal(man.deck.node,L[2],'the deepest line itself is allowed');
+  // the deepest line is the end of it: safeX stays the deepest place of the act, there is nothing to search toward
+  ({s,man}=searcher({node:L[2],phase:'hold',wallX:null,lim:L[2]}));assert.equal(s.deckSearch(man),false,'on his deepest line');assert.deepEqual([man.deck.node,man.deck.phase],[L[2],'hold']);
+  const deepest=P.paths[0].at(-1).x;assert.ok(man.x>=deepest-1.5&&man.x>=DECK_SAFE_X+DECK_LINE_MARGIN_M-1.5);
+  // a man of the assault fell lately: like the stage of the pressure, the search waits casualtyHoldSec after the last one
+  for(const [ago,ok] of [[T.casualtyHoldSec-1,false],[T.casualtyHoldSec+1,true]]){
+    ({s,man}=searcher({node:limit,phase:'hold',wallX:430}));
+    Object.assign(s.actor('de_spans_5'),{alive:false,health:0,state:'DOWN',diedAt:s.clock-ago,x:700});
+    assert.equal(s.deckSearch(man),ok,`a man fell ${ago} s ago`);
+  }
+  // and in the cover of a closing line the search is the old one (up to the limit he has)
+  ({s,man}=searcher({node:limit,phase:'cover',wallX:440,lim:L[1]}));assert.equal(s.deckSearch(man),true);assert.equal(man.deck.node,limit+1);assert.equal(man.deck.lim,L[1],'his limit is unchanged');
 });
 
 test('the search through the fight: a man who saw the Poles and has none in sight at his next trigger moves on instead of firing at the place; a man who still sees one fires and stays',()=>{
@@ -299,11 +342,13 @@ test('the stick grenade is never unfair: not at a player he can hit, not out of 
   {
     const {s,man}=bomber({pairOn:true});Object.assign(s.player,{x:-60,z:20,crouched:false});
     const [pawlak]=pair(s);Object.assign(man,{x:pawlak.x+25,z:pawlak.z,y:s.world.heightAt(pawlak.x+25,pawlak.z)});
-    assert.equal(s.world.lineOfSight(man,pawlak),true);assert.equal(s.deckGrenade(man),false,'Pawlak is in his sight: the rifle');
-    // pinned down on his post (kneeling and suppressed) he is a target even in sight; standing, or kneeling and not suppressed, he is not
-    pawlak.crouched=true;pawlak.suppressedUntil=s.clock-1;assert.equal(s.deckGrenade(man),false,'kneeling, not suppressed');
-    pawlak.crouched=false;pawlak.suppressedUntil=s.clock+3;assert.equal(s.deckGrenade(man),false,'suppressed but standing');
-    pawlak.crouched=true;assert.equal(s.deckGrenade(man),true,'kneeling and suppressed: pinned down on his post');
+    for(const x of pair(s))x.crouched=false;   // (the pair of the saved scene kneels at its post, as the section's men do: package 2 counts that as cover)
+    assert.equal(s.world.lineOfSight(man,pawlak),true);assert.equal(s.deckGrenade(man),false,'Pawlak is in his sight, standing: the rifle');
+    // 2026-11-04 re-pin (package 2, golden amendment 21): R2-b asked for the defender to be kneeling AND suppressed (pinned down on his post) to be a target in sight; the rearguard kneels except the second before and
+    // after each shot, and a grenade needed a man 6-32 m away pinned by this very German at that moment: 0 in 24 routes. Kneeling at his post is cover enough; standing he is still the rifle's, suppressed or not.
+    pawlak.crouched=false;pawlak.suppressedUntil=s.clock-1;assert.equal(s.deckGrenade(man),false,'standing, not suppressed: the rifle');
+    pawlak.crouched=false;pawlak.suppressedUntil=s.clock+3;assert.equal(s.deckGrenade(man),false,'suppressed but standing: the rifle');
+    pawlak.crouched=true;pawlak.suppressedUntil=s.clock-1;assert.equal(s.deckGrenade(man),true,'kneeling at his post: in cover, even in sight and not suppressed');
     const g0=german(s)[0],aim=Math.hypot(g0.vx*T.grenade.flightSec+g0.x-pawlak.x,g0.vz*T.grenade.flightSec+g0.z-pawlak.z);assert.ok(aim<5,`at Pawlak (${aim.toFixed(1)} m)`);
     s.grenades.active.length=0;man.deck.gr=0;delete s.timers.deckGrenadeAt;pawlak.suppressedUntil=0;pawlak.crouched=true;
     s.world.obstacles.push({id:'t_wall',min:{x:30,y:-1,z:30},max:{x:32,y:8,z:50},material:'stone'});

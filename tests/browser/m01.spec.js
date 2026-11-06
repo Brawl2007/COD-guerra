@@ -1,4 +1,5 @@
-import {test,expect} from '@playwright/test';
+import {test} from '@playwright/test';
+import {expect,gameBooted,expectPaused,slowGlPage,slowGlTestTimeout,simWaitTimeout,framesTimeout,EXPECT_TIMEOUT} from '../helpers/m01-browser-boot.js';
 import {route,driver,toRepair,toCoverAdjustment,toStationEvacuation} from '../helpers/m01-route.js';
 import {seconds,M01Simulation} from '../../src/game/m01-simulation.js';
 import {M01_BOMBING_BATTLE_SECONDS} from '../../src/world/m01-aircraft-path.js';
@@ -11,12 +12,12 @@ test.afterEach(async({page},info)=>{
   try{await info.attach('m01-diagnostics',{body:JSON.stringify(await page.evaluate(()=>window.gameDiagnostics?.())),contentType:'application/json'});}catch{/* Trace remains available after a timeout. */}
 });
 async function open(page){
-  const errors=[],failed=[];
+  const errors=[],failed=[];slowGlPage(page);
   page.on('pageerror',e=>errors.push(e.message));
   page.on('response',r=>{if(r.status()>=400)failed.push(`${r.status()} ${r.url()}`);});
   await page.goto('?debug=1');
   await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9);
-  await expect(page.locator('#error')).toBeHidden();await expect(page.locator('#start')).toBeEnabled({timeout:60000});
+  await expect(page.locator('#error')).toBeHidden();await gameBooted(page);
   return {errors,failed};
 }
 async function start(page,button='#start'){
@@ -34,7 +35,7 @@ async function freezeClick(page,button){
       document.removeEventListener('pointerlockchange',hold,true);e.stopImmediatePropagation();document.exitPointerLock();
     }};document.addEventListener('pointerlockchange',hold,true);
   });
-  await page.locator(button).click();await expect(page.locator('#pause')).toBeVisible();
+  await page.locator(button).click();await expectPaused(page);
 }
 async function waitForBearingFrame(page,angle,bearing,minFrame){
   // The failing full-suite traces had the correct simulated yaw/status after a slow
@@ -44,7 +45,7 @@ async function waitForBearingFrame(page,angle,bearing,minFrame){
     const d=window.gameDiagnostics(),hud=document.querySelector('#objective-status').textContent;
     const error=Math.abs(Math.atan2(Math.sin(d.player.angle-angle),Math.cos(d.player.angle-angle)));
     return error<.01&&d.m01.renderedFrames>minFrame&&hud===d.m01.threat.status&&hud.includes(bearing);
-  },{angle,bearing,minFrame},{timeout:process.env.CI?60000:30000});
+  },{angle,bearing,minFrame},{timeout:framesTimeout(12)});
   return page.evaluate(()=>({data:window.gameDiagnostics(),hud:document.querySelector('#objective-status').textContent}));
 }
 async function waitForFrameAfterRestore(page){
@@ -54,10 +55,11 @@ async function waitForFrameAfterRestore(page){
   // final integration run, "Reparo 35% · sapadores deitados..." vs ""). Sample only once a frame has been rendered after the restore;
   // every later task boundary follows a whole frame, so HUD and simulation are compared exactly and the equality stays strict.
   const restored=await page.evaluate(()=>window.gameDiagnostics().m01.renderedFrames);
-  await page.waitForFunction(frame=>window.gameDiagnostics().m01.renderedFrames>frame,restored,{timeout:process.env.CI?60000:30000});
+  await page.waitForFunction(frame=>window.gameDiagnostics().m01.renderedFrames>frame,restored,{timeout:framesTimeout(12)});
 }
 test('M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A',async({page},info)=>{
-  test.setTimeout(process.env.CI?180000:90000);
+  // Two boots (the page is reloaded at the end); ~14 s of simulation (5 bolt cycles of 1.05 s, the 3.4 s clip reload, the sight and the restarts) and the screenshots are frame-bound.
+  test.setTimeout(slowGlTestTimeout({boots:2,simSeconds:14,frames:16}));
   const {errors,failed}=await open(page);await page.screenshot({path:info.outputPath('m01-menu.png')});await start(page);
   const initial=await page.evaluate(()=>window.gameDiagnostics());
   expect(initial.missionId).toBe('m01_tczew');expect(initial.m01.visiblePieces).toBeGreaterThan(40);expect(initial.player.angle).toBe(0);
@@ -70,14 +72,14 @@ test('M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, a
   }
   await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state==='READY');
   await page.keyboard.press('KeyR');await expect(page.locator('#mag')).toHaveText('—');
-  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  await page.evaluate(()=>document.exitPointerLock());await expectPaused(page);
   const frozen=await page.evaluate(()=>window.gameDiagnostics());await page.waitForTimeout(350);
   const still=await page.evaluate(()=>window.gameDiagnostics());expect(still.clock).toBe(frozen.clock);expect(still.m01.battleClock).toBe(frozen.m01.battleClock);expect(still.m01.weapon).toEqual(frozen.m01.weapon);
   // The clip reload is 3.4 s of SIMULATION time (kb_wz29 reloadClipSec) and the loop simulates at most 5 fixed steps (250 ms) per rendered frame (src/game/frame-catchup.js, unchanged
   // since 5378fb4: dt was already clamped to .25 s), so under software rendering the wait is a frame budget, not seconds. Measured on a shared 4-CPU runner (load 6-7): 0.8-1.2 frames/s,
   // i.e. 0.2-0.3 s of simulation per real second at 5378fb4 and at 8a978fb alike, so the reload needs 11-17 s of wall time and the old 15 s window failed in the 2026-10-19 integration run.
   // Same CI budget as waitForBearingFrame/waitForFrameAfterRestore; the expectation itself (the reload ends with 5 in the magazine and 35 in reserve) is unchanged.
-  await page.locator('#resume').click();await expect(page.locator('#mag')).toHaveText('5',{timeout:process.env.CI?60000:15000});await expect(page.locator('#reserve')).toHaveText('35');
+  await page.locator('#resume').click();await expect(page.locator('#mag')).toHaveText('5',{timeout:simWaitTimeout(3.4)+EXPECT_TIMEOUT});await expect(page.locator('#reserve')).toHaveText('35');
   await page.keyboard.press('KeyV');await expect(page.locator('#weapon-state')).toContainText('500 m');
   await page.mouse.down({button:'right'});await expect(page.locator('#crosshair')).toBeHidden();await page.mouse.up({button:'right'});
   await page.screenshot({path:info.outputPath('m01-playing.png')});
@@ -116,7 +118,7 @@ test('the genuine first raid displays three Ju 87 GLBs with light LODs and freez
     document.dispatchEvent(new MouseEvent('mousemove',{movementX:x,movementY:y,bubbles:true}));
   },{x:Math.atan2(Math.sin(angle-before.player.angle),Math.cos(angle-before.player.angle))/.0022,y:(before.player.pitch-pitch)/.0022});
   await page.waitForFunction(()=>window.gameDiagnostics().player.pitch>.2);
-  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  await page.evaluate(()=>document.exitPointerLock());await expectPaused(page);
   const frozen=await page.evaluate(()=>window.gameDiagnostics());await page.waitForTimeout(300);
   expect((await page.evaluate(()=>window.gameDiagnostics())).m01.aircraft).toEqual(frozen.m01.aircraft);
   await page.screenshot({path:info.outputPath('m01-ju87-real-raid.png'),style:'#pause { visibility:hidden !important; }'});
@@ -137,7 +139,8 @@ test('unavailable optional Ju 87 models retain all three raid silhouettes and th
 test('licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset',async({page},info)=>{
   // Every wait here is frame-bound (reload clips, bolt cycles, quality switch): the 2.1-2.5 min of the V7 CI runs filled 180 s once
   // the integrated scene made each software-rendered frame ~1.4x dearer. The sequence and its assertions are unchanged.
-  test.setTimeout(process.env.CI?300000:180000);
+  // One boot plus the quality switch back through the menu (a second start); 5 bolt cycles + two reload clips are ~12 s of simulation, and the four paused captures are frames too.
+  test.setTimeout(slowGlTestTimeout({boots:2,simSeconds:14,frames:40}));
   const {errors,failed}=await open(page);await start(page);
   await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.active>0&&window.gameDiagnostics().m01.viewModel.active);
   const initial=await page.evaluate(()=>window.gameDiagnostics());
@@ -160,7 +163,7 @@ test('licensed character rigs and first-person hands follow real weapon state, p
   }
   async function capture(name){
     await page.evaluate(()=>document.exitPointerLock());
-    await expect(page.locator('#pause')).toBeVisible();
+    await expectPaused(page);
     await page.screenshot({path:info.outputPath(name),style:'#pause { visibility:hidden !important; }'});
   }
   // The aim state reaches the HUD through the next software-rendered frame(s): give the same assertion room for them.
@@ -178,7 +181,7 @@ test('licensed character rigs and first-person hands follow real weapon state, p
     // Pointer-lock native mouse movement can race the slow rendered frame. Dispatch the same window input
     // consumed by Input without repositioning the locked cursor, then wait on authoritative weapon state.
     await page.evaluate(()=>{window.dispatchEvent(new MouseEvent('mousedown',{button:0,bubbles:true}));window.dispatchEvent(new MouseEvent('mouseup',{button:0,bubbles:true}));});
-    await page.waitForFunction(expected=>window.gameDiagnostics().m01.weapon.mag===expected,expectedMag,{timeout:process.env.CI?30000:10000});
+    await page.waitForFunction(expected=>window.gameDiagnostics().m01.weapon.mag===expected,expectedMag,{timeout:EXPECT_TIMEOUT});
     expect((await page.evaluate(()=>window.gameDiagnostics())).m01.weapon.shotCount).toBe(before+1);
     await expect(page.locator('#mag')).toHaveText(String(expectedMag));
   };
@@ -212,7 +215,9 @@ test('an optional character download failure preserves playable procedural actor
   expect(data.m01.assetFailures).toEqual([]);expect(data.m01.actorPoses.standing).toBeGreaterThan(0);
 });
 test('Kowal fires and changes the rkm magazine from actual combat state, preserving both poses in pause',async({page},info)=>{
-  test.setTimeout(process.env.CI?180000:120000);
+  // The Node staging (toRepair + two walks + until rounds===2) is 37 s at load 30; in the page the burst is on screen 0.05 s after the restore and the reload clip 5.2 s later
+  // (measured with a Node restoreSnapshot of this very save), i.e. 21 frames for the second wait.
+  test.setTimeout(slowGlTestTimeout({route:true,simSeconds:8,frames:16}));
   const d=toRepair(driver());d.walk(-115,32);d.walk(-74,30);d.step({crouch:true});
   d.until(()=>d.sim.actor('szymon_kowal').rounds===2,240);
   const k=d.sim.actor('szymon_kowal'),p=d.sim.player,angle=Math.atan2(k.z-p.z,k.x-p.x);
@@ -226,8 +231,8 @@ test('Kowal fires and changes the rkm magazine from actual combat state, preserv
       const g=window.gameDiagnostics();
       if(!g.paused&&g.m01.characters.actors?.some(a=>a.id==='szymon_kowal'&&a.clip===clip)){document.exitPointerLock();return true;}
       return false;
-    },clip,{timeout:90000});
-    await expect(page.locator('#pause')).toBeVisible();
+    },clip,{timeout:simWaitTimeout(7)+EXPECT_TIMEOUT});
+    await expectPaused(page);
     const frozen=await page.evaluate(()=>window.gameDiagnostics()),actor=frozen.m01.characters.actors.find(a=>a.id==='szymon_kowal');
     expect(actor.clip).toBe(clip);expect(actor.weapon).toBe('rkm_wz28');expect(actor.weaponMeshes).toContain('rkm_wz28');
     expect(actor.weaponMeshes).not.toContain('rifle');expect(actor.weaponMeshes).not.toContain('clip');
@@ -278,7 +283,7 @@ test('the station evacuation restores its grounded drag, pauses with the mission
     window.dispatchEvent(new MouseEvent('mousemove',{movementX:delta,movementY:(pitch+.18)/.0022}));
   },{delta:Math.atan2(Math.sin(angle-current.player.angle),Math.cos(angle-current.player.angle))/.0022,pitch:current.player.pitch});
   await page.waitForFunction(angle=>Math.abs(Math.atan2(Math.sin(window.gameDiagnostics().player.angle-angle),Math.cos(window.gameDiagnostics().player.angle-angle)))<.02,angle);
-  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  await page.evaluate(()=>document.exitPointerLock());await expectPaused(page);
   const frozen=await page.evaluate(()=>window.gameDiagnostics());await page.waitForTimeout(300);
   expect((await page.evaluate(()=>window.gameDiagnostics())).m01.stationEvacuation).toEqual(frozen.m01.stationEvacuation);
   await page.screenshot({path:info.outputPath('m01-station-ground-drag.png'),style:'#pause { visibility:hidden !important; }',timeout:120000});
@@ -308,7 +313,7 @@ for(const phase of ['grab','release'])test(`the real station ${phase} restores s
       document.exitPointerLock();return true;
     }return false;
   },phase);
-  await expect(page.locator('#pause')).toBeVisible();const frozen=await page.evaluate(()=>window.gameDiagnostics());
+  await expectPaused(page);const frozen=await page.evaluate(()=>window.gameDiagnostics());
   const roles=frozen.m01.characters.actors.filter(a=>['generic_rifleman','leon_dudek'].includes(a.id));
   expect(roles).toHaveLength(2);expect(roles[0].clipTime).toBeCloseTo(roles[1].clipTime,6);
   for(const a of roles){expect(a.loop).toBe(false);expect(a.weaponMeshes).toEqual([]);}
@@ -322,7 +327,7 @@ for(const phase of ['grab','release'])test(`the real station ${phase} restores s
       document.exitPointerLock();return true;
     }return false;
   },phase);
-  await expect(page.locator('#pause')).toBeVisible();const restored=await page.evaluate(()=>window.gameDiagnostics());
+  await expectPaused(page);const restored=await page.evaluate(()=>window.gameDiagnostics());
   expect(restored.m01.stationEvacuation.patient.stationDrag.startedAt).toBe(snapshot.actors.find(a=>a.id==='generic_rifleman').stationDrag.startedAt);
   for(const role of ['patient','medic'])for(const axis of ['x','y','z','facing'])
     expect(restored.m01.stationEvacuation[role][axis]).toBe(frozen.m01.stationEvacuation[role][axis]);
@@ -346,11 +351,11 @@ test('a missing optional station transition GLB keeps the grounded fallback and 
 test('real keyboard movement traverses the approaches and E delivers the message at the rail bridge',async({page},info)=>{
   // Slow software rendering needs room for input and the final, paused evidence capture. The route is frame-bound (each leg is ~34 frames
   // of 0.25 s mission time): the V7 CI runs took 3.6-3.8 min of the previous 240 s, and every frame of the integrated scene is ~1.4x dearer.
-  test.setTimeout(process.env.CI?420000:130000);
+  test.setTimeout(slowGlTestTimeout({simSeconds:15,frames:12}));
   const {errors,failed}=await open(page);await start(page);await page.keyboard.down('ShiftLeft');
   async function axis(code,axis,target,direction){
     await page.keyboard.down(code);
-    await page.waitForFunction(({axis,target,direction})=>window.gameDiagnostics().player[axis]*direction>=target*direction,{axis,target,direction},{timeout:process.env.CI?150000:45000});
+    await page.waitForFunction(({axis,target,direction})=>window.gameDiagnostics().player[axis]*direction>=target*direction,{axis,target,direction},{timeout:simWaitTimeout(8)});
     await page.keyboard.up(code);
   }
   // The route a player can walk: the abutments of both bridges are walls (the old route climbed their faces at x=-15), so go west of them (x=-30), up the
@@ -360,13 +365,13 @@ test('real keyboard movement traverses the approaches and E delivers the message
   // Walk the final approach. A key-up queued behind a slow software-rendered frame
   // can carry a sprint several metres beyond the point's actual interaction radius.
   await axis('KeyA','z',3,-1);await axis('KeyW','x',17,1);
-  await expect(page.locator('#interaction')).toContainText('entregar mensagem',{timeout:30000});
+  await expect(page.locator('#interaction')).toContainText('entregar mensagem');
   await page.keyboard.press('KeyE');await page.waitForFunction(()=>window.gameDiagnostics().m01.objectives.obj_m01_deliver_message.state==='done');
   const data=await page.evaluate(()=>window.gameDiagnostics());expect(data.m01.battleClock).toBeGreaterThanOrEqual(4*3600+33*60+10);expect(data.eventIds).toContain('evt_m01_planes_heard');
   // A real pause stops animation and avoids competing GPU frames during readback.
   // Headless Chromium does not release pointer lock from Playwright's Escape key.
   // Use the browser release API, as in the existing pause/control tests.
-  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  await page.evaluate(()=>document.exitPointerLock());await expectPaused(page);
   const paused=await page.evaluate(()=>window.gameDiagnostics());await page.waitForTimeout(300);
   const still=await page.evaluate(()=>window.gameDiagnostics());
   expect(still.clock).toBe(paused.clock);expect(still.m01.renderedFrames).toBe(paused.m01.renderedFrames);
@@ -386,7 +391,7 @@ test('walking off the rail abutment edge in the real game is a fall: gravity, on
   expect(data.m01.bodyFeedback.landings).toBe(1);
   expect(data.m01.bodyFeedback.lastSpeed).toBeGreaterThan(6.8);expect(data.m01.bodyFeedback.lastSpeed).toBeLessThan(7.6);   // sqrt(2 g 2.65 m) = 7.21 m/s
   expect(data.player.y).toBeCloseTo(-3,2);expect(data.player.health).toBe(100);expect(data.player.x).toBeGreaterThan(11.9);
-  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  await page.evaluate(()=>document.exitPointerLock());await expectPaused(page);
   await page.screenshot({path:info.outputPath('m01-landed-below-the-abutment.png')});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
@@ -408,12 +413,13 @@ for(const truss of [false,true])test(`adjustment salvo ${truss?'behind the truss
   await expect(page.locator('#objective-status')).toContainText('atrás de si');
   expect(turned.hud).toBe(turned.data.m01.threat.status);
   await info.attach('bearing-frame-proof',{body:JSON.stringify({before,turned}),contentType:'application/json'});
-  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  await page.evaluate(()=>document.exitPointerLock());await expectPaused(page);
   await page.screenshot({path:info.outputPath('m01-cover-origin-paused.png'),timeout:120000});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
 test('demolition inside the road truss shows the actual bearing while mouse look remains free',async({page},info)=>{
-  test.setTimeout(process.env.CI?180000:90000);
+  // flow() runs the whole Node route inside the first test that needs it (107-149 s at load 30); the browser part is two turns, each presented by a new frame.
+  test.setTimeout(slowGlTestTimeout({route:true,simSeconds:2,frames:20}));
   const snapshot=flow().combatSnapshots.eastDemolition;
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
   const {errors,failed}=await open(page);await start(page,'#continue');
@@ -437,7 +443,7 @@ test('demolition inside the road truss shows the actual bearing while mouse look
   expect(Math.abs(Math.atan2(Math.sin(facing.player.angle-aim),Math.cos(facing.player.angle-aim)))).toBeLessThan(.01);
   expect(facing.player.x).toBe(initial.player.x);expect(facing.player.z).toBe(initial.player.z);
   await info.attach('bearing-frame-proof',{body:JSON.stringify({initial,away:awayFrame,facing:facingFrame}),contentType:'application/json'});
-  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  await page.evaluate(()=>document.exitPointerLock());await expectPaused(page);
   await page.screenshot({path:info.outputPath('m01-demolition-inside-truss.png'),timeout:120000});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
@@ -454,8 +460,16 @@ test('demolition inside the road truss shows the actual bearing while mouse look
 // 2026-10-22 (integration): the ckm stoppages (WP2, golden amendment 15) move the deck fight of this route again: the casualties of the route's CP-D save are now de_spans_0..5 and de_spans_8
 // (de_east_3 survives; de_spans_5 falls on the deck, as tests/m01-german-retreat.test.js records), i.e. 43 alive. Measured on the route's own save with a Node M01Simulation(1).restoreSnapshot on the
 // merged tree (43); the same measurement at 3eb21b38 (candidate + WP1) and at c99a4326 (+ WP3), before WP2, gives 44 with the casualties named above, so the change is the stoppages' and nothing else.
-const CPD_ENEMIES_ALIVE=43;
+// 2026-11-04 (package 2, golden amendment 21): the assault reaches its closing lines (safeX 190) and the dust of the blasts hides the Poles (src/game/m01-dust.js), so the deck fight of this route changes again: the
+// casualties of the route's CP-D save are now de_spans_0..4 (de_east_3 survives; de_spans_5 to de_spans_9 live to the blast, as tests/m01-german-retreat.test.js records for the golden route), i.e. 45 alive of the 50.
+// Measured on the route's own save with a Node M01Simulation(1).restoreSnapshot on the branch tree (enemyAlive 45, not alive de_spans_0..4); the browser restore must still reproduce exactly the route's casualties.
+// 2026-11-05 (golden amendment 22, part B): one round of German supporting fire (4f5d992b) gives the deck search its cause, and the deck fight of this route changes once more: the casualties of the
+// route's CP-D save are now de_spans_0..3, de_spans_5, de_spans_6, de_spans_8 and de_spans_9 (de_spans_4 and de_spans_7 live: they are the carriers of tests/m01-german-retreat.test.js after 6a4043a5), i.e. 42 alive
+// of the 50. Measured on the route's own save with a Node M01Simulation.restoreSnapshot: 45 at 68892bce and at 4d72bacf (search from hold, before the round), 42 at 4f5d992b and at 5791ef91 (the line).
+// The full browser run of 2026-11-05 received 42 at this assertion; the pin stays exact (a restore must reproduce the route's casualties, no more and no fewer).
+const CPD_ENEMIES_ALIVE=42;
 test('a genuine CP-D reload keeps east destruction and casualties, including restart and page reload',async({page},info)=>{
+  test.setTimeout(slowGlTestTimeout({route:true,boots:2,simSeconds:3,frames:16}));   // flow() = Node route; the page is reloaded once (second boot); no casualty happens in the 60 s after this save (Node)
   const snapshot=flow().checkpoints.cp_m01_d_retirada;
   await page.addInitScript(({key,snapshot})=>{if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(snapshot));},{key,snapshot});
   const {errors,failed}=await open(page);await start(page,'#continue');
@@ -469,6 +483,7 @@ test('a genuine CP-D reload keeps east destruction and casualties, including res
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
 test('the actual outro state can be skipped through the UI into the enabled historical debrief',async({page},info)=>{
+  test.setTimeout(slowGlTestTimeout({route:true,simSeconds:3,frames:12}));
   // Staged browser continuation of a snapshot reached by the full simulation route.
   // This is not an uninterrupted browser playthrough.
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:flow().outro});
@@ -519,7 +534,7 @@ test('the genuine train 963 and both MG34 fire sources use optional GLBs, light 
       document.exitPointerLock();return true;
     }return false;
   },null,{timeout:90000});
-  await expect(page.locator('#pause')).toBeVisible();
+  await expectPaused(page);
   const frozen=await page.evaluate(()=>window.gameDiagnostics()),w=frozen.m01.wagons,mg=frozen.m01.characters.actors.filter(a=>a.weapon==='mg34');
   expect(w).toMatchObject({wagons:65,step:9.1,proxies:0,visible:true,first:[1090,0,-2.5],last:[1672.4,0,-2.5]});
   expect(w.loaded).toEqual(['covered:0','covered:1','covered:2','open:0','open:1','open:2']);expect(w.lodDistribution).toEqual({0:0,1:0,2:65});
@@ -530,7 +545,7 @@ test('the genuine train 963 and both MG34 fire sources use optional GLBs, light 
   expect(still.clock).toBe(frozen.clock);expect(still.m01.characters).toEqual(frozen.m01.characters);expect(still.m01.wagons).toEqual(w);
   await page.screenshot({path:info.outputPath('m01-train-mg34.jpg'),type:'jpeg',quality:85,style:'#pause { visibility:hidden !important; }',timeout:120000});
   await page.locator('#restart-checkpoint').click();await page.waitForFunction(()=>!window.gameDiagnostics().paused);
-  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  await page.evaluate(()=>document.exitPointerLock());await expectPaused(page);
   const restored=await page.evaluate(()=>window.gameDiagnostics());
   expect(restored.m01.wagons).toEqual(w);expect(restored.geometries).toBeLessThanOrEqual(frozen.geometries+2);expect(restored.textures).toBeLessThanOrEqual(frozen.textures+2);
   await info.attach('train-mg34-samples',{body:JSON.stringify({kind:'production continuation of a genuine simulation-control snapshot; view from west bank',frozen,restored,errors,failed}),contentType:'application/json'});
@@ -567,10 +582,11 @@ test('missing optional wagon models and MG34 clips preserve 65 proxies, both pro
   await start(page,'#continue');const g=await page.evaluate(()=>window.gameDiagnostics());
   expect(g.m01.requiredAssetFailures).toEqual([]);expect(g.m01.wagons).toMatchObject({wagons:65,proxies:65,loaded:[],visible:true});
   expect(g.m01.characters.actors.every(a=>a.weapon!=='mg34')).toBe(true);expect(g.m01.actorAnimations.aiming).toBeGreaterThan(0);
-  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  await page.evaluate(()=>document.exitPointerLock());await expectPaused(page);
   await page.screenshot({path:info.outputPath('m01-train-mg34-fallback.jpg'),type:'jpeg',quality:85,style:'#pause { visibility:hidden !important; }',timeout:120000});
 });
 test('the real roll-call snapshot renders seated actors and keeps their pose after page reload',async({page},info)=>{
+  test.setTimeout(slowGlTestTimeout({route:true,boots:2,simSeconds:3,frames:16}));
   // Visual verification by continuation of a snapshot reached with simulation controls.
   const snapshot=flow().outro,seated=snapshot.actors.filter(a=>a.active&&a.alive&&a.pose==='seated').length;
   expect(seated).toBeGreaterThanOrEqual(6);
@@ -583,7 +599,8 @@ test('the real roll-call snapshot renders seated actors and keeps their pose aft
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
 test('a real withdrawal continuation loses men only to rounds from the spans, keeps the twelve-survivor floor and shows the count in the HUD',async({page},info)=>{
-  test.setTimeout(process.env.CI?180000:90000);
+  // flow() = Node route (107-149 s at load 30). The first man falls 2.85 s of simulation after this save (Node restoreSnapshot), the loop below samples every 250 ms of wall time.
+  test.setTimeout(slowGlTestTimeout({route:true,simSeconds:8,frames:30}));
   const snapshot=flow().combatSnapshots.withdrawal;
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
   const {errors,failed}=await open(page);await start(page,'#continue');await waitForFrameAfterRestore(page);
@@ -604,7 +621,7 @@ test('a real withdrawal continuation loses men only to rounds from the spans, ke
   expect(samples.some(s=>s.origins.some(id=>id.startsWith('de_spans_')))).toBe(true);
   expect(samples.some(s=>s.muzzle.frames>muzzleStart)).toBe(true);
   for(const s of samples){expect(s.hud).toBe(s.sim);expect(s.hud).toContain(`Pelotão leste: ${s.n} homens`);}
-  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  await page.evaluate(()=>document.exitPointerLock());await expectPaused(page);
   await page.screenshot({path:info.outputPath('m01-withdrawal-under-fire.png'),style:'#pause {visibility:hidden !important;}',timeout:120000});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
@@ -613,7 +630,7 @@ test('a failed M01 bridge load prevents an invisible bridge; the French sandbox 
   await page.goto('?debug=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.requiredAssetFailures.length===9);
   await expect(page.locator('#error')).toBeVisible();await expect(page.locator('#start')).toBeDisabled();
   await page.locator('#close-error').click();await page.locator('#mission-select').selectOption('sandbox-1944');
-  await expect(page.locator('#start')).toBeEnabled({timeout:60000});await page.locator('#start').click();
+  await gameBooted(page);await page.locator('#start').click();
   await page.waitForFunction(()=>!window.gameDiagnostics().paused);await expect(page.locator('#weapon-name')).toHaveText('M1 CARBINE');
 });
 
@@ -633,7 +650,8 @@ async function resourcesSettled(page,frames=3){
   },{frames});
 }
 test('textured atmosphere survives checkpoint restart without duplicating resources; low quality reduces vegetation',async({page},info)=>{
-  test.setTimeout(process.env.CI?300000:180000);
+  // flow() = Node route; a restart and a second start at low quality, with the resource counts waited out over several rendered frames each time.
+  test.setTimeout(slowGlTestTimeout({route:true,boots:2,simSeconds:3,frames:40}));
   const snapshot=flow().checkpoints.cp_m01_d_retirada,shaderErrors=[];
   page.on('console',m=>{if(m.type()==='error')shaderErrors.push(m.text());});
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
@@ -670,7 +688,7 @@ test('ckm west crew and weapon use actual saved abandon time, pause and fresh re
   // T40: the optional first-person arm GLBs (fp:0, fp:patient) load in the background and append to characters.loaded when they arrive (and bump the paused revision): on a slow
   // runner that can fall inside the 250 ms window below. The pause stability being proven here starts once the optional residency has settled (loaded or failed).
   await page.waitForFunction(()=>{const c=window.gameDiagnostics().m01.characters;return [['fp:0','m01_fp_arms_v2'],['fp:patient','m01_fp_patient_v2']].every(([k,f])=>c.loaded.includes(k)||c.failures.some(x=>String(x.path).includes(f)));},null,{timeout:120000});
-  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  await page.evaluate(()=>document.exitPointerLock());await expectPaused(page);
   const before=await page.evaluate(()=>window.gameDiagnostics()),c=before.m01.characters;
   const gunner=c.actors.find(a=>a.id==='ckm_gunner'),loader=c.actors.find(a=>a.id==='ckm_loader');
   expect(loader.clip).toBe('ckm_wz30_loader_abandon');expect(loader.clipTime).toBeCloseTo(gunner.clipTime,5);

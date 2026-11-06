@@ -14,6 +14,9 @@ import { M01TerrainMaterial } from './m01-terrain-material.js';
 import {M01TerrainRelief} from './m01-terrain-relief.js';
 import {M01FarLandscape} from './m01-far-landscape.js';
 import {M01AreaDressing} from './m01-area-dressing.js';
+import {M01AreaStretcher} from './m01-area-stretcher.js';
+import {M01AreaDusk,DUSK,duskLift} from './m01-area-dusk.js';
+import {areaReliefOffset} from './m01-area-field.js';
 import { M01Atmosphere, visualNoise } from './m01-atmosphere.js';
 import { applyLighting, viewLightingDiagnostics, M01_FOG_RANGE } from './m01-lighting.js';
 import { M01Water } from './m01-water.js';
@@ -43,6 +46,7 @@ import {M01BridgeFinishRuntime} from './m01-bridge-finish-runtime.js';
 import {isDemolitionDamage,collapseTwinName,collapseDamageId,collapseSeed,collapsePose,collapseProgress,demolitionFlash,demolitionFallPoints,demolitionSilenceWindow,
   farFeedback,farFeedbackApplies,M01_COLLAPSE_DURATION,M01_BLAST_CHIP_MATERIALS,M01_DEMOLITION_BUDGET} from './m01-demolition.js';
 
+const SHELL_FIRST_FRAME_AGE=.06;
 export const M01_BATTLEFIELD_FX_LIMITS=Object.freeze({bursts:16,flash:16,core:48,fire:96,smoke:128,dust:128,shards:96,lights:1});
 const FX_DENSITY={low:.55,medium:.78,high:1};
 /** Height of the rifle muzzle of an impostor as a share of its figure height (the silhouette's rifle ends at .77 h, see m01-impostors.js). */
@@ -213,19 +217,26 @@ export class M01View {
    * act's entry card) and the area's dressing is made; the current act's world has no area, so for it nothing here ever runs.
    */
   syncAreaTerrain(world){
-    const key=areaKey(world);if(key===this.reliefAreaKey)return;
-    this.reliefAreaKey=key;
-    const relief=this.terrainRelief.enabled,far=this.farLandscape.enabled;
-    this.terrainRelief.dispose();this.farLandscape.dispose();
-    this.terrainRelief=new M01TerrainRelief(this.scene,world,this.materials.ground,{terrainMeshes:this.terrainMeshes,onUpdate:()=>{this.lastFrame=null;}});this.terrainRelief.setEnabled(relief);
-    this.farLandscape=new M01FarLandscape(this.scene,world,{surfaceY:(x,z)=>this.terrainRelief.surfaceHeightAt(x,z),onUpdate:()=>{this.lastFrame=null;}});this.farLandscape.setEnabled(far);
-    for(const mesh of this.terrainFillers)this.terrainRelief.trackAuxiliaryGround(mesh);
-    this.areaDressing?.dispose();this.areaDressing=world.area?new M01AreaDressing(this.scene,world,{ground:texturedSurface('soil',{worldScale:.42,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-4})}):null;
+    // INC-2: two acts of the same area (VII-a, VII-b) share the relief but not the turned earth the Germans bound to (the covers of their plans): when the covers differ, the dressing is made again for the new world.
+    const key=areaKey(world),rebuilt=key!==this.reliefAreaKey,coverKey=world.area?world.areaCovers.map(c=>c.id).join(','):'';
+    if(!rebuilt&&(!world.area||(this.areaDressing&&this.areaCoverKey===coverKey)))return;
+    this.reliefAreaKey=key;this.areaCoverKey=coverKey;
+    if(rebuilt){
+      const relief=this.terrainRelief.enabled,far=this.farLandscape.enabled;
+      this.terrainRelief.dispose();this.farLandscape.dispose();
+      this.terrainRelief=new M01TerrainRelief(this.scene,world,this.materials.ground,{terrainMeshes:this.terrainMeshes,onUpdate:()=>{this.lastFrame=null;}});this.terrainRelief.setEnabled(relief);
+      // The far landscape stands on the drawn ground: the submitted terrain plus the area's visual offset (m01-area-field: 0 on the fought-over strip).
+      this.farLandscape=new M01FarLandscape(this.scene,world,{surfaceY:(x,z)=>this.terrainRelief.surfaceHeightAt(x,z)+(world.area?areaReliefOffset(world.area,x,z):0),onUpdate:()=>{this.lastFrame=null;}});this.farLandscape.setEnabled(far);
+      for(const mesh of this.terrainFillers)this.terrainRelief.trackAuxiliaryGround(mesh);
+    }
+    const prevDressing=this.areaDressing;this.areaDressing=world.area?new M01AreaDressing(this.scene,world,{surface:(x,z)=>this.terrainRelief.surfaceHeightAt(x,z),quality:this.owner?.quality,reuse:rebuilt?null:prevDressing}):null;prevDressing?.dispose();   // same area, other covers: the new dressing takes over the field/trees from the old one
     this.lastFrame=null;
   }
   syncSolids(world){
     if(this.world!==world){if(!this.world)this.buildTerrain(world);else{this.world=world;this.terrain?.setWorld(world);}this.syncAreaTerrain?.(world);}
     this.terrainRelief?.sync(world,this.owner?.quality);
+    this.areaDressing?.setQuality(this.owner?.quality);
+    this.characters?.setAreaLegibility?.(Boolean(this.areaDressing));
     const fieldRevision=this.environment?.fieldStructures.revision??0;
     for(const proxy of this.fieldProxyMeshes??[])proxy.visible=!this.environment.fieldStructures.replaces(proxy.userData.m01FieldProxy);
     if(this.revision===world.revision&&this.solidWorld===world&&this.solidFieldRevision===fieldRevision)return;
@@ -234,7 +245,7 @@ export class M01View {
     for(const m of this.solidGroup.children)if(m.isInstancedMesh)m.dispose();this.solidGroup.clear();
     const byMaterial=new Map();
     for(const b of [...world.buildings,...world.covers,...world.joints]){
-      if(this.environment?.fieldStructures.replaces(b.id))continue;
+      if(this.environment?.fieldStructures.replaces(b.id)||this.areaDressing?.replaces(b.id))continue;
       if(b.id==='station'&&this.environment?.station?.ready)continue; // Visual replacement; collider remains in world.
       const key=b.material??'stone';if(!byMaterial.has(key))byMaterial.set(key,[]);byMaterial.get(key).push(b);
     }
@@ -615,7 +626,7 @@ export class M01View {
     const findDamage=b=>state.damage.find(d=>Math.abs(d.started-b.start)<.08&&Math.hypot(d.x-b.x,d.z-b.z)<2);
     this.bursts=this.bursts.filter(b=>{const d=findDamage(b),profile=battlefieldProfile(d?.id??'',b.aerial);return time>=b.start&&time-b.start<profile.duration;});
     const counts={flash:0,core:0,fire:0,smoke:0,dust:0},dummy=this.battlefieldDummy,quality=this.owner.quality,cam=this.camera.position;
-    const meta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};let shardCount=0,strongest=null,demolitionFlashState=null;
+    const meta={kinds:{small:0,shell:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};let shardCount=0,strongest=null,demolitionFlashState=null;
     const put=(name,p,sx,sy,opacity,color,seed,variant=0)=>{
       const batch=this.battlefieldFxBatches[name],index=counts[name];if(index>=batch.instanceMatrix.count||opacity<=.004)return;
       dummy.position.set(p.x,p.y,p.z);dummy.rotation.set(0,0,0);dummy.scale.set(sx,sy,1);dummy.updateMatrix();batch.setMatrixAt(index,dummy.matrix);
@@ -623,7 +634,11 @@ export class M01View {
       batch.setColorAt(index,this.battlefieldColor.set(color));counts[name]++;
     };
     for(const b of this.bursts){
-      const age=time-b.start,match=findDamage(b),id=match?.id??'',kind=battlefieldBlastKind(id,b.aerial),profile=battlefieldProfile(id,b.aerial);
+      const match=findDamage(b),id=match?.id??'',kind=battlefieldBlastKind(id,b.aerial),profile=battlefieldProfile(id,b.aerial);
+      // A shell's burst is aged from the first frame it is drawn (at most .3 s after the impact), and that frame is drawn at age SHELL_FIRST_FRAME_AGE, inside the flash (its eased life is zero at age 0): a slow frame that
+      // carried the clock past the flash would otherwise never show it. Other kinds keep the clock.
+      if(kind==='shell'&&b.first===undefined)b.first=Math.min(.3,Math.max(0,time-b.start))-SHELL_FIRST_FRAME_AGE;
+      const age=time-b.start-(kind==='shell'?b.first:0),heavy=kind==='bombing'||kind==='shell';
       const distance=Math.hypot(b.x-cam.x,b.y-cam.y,b.z-cam.z),band=fxDistanceBand(distance);meta.kinds[kind]++;meta.bands[band]++;
       const farScale=band==='far'?1.12:band==='mid'?1.04:1;
       // Demolition only: minimum angular size/duration of the flash and reach of the light by viewer distance (identical below 85 m).
@@ -661,7 +676,7 @@ export class M01View {
         const a=(j/Math.max(1,dustN))*Math.PI*2+(n0-.5)*.72,r=profile.scale*(.06+profile.dustReach*Math.pow(life.t,.72))*(.70+n1*.46);
         const sx=profile.scale*(.09+.22*life.t)*(.58+n2*.72)*farScale,sy=sx*(.28+.20*visualNoise(b.seed,123+j*5));
         put('dust',{x:b.x+Math.cos(a)*r,y:b.y+.10+profile.scale*.017*life.t+visualNoise(b.seed,124+j*5)*.22,z:b.z+Math.sin(a)*r},
-          sx,sy,.52*life.life,kind==='demolition'?(j%3?'#94816a':'#aa9577'):kind==='bombing'?(j%2?'#9f8a70':'#b09a7d'):'#aa967b',b.seed,120+j);
+          sx,sy,.52*life.life,kind==='demolition'?(j%3?'#94816a':'#aa9577'):heavy?(j%2?'#9f8a70':'#b09a7d'):'#aa967b',b.seed,120+j);
       }
       const smokeN=fxLayerCount(profile.counts.smoke,quality,distance);
       for(let j=0;j<smokeN;j++){
@@ -677,7 +692,7 @@ export class M01View {
       for(let j=0;j<shardN&&shardCount<M01_BATTLEFIELD_FX_LIMITS.shards;j++){
         const n0=visualNoise(b.seed,280+j*5),n1=visualNoise(b.seed,281+j*5),n2=visualNoise(b.seed,282+j*5),life=staggeredLife(age,profile.shardStart,profile.shardEnd,n0,.16);
         if(!life.life)continue;
-        const a=n0*Math.PI*2,v=(kind==='demolition'?15:kind==='bombing'?10.5:6.2)*(.40+n1*.92),t=age-life.start;
+        const a=n0*Math.PI*2,v=(kind==='demolition'?15:heavy?10.5:6.2)*(.40+n1*.92),t=age-life.start;
         dummy.position.set(b.x+Math.cos(a)*v*t,b.y+.18+(4+n2*(kind==='demolition'?9:6))*t-4.9*t*t,b.z+Math.sin(a)*v*t);
         dummy.rotation.set(t*(3+j*.71),a+n1,t*(5+n0*4));const s=(.05+n2*.17)*(kind==='demolition'?1.24:1)*Math.max(.15,life.life);
         dummy.scale.set(s*(.65+n1*.8),s*(.32+n0*.48),s*(.62+n2*.55));dummy.updateMatrix();this.battlefieldShards.setMatrixAt(shardCount,dummy.matrix);
@@ -839,15 +854,31 @@ export class M01View {
   }
   syncDamage(sim,state){
     this.stationDamage.update(state.damage,sim.clock);
+    this.areaDressing?.syncShellCraters(state.damage);   // INC-2: the craters of an area act's shells, from the saved damage (nothing for an act without shells)
     const yardFire=yardWagonFireDamage(sim.destruction,sim.world,sim.consumed.evt_m01_wounded_dragged??0,sim.clock);
-    this.atmosphere.update(yardFire?{...state,damage:[...state.damage,yardFire]}:state,sim.clock,this.owner.quality,{surfaceY:(x,z)=>sim.world.terrainHeightAt(x,z),trainSources:this.trainLife.sources,railwaySmoke:this.trainSmokeEnabled!==false});
+    this.atmosphere.update(yardFire?{...state,damage:[...state.damage,yardFire]}:state,sim.clock,this.owner.quality,{surfaceY:(x,z)=>sim.world.terrainHeightAt(x,z),eye:this.camera.position,trainSources:this.trainLife.sources,railwaySmoke:this.trainSmokeEnabled!==false});
     const live=new Set(sim.grenades.active.map(g=>g.id));
     for(const g of sim.grenades.active){let m=this.grenadeViews.get(g.id);if(!m){m=this.mesh('sphere','metal',[0,0,0],[.07,.07,.07],this.effects);this.grenadeViews.set(g.id,m);}m.position.set(g.x,g.y,g.z);}
     for(const [id,m]of this.grenadeViews)if(!live.has(id)){this.effects.remove(m);this.grenadeViews.delete(id);}
   }
+  /**
+   * Area acts only (nothing here runs for the current act: `sim.plan` is the area simulation's). VII-b has stretcher-bearers (plan.medics): their stretcher is drawn while they carry; VII-c has a withdrawal
+   * (plan.withdrawal): its exit band gets two hooded lanterns, the town to the south-west glows and the ambient is lifted a little. Made when the act's plan appears, disposed when it goes.
+   */
+  syncAreaPolish(sim){
+    const plan=this.areaDressing?sim.plan:null,medics=Boolean(plan?.medics),withdrawal=plan?.withdrawal??null;
+    if(medics!==Boolean(this.areaStretcher)){this.areaStretcher?.dispose();this.areaStretcher=medics?new M01AreaStretcher(this.scene):null;this.lastFrame=null;}
+    if(withdrawal!==(this.areaDuskPlan??null)){
+      this.areaDusk?.dispose();this.areaDuskPlan=withdrawal;
+      this.areaDusk=withdrawal?new M01AreaDusk(this.scene,{exit:withdrawal.exit,groundY:(x,z)=>sim.world.heightAt?.(x,z)??0,quality:this.owner?.quality}):null;this.lastFrame=null;
+    }
+    this.areaDusk?.setQuality(this.owner?.quality);
+  }
   lighting(sim){
     // Sky, sun, hemisphere, fog and exposure come from the pure model in m01-lighting.js (twilight key, per-phase exposure).
     applyLighting(this,sim);
+    // The dusk act (VII-c) only: the ambient a little lifted by how far the act's own sun is below the horizon, so the field and the figures stay legible (the hemisphere light and exposure are rewritten each frame by applyLighting: no accumulation).
+    if(this.areaDusk){const lift=this.areaDuskLift=duskLift(this.lightingModel.altDeg);this.skyLight.intensity*=1+DUSK.liftHemi*lift;this.engine.toneMappingExposure*=1+DUSK.liftExposure*lift;}
     this.environment?.sync(sim.world,this.owner.quality,sim.player,sim.clock);
   }
   render(sim){
@@ -880,9 +911,11 @@ export class M01View {
     this.terrain?.sync(this.owner.quality);
     this.syncSolids(sim.world);this.portalPolish.sync(this.owner.quality);const dt=Math.min(.05,Math.max(0,time-this.lastClock));this.lastClock=time;
     for(const kit of this.kit)for(const piece of kit.pieces){const s=state.parts[piece.name];piece.node.visible=Boolean(s&&s.visible&&s.lod===kit.file.lod);}
+    this.syncAreaPolish(sim);
     const sapperOps=sim.sapperOps;this.repairLine.sync(sapperOps,sim.world);   // R3-a: before the demolition and the actors (tests/m01-demolition.test.js pins updateDemolition directly before updateActors)
     this.updateDemolition(state,time,sim);
-    this.updateActors(sim.actors,time,sim.player,sim.battleClock,sapperOps);this.syncDamage(sim,state);this.lighting(sim);this.water.sync(this.lightingModel,sim.clock,this.owner.quality);
+    this.updateActors(this.areaStretcher?this.areaStretcher.present(sim.actors):sim.actors,time,sim.player,sim.battleClock,sapperOps);this.syncDamage(sim,state);this.lighting(sim);
+    this.areaDusk?.update(this.camera.position,sim.clock);this.water.sync(this.lightingModel,sim.clock,this.owner.quality);
     const atmosphere=this.ambientDirector.sample(sim,this.owner.quality),flash=atmosphere.horizonFlash;
     this.horizonGlow.visible=Boolean(flash.active);
     if(flash.active){const angle=flash.azimuthDeg*Math.PI/180,d=flash.distance;
@@ -1023,7 +1056,7 @@ export class M01View {
     environmentProps:this.environment?.propDiagnostics,trackBed:this.environment?.trackBed.diagnostics,bridgeFinish:this.bridgeFinish.diagnostics,bridgeCamera:{position:this.camera.position.toArray(),quaternion:this.camera.quaternion.toArray(),fov:this.camera.fov},bridgePortalPolish:this.portalPolish?.diagnostics,bridgeStructure:this.bridgeStructure?.diagnostics,vegetation:this.environment?.diagnostics,actorPoses:{...this.actorPoses},actorAnimations:{...this.actorAnimations},
     damageDecals:this.damageDecals.diagnostics,
     terrain:this.terrain?this.terrain.diagnostics:{material:'legacy-soil',textures:1,gpuBytes:0,quality:this.owner.quality},
-    terrainRelief:this.terrainRelief?.diagnostics,farLandscape:this.farLandscape?.diagnostics,
+    terrainRelief:this.terrainRelief?.diagnostics,farLandscape:this.farLandscape?.diagnostics,areaDressing:this.areaDressing?.diagnostics??null,areaPolish:{stretcher:this.areaStretcher?.diagnostics??null,dusk:this.areaDusk?{...this.areaDusk.diagnostics,lift:this.areaDuskLift??0}:null},
     visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx},muzzlePresentation:{...this.muzzlePresentation},ckmPresentation:{...this.ckmPresentation},distantFire:this.shotDiagnostics,longRangeFire:this.longRangeDiagnostics,
     combatFeedback:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality),bodyFeedback:this.bodyFeedback.diagnostics(),
     ambient:this.ambientDirector?.diagnostics,livingMotion:{...this.livingMotion},
@@ -1037,7 +1070,7 @@ export class M01View {
     if(this.disposed)return;
     this.disposed=true;this.bridgeFinish.dispose();if(typeof window!=='undefined'&&window.m01BridgeFinishDebug===this.bridgeFinishDebug)delete window.m01BridgeFinishDebug;if(typeof window!=='undefined'&&window.m01RailPropsDebug===this.railPropsDebug)delete window.m01RailPropsDebug;if(typeof window!=='undefined'&&window.m01FieldStructuresDebug===this.fieldStructuresDebug)delete window.m01FieldStructuresDebug;if(typeof window!=='undefined'&&window.m01TerrainDebug===this.terrainDebug)delete window.m01TerrainDebug;this.grading.dispose();this.bombs?.forEach(b=>b.removeFromParent());if(this.bombs)this.bombs.length=0;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}for(const m of this.aircraftMaterials??[])m.dispose();this.aircraftSky?.dispose();this.viewModel?.dispose();this.repairLine?.dispose();this.characters?.dispose();this.impostors?.dispose();
     this.fallbackFx.dispose();this.weaponWorldFx.dispose();this.weaponLighting.dispose();
-    if(typeof window!=='undefined'&&window.m01ReliefHorizonDebug===this.reliefHorizonDebug)delete window.m01ReliefHorizonDebug;this.terrainRelief?.dispose();this.farLandscape?.dispose();this.areaDressing?.dispose();
+    if(typeof window!=='undefined'&&window.m01ReliefHorizonDebug===this.reliefHorizonDebug)delete window.m01ReliefHorizonDebug;this.terrainRelief?.dispose();this.farLandscape?.dispose();this.areaDressing?.dispose();this.areaStretcher?.dispose();this.areaDusk?.dispose();
     if(typeof window!=='undefined'&&window.m01VegetationDebug===this.vegetationDebug)delete window.m01VegetationDebug;
     this.trainLife.dispose();this.stationDamage.dispose();this.yardWagons.dispose();this.wagons.dispose();this.locomotive.dispose();this.panzerzugArt.dispose();this.portalPolish?.dispose();this.bridgeStructure?.dispose();this.damageDecals.dispose();this.environment?.dispose();this.assets.dispose();this.terrain?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.horizonGlow?.material.dispose();this.geometry.forEach(g=>g.dispose());this.speckGeometry?.dispose();
     const textures=new Set();for(const m of new Set([...Object.values(this.materials),this.terrainLegacyMaterial].filter(Boolean))){if(m===this.terrain?.material)continue;if(m.map)textures.add(m.map);if(m.bumpMap)textures.add(m.bumpMap);m.dispose();}textures.forEach(t=>t.dispose());

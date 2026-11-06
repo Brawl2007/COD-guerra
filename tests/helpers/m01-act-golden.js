@@ -1,12 +1,13 @@
 // R4 INC-1: the golden of Act VII-a (the counterpart of the current act's gameplay goldens, which stay untouched). Two routes of the area simulation (the passive
 // and the active pilot of tests/helpers/m01-act-route.js, seed 19390901, recruta), a sha256 digest of the gameplay state every second of simulation, the final
-// account (clock, wave times, casualties, deaths), the clipping and stacking audits, and the sha256 of every input of the act. Deterministic JSON (no wall clock,
+// account (clock, checkpoints, wave times, casualties, deaths), the clipping and stacking audits, and the sha256 of every input of the act. Deterministic JSON (no wall clock,
 // no paths). Written only by tools/verification/m01-act-vii-a-golden.mjs --write (x86_64); tests/m01-act-vii-a.test.js regenerates and compares it byte for byte.
 import {createHash} from 'node:crypto';
 import {readFileSync} from 'node:fs';
 import {M01AreaSimulation} from '../../src/game/m01-area-sim.js';
 import {actRoute} from './m01-act-route.js';
-import {clippingAudit,stackingAudit} from './m01-clipping.js';
+import {stackingAudit} from './m01-clipping.js';
+import {areaClippingAudit} from './m01-act-audit.js';   // the clipping audit on the men who moved and the solids of the area: the same events as the full audit, a fifth of the time (tests/m01-act-vii-a.test.js proves it)
 
 export const ACT_GOLDEN_FIXTURE='tests/fixtures/m01-act-vii-a-gameplay-baseline.json';
 export const ACT_GOLDEN_INPUTS=Object.freeze(['src/game/m01-area-sim.js','src/game/m01-act-factories.js','src/world/m01-area-world.js','src/world/m01-prop-layout.js',
@@ -22,11 +23,13 @@ export function actFrame(sim){
     actors:sim.actors.map(a=>[a.id,r6(a.x),r6(a.z),r6(a.health),a.alive,a.active,Boolean(a.crouched),a.deck?`${a.deck.phase}:${a.deck.node}`:null,r6(a.suppressedUntil),a.ckm?.phase??null])};
 }
 export function actGoldenRoute(mode,seed=19390901,difficulty='recruta'){
-  const sim=new M01AreaSimulation(seed,{difficulty}),clip=clippingAudit(),stack=stackingAudit(),seconds=[];let digest=createHash('sha256');
+  const sim=new M01AreaSimulation(seed,{difficulty}),clip=areaClippingAudit(),stack=stackingAudit(),seconds=[];let digest=createHash('sha256');
   const r=actRoute(sim,{mode,maxSec:600,onStep:x=>{clip.observe(x);stack.observe(x);digest.update(JSON.stringify(actFrame(x.sim)));if(x.tick%20===0){seconds.push(digest.digest('hex').slice(0,16));digest=createHash('sha256');}}});
   const W=sim.timers.wave;
-  return {mode,seed,difficulty,ticks:r.ticks,complete:r.complete,clock:r6(r.clock),deaths:r.deaths,
-    wave:W&&{at:r6(W.at),brokenAt:W.brokenAt===null?null:r6(W.brokenAt),repelledAt:W.repelledAt===null?null:r6(W.repelledAt),casualties:W.casualties},
+  return {mode,seed,difficulty,ticks:r.ticks,complete:r.complete,clock:r6(r.clock),deaths:r.deaths,checkpoints:[...sim.checkpointsReached],
+    // at/brokenAt/repelledAt: the whole fight (brokenAt = the LAST echelon's break); echelons: when each entered and broke, and the German dead while it was on the field.
+    wave:W&&{at:r6(W.at),brokenAt:W.brokenAt===null?null:r6(W.brokenAt),repelledAt:W.repelledAt===null?null:r6(W.repelledAt),casualties:W.casualties,
+      echelons:W.echs.map(e=>({at:r6(e.at),brokenAt:e.brokenAt===null?null:r6(e.brokenAt),casualties:e.casualties}))},
     germansDead:sim.enemies.filter(a=>!a.alive).map(a=>a.id),polesDead:sim.allies.filter(a=>!a.alive).map(a=>a.id),roundsFired:sim.enemyFire.nextId,
     ckmBursts:sim.ckm?.bursts??0,clipping:clip.report(),stacking:stack.report(),final:sha(actFrame(sim)),perSecond:seconds};
 }

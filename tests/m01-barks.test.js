@@ -7,6 +7,7 @@ import {readFileSync} from 'node:fs';
 import definition from '../missions/m01-tczew/mission.json' with {type:'json'};
 import mapLayout from '../missions/m01-tczew/map-layout.json' with {type:'json'};
 import {M01Simulation,validateM01Snapshot,seconds,CKM_BELT,CKM_BURST_ROUNDS} from '../src/game/m01-simulation.js';
+import {dustSpec} from '../src/game/m01-dust.js';
 import {BARK_RULES,BARK_RULE_LIST,BARK_CONFIG,BARK_GROUPS,compileBarks,newBarkState,barkEvent,barkPoll,barkTrigger,barkChannelOpen,validateBarkState,TRIGGERS,
   CKM_BELT_FULL,CKM_BURST_ROUNDS_FULL} from '../src/game/m01-barks.js';
 import {route} from './helpers/m01-route.js';
@@ -588,6 +589,15 @@ const CASES={
   [D(210)]:{stage:s=>near(s,'staszek_pawlak'),act:s=>barkTrigger(s,'opening',{node:'phone_dead',point:s.actor('staszek_pawlak')})},
   [D(211)]:{stage:s=>{near(s,'marek_zielinski');speakFirst(s,D(210),3);},act:s=>barkTrigger(s,'opening',{node:'alert_order',point:s.actor('marek_zielinski')})},
   [D(212)]:{stage:s=>near(s,'ckm_loader',10),act:s=>barkTrigger(s,'opening',{node:'ammo_report',point:s.actor('ckm_loader')})},
+  // Package 2 (the first aid, src/game/m01-aid.js, golden amendment 21): the wounded man of the garrison calls (220-222, rotating), the medic arrives (223-224, rotating), lifts (225) and lays down (226) his man; each through the
+  // `aid` trigger with its node and the point where the speaker stands, the player within the rule's hearing (70 m)
+  [D(220)]:{stage:s=>near(s,'pl_west_1'),act:s=>barkTrigger(s,'aid',{node:'call',point:s.actor('pl_west_1')})},
+  [D(221)]:{stage:s=>{near(s,'pl_west_1');withLedger(s,{g:{aid_call:[1,0]}});},act:s=>barkTrigger(s,'aid',{node:'call',point:s.actor('pl_west_1')})},
+  [D(222)]:{stage:s=>{near(s,'pl_west_1');withLedger(s,{g:{aid_call:[2,0]}});},act:s=>barkTrigger(s,'aid',{node:'call',point:s.actor('pl_west_1')})},
+  [D(223)]:{stage:s=>near(s,'leon_dudek'),act:s=>barkTrigger(s,'aid',{node:'arrive',point:s.actor('leon_dudek')})},
+  [D(224)]:{stage:s=>{near(s,'leon_dudek');withLedger(s,{g:{aid_arrive:[1,0]}});},act:s=>barkTrigger(s,'aid',{node:'arrive',point:s.actor('leon_dudek')})},
+  [D(225)]:{stage:s=>near(s,'leon_dudek'),act:s=>barkTrigger(s,'aid',{node:'carry',point:s.actor('leon_dudek')})},
+  [D(226)]:{stage:s=>near(s,'leon_dudek'),act:s=>barkTrigger(s,'aid',{node:'delivered',point:s.actor('leon_dudek')})},
   'co_m01_opening_order':{stage:s=>near(s,'pl_west_1'),act:s=>barkTrigger(s,'opening',{node:'courier_report',point:s.actor('pl_west_1')})},
   'co_m01_opening_alert':{stage:s=>{near(s,'pl_west_1');s.consumed.evt_m01_railway_worker_report=s.clock-5;},act:s=>barkTrigger(s,'opening',{node:'courier_report',point:s.actor('pl_west_1')})},
   'co_m01_ally_hit':{stage:s=>{withdrawal(s);near(s,'marek_zielinski');withLedger(s,{n:unspoken(s,[D(100),D(101),D(102)])});},act:s=>impact(s,{victim:'pl_east_17',point:{x:s.player.x+10,y:0,z:s.player.z}})},
@@ -613,6 +623,21 @@ for(const r of BARK_RULE_LIST)test(`rule ${r.id} can be said (${r.on}), and only
 });
 
 test('the staged cases cover exactly the rules of the data',()=>{assert.deepEqual(Object.keys(CASES).sort(),BARK_RULE_LIST.map(r=>r.id).sort());});
+
+// Package 2 critical review (2026-11-04): the condition `mg34 {los:true}` (123/124, «Ele recarrega! Agora!») asked the world's line of sight, so a gunner whom a cloud of dust hid from the player (and the
+// player from him: sees() is what his own acquisition asks) was still reported as in sight. It asks sees() now, as the rest of the act does.
+test('the gate MG reload lines (123 / 124) are silent when a cloud of dust hides the gunner from the player, and said in clear air',()=>{
+  const stage=s=>{inCover(s);const g=s.actor('de_east_1');g.active=true;g.mg34Prone={phase:'reload',startedAt:s.clock,duration:1.9,progress:1};return g;};
+  const reload=t=>t.startsWith(D(123))||t.startsWith(D(124));
+  {const s=fresh(),g=stage(s);assert.equal(s.world.lineOfSight(g,s.player),true);assert.equal(s.sees(g,s.player),true);
+    assert.equal(delta(s,()=>barkPoll(s)).filter(reload).length,1,'in clear air: one of the two lines is said');}
+  {const s=fresh(),g=stage(s),x=s.player.x+10;
+    s.sectors.damage.push({id:'raid_test_1',x,y:s.world.heightAt(x,s.player.z),z:s.player.z,started:s.clock-2,soundAt:s.clock-2,dust:dustSpec('bomb')});
+    assert.equal(s.world.lineOfSight(g,s.player),true,'the world is open between them');assert.equal(s.sees(g,s.player),false,'the cloud hides him');
+    assert.deepEqual(delta(s,()=>barkPoll(s)).filter(reload),[],'and the line is not said');
+    s.clock+=45;   // the cloud of a bomb lasts 40 s
+    assert.equal(s.sees(g,s.player),true,'the cloud is gone');assert.equal(delta(s,()=>barkPoll(s)).filter(reload).length,1,'and it is said');}
+});
 
 test('the same rules stay silent when their conditions do not hold (the player is too far, the wrong objective, the wrong side)',()=>{
   const far=(s,id)=>Object.assign(s.player,{x:s.actor(id).x+500});

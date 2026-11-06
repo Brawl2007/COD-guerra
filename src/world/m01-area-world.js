@@ -21,14 +21,18 @@ export function areaPropPlacements(layout){
 export class M01AreaWorld extends TczewWorld {
   /**
    * `layout`: areas/<area>/layout.json. `extraCovers`: solids built from the act data (the approach plan's turned earth, {id,min,max}). `eventIds`: the current
-   * act's consumed events (the bridges stay as the demolitions left them).
+   * act's consumed events (the bridges stay as the demolitions left them). `sun` (F8 of the R4 design, INC-2): the act's own sun keyframes (act.clock.sun, {source, keyframes}),
+   * which replace map-layout's sun for this act only (presentation: applyLighting reads world.layout.sun); absent, the world keeps the current act's sun exactly.
    */
-  constructor(layout,{extraCovers=[],eventIds=[],flags={}}={}){
+  constructor(layout,{extraCovers=[],eventIds=[],flags={},sun=null}={}){
     super();
     this.area=layout;this.extraCovers=extraCovers;
     const b=layout.bounds;
+    if(sun&&(!Array.isArray(sun.keyframes)||!sun.keyframes.length||sun.keyframes.some((k,i,all)=>!/^\d\d:\d\d(:\d\d)?$/.test(k.clock)||![k.altitudeDeg,k.azimuthDeg].every(Number.isFinite)||(i&&k.clock<=all[i-1].clock))))
+      throw new Error('M01 area world: sun.keyframes: {clock "HH:MM", altitudeDeg, azimuthDeg} in time order');
     this.layout={...this.layout,bounds:{...this.layout.bounds,playable:{...b.playable},softWarningX:Infinity,outOfBoundsX:Infinity,outOfBoundsGraceSec:b.outOfBoundsGraceSec},
-      areaRegions:[b.terrainRegion],features:[...this.layout.features,...(layout.features??[])],area:layout.area};
+      areaRegions:[b.terrainRegion],features:[...this.layout.features,...(layout.features??[])],area:layout.area,
+      ...(sun?{sun:{...this.layout.sun,source:sun.source??this.layout.sun.source,keyframes:sun.keyframes.map(k=>({...k}))}}:{})};
     this.areaProps=areaPropPlacements(layout);
     this.refresh(eventIds,flags);
   }

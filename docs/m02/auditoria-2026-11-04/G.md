@@ -1,0 +1,7 @@
+# Auditoria M02 — secção G (Bíblia ambiental), PDF pp. 28–29 vs origin/gemini/m02-01-quinta (transcrito pelo Capitão a partir do relatório do auditor)
+- G1: relevo/drenagem PARCIAL; «evitar superfície lisa» CONTRADIZ (campos de cor única, renderer l.325–327); árvores não equidistantes IMPLEMENTADO (7 macieiras 9,8–29,2 m); paleta PARCIAL; sujidade EM FALTA; vegetação só pomar (PARCIAL); espécie afirmada sem fonte CONTRADIZ (M02_HANDOFF l.28 «7 macieiras»); setembro (restolho, fruta) EM FALTA; sem milho moderno OK.
+- G2: sulcos PARCIAL (só faixa de cor); poço, lenha, cercas, palha, munição, marcas sanitárias PARCIAL; ferramentas, recipientes na quinta, roupa/fotografias, bagagem civil EM FALTA; carroça IMPLEMENTADA na célula B.
+- G3: quinta A, cruzamento B, acesso C PARCIAL (crateras SP03 implementadas).
+- G4: estados de portas/janelas e cercas IMPLEMENTADO; marcas pós-ação EM FALTA; chuva/vento/nuvens EM FALTA (só presets de luz/nevoeiro).
+- G5: prancha de referência EM FALTA; sem assets modernos OK; leitura de B01–B03 sem legendas exige revisão visual humana.
+- Reutilização M01 (só na linha claude/dreamy-ramanujan-6v62vr): m01-area-field (sulcos/rodeiras), m01-area-stubble (restolho), m01-area-trees (árvores de limite), m01-area-earthworks (taludes, crateras), m01-area-dressing (orquestrador), m01-area-geo (ruído). Nota: o auditor diz que a M02 importa ./m01-lod-policy.js que não existe em main — verificar.

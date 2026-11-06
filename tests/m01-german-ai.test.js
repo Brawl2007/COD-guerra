@@ -9,7 +9,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import definition from '../missions/m01-tczew/mission.json' with {type:'json'};
 import {M01Simulation,validateM01Snapshot} from '../src/game/m01-simulation.js';
-import {DECK_SAFE_X,DECK_LINE_MARGIN_M,deckAssaultPlan,deckLines,deckLineNumber,deckLimitNode,validDeckRecord} from '../src/game/m01-deck-assault.js';
+import {DECK_SAFE_X,DECK_LINE_MARGIN_M,DECK_SUPPORT_MIN_AHEAD_M,deckAssaultPlan,deckLines,deckLineNumber,deckLimitNode,validDeckRecord} from '../src/game/m01-deck-assault.js';
 import {SECTION,sectionRealOn} from '../src/game/m01-section.js';
 import {validateM01AudioEvent,DECK_TACTIC_KINDS} from '../src/game/m01-audio-events.js';
 import {deathText} from '../src/game/m01-difficulty.js';
@@ -19,7 +19,7 @@ import {P,T,ENTRY,dist,load,plan,entry,isolate,pair,scene,lcg,shotsOf} from './h
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 test('the closing lines: three per man by default (line 0 is the old limit), the deepest at safeX + 8 m + his place in the formation; safeX 450 is the old assault node for node',()=>{
-  assert.equal(DECK_SAFE_X,250,'the shipped value of the single number the owner decides (it was 450)');
+  assert.equal(DECK_SAFE_X,190,'the shipped value of the single number the owner decides (it was 450, then 250; 190 since package 2, 2026-11-04: the front man ends within a stick grenade\'s throw of the rearguard)');
   const minLimit=Math.min(...P.limits);
   P.assault.forEach((id,k)=>{
     const lines=P.lines[k],path=P.paths[k],[z]=P.lanes[k];
@@ -31,8 +31,9 @@ test('the closing lines: three per man by default (line 0 is the old limit), the
     assert.ok(path[lines[1]].x<path[lines[0]].x&&path[lines[1]].x>path.at(-1).x,`${id}: the closing line lies between`);
     assert.ok(path.every((p,i)=>p.z===z&&(!i||p.x<path[i-1].x)),`${id}: one lane, east to west`);
   });
-  // the owner's numbers: the man in front ends 228 m from the deck post of the player (< 300 m) and 83 m from the rearguard's eastmost post (x 165-175: >= 80 m)
-  const lead=P.paths[0].at(-1).x;assert.ok(lead-30<300&&lead-175>=80,`the lead man's deepest line x ${lead}`);
+  // the owner's numbers: the man in front ends 168 m from the deck post of the player (< 300 m) and 23 m from the rearguard's eastmost post (x 165-175), inside the throw of a stick grenade (minM 6, rangeM 32)
+  // (2026-11-04, package 2: it was 228 m and 83 m with safeX 250: the grenade was out of reach in all 24 routes)
+  const lead=P.paths[0].at(-1).x;assert.ok(lead-30<300&&lead-175>=T.grenade.minM&&lead-175<=T.grenade.rangeM,`the lead man's deepest line x ${lead}`);
   // 450 = the assault of before R2-b: one line, the same nodes, the same limits, the same safety line
   const old=deckAssaultPlan(plan(d=>{d.safeX=450;}));
   assert.ok(old.lines.every(l=>l.length===1),'no closing line at 450');
@@ -50,14 +51,27 @@ test('the closing lines: three per man by default (line 0 is the old limit), the
 
 test('the tactics are mission data validated at load: a typo stops the game',()=>{
   const bad={
-    safeX_low:d=>{d.safeX=100;},limit_west:d=>{d.limits[0]=240;},stations_order:d=>{d.stations.push(900);},no_tactics:d=>{delete d.tactics;},stages:d=>{d.tactics.stages=0;},closeGap:d=>{d.tactics.closeGapM=0;},
+    safeX_low:d=>{d.safeX=100;},limit_west:d=>{d.limits[0]=185;},stations_order:d=>{d.stations.push(900);},no_tactics:d=>{delete d.tactics;},stages:d=>{d.tactics.stages=0;},closeGap:d=>{d.tactics.closeGapM=0;},
     pressure_share:d=>{d.tactics.pressure.share=0;},pressure_window:d=>{d.tactics.pressure.windowSec=-1;},hold:d=>{d.tactics.closeHoldSec=[9,3];},extra:d=>{d.tactics.closeExtraSec=1e3;},wait:d=>{d.tactics.alternateWaitSec=-1;},
     pin:d=>{d.tactics.pinSec=30;},squad:d=>{d.tactics.squadTargets.rangeM=10;},search:d=>{d.tactics.search.afterSec=d.tactics.search.memorySec;},grenade_range:d=>{d.tactics.grenade.rangeM=5;},grenade_fuse:d=>{d.tactics.grenade.fuseSec=d.tactics.grenade.flightSec;},
     grenade_wound:d=>{d.tactics.grenade.woundM=9;d.tactics.grenade.reachM=8;},grenade_per:d=>{d.tactics.grenade.perMan=5;},
+    search_hold:d=>{d.tactics.search.hold='yes';},search_hold_num:d=>{d.tactics.search.hold=1;},   // golden amendment 22: `hold` is a boolean or absent
+    // golden amendment 22: `support` (the German supporting round) is an object with a delay, a window and a distance in front of the rearguard that keeps the round out of the ring in which a shell shakes a man
+    support_type:d=>{d.tactics.support=true;},support_array:d=>{d.tactics.support=[4,12,24];},support_delay:d=>{d.tactics.support.delaySec=-1;},support_delay_far:d=>{d.tactics.support.delaySec=31;},
+    support_window:d=>{d.tactics.support.windowSec=0;},support_window_far:d=>{d.tactics.support.windowSec=61;},support_ahead_near:d=>{d.tactics.support.aheadM=DECK_SUPPORT_MIN_AHEAD_M-1;},
+    support_ahead_far:d=>{d.tactics.support.aheadM=121;},support_missing:d=>{delete d.tactics.support.aheadM;},support_nan:d=>{d.tactics.support.delaySec=null;},
   };
   for(const [name,f] of Object.entries(bad))assert.throws(()=>deckAssaultPlan(plan(f)),/deck assault/,name);
+  assert.doesNotThrow(()=>deckAssaultPlan(plan(d=>{delete d.tactics.support;})),'no support is the game of before the amendment');
+  assert.equal(deckAssaultPlan(plan(d=>{delete d.tactics.support;})).tactics.support,null);
+  assert.doesNotThrow(()=>deckAssaultPlan(plan(d=>{d.tactics.support.aheadM=DECK_SUPPORT_MIN_AHEAD_M;})),'the nearest the round may fall');
+  assert.deepEqual({...T.support},{delaySec:4,windowSec:12,aheadM:24},'the live data');
+  assert.ok(Object.isFrozen(T.support)&&T.support.aheadM>20,'frozen, and outside the 20 m ring in which a shell shakes a man (m01-shell-blast.js)');
   assert.doesNotThrow(()=>deckAssaultPlan(plan(d=>{d.safeX=120;})),'the floor of the number the owner may move');
   assert.doesNotThrow(()=>deckAssaultPlan(plan(d=>{d.tactics.grenade.perMan=0;})),'no grenades is a valid choice');
+  assert.doesNotThrow(()=>deckAssaultPlan(plan(d=>{delete d.tactics.search.hold;})),'a search without `hold` is the one of R2-b');
+  assert.equal(deckAssaultPlan(plan(d=>{d.tactics.search.hold=false;})).tactics.search.hold,false);
+  assert.equal(T.search.hold,true,'the live data turn the search of a holding man on (golden amendment 22)');
 });
 
 test('A* validity: every node of every path, and the legs between them, are clear of every solid for a body, and the navigator routes a man along a line to the next without a detour',()=>{
@@ -89,6 +103,10 @@ test('the records: lim and gr are optional keys of the deck record, bounded; eve
   man.deck.lim=lines[1];assert.ok(validDeckRecord(man,s.clock));assert.equal(deckLineNumber(man),1);
   man.deck.lim=lines[2];assert.ok(validDeckRecord(man,s.clock));assert.equal(deckLineNumber(man),2);
   man.deck.lim=lines[1]+1;assert.ok(!validDeckRecord(man,s.clock),'a limit that is not a line');
+  // 2026-11-04 (package 2 critical review): the same record is the record of ANOTHER safeX when it is a node of the man's path under some safeX (250 -> 190 renumbered the lines): the validator of a load
+  // (olderPlan) accepts it, restoreSnapshot puts it on the nearest live line (tests/m01-pkg2-saves.test.js); what no safeX could have written is refused in both modes.
+  assert.ok(validDeckRecord(man,s.clock,{olderPlan:true}),'a node of the path that is not a line: a save of another safeX');
+  for(const bad of [lines[1]+.5,'29',null,-1,lines[0]-1,P.maxNodes[1]+1,1e9]){man.deck.lim=bad;assert.ok(!validDeckRecord(man,s.clock,{olderPlan:true}),`lim ${bad} is no node of any path`);}
   man.deck.lim=lines[1];man.deck.gr=1;assert.ok(validDeckRecord(man,s.clock));
   for(const bad of [0,2,-1,1.5,'1']){man.deck.gr=bad;assert.ok(!validDeckRecord(man,s.clock),`gr ${bad}`);}
   delete man.deck.gr;man.deck.extra=1;assert.ok(!validDeckRecord(man,s.clock),'an unknown key');delete man.deck.extra;
@@ -96,7 +114,10 @@ test('the records: lim and gr are optional keys of the deck record, bounded; eve
   const over=s.actor('de_spans_1');over.deck.lim=0;assert.ok(!validDeckRecord(over,s.clock),'an overwatch man has no line');
   // inside a save
   const save=json(raw);const m=save.actors.find(a=>a.id==='de_spans_4');m.deck.lim=P.lines[0][1];assert.doesNotThrow(()=>validateM01Snapshot(json(save)));
-  m.deck.lim=P.lines[0][1]+1;assert.throws(()=>validateM01Snapshot(json(save)),/assalto do tabuleiro/);
+  // 2026-11-04 (package 2 critical review): a limit that is a node of the man's path but not a line of the live data is a save of another safeX and loads (it was refused before: a CP-D written with safeX 250
+  // could not be loaded with 190); a limit no safeX could have written is still refused.
+  m.deck.lim=P.lines[0][1]+1;assert.doesNotThrow(()=>validateM01Snapshot(json(save)),'a node of the path that is not a line');
+  for(const bad of [P.lines[0][1]+.5,'29',-1,P.lines[0][0]-1,P.maxNodes[0]+1,1e9]){m.deck.lim=bad;assert.throws(()=>validateM01Snapshot(json(save)),/assalto do tabuleiro/,`lim ${bad}`);}
 });
 
 test('the new events are validated: the stick grenade thrown, the explosion with its thrower, the changes of line; and the grenade death has its own words',()=>{

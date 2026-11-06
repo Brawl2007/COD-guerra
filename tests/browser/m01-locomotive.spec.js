@@ -1,9 +1,12 @@
 import {test,expect} from '@playwright/test';
+import {slowGlTestTimeout} from '../helpers/m01-browser-boot.js';
 import {driver,toRepair} from '../helpers/m01-route.js';
 import {seconds} from '../../src/game/m01-simulation.js';
 const key='cod-guerra:checkpoint:m01:v2';
 const d=toRepair(driver());d.until(()=>d.sim.battleClock>=seconds('04:45:10'),120);const snapshot=d.sim.snapshot(false);
 for(const fallback of [false,true])test(`locomotive 963 production ${fallback?'optional failure fallback':'GLBs load, far LOD, pause and restore'}`,async({page})=>{
+ // The default 45 s of the non-CI config is the whole test on this machine (45.6 s alone, failed at 45 s in the full run of 2026-11-05): one boot, the wait for the three GLBs, and a reload with a second boot.
+ test.setTimeout(slowGlTestTimeout({boots:2,simSeconds:4,frames:8}));
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  if(fallback)await page.route('**/locomotive/*.glb',r=>r.abort());
  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});

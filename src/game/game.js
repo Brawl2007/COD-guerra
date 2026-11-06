@@ -12,6 +12,7 @@ import {SIM_STEP,frameSimBudget,playDueSounds} from './frame-catchup.js';
 import {ROUND_SPEED} from './m01-fire.js';
 import {roundImpactSoundPlan,grenadeThrowSoundPlan,waterCrossing} from '../core/battlefield-audio.js';
 import {ACTS,M01ActRunner,actOf} from './m01-acts.js';
+import {chooseContinue,ACT_SAVE_BACKUP_SUFFIX,ACT_SAVE_REJECTED_SUFFIX} from './m01-save-select.js';
 
 const SAVE_KEY='cod-guerra:checkpoint:v1';
 // R4 INC-1: a new act's checkpoint (schema 3 envelope, src/game/m01-acts.js) lives under its own key, so the schema 2 save of the current act is never overwritten by it
@@ -69,17 +70,26 @@ export class Game {
   }
   start({continueSaved=false}={}){
     if(this.started)return this.resume();
+    let notice=null;   // said only once the loaded simulation is in place (say() reads this.sim.clock) and after any act entry (it resets messageUntil)
     if(continueSaved){
       let result;
       if(this.acts&&this.isM01){   // R4 INC-1: a new act's envelope first (it is newer than the completed current act it came from), else the schema 2 save
-        try{result=this.acts.load(localStorage.getItem(ACT_SAVE_KEY)??localStorage.getItem(this.saveKey));}catch(error){result={ok:false,error:error.message};}
+        try{
+          const pick=chooseContinue(this.acts,localStorage.getItem(ACT_SAVE_KEY),localStorage.getItem(this.saveKey));
+          result=pick.source==='acts'?pick.result:this.acts.load(pick.text);
+          if(pick.rejected){   // invalid act envelope: keep it under its own key (a new game never touches it), open the schema 2 save, never delete it silently
+            localStorage.setItem(ACT_SAVE_KEY+ACT_SAVE_REJECTED_SUFFIX,pick.rejected);
+            if(result.ok){localStorage.removeItem(ACT_SAVE_KEY);notice='Checkpoint do ato novo inválido: guardado em cópia; a retomar o save anterior.';}
+          }
+        }catch(error){result={ok:false,error:error.message};}
         if(result.ok)this.sim=result.sim;
       }else try{result=this.sim.loadCheckpoint(localStorage.getItem(this.saveKey));}catch(error){result={ok:false,error:error.message};}
       if(!result.ok){this.onState('save-error',result.error);return false;}
       this.m01Hud.reset('continue',this.sim.clock);
     }
     this.started=true;this.rebuildSounds();
-    if(this.sim.mission.complete&&this.acts?.next(this.sim)){this.enterNextAct();this.audio.init();this.requestControl();return true;}   // R4: a finished act with a next one opens it
+    if(this.sim.mission.complete&&this.acts?.next(this.sim)){this.enterNextAct();if(notice)this.say(notice,3200);this.audio.init();this.requestControl();return true;}   // R4: a finished act with a next one opens it
+    if(notice)this.say(notice,3200);
     if(this.sim.mission.complete){this.onState('complete');return true;}
     this.audio.init();this.requestControl();return true;
   }
@@ -138,7 +148,10 @@ export class Game {
   get difficulty(){return this.isM01?this.sim.difficulty:null;}
   /** H9 D5: the UI only passes the chosen level; the simulation owns it. A different level means a fresh M01Simulation (same seed), as in selectMission. */
   restartMission(difficulty){
-    if(this.acts&&this.isM01)this.sim=this.acts.createInitial({difficulty:difficulty??this.sim.difficulty});   // R4: a new game starts at the first act (or the QA start act)
+    if(this.acts&&this.isM01){   // R4: a new game starts at the first act (or the QA start act); the old act save moves to a backup key now, so Continue cannot open it
+      try{const old=localStorage.getItem(ACT_SAVE_KEY);if(old){localStorage.setItem(ACT_SAVE_KEY+ACT_SAVE_BACKUP_SUFFIX,old);localStorage.removeItem(ACT_SAVE_KEY);}}catch{/* storage refused: as before */}
+      this.sim=this.acts.createInitial({difficulty:difficulty??this.sim.difficulty});
+    }
     else if(this.isM01&&difficulty&&difficulty!==this.sim.difficulty)this.sim=new M01Simulation(undefined,{difficulty});else this.sim.reset();this.started=true;this.paused=true;this.pendingSounds=[];this.pendingM01HitFeedback=null;
     this.audio.resetPresentation?.(this.sim.clock,this.isM01?this.sim.renderState:null);
     this.audioDirector?.reset(this.sim);
@@ -323,6 +336,7 @@ export class Game {
     }
     // The simulation decided the landing (speed, damage, surface); the thud and the camera dip only present it.
     if(event.type==='player-landing'){this.audio.landing(event.speed,event.surface,`landing:${this.sim.clock.toFixed(3)}`);this.renderer.m01.playerLanding(this.sim.clock,event.speed,event.surface);}
+    // R4 INC-2: the whistle of an incoming shell is presented by the audio director (m01-area-audio.js), placed distance/343 s after the launch so that it leads the thud by warnSec.
     if(event.type==='m01-blast'){
       // O estrondo e a vibração chegam juntos (atraso = distância/343 m/s); o áudio só apresenta a autoridade já emitida.
       const s=this.spatial(event.point),damage=[...this.sim.sectors.damage].reverse().find(d=>d.soundAt===event.soundAt&&d.x===event.point.x&&d.z===event.point.z);

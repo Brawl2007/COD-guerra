@@ -70,7 +70,11 @@ function missionMenu(){
   $('#mission-note').textContent=m01?'AS PONTES DO VÍSTULA':'COMUNICAÇÕES INTERROMPIDAS';
   $('#mission-status').textContent=m01?'PROTÓTIPO · MODELOS E ÁUDIO PROVISÓRIOS':'BANCADA FICCIONAL · FRANÇA, 1944';
   if(m01&&game.acts?.startAct){   // R4 INC-1 QA start: say what this is before the player starts it
-    $('#mission-briefing').textContent='QA · Ato VII-a — perímetro norte de Tczew, manhã (ataque de ~07:00, fonte única T08). Trincheira e posições: reconstrução; a chegada da secção é dramatização.';
+    $('#mission-briefing').textContent=game.acts.startAct==='act_vii_c_withdrawal'
+      ?'QA · Ato VII-c — perímetro norte de Tczew, ordem de ~17:00 e retirada ao anoitecer (T03, resumo, certeza média). O mensageiro, os lanços, a retaguarda e o caminho: reconstrução e dramatização.'
+      :game.acts.startAct==='act_vii_b_north_day'
+      ?'QA · Ato VII-b — perímetro norte de Tczew, durante o dia (ataques do norte com apoio de artilharia, T16, certeza baixa). Posições, barragens, maqueiros e investidas: reconstrução e dramatização.'
+      :'QA · Ato VII-a — perímetro norte de Tczew, manhã (ataque de ~07:00, fonte única T08). Trincheira e posições: reconstrução; a chegada da secção é dramatização.';
     $('#mission-status').textContent='QA · ATO NOVO DESLIGADO NO JOGO DISTRIBUÍDO · NÃO VALIDADO';
   }
   t50Loading.selectMission(m01);

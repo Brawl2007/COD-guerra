@@ -23,7 +23,10 @@ import {M01_COLLAPSE_DURATION,M01_FLASH_MIN_ANGULAR,M01_FLASH_MIN_DURATION,M01_L
 // state except that the demolition has not happened (the checkpoint is loaded but never ticked), inside a region around the effect
 // (projected with the page's own camera) and against a sky control region that must stay unchanged.
 //  east flash         west bank on the open corridor between the two bridges (z 20, between the trusses at z 5.2 and 36.4), 776 m
-//  east mid-collapse  east flood plain in the same corridor, 190 m from the blast; 2.4..2.9 s after it (collapse progress >= .5)
+//  east mid-collapse  the east edge of the playable area (x 440) in the same corridor, 360 m from the blast; 2.7..2.95 s after it (collapse progress >= .71, tremor window over, spans not landed)
+//                     (the camera stood at x 610, 190 m from the blast, until the player's body physics (16383eb6, D44) clamped x to the playable edge + 10 m = 450: the scripted placement was moved
+//                     160 m west on the first tick, the live camera was no longer the reference camera, and the 185..200 m window of the assertions was never met. 440 m is inside the area, in sight
+//                     of every ROI point, and the tremor window of 360 m ends at 2.65 s, so the capture window is 2.7..2.95 s: after the tremor, before the spans land at 3.0 s (M01_SPLASH_DELAY).)
 //  west flash         west of the hut (z 40 clears it), 363 m
 //  west fall/splash   on the crest of the road approach (x -120, z 42), looking over the bank at the river and the spans' fall points; 3.5..4.1 s
 //  west earth rain    62 m from the firing post (x -290, z 22); 3.5..4.1 s
@@ -50,11 +53,11 @@ const world=new M01Simulation(19390901).world;
 // y comes from the world, exactly as the simulation would place it.
 const SHOTS=Object.freeze({
   eastFlash:{base:'east',x:24,z:20,aim:{x:800,y:8,z:20},lift:110},
-  eastCollapse:{base:'east',x:610,z:20,aim:{x:800,y:8,z:20},lift:60},
+  eastCollapse:{base:'east',x:440,z:20,aim:{x:800,y:8,z:20},lift:60},
   westFlash:{base:'west',x:-292,z:40,aim:{x:70,y:8,z:20},lift:110},
   westFall:{base:'west',x:-120,z:42,aim:{x:110,y:-4,z:20},lift:0},   // crest of the road approach (3 m above the plain): from the plain the river, 7 m below the bank edge at x 25, is hidden
   westRain:{base:'west',x:-235,z:50,aim:{x:-290,y:10,z:22},lift:-20},
-  eastRestore:{base:'eastAfter',x:610,z:20,aim:{x:800,y:8,z:20},lift:60}
+  eastRestore:{base:'eastAfter',x:440,z:20,aim:{x:800,y:8,z:20},lift:60}
 });
 function place(snapshot,shot){
   const s=structuredClone(snapshot),y=world.heightAt(shot.x,shot.z);   // the simulation snaps y to the ground on every tick
@@ -341,14 +344,14 @@ test('east demolition from ~776 m: flash, light and exposure at the blast instan
   expect(entry.distance).toBeGreaterThan(740);
 });
 
-test('east mid-collapse (2.4..2.9 s, progress >= .5): the pose is the pure model, pausing freezes it, the far tremor is over, the collapse is visible in pixels',async({browser},info)=>{
+test('east mid-collapse (2.7..2.95 s, progress >= .5): the pose is the pure model, pausing freezes it, the far tremor is over, the collapse is visible in pixels',async({browser},info)=>{
   test.setTimeout(process.env.CI?900000:600000);
   const shot=SHOTS.eastCollapse,snapshot=place(fixtures.east,shot);
-  const r=await liveCapture(browser,info,{name:'m01-demolition-east-midcollapse',snapshot,id:'east_demolition',minAge:2.4,maxAge:2.9});
+  const r=await liveCapture(browser,info,{name:'m01-demolition-east-midcollapse',snapshot,id:'east_demolition',minAge:2.7,maxAge:2.95});
   try{
     const demo=r.data.m01.demolition,entry=demo.entries.find(e=>e.id==='east_demolition');
-    expect(entry.distance).toBeGreaterThan(185);expect(entry.distance).toBeLessThan(200);expect(entry.farActive).toBe(true);   // beyond the 180 m near-feedback path
-    expect(entry.age).toBeGreaterThanOrEqual(2.4);expect(entry.age).toBeLessThanOrEqual(2.9);
+    expect(entry.distance).toBeGreaterThan(355);expect(entry.distance).toBeLessThan(365);expect(entry.farActive).toBe(true);   // beyond the 180 m near-feedback path
+    expect(entry.age).toBeGreaterThanOrEqual(2.7);expect(entry.age).toBeLessThanOrEqual(2.95);
     expect(entry.progress).toBeGreaterThanOrEqual(.5);expect(entry.progress).toBeLessThan(1);expect(entry.progress).toBeCloseTo(collapseProgress(entry.age),9);
     const falling=demo.pieces.filter(p=>p.phase==='falling');
     expect(falling.length).toBeGreaterThan(0);
@@ -359,7 +362,7 @@ test('east mid-collapse (2.4..2.9 s, progress >= .5): the pose is the pure model
     }
     expectPieces(demo,r.data.m01.parts);
     const feedback=r.data.m01.combatFeedback,fx=r.data.m01.battlefieldFx.atmosphere;
-    expect(feedback.farTremor).toBe(0);                                              // 190 m / 343 m/s = .55 s: the tremor window (1.6 s) is over
+    expect(feedback.farTremor).toBe(0);                                              // 360 m / 343 m/s = 1.05 s: the tremor window (1.6 s) ends at 2.65 s, before the earliest capture (2.7 s)
     expect(fx.demolition.chips).toBe(0);                                             // nothing has landed yet ...
     if(entry.age<M01_HAZE_DELAY)expect(fx.demolition.puffs).toBe(0);else expect(fx.demolition.puffs).toBeGreaterThan(0);   // ... the dust starts hanging just before the spans land
     // Pause freezes the pose: two reads with real time and rendered frames in between are identical.

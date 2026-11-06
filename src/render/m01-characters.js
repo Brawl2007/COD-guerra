@@ -73,11 +73,24 @@ const SUPPORT_ARM_NAMES=['upperarm_l','arm_l','LeftArm','mixamorigLeftArm'];
 const OPEN_IK_M={low:22,medium:45,high:75},OPEN_IK_MAX=14;
 const POSE_HOLD_MAX_DRIFT_M=1.5;   // a walking/running soldier moves < 0.5 m in the longest hold (0.067 s); anything more is not a normal frame
 const UP_AXIS=new THREE.Vector3(0,1,0);
+/** VII-a visual package: value multiplier of the German bodies' material colour in an act area (a pale stubble field behind a field-grey uniform). 1 elsewhere. */
+const AREA_GERMAN_LIFT=1.32;
 // Per-frame scratch of update() (single-threaded, never retained across calls).
 const _twist=new THREE.Quaternion(),_muzzle=new THREE.Vector3();
 // Optional high-tier sources requested by update(); the key prefix selects the loader (loadSource / loadMG / loadCKM).
 const HIGH_SOURCES=['pl:0','de:0','de:1','mg34:0','ckm:0','mg34:1','ckm:1'];
 // Candidate order: reserved MG34 gunners, then their loaders, then nearest first, ties by id (a total order, so the in-place sort is deterministic).
+// Over-budget priority (renderer-only, reads sim fields): a live, active enemy that is in the player's view or fired within the last PRIORITY_FIRE_SEC is drawn before any ally;
+// then allies in view; then everything else. VIEW_COS = cos(60 deg), wider than the horizontal half-FOV of 16:9 at 70 deg (51 deg), so nothing visible falls outside it.
+const PRIORITY_FIRE_SEC=3,VIEW_COS=.5;
+const hostileLive=a=>a.team==='enemy'&&a.alive!==false;
+/** Priority class of a candidate: 1 = live enemy in view or recently firing, 2 = living non-hostile in view, 3 = the rest. Pure; `cosA/sinA` = player view direction (x,z), NaN = unknown. */
+export function actorPriority(a,d,px,pz,cosA,sinA,time){
+  const live=hostileLive(a),fresh=live&&(a.shot>0||time-a.firedAt<PRIORITY_FIRE_SEC);
+  const inView=d<=.5||(a.x-px)*cosA+(a.z-pz)*sinA>=VIEW_COS*d;   // false when the direction is NaN (a caller without a view)
+  return live&&(inView||fresh)?1:inView&&a.alive!==false?2:3;
+}
+const byPriority=(a,b)=>Number(mgGunner(b.a))-Number(mgGunner(a.a))||Number(mgLoader(b.a))-Number(mgLoader(a.a))||a.p-b.p||a.d-b.d||a.a.id.localeCompare(b.a.id);
 const byCandidate=(a,b)=>Number(mgGunner(b.a))-Number(mgGunner(a.a))||Number(mgLoader(b.a))-Number(mgLoader(a.a))||a.d-b.d||a.a.id.localeCompare(b.a.id);
 const unarmedKind=a=>Boolean(a.civilian)||a.role==='MEDIC'||mgCrew(a);   // never carries the rifle: its weapon parts are not batched (decided at create, recreated if it ever changes)
 const NO_NAMES=[],RIFLE_ARMED=['rifle','clip'],BAK_ARMED=['clip','rifle_wz98a'],KOWAL_ARMED=['rkm_wz28'];   // parts whose visibility is exactly `armed` (see the update loop)
@@ -452,15 +465,24 @@ export class M01Characters {
     this.carriers.clear();for(let i=0;i<actors.length;i++)if(actors[i].carriedBy)this.carriers.add(actors[i].carriedBy);
     const availableMG=[0,1,2].some(l=>this.sources.has(`mg34:${l}`))&&this.clips.has('mg34_aim')&&this.clips.has('mg34_fire_burst');
     // Candidates live in a reused record pool and array (no filter/map/slice chain per frame); the sort is in place.
-    const cands=this.cands,pool=this.candPool;cands.length=0;
+    const cands=this.cands,pool=this.candPool;cands.length=0;let hostileCands=0;
     for(let i=0;i<actors.length;i++){
       const a=actors[i];
       if(!(a.active&&(!a.civilian||dressedCivilian(a))&&(a.role!=='SUPPORT'||a.id==='szymon_kowal'||mgGunner(a)&&availableMG||ckmRole(a))))continue;
       const d=Math.hypot(a.x-player.x,a.z-player.z);
       if(!(mgCrew(a)?d<1800:selectConsumerLod('actors',d,preset,instanceLod(this.instances.get(a.id)))<3))continue;
-      const rec=pool[cands.length]??={a:null,d:0};rec.a=a;rec.d=d;cands.push(rec);
+      const rec=pool[cands.length]??={a:null,d:0,p:3};rec.a=a;rec.d=d;rec.p=3;cands.push(rec);if(hostileLive(a))hostileCands++;
     }
     // Reserve the two real fire sources and their linked loaders within the existing 18/24/28 actor budget.
+    // Over budget: rank by priority (live enemies in view / firing first), keep the best `count`, then restore the usual nearest-first order among them (IK budget, pose order).
+    const overBudget=cands.length>limits.count;
+    if(overBudget){
+      const cosA=Math.cos(player.angle),sinA=Math.sin(player.angle);
+      for(let i=0;i<cands.length;i++){const r=cands[i];r.p=actorPriority(r.a,r.d,player.x,player.z,cosA,sinA,time);}
+      cands.sort(byPriority);
+      for(let i=limits.count;i<cands.length;i++)cands[i].a=null;
+      cands.length=limits.count;
+    }
     cands.sort(byCandidate);const candidateCount=Math.min(cands.length,limits.count);
     if(this.clips.size)for(let ci=0;ci<candidateCount;ci++){
       const {a,d}=cands[ci];
@@ -596,6 +618,7 @@ export class M01Characters {
         socket.add(v.root);v.root.position.set(0,0,0);v.root.rotation.set(0,0,0);v.root.updateMatrixWorld(true);
       }
     }
+    let hostileDrawn=0;for(let i=0;i<candidateCount;i++)if(hostileLive(cands[i].a)&&selected.has(cands[i].a.id))hostileDrawn++;
     for(let i=0;i<cands.length;i++)cands[i].a=null;cands.length=0;   // do not keep the actor records alive between frames
     for(const [id,v]of this.instances)if(!selected.has(id)){this.release(v);this.instances.delete(id);}
     // A record older than GAP (or from a later clock after a load) would be reset anyway: drop it.
@@ -605,7 +628,7 @@ export class M01Characters {
     let built=null;const chars=this;
     this.stats={poseUpdates:this.poseStats.applied,heldPoses:this.poseStats.held,boneUploads:this.poseStats.boneUploads,boneSkips:this.poseStats.boneSkips,active:selected.size,limit:limits.count,instances:this.instances.size,clips,
       get actors(){return built??=chars.diagnosticsViews(visible);},
-      lodPreset:preset,lodBands:bands,submittedMeshes:submitted,submittedDrawCalls:drawCalls,lodSwitches:this.lodSwitches,
+      lodPreset:preset,lodBands:bands,priority:{overBudget,hostileCandidates:hostileCands,hostileDrawn,hostileNotSkinned:hostileCands-hostileDrawn},submittedMeshes:submitted,submittedDrawCalls:drawCalls,lodSwitches:this.lodSwitches,
       lodCounters:{low:lodCounterTotals(this.lodCounters,'low'),medium:lodCounterTotals(this.lodCounters,'medium'),high:lodCounterTotals(this.lodCounters,'high')}};
     return selected;
   }
@@ -665,6 +688,8 @@ export class M01Characters {
     v.root.updateMatrixWorld(true);return new THREE.Vector3().fromArray(v.muzzle).applyMatrix4(bone.matrixWorld);
   }
   get diagnostics(){return {...this.stats,ik:formatIkDiagnostics(this.ikState,this.ikEnabled),visuals:this.visuals?.diagnostics??null,proneAvailable:this.hasProne(),ckm:this.ckm?{visible:this.ckm.root.visible,lod:this.ckm.lod,clip:this.ckm.clip,time:this.ckm.time,position:this.ckm.root.position.toArray()}:null,loaded:[...this.sources.keys()],failures:this.assets.failures};}
+  /** VII-a visual package: German bodies are lifted in value where the area's pale stubble field is behind them (presentation only; the act-1 look is untouched). */
+  setAreaLegibility(on){this.visuals?.setLift(on?AREA_GERMAN_LIFT:1);}
   /** R4 INC-1: the gun of a new act's area at its own root and yaw; the same LOD, clips and phases as updateCKM (which stays byte-pinned for the current act). */
   updateAreaCKM(gunner,time,player,quality){
     const at=gunner.ckm.root,yaw=Number.isFinite(gunner.ckm.yaw)?gunner.ckm.yaw:0,d=Math.hypot(player.x-at.x,player.z-at.z);

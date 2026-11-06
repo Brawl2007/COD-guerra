@@ -27,7 +27,11 @@ const SPANS=Array.from({length:10},(_,i)=>`de_spans_${i}`),FALLEN=SPANS.slice(0,
 // docs/verification/m01-runtime/sappers-r3a-2026-10-24/README.md's route), so at 06:10 none of the ten is alive and there is nobody to fall back, lift a man or regroup. T48 is about what the survivors do, not about how many
 // the Poles kill on a route, so its control route is the control route of seed 1, on which all six survive to the blast (measured, deck Germans alive at the first tick after the blast, of the ten: seed 1: 6,
 // 3: 4, 2: 4, 4: 4, 6: 3, 7: 3, 8: 3, 5: 2; seed 19390901: 0). The support route of the golden (seed 7) is unchanged. Nothing else about the file moved.
-const CONTROL_SEED=1;
+// 2026-11-04 re-pin (package 2, golden amendment 21: the assault reaches its closing lines at x 198 and may throw its grenade, the dust of the blasts hides the Poles; src/game/m01-dust.js): the fight on the deck lasts longer and
+// on the control route of seed 1 five of the six men of the assault now fall before the blast (one, de_spans_9, survives), so there are not two men to lift the two fallen. The golden route itself (seed 19390901) keeps five
+// of them (de_spans_5 to de_spans_9; de_spans_4 falls on the deck) and is the control route of this file again, as it was before the re-pin above (measured, deck Germans alive at the first tick after the blast, of the ten, with a
+// read-only probe of the control routes: seed 19390901: 5, 3: 5, 7: 5, 2: 3, 6: 3, 9: 3, 4: 2, 8: 2, 10: 2, 1: 1, 11: 1, 5: 0). The support route of the golden (seed 7) is unchanged.
+const CONTROL_SEED=19390901;
 const ROUTES=[[CONTROL_SEED,false],[7,true]];
 const info=(sim,a)=>({id:a.id,x:a.x,y:a.y,z:a.z,facing:a.facing,state:a.state,alive:a.alive,active:a.active,carriedBy:a.carriedBy??null,
   fallBack:a.fallBack?structuredClone(a.fallBack):null,diedAt:a.diedAt,speed:a.motion.speed,gait:a.motion.gait,pose:actorPoseName(a,sim.clock)});
@@ -353,9 +357,11 @@ test('the validator accepts the new data and rejects malformed withdrawal data a
     // on a man who really retreats and carries.
     // 2026-10-24 re-pin de_spans_9 -> de_spans_5 for this and the dead-carrier mutation below (R3-a, golden amendment 19; the control route is now the one of seed 1, see CONTROL_SEED): on it all six of the assault
     // survive to the blast and the two men who retreat and carry are de_spans_5 (de_spans_2) and de_spans_4 (de_spans_3). The same mutations, on a man who really carries.
-    ['a German carried by a man without a plan',mid,s=>{delete span(s,'de_spans_5').fallBack;},/transporte alemão/],
+    // 2026-11-05 re-pin de_spans_5 -> de_spans_7 for this and the dead-carrier mutation below (golden amendment 22: the German supporting round changes the fight of the control route; de_spans_5, 6, 8 and 9 now fall on the deck
+    // (x 370, 643, 570, 346) and the two men who retreat and carry are de_spans_7 (de_spans_2) and de_spans_4 (de_spans_3), the same pair of carriers as the mutation above was written for). The same mutations, on a man who really carries.
+    ['a German carried by a man without a plan',mid,s=>{delete span(s,'de_spans_7').fallBack;},/transporte alemão/],
     ['a German carried by a Pole',mid,s=>{span(s,'de_spans_2').carriedBy='marek_zielinski';},/transporte alemão/],
-    ['a German carried by a dead man',mid,s=>{span(s,'de_spans_5').alive=false;},/transporte/],
+    ['a German carried by a dead man',mid,s=>{span(s,'de_spans_7').alive=false;},/transporte/],
   ];
   for(const [name,base,alter,pattern] of alterations){
     const bad=structuredClone(base);alter(bad);const raw=structuredClone(bad),target=new M01Simulation(),saved=target.snapshot();
@@ -374,6 +380,7 @@ test('the getter is computed on every read and detached; the plan and the pairs 
   // 2026-10-23 re-pin de_spans_6 -> de_spans_8 (golden amendment 16): de_spans_4 to de_spans_7 now fall in the deck fight (x 459-667); de_spans_8 retreats and carries (de_spans_3), de_spans_9 too (de_spans_2).
   // 2026-10-24 re-pin de_spans_8 -> de_spans_7 (golden amendment 18, R2-b): de_spans_8 now falls in the deck fight (x 567); de_spans_7 retreats and carries (de_spans_3), de_spans_9 too (de_spans_2).
   // 2026-10-24 (R3-a, golden amendment 19; control route of seed 1, see CONTROL_SEED): all six of the assault survive and retreat, de_spans_7 among them (the carriers are de_spans_5 and de_spans_4).
+  // 2026-11-05 (golden amendment 22, the German supporting round; control route of seed 19390901): de_spans_4 and de_spans_7 retreat and carry (de_spans_3 and de_spans_2); the other four of the assault fall on the deck.
   assert.match(JSON.stringify(saved.actors.find(a=>a.id==='de_spans_7')),/"fallBack":\{"t0":\d+(\.\d+)?,"x0"/);
   assert.deepEqual(restore(sim).germanWithdrawal,sim.germanWithdrawal);
 });

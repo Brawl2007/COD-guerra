@@ -1,0 +1,91 @@
+{
+ "quality": "low",
+ "germanDistancesM": [
+  171.1,
+  169.6,
+  194.2,
+  174.4,
+  152.2,
+  164.9,
+  119.5,
+  142.2,
+  141.7,
+  149.6,
+  131.9,
+  153.9
+ ],
+ "scenes": {
+  "spawn": {
+   "quality": "low",
+   "drawCalls": 74,
+   "triangles": 232134,
+   "geometries": 243,
+   "textures": 76,
+   "dressing": {
+    "area": "np",
+    "quality": "low",
+    "meshes": 9,
+    "drawCalls": 9,
+    "triangles": 38334,
+    "trees": 35,
+    "clods": 214,
+    "replacedSolids": 71
+   },
+   "errors": []
+  },
+  "mid": {
+   "quality": "low",
+   "drawCalls": 71,
+   "triangles": 236304,
+   "geometries": 245,
+   "textures": 79,
+   "dressing": {
+    "area": "np",
+    "quality": "low",
+    "meshes": 9,
+    "drawCalls": 9,
+    "triangles": 38334,
+    "trees": 35,
+    "clods": 214,
+    "replacedSolids": 71
+   },
+   "errors": []
+  },
+  "west": {
+   "quality": "low",
+   "drawCalls": 95,
+   "triangles": 239252,
+   "geometries": 261,
+   "textures": 79,
+   "dressing": {
+    "area": "np",
+    "quality": "low",
+    "meshes": 9,
+    "drawCalls": 9,
+    "triangles": 38334,
+    "trees": 35,
+    "clods": 214,
+    "replacedSolids": 71
+   },
+   "errors": []
+  },
+  "wreck": {
+   "quality": "low",
+   "drawCalls": 73,
+   "triangles": 236562,
+   "geometries": 247,
+   "textures": 79,
+   "dressing": {
+    "area": "np",
+    "quality": "low",
+    "meshes": 9,
+    "drawCalls": 9,
+    "triangles": 38334,
+    "trees": 35,
+    "clods": 214,
+    "replacedSolids": 71
+   },
+   "errors": []
+  }
+ }
+}

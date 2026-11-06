@@ -136,10 +136,19 @@ test('the aim transition and the recoil are continuous: the rifle never steps mo
   assert.ok(hipWood>=0);
 });
 
-test('aimed: the rear sight block is in the picture (a flat block, the asset has no notch) and the front post is documented as hidden behind it',()=>{
-  const pic=pose({state:'READY',aiming:true});
-  // BEFORE: 104 px of 1280 x 720. A sliver above the receiver ring: the sight line grazes the top of the block, 3 mm over the ring.
-  assert.ok(pixels(pic,PART.rear)>=90,`rear sight ${pixels(pic,PART.rear)} px of 1280 x 720`);
-  // The front post tip is on the line, 1 mm over the top of the rear block, so the block hides the post (0 px in the rasteriser, a few pixels of its ears on screen).
-  assert.ok(pixels(pic,PART.front)<=40,`front sight ${pixels(pic,PART.front)} px of 1280 x 720`);
+test('aimed: the rear sight leaf shows a U notch centred on the screen and the front post stands in it (pkg4; before: a flat block 1 mm under the line, front post 0 px)',()=>{
+  pose({state:'READY',aiming:true});
+  // BEFORE pkg4: 104 px of 1280 x 720 of flat rear block, 0 px of front post (the block's top was 1 mm under the sight line, the post tip on it).
+  // AFTER: the GLB block is replaced by a low base and a leaf with a U notch (src/render/m01-wz29-sights.js); the notch is open to the sky/ground and the post is seen in it.
+  const full=sightPicture(rig,classes,{faceClip:clipDepth(),cols:1280,rows:720}),at=(x,y)=>full.part[y*full.cols+x];
+  const count=k=>full.part.reduce((n,x)=>n+(x===k?1:0),0),rear=count(PART.rear),front=count(PART.front);
+  assert.ok(rear>=150,`rear sight ${rear} px of 1280 x 720`);assert.ok(front>=3&&front<=40,`front post ${front} px of 1280 x 720`);
+  // Locate the post, then walk left and right along its rows: leaf, a gap with the post, leaf; the gap is centred on the post (and on the screen centre, 640).
+  let post=null;for(let y=0;y<full.rows&&!post;y++)for(let x=0;x<full.cols;x++)if(at(x,y)===PART.front){post={x,y};break;}
+  assert.ok(post,'the front post is in the picture');assert.ok(Math.abs(post.x-639.5)<=2,`post at column ${post.x}`);
+  let left=post.x,right=post.x;while(left>0&&at(left-1,post.y)!==PART.rear)left--;while(right<full.cols-1&&at(right+1,post.y)!==PART.rear)right++;
+  assert.ok(at(left-1,post.y)===PART.rear&&at(right+1,post.y)===PART.rear,'a leaf shoulder on each side of the post');
+  assert.ok(Math.abs((left+right)/2-(post.x+.5))<=2.5,`the notch (${left}..${right}) is centred on the post`);assert.ok(right-left+1>=5&&right-left+1<=14,`notch ${right-left+1} px wide`);
+  // The notch is a notch: leaf pixels exist on both sides of it one row below the post and none of the middle columns is leaf at the rows above the post.
+  for(let y=post.y-6;y<post.y;y++)for(let x=left;x<=right;x++)assert.notEqual(at(x,y),PART.rear,`the notch is open above the post at ${x},${y}`);
 });

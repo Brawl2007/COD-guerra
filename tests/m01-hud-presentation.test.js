@@ -28,7 +28,7 @@ const opacity=(node)=>Number(node.styles.get('opacity')??0);
 
 test('intro cards and fade follow the cs_m01_intro beats in mission data',()=>{
   const intro=definition.cutscenes.find(c=>c.id==='cs_m01_intro').timeline,beat=prefix=>intro.find(b=>b.action?.startsWith(prefix)).t;
-  assert.equal(beat('tela preta'),0);
+  assert.equal(beat('ecrã preto'),0);   // 2026-11-05 (golden amendment 22, European Portuguese): the beat's action text is «ecrã preto», it was «tela preta»; the beat itself (t 0) is the same
   assert.equal(INTRO_CARDS[0].from,beat('cartela:'));assert.equal(INTRO_CARDS[1].from,beat('cartela 2'));
   assert.equal(INTRO_CARDS[1].to,beat('fade-in'));assert.equal(HUD_TIMING.introBlackUntil,beat('fade-in'));
   const at=t=>cinematicFrame({id:'cs_m01_intro',elapsed:t});
@@ -56,7 +56,7 @@ test('objective transitions, interaction keys and optional objective split are p
   const changes=objectiveChanges({obj_m01_deliver_message:{state:'active'}},{obj_m01_deliver_message:{state:'done'},obj_m01_take_cover:{state:'active'}},defs);
   assert.deepEqual(changes.map(c=>`${c.kind}:${c.id}`),['done:obj_m01_deliver_message','new:obj_m01_take_cover']);
   const optional=objectiveChanges({},{obj_m01_rescue_bak:{state:'active'}},defs)[0];
-  assert.equal(optional.optional,true);assert.equal(optional.text,'Leve Bąk até o socorrista');
+  assert.equal(optional.optional,true);assert.equal(optional.text,'Leve Bąk até ao socorrista');
   assert.equal(objectiveChanges({obj_m01_rescue_bak:{state:'active'}},{obj_m01_rescue_bak:{state:'expired'}},defs)[0].kind,'expired');
   assert.deepEqual(splitInteraction('E · entregar mensagem e café'),{key:'E',action:'entregar mensagem e café'});
   assert.deepEqual(splitInteraction('Espaço · saltar cena'),{key:'Espaço',action:'saltar cena'});

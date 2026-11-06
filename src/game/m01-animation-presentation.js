@@ -118,7 +118,7 @@ export function validatePresentation(a,clock,reject){
   if(a.posture==='prone'&&!a.mg34Prone&&!(['de_east_0','de_east_1'].includes(a.id)&&a.weapon==='mg34')&&(a.team!=='ally'||a.group==='grp_east_platoon'||a.displayOnly))reject('prone '+a.id);
   if(a.reload!==undefined){const r=a.reload;if(!r||Object.keys(r).some(k=>!['startedAt','duration','mode'].includes(k))||!finite(r.startedAt,0,clock)||r.duration!==3.4||r.mode!=='clip')reject('reload '+a.id);}
   if(a.cover!==undefined){const c=a.cover;if(!c||Object.keys(c).some(k=>!['nodeId','type','side','height'].includes(k))||typeof c.nodeId!=='string'||typeof c.type!=='string'||!['left','right'].includes(c.side)||!finite(c.height,0,5))reject('cover '+a.id);}
-  if(a.carry!==undefined){const c=a.carry;if(a.id!=='jozef_bak'||!c||Object.keys(c).some(k=>!['phase','startedAt','duration'].includes(k))||!['pickup','carry','putdown'].includes(c.phase)||!finite(c.startedAt,0,clock)||c.duration!==1.6||!a.carriedBy||!a.alive)reject('carry '+a.id);}
+  if(a.carry!==undefined){const c=a.carry;if((a.id!=='jozef_bak'&&a.group!=='grp_west_garrison')||!c||Object.keys(c).some(k=>!['phase','startedAt','duration'].includes(k))||!['pickup','carry','putdown'].includes(c.phase)||!finite(c.startedAt,0,clock)||c.duration!==1.6||!a.carriedBy||!a.alive)reject('carry '+a.id);}
   for(const key of ['hitYaw','deathYaw'])if(a[key]!==undefined&&!Number.isFinite(a[key]))reject(key+' '+a.id);
   if((a.hitYaw!==undefined&&a.hitAt===undefined)||(a.deathYaw!==undefined&&a.diedAt===undefined)||
     (a.diedAt!==undefined&&a.diedAt!==-1e9&&(a.alive||a.deathYaw===undefined)))reject('eventos de apresentação '+a.id);

@@ -1,5 +1,6 @@
 import {test,expect} from '@playwright/test';
 import {driver} from '../helpers/m01-route.js';
+import {expectPaused,SLOW_GL_TEST_TIMEOUT} from '../helpers/m01-browser-boot.js';
 
 // Presentation-only verification in the production build. Snapshots come from genuine controls in the
 // real simulation; the browser then fires/reloads with the same window input the game consumes.
@@ -30,13 +31,13 @@ async function watch(page,predicates){
 }
 const fire=page=>page.evaluate(()=>{window.dispatchEvent(new MouseEvent('mousedown',{button:0,bubbles:true}));window.dispatchEvent(new MouseEvent('mouseup',{button:0,bubbles:true}));});
 const frozen=async page=>{
-  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  await page.evaluate(()=>document.exitPointerLock());await expectPaused(page);
   const a=await page.evaluate(()=>window.gameDiagnostics());await page.waitForTimeout(300);const b=await page.evaluate(()=>window.gameDiagnostics());
   expect(b.clock).toBe(a.clock);expect(b.m01?.viewModel??b.weaponFx).toEqual(a.m01?.viewModel??a.weaponFx);if(a.m01)expect(b.m01.weaponFx).toEqual(a.m01.weaponFx);
 };
 
 test('wz.29 ADS shot: layered flash on the socket, bolt stroke, one case into the world; gameplay state is the simulation\'s',async({page},info)=>{
-  test.setTimeout(process.env.CI?180000:90000);
+  test.setTimeout(SLOW_GL_TEST_TIMEOUT);
   const {errors,failed}=await openFrom(page,ready);
   await page.mouse.down({button:'right'});
   await page.waitForFunction(()=>window.gameDiagnostics().m01.viewModel.aimBlend===1);
@@ -62,7 +63,7 @@ test('wz.29 ADS shot: layered flash on the socket, bolt stroke, one case into th
 });
 
 test('wz.29 clip reload: the empty stripper clip leaves at the 2,45 s marker and lands in the world',async({page})=>{
-  test.setTimeout(process.env.CI?180000:90000);
+  test.setTimeout(SLOW_GL_TEST_TIMEOUT);
   const {errors,failed}=await openFrom(page,empty);
   await watch(page,{clip:g=>g.m01.weaponFx.clips>0,done:g=>g.m01.weapon.state==='READY'&&g.m01.weapon.mag===5});
   await page.keyboard.press('KeyR');
@@ -75,7 +76,7 @@ test('wz.29 clip reload: the empty stripper clip leaves at the 2,45 s marker and
 });
 
 test('bench M1 Carbine keeps its own semi-auto identity: flash, brass with the shot, smooth ADS',async({page},info)=>{
-  test.setTimeout(process.env.CI?180000:90000);
+  test.setTimeout(SLOW_GL_TEST_TIMEOUT);
   const errors=[],failed=[];
   page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.status()>=400)failed.push(`${r.status()} ${r.url()}`);});
   await page.goto('?debug=1&mission=sandbox-1944');await page.waitForFunction(()=>window.gameDiagnostics?.().models.length===3);
