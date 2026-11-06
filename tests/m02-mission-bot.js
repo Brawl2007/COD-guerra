@@ -183,7 +183,10 @@ export class MissionBot extends PlayerBot {
         const lis = sim.allies.find((al) => al.id === 'pl_lis');
         const shot = this.nearestHittableHostile(160);
         if (shot) return this.tick(this.aimAtPoint(shot.aim));
-        if (!lis || a.lisPhase === 'incapacitated' || a.lisPhase === 'sheltered' || a.lisPhase === null) {
+        // Lis caído (não vivo) com qualquer fase (`supported`, `returning`, `waiting`): não há a quem dar amparo nem a quem esperar. Antes o
+        // bot rondava-o até ao tempo limite: junto dele andava para o ponto da rota que Lis nunca ocuparia, afastava-se mais de 3,5 m,
+        // voltava a ele... (e, parado ao lado, nunca ia ao ponto de evacuação). Sem Lis o desfecho é `missing` (C11 p. 14).
+        if (!lis || !lis.alive || a.lisPhase === 'incapacitated' || a.lisPhase === 'sheltered' || a.lisPhase === null) {
           return this.walkStep({ x: EVAC_POINT[0], z: EVAC_POINT[1] }, 3.0);
         }
         const dl = Math.hypot(lis.x - p.x, lis.z - p.z);

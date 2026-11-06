@@ -1652,7 +1652,9 @@ function c11Resolved(sim) {
   const evac = cellsBCLayout.cells.C.evacRoute.at(-1);
   if (Math.hypot(sim.player.x - evac[0], sim.player.z - evac[1]) > C11_EVAC_RADIUS_M) return false;
   const lis = sim.allies.find((al) => al.id === 'pl_lis');
-  if (a.lisPhase === 'supported' && lis && Math.hypot(sim.player.x - lis.x, sim.player.z - lis.z) <= cellsBCLayout.cells.C.lisReturn.supportRadius) {
+  // (só um Lis vivo "ainda a chegar" faz esperar: um Lis caído em pleno amparo (`supported`) já não anda e Piotr ao pé dele, parado ou a
+  // rondá-lo, impedia C11 de fechar para sempre; sem Lis em pé o desfecho é `missing`, deriveLisOutcome)
+  if (a.lisPhase === 'supported' && lis && lis.alive && Math.hypot(sim.player.x - lis.x, sim.player.z - lis.z) <= cellsBCLayout.cells.C.lisReturn.supportRadius) {
     return false; // Lis ainda a chegar, com Piotr ao pé
   }
   return true;
