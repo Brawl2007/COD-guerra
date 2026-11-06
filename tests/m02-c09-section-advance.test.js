@@ -273,7 +273,8 @@ describe('M02 C09: o avanço com Piotr no pátio — Gruca vigia, Wierzba e Mał
 
 describe('M02 C09: snapshot, restauro e validador do plano', () => {
   it('a meio do avanço o snapshot é válido (holdingFor é um nó do plano) e restaurar reproduz a continuação, tick a tick', () => {
-    const sim = enterC(2);
+    // Merge M02 único: com a semente 2 a trela já não retém ninguém neste trecho (fluxo caótico); com a 3 retém a partir de 12,4 s.
+    const sim = enterC(3);
     run(sim, 20);
     killWorkshop(sim);
     sim.teleportPlayer(-14, -25, Math.PI / 2, 0);

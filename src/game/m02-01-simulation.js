@@ -1944,7 +1944,7 @@ export class M02BenchSimulation {
       const rLen = Math.hypot(rx, ry, rz) || 1;
       const dir = { x: rx / rLen, y: ry / rLen, z: rz / rLen };
 
-      const hit = traceShot(this.world, origin, dir, candidateTargets, prof.range,muzzle);
+      const hit = traceShot(this.world, origin, dir, candidateTargets, prof.range, muzzle);
       // Presentation receives the actual, spread/occlusion-resolved round. The
       // intended aim point below remains tactical memory, never an impact FX.
       traces.push({origin:{...muzzle},point:hit?.point?{...hit.point}:{x:origin.x+dir.x*prof.range,y:origin.y+dir.y*prof.range,z:origin.z+dir.z*prof.range},hitKind:hit?.kind??'none',hitId:hit?.kind==='actor'?hit.actor.id:null,material:hit?.kind==='actor'?'character':hit?.material??'air'});

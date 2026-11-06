@@ -17,7 +17,9 @@ const SEED = 19390909;
 /** Piotr à janela da cozinha de B01 (DE-A07 tem linha de tiro) com pouca vida: morre a tiro por entradas simuladas. */
 function sniped(seed = SEED, options = {}) {
   const sim = new M02BenchSimulation(seed, options);
-  sim.teleportPlayer(-44.0, -15.5, 0);
+  // Merge M02 único: a física do jogador corre em todos os ticks (Codex dd8358bf); em x = −44 Piotr assentava no fundo da vala oeste
+  // (y −1,1), tapado pelo peitoril de B01. Em x = −42, chão firme à mesma janela, DE-A07 tem a linha de tiro que o teste exige.
+  sim.teleportPlayer(-42.0, -15.5, 0);
   sim.player.health = 5;
   return sim;
 }

@@ -59,7 +59,9 @@ describe('M02 C06: a janela de segurança da entrada em B — nos 3 perfis, a dt
     it(`${difficulty}: o controlo — sem a janela (contacto já aberto) o mesmo ponto é fogo imediato e a vida de Piotr desce`, () => {
       const sim = enterB(difficulty);
       sim.areaB.contact = { movementStartedAt: 0, contactAt: 0, opened: true, openedAt: 0, openedBy: 'timer' };
-      run(sim, 30);
+      // Merge M02 único: com a reação de aquisição (1,2 s) e as rajadas ronda a ronda o 1.º impacto em Piotr em recruta chega mais tarde;
+      // a observação passa de 30 para 60 s, com as mesmas asserções (hostil nos três perfis).
+      run(sim, 60);
       // sem disjunção (revisão adversarial): o controlo tem de ser hostil nos três perfis, não «alguma coisa mudou». Medido: 8-9
       // atiradores de EB1, ≥ 1 impacto em Piotr em 30 s (recruta 1 e 68 de vida; soldado/veterano 5 e morre) e impactos na secção.
       const eb1Shooters = eb1(sim).filter((e) => e.shotsFired > 0);
