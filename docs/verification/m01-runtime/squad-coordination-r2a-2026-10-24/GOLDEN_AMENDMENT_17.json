@@ -1,0 +1,904 @@
+{
+  "task": "M01-SQUAD-COORDINATION-V1",
+  "amendment": "amendment-17",
+  "delta": "squad-coordination",
+  "predecessor": "c66436d444e94fa4a9f083c303a58185c4177d85",
+  "predecessorSourceSha256": "945a2bf53ca089d3e3ecb420ec8bb0e455b934dc3eecf60ae7630560c91ca7b9",
+  "sourceSha256": "5236c1730015940ae7cd9168fb3e6eda76f6c5d720bf58ff7b0618ebb62c3217",
+  "previousGolden": {
+    "task": "M01-BOMB-EFFECTS-V1",
+    "file": "tests/fixtures/m01-bomb-effects-gameplay-baseline.json",
+    "sha256": "2750eef447b8bd7d59b8996b6e212a10af404108f1363b19cad907c6f87a5bcc",
+    "sourceSha256": "945a2bf53ca089d3e3ecb420ec8bb0e455b934dc3eecf60ae7630560c91ca7b9"
+  },
+  "deltaFields": "^\\$\\.(state|checkpoint)\\.timers\\.section$",
+  "behaviourFields": "^\\$\\.(state|checkpoint)\\.actors\\.\\d+\\.(facing|crouched)$",
+  "behaviourActors": "^(marek_zielinski|szymon_kowal|staszek_pawlak|east_platoon_voice|jozef_bak)$",
+  "authority": "Written only by tools/verification/m01-integration-golden-audit.mjs --amendment 17 --write (x86); never edited by hand.",
+  "changedGameplayInputsSincePredecessor": [
+    "src/game/m01-simulation.js",
+    "missions/m01-tczew/mission.json",
+    "src/game/m01-barks.js",
+    "src/game/m01-audio-events.js",
+    "src/game/m01-squad.js",
+    "src/game/m01-section.js"
+  ],
+  "routes": [
+    {
+      "seed": 19390901,
+      "support": false,
+      "oldTicks": 23402,
+      "newTicks": 23402,
+      "firstDifference": {
+        "tick": 1356,
+        "clock": 67.8,
+        "battleClock": "04:34:00",
+        "path": "$.state.timers.section",
+        "actor": null,
+        "predecessor": null,
+        "live": {
+          "v": 1,
+          "rng": {
+            "marek_zielinski": 3045538508,
+            "szymon_kowal": 2804536501,
+            "staszek_pawlak": 1079084389,
+            "east_platoon_voice": 1453796410,
+            "jozef_bak": 2081530480
+          },
+          "at": {
+            "scan": -1000000000,
+            "callout": -1000000000,
+            "order": -1000000000,
+            "shift": -1000000000
+          },
+          "next": {
+            "staszek_pawlak": 75.307,
+            "east_platoon_voice": 75.831,
+            "hold": 0,
+            "focus": 67.79999999999829
+          },
+          "seen": {},
+          "deckSig": "",
+          "focus": null,
+          "shots": [],
+          "hold": {},
+          "pin": {},
+          "pins": [],
+          "post": {
+            "staszek_pawlak": {
+              "k": 0,
+              "since": 67.79999999999829,
+              "moving": false,
+              "until": 0
+            },
+            "east_platoon_voice": {
+              "k": 0,
+              "since": 67.79999999999829,
+              "moving": false,
+              "until": 0
+            }
+          },
+          "order": null,
+          "cas": [],
+          "recent": [],
+          "done": {
+            "deck": false
+          },
+          "say": null,
+          "n": {
+            "scans": 0,
+            "callouts": 0,
+            "orders": 0,
+            "shifts": 0,
+            "shots": 0,
+            "casualties": 0
+          }
+        },
+        "missing": true
+      },
+      "identicalTicksBeforeIt": 1355,
+      "identicalBlocks": 2,
+      "firstBehaviourDifference": {
+        "tick": 1481,
+        "clock": 74.05,
+        "battleClock": "04:34:22",
+        "path": "$.state.actors.0.facing",
+        "actor": "marek_zielinski",
+        "predecessor": -3.0406367936696723,
+        "live": 0.11
+      },
+      "battleClockEvents": [
+        {
+          "id": "evt_m01_railway_worker_report",
+          "at": "04:31:00",
+          "fixed": true,
+          "jump": false,
+          "battle": {
+            "predecessor": 16260,
+            "live": 16260
+          },
+          "real": {
+            "predecessor": 16,
+            "live": 16
+          }
+        },
+        {
+          "id": "evt_m01_planes_heard",
+          "at": "04:33:10",
+          "fixed": false,
+          "jump": false,
+          "battle": {
+            "predecessor": 16390,
+            "live": 16390
+          },
+          "real": {
+            "predecessor": 17.75,
+            "live": 17.75
+          }
+        },
+        {
+          "id": "evt_m01_bombing_0434",
+          "at": "04:34:00",
+          "fixed": true,
+          "jump": false,
+          "battle": {
+            "predecessor": 16440,
+            "live": 16440
+          },
+          "real": {
+            "predecessor": 67.75,
+            "live": 67.75
+          }
+        },
+        {
+          "id": "evt_m01_wounded_dragged",
+          "at": "04:35:30",
+          "fixed": true,
+          "jump": false,
+          "battle": {
+            "predecessor": 16530.12,
+            "live": 16530.12
+          },
+          "real": {
+            "predecessor": 93.55,
+            "live": 93.55
+          }
+        },
+        {
+          "id": "evt_m01_second_air_pass",
+          "at": "04:40:00",
+          "fixed": true,
+          "jump": false,
+          "battle": {
+            "predecessor": 16800.15,
+            "live": 16800.15
+          },
+          "real": {
+            "predecessor": 170.7,
+            "live": 170.7
+          }
+        },
+        {
+          "id": "evt_m01_train963_arrives",
+          "at": "04:45:00",
+          "fixed": true,
+          "jump": false,
+          "battle": {
+            "predecessor": 17100,
+            "live": 17100
+          },
+          "real": {
+            "predecessor": 256.4,
+            "live": 256.4
+          }
+        },
+        {
+          "id": "evt_m01_panzerzug_arrives",
+          "at": "04:52:00",
+          "fixed": true,
+          "jump": false,
+          "battle": {
+            "predecessor": 17520.3,
+            "live": 17520.3
+          },
+          "real": {
+            "predecessor": 303.1,
+            "live": 303.1
+          }
+        },
+        {
+          "id": "evt_m01_order_demolish",
+          "at": "05:30:00",
+          "fixed": false,
+          "jump": false,
+          "battle": {
+            "predecessor": 19800,
+            "live": 19800
+          },
+          "real": {
+            "predecessor": 467.55,
+            "live": 467.55
+          }
+        },
+        {
+          "id": "evt_m01_bombing_0530",
+          "at": "05:30:00",
+          "fixed": true,
+          "jump": false,
+          "battle": {
+            "predecessor": 19800,
+            "live": 19800
+          },
+          "real": {
+            "predecessor": 467.55,
+            "live": 467.55
+          }
+        },
+        {
+          "id": "evt_m01_runner_pressure_report",
+          "at": "05:40:00",
+          "fixed": true,
+          "jump": false,
+          "battle": {
+            "predecessor": 20400.8,
+            "live": 20400.8
+          },
+          "real": {
+            "predecessor": 513.65,
+            "live": 513.65
+          }
+        },
+        {
+          "id": "evt_m01_north_contact_distant",
+          "at": "05:50:00",
+          "fixed": true,
+          "jump": false,
+          "battle": {
+            "predecessor": 21000.8,
+            "live": 21000.8
+          },
+          "real": {
+            "predecessor": 538.65,
+            "live": 538.65
+          }
+        },
+        {
+          "id": "evt_m01_east_platoon_withdraws",
+          "at": "06:00:00",
+          "fixed": true,
+          "jump": false,
+          "battle": {
+            "predecessor": 21600,
+            "live": 21600
+          },
+          "real": {
+            "predecessor": 568.65,
+            "live": 568.65
+          }
+        },
+        {
+          "id": "evt_m01_bak_wounded",
+          "at": "06:04:00",
+          "fixed": false,
+          "jump": false,
+          "battle": {
+            "predecessor": 21840,
+            "live": 21840
+          },
+          "real": {
+            "predecessor": 598.65,
+            "live": 598.65
+          }
+        },
+        {
+          "id": "evt_m01_germans_on_east_spans",
+          "at": "06:05:00",
+          "fixed": true,
+          "jump": false,
+          "battle": {
+            "predecessor": 21900,
+            "live": 21900
+          },
+          "real": {
+            "predecessor": 606.15,
+            "live": 606.15
+          }
+        },
+        {
+          "id": "evt_m01_east_demolition",
+          "at": "06:10:00",
+          "fixed": false,
+          "jump": false,
+          "battle": {
+            "predecessor": 22200,
+            "live": 22200
+          },
+          "real": {
+            "predecessor": 841.75,
+            "live": 841.75
+          }
+        },
+        {
+          "id": "evt_m01_dudek_retrieves_bak",
+          "at": "06:14:00",
+          "fixed": false,
+          "jump": false,
+          "battle": {
+            "predecessor": 22440.12,
+            "live": 22440.12
+          },
+          "real": {
+            "predecessor": 870,
+            "live": 870
+          }
+        },
+        {
+          "id": "evt_m01_west_demolition",
+          "at": "06:45:00",
+          "fixed": false,
+          "jump": true,
+          "battle": {
+            "predecessor": 24300,
+            "live": 24300
+          },
+          "real": {
+            "predecessor": 1155.05,
+            "live": 1155.05
+          }
+        },
+        {
+          "id": "evt_m01_kozliny_attack_distant",
+          "at": "07:00:00",
+          "fixed": true,
+          "jump": true,
+          "battle": {
+            "predecessor": 25500,
+            "live": 25500
+          },
+          "real": {
+            "predecessor": 1170.05,
+            "live": 1170.05
+          }
+        }
+      ],
+      "movedEvents": [],
+      "endState": {
+        "predecessorOwnRoute": {
+          "ticks": 23402,
+          "real": 1170.1,
+          "to0600": 568.65,
+          "survivors": 12,
+          "playerHealth": 84
+        },
+        "live": {
+          "ticks": 23402,
+          "real": 1170.1,
+          "to0600": 568.65,
+          "survivors": 12,
+          "playerHealth": 84
+        },
+        "objectives": {
+          "deliver_message": "done",
+          "take_cover": "done",
+          "follow_sergeant": "done",
+          "find_sappers": "done",
+          "fetch_material": "done",
+          "cover_repair": "done",
+          "hold_access": "done",
+          "cover_withdrawal": "done",
+          "rescue_bak": "expired",
+          "leave_bridge": "done",
+          "hold_corridor": "done",
+          "reach_shelter": "done"
+        },
+        "checkpoints": [
+          "cp_m01_a_orientacao",
+          "cp_m01_b_reorganizacao",
+          "cp_m01_c_engenheiros",
+          "cp_m01_d_retirada"
+        ],
+        "finalBattleClock": "07:05:00",
+        "consumedEvents": 26,
+        "suggestedCover": {
+          "predecessor": null,
+          "live": null
+        }
+      },
+      "measured": {
+        "clipping": 0,
+        "stacked": 0,
+        "germanRoundsPerRealMin": {
+          "predecessor": 92.2,
+          "live": 92.2
+        }
+      }
+    },
+    {
+      "seed": 7,
+      "support": true,
+      "oldTicks": 23354,
+      "newTicks": 23354,
+      "firstDifference": {
+        "tick": 1356,
+        "clock": 67.8,
+        "battleClock": "04:34:00",
+        "path": "$.state.timers.section",
+        "actor": null,
+        "predecessor": null,
+        "live": {
+          "v": 1,
+          "rng": {
+            "marek_zielinski": 2642684318,
+            "szymon_kowal": 2401682311,
+            "staszek_pawlak": 567497231,
+            "east_platoon_voice": 942209252,
+            "jozef_bak": 1678676290
+          },
+          "at": {
+            "scan": -1000000000,
+            "callout": -1000000000,
+            "order": -1000000000,
+            "shift": -1000000000
+          },
+          "next": {
+            "staszek_pawlak": 74.593,
+            "east_platoon_voice": 75.116,
+            "hold": 0,
+            "focus": 67.79999999999829
+          },
+          "seen": {},
+          "deckSig": "",
+          "focus": null,
+          "shots": [],
+          "hold": {},
+          "pin": {},
+          "pins": [],
+          "post": {
+            "staszek_pawlak": {
+              "k": 0,
+              "since": 67.79999999999829,
+              "moving": false,
+              "until": 0
+            },
+            "east_platoon_voice": {
+              "k": 0,
+              "since": 67.79999999999829,
+              "moving": false,
+              "until": 0
+            }
+          },
+          "order": null,
+          "cas": [],
+          "recent": [],
+          "done": {
+            "deck": false
+          },
+          "say": null,
+          "n": {
+            "scans": 0,
+            "callouts": 0,
+            "orders": 0,
+            "shifts": 0,
+            "shots": 0,
+            "casualties": 0
+          }
+        },
+        "missing": true
+      },
+      "identicalTicksBeforeIt": 1355,
+      "identicalBlocks": 2,
+      "firstBehaviourDifference": {
+        "tick": 1481,
+        "clock": 74.05,
+        "battleClock": "04:34:22",
+        "path": "$.state.actors.0.facing",
+        "actor": "marek_zielinski",
+        "predecessor": -3.0406367936696723,
+        "live": 0.11
+      },
+      "battleClockEvents": [
+        {
+          "id": "evt_m01_railway_worker_report",
+          "at": "04:31:00",
+          "fixed": true,
+          "jump": false,
+          "battle": {
+            "predecessor": 16260,
+            "live": 16260
+          },
+          "real": {
+            "predecessor": 16,
+            "live": 16
+          }
+        },
+        {
+          "id": "evt_m01_planes_heard",
+          "at": "04:33:10",
+          "fixed": false,
+          "jump": false,
+          "battle": {
+            "predecessor": 16390,
+            "live": 16390
+          },
+          "real": {
+            "predecessor": 17.75,
+            "live": 17.75
+          }
+        },
+        {
+          "id": "evt_m01_bombing_0434",
+          "at": "04:34:00",
+          "fixed": true,
+          "jump": false,
+          "battle": {
+            "predecessor": 16440,
+            "live": 16440
+          },
+          "real": {
+            "predecessor": 67.75,
+            "live": 67.75
+          }
+        },
+        {
+          "id": "evt_m01_wounded_dragged",
+          "at": "04:35:30",
+          "fixed": true,
+          "jump": false,
+          "battle": {
+            "predecessor": 16530.12,
+            "live": 16530.12
+          },
+          "real": {
+            "predecessor": 93.55,
+            "live": 93.55
+          }
+        },
+        {
+          "id": "evt_m01_second_air_pass",
+          "at": "04:40:00",
+          "fixed": true,
+          "jump": false,
+          "battle": {
+            "predecessor": 16800.15,
+            "live": 16800.15
+          },
+          "real": {
+            "predecessor": 170.7,
+            "live": 170.7
+          }
+        },
+        {
+          "id": "evt_m01_train963_arrives",
+          "at": "04:45:00",
+          "fixed": true,
+          "jump": false,
+          "battle": {
+            "predecessor": 17100,
+            "live": 17100
+          },
+          "real": {
+            "predecessor": 256.4,
+            "live": 256.4
+          }
+        },
+        {
+          "id": "evt_m01_panzerzug_arrives",
+          "at": "04:52:00",
+          "fixed": true,
+          "jump": false,
+          "battle": {
+            "predecessor": 17520.3,
+            "live": 17520.3
+          },
+          "real": {
+            "predecessor": 303.1,
+            "live": 303.1
+          }
+        },
+        {
+          "id": "evt_m01_order_demolish",
+          "at": "05:30:00",
+          "fixed": false,
+          "jump": false,
+          "battle": {
+            "predecessor": 19800,
+            "live": 19800
+          },
+          "real": {
+            "predecessor": 447.85,
+            "live": 447.85
+          }
+        },
+        {
+          "id": "evt_m01_bombing_0530",
+          "at": "05:30:00",
+          "fixed": true,
+          "jump": false,
+          "battle": {
+            "predecessor": 19800,
+            "live": 19800
+          },
+          "real": {
+            "predecessor": 447.85,
+            "live": 447.85
+          }
+        },
+        {
+          "id": "evt_m01_runner_pressure_report",
+          "at": "05:40:00",
+          "fixed": true,
+          "jump": false,
+          "battle": {
+            "predecessor": 20400,
+            "live": 20400
+          },
+          "real": {
+            "predecessor": 492.85,
+            "live": 492.85
+          }
+        },
+        {
+          "id": "evt_m01_north_contact_distant",
+          "at": "05:50:00",
+          "fixed": true,
+          "jump": false,
+          "battle": {
+            "predecessor": 21000,
+            "live": 21000
+          },
+          "real": {
+            "predecessor": 517.85,
+            "live": 517.85
+          }
+        },
+        {
+          "id": "evt_m01_east_platoon_withdraws",
+          "at": "06:00:00",
+          "fixed": true,
+          "jump": false,
+          "battle": {
+            "predecessor": 21600,
+            "live": 21600
+          },
+          "real": {
+            "predecessor": 547.85,
+            "live": 547.85
+          }
+        },
+        {
+          "id": "evt_m01_bak_wounded",
+          "at": "06:04:00",
+          "fixed": false,
+          "jump": false,
+          "battle": {
+            "predecessor": 21840,
+            "live": 21840
+          },
+          "real": {
+            "predecessor": 577.85,
+            "live": 577.85
+          }
+        },
+        {
+          "id": "evt_m01_germans_on_east_spans",
+          "at": "06:05:00",
+          "fixed": true,
+          "jump": false,
+          "battle": {
+            "predecessor": 21900,
+            "live": 21900
+          },
+          "real": {
+            "predecessor": 585.35,
+            "live": 585.35
+          }
+        },
+        {
+          "id": "evt_m01_east_demolition",
+          "at": "06:10:00",
+          "fixed": false,
+          "jump": false,
+          "battle": {
+            "predecessor": 22200,
+            "live": 22200
+          },
+          "real": {
+            "predecessor": 833.25,
+            "live": 833.25
+          }
+        },
+        {
+          "id": "evt_m01_dudek_retrieves_bak",
+          "at": "06:14:00",
+          "fixed": false,
+          "jump": false,
+          "battle": {
+            "predecessor": 22440.12,
+            "live": 22440.12
+          },
+          "real": {
+            "predecessor": 861.5,
+            "live": 861.5
+          }
+        },
+        {
+          "id": "evt_m01_west_demolition",
+          "at": "06:45:00",
+          "fixed": false,
+          "jump": true,
+          "battle": {
+            "predecessor": 24300,
+            "live": 24300
+          },
+          "real": {
+            "predecessor": 1152.65,
+            "live": 1152.65
+          }
+        },
+        {
+          "id": "evt_m01_kozliny_attack_distant",
+          "at": "07:00:00",
+          "fixed": true,
+          "jump": true,
+          "battle": {
+            "predecessor": 25500,
+            "live": 25500
+          },
+          "real": {
+            "predecessor": 1167.65,
+            "live": 1167.65
+          }
+        }
+      ],
+      "movedEvents": [],
+      "endState": {
+        "predecessorOwnRoute": {
+          "ticks": 23354,
+          "real": 1167.7,
+          "to0600": 547.85,
+          "survivors": 18,
+          "playerHealth": 100
+        },
+        "live": {
+          "ticks": 23354,
+          "real": 1167.7,
+          "to0600": 547.85,
+          "survivors": 18,
+          "playerHealth": 100
+        },
+        "objectives": {
+          "deliver_message": "done",
+          "take_cover": "done",
+          "follow_sergeant": "done",
+          "find_sappers": "done",
+          "fetch_material": "done",
+          "cover_repair": "done",
+          "hold_access": "done",
+          "cover_withdrawal": "done",
+          "rescue_bak": "expired",
+          "leave_bridge": "done",
+          "hold_corridor": "done",
+          "reach_shelter": "done"
+        },
+        "checkpoints": [
+          "cp_m01_a_orientacao",
+          "cp_m01_b_reorganizacao",
+          "cp_m01_c_engenheiros",
+          "cp_m01_d_retirada"
+        ],
+        "finalBattleClock": "07:05:00",
+        "consumedEvents": 26,
+        "suggestedCover": {
+          "predecessor": "cv_sandbag_mid_2",
+          "live": "cv_sandbag_mid_2"
+        }
+      },
+      "measured": {
+        "clipping": 0,
+        "stacked": 0,
+        "germanRoundsPerRealMin": {
+          "predecessor": 62.48,
+          "live": 62.48
+        }
+      }
+    }
+  ],
+  "otherRoutes": [
+    {
+      "seed": 3,
+      "support": false,
+      "clipping": 0,
+      "stacked": 0,
+      "same": {
+        "objectives": true,
+        "checkpoints": true,
+        "consumedEventIds": true,
+        "finalBattleClock": true
+      },
+      "survivors": {
+        "predecessor": 12,
+        "live": 12
+      },
+      "real": {
+        "predecessor": 1222.15,
+        "live": 1222.15
+      },
+      "repairComplete": {
+        "predecessor": 442.2,
+        "live": 442.2
+      }
+    },
+    {
+      "seed": 3,
+      "support": true,
+      "clipping": 0,
+      "stacked": 0,
+      "same": {
+        "objectives": true,
+        "checkpoints": true,
+        "consumedEventIds": true,
+        "finalBattleClock": true
+      },
+      "survivors": {
+        "predecessor": 18,
+        "live": 18
+      },
+      "real": {
+        "predecessor": 1140.7,
+        "live": 1140.7
+      },
+      "repairComplete": {
+        "predecessor": 391.35,
+        "live": 391.35
+      }
+    },
+    {
+      "seed": 7,
+      "support": false,
+      "clipping": 0,
+      "stacked": 0,
+      "same": {
+        "objectives": true,
+        "checkpoints": true,
+        "consumedEventIds": true,
+        "finalBattleClock": true
+      },
+      "survivors": {
+        "predecessor": 12,
+        "live": 12
+      },
+      "real": {
+        "predecessor": 1212.15,
+        "live": 1212.15
+      },
+      "repairComplete": {
+        "predecessor": 441.8,
+        "live": 441.8
+      }
+    },
+    {
+      "seed": 7,
+      "support": true,
+      "clipping": 0,
+      "stacked": 0,
+      "same": {
+        "objectives": true,
+        "checkpoints": true,
+        "consumedEventIds": true,
+        "finalBattleClock": true
+      },
+      "survivors": {
+        "predecessor": 18,
+        "live": 18
+      },
+      "real": {
+        "predecessor": 1167.7,
+        "live": 1167.7
+      },
+      "repairComplete": {
+        "predecessor": 393.55,
+        "live": 393.55
+      }
+    }
+  ]
+}

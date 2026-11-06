@@ -1,0 +1,1005 @@
+{
+  "task": "M01-PARTIALS-COMPLETION-INTEGRATION-V1",
+  "amendment": "CAPTAIN-AMENDMENT-03",
+  "predecessor": "bc8f6a21a57ccd926d4e0655481908d90d6b1978",
+  "seeds": [
+    1
+  ],
+  "policy": {
+    "source": "function westCarryHoldReplay(originalReady,id,pendingAtTickStart){return originalReady(id)&&(id!=='evt_m01_west_demolition'||!pendingAtTickStart);}",
+    "healthComparison": {
+      "source": "h=>({clock:h.clock,battleClock:h.battleClock,gate:h.gate,player:h.player,round:h.round,healthBefore:h.healthBefore,healthAfter:h.healthAfter,events:hitEvents(h),emission:h.emission&&{round:h.emission.round,clock:h.emission.context.clock,battleClock:h.emission.context.battleClock,gate:h.emission.context.gate,player:h.emission.context.player,events:h.emission.events},issue:h.issue&&{round:h.issue.round,clock:h.issue.context.clock,battleClock:h.issue.context.battleClock,gate:h.issue.context.gate,player:h.issue.context.player}})",
+      "eventProjectionSource": "h=>h.events.map(e=>{if(e.type!=='round-impact')return e;const {pass,pinned,...rest}=e;return {...rest,pinned:pinned.filter(id=>!['jozef_bak','leon_dudek'].includes(id))};})",
+      "scope": "Only hit-causality comparison projects impact events: T05 adds pass; T36 finite Bak/Dudek path can change only their pinned membership. Every other pinned ID and every player/health/projectile/impact/source/weapon/time/point/material/distance field remain exact. Full events and tick controls/health/RNG are retained, unmodified."
+    },
+    "authority": "Only predecessor WEST readiness is delayed from candidate carry/carriedBy at the beginning of the SAME numbered tick. No clock, RNG, health or event mask. Raw health is exactly raw minus separately identified extra real impacts.",
+    "sourceHashes": {
+      "current": {
+        "src/game/m01-simulation.js": "1e5c17fbc45d876dee4c5fbabeeebc426325eab5d0180a1d596e81423908ccde",
+        "tests/helpers/m01-cover.js": "f0ef4ab8ecd586963ad24639473ff4da56b39b1f2a6ba284e6ced2b14fc2f8cb",
+        "tests/helpers/m01-route.js": "1fc075cbf677e864221466f1819a927b6b057417d0cdbed8be2655c869a53b92"
+      },
+      "predecessor": {
+        "src/game/m01-simulation.js": "e988fcd9b923a429657d1deeb820054694b5e9b046ff904faa190e14e020c4a6",
+        "tests/helpers/m01-cover.js": "5c9530c044fccbfc6505a2ef07890d577593c21c58a68898c147741e764f01fd",
+        "tests/helpers/m01-route.js": "1fc075cbf677e864221466f1819a927b6b057417d0cdbed8be2655c869a53b92"
+      }
+    }
+  },
+  "rawPredecessor": {
+    "runs": [
+      {
+        "seed": 1,
+        "mode": "help",
+        "shots": 50,
+        "repair": {
+          "deliveredAt": 207.3500000000129,
+          "start": "04:42:08",
+          "end": "05:09:27",
+          "realSeconds": 212,
+          "pins": 19
+        },
+        "casualties": [
+          "06:06:04",
+          "06:08:04"
+        ],
+        "repairMgSuppressed": 157.7000000000016,
+        "repairUnderFire": 162.9500000000028,
+        "germanCasualties": [
+          "04:45:42",
+          "06:06:32"
+        ],
+        "survivors": 16,
+        "times": {
+          "order_demolish": "05:30:00",
+          "east_platoon_withdraws": "06:00:00",
+          "germans_on_east_spans": "06:05:00",
+          "east_demolition": "06:10:00",
+          "west_demolition": "06:45:00",
+          "roll_call": "07:05:00"
+        },
+        "repairMgSuppressedPct": 97,
+        "health": 100,
+        "activeSeconds": 1029.1,
+        "checkpoints": [
+          "cp_m01_a_orientacao",
+          "cp_m01_b_reorganizacao",
+          "cp_m01_c_engenheiros",
+          "cp_m01_d_retirada"
+        ],
+        "lethalRounds": 2,
+        "enemyFire": 1697
+      },
+      {
+        "seed": 1,
+        "mode": "ignore",
+        "shots": 0,
+        "repair": {
+          "deliveredAt": 207.3500000000129,
+          "start": "04:42:08",
+          "end": "05:10:03",
+          "realSeconds": 216,
+          "pins": 54
+        },
+        "casualties": [
+          "06:05:23",
+          "06:05:43",
+          "06:06:04",
+          "06:06:24",
+          "06:06:44",
+          "06:07:04"
+        ],
+        "repairMgSuppressed": 5.999999999999987,
+        "repairUnderFire": 166.9500000000037,
+        "survivors": 12,
+        "times": {
+          "order_demolish": "05:30:00",
+          "east_platoon_withdraws": "06:00:00",
+          "germans_on_east_spans": "06:05:00",
+          "east_demolition": "06:10:00",
+          "west_demolition": "06:45:00",
+          "roll_call": "07:05:00"
+        },
+        "repairMgSuppressedPct": 4,
+        "health": 84,
+        "activeSeconds": 1031.7,
+        "checkpoints": [
+          "cp_m01_a_orientacao",
+          "cp_m01_b_reorganizacao",
+          "cp_m01_c_engenheiros",
+          "cp_m01_d_retirada"
+        ],
+        "lethalRounds": 6,
+        "enemyFire": 1952
+      }
+    ],
+    "summary": {
+      "help": {
+        "repairRealSeconds": [
+          212,
+          212
+        ],
+        "repairEnd": [
+          "05:09:27"
+        ],
+        "repairPins": [
+          19,
+          19
+        ],
+        "gateMgSuppressedPct": [
+          97,
+          97
+        ],
+        "survivors": [
+          16,
+          16
+        ],
+        "health": [
+          100,
+          100
+        ],
+        "activeSeconds": [
+          1029.1,
+          1029.1
+        ]
+      },
+      "ignore": {
+        "repairRealSeconds": [
+          216,
+          216
+        ],
+        "repairEnd": [
+          "05:10:03"
+        ],
+        "repairPins": [
+          54,
+          54
+        ],
+        "gateMgSuppressedPct": [
+          4,
+          4
+        ],
+        "survivors": [
+          12,
+          12
+        ],
+        "health": [
+          84,
+          84
+        ],
+        "activeSeconds": [
+          1031.7,
+          1031.7
+        ]
+      }
+    }
+  },
+  "current": {
+    "runs": [
+      {
+        "seed": 1,
+        "mode": "help",
+        "shots": 50,
+        "repair": {
+          "deliveredAt": 207.3500000000129,
+          "start": "04:42:08",
+          "end": "05:09:27",
+          "realSeconds": 212,
+          "pins": 19
+        },
+        "casualties": [
+          "06:06:04",
+          "06:08:04"
+        ],
+        "repairMgSuppressed": 157.7000000000016,
+        "repairUnderFire": 162.9500000000028,
+        "germanCasualties": [
+          "04:45:42",
+          "06:06:32"
+        ],
+        "survivors": 16,
+        "times": {
+          "order_demolish": "05:30:00",
+          "east_platoon_withdraws": "06:00:00",
+          "germans_on_east_spans": "06:05:00",
+          "east_demolition": "06:10:00",
+          "west_demolition": "06:45:00",
+          "roll_call": "07:05:00"
+        },
+        "repairMgSuppressedPct": 97,
+        "health": 100,
+        "activeSeconds": 1093.1,
+        "checkpoints": [
+          "cp_m01_a_orientacao",
+          "cp_m01_b_reorganizacao",
+          "cp_m01_c_engenheiros",
+          "cp_m01_d_retirada"
+        ],
+        "lethalRounds": 2,
+        "enemyFire": 1718
+      },
+      {
+        "seed": 1,
+        "mode": "ignore",
+        "shots": 0,
+        "repair": {
+          "deliveredAt": 207.3500000000129,
+          "start": "04:42:08",
+          "end": "05:10:03",
+          "realSeconds": 216,
+          "pins": 54
+        },
+        "casualties": [
+          "06:05:23",
+          "06:05:43",
+          "06:06:04",
+          "06:06:24",
+          "06:06:44",
+          "06:07:04"
+        ],
+        "repairMgSuppressed": 5.999999999999987,
+        "repairUnderFire": 166.9500000000037,
+        "survivors": 12,
+        "times": {
+          "order_demolish": "05:30:00",
+          "east_platoon_withdraws": "06:00:00",
+          "germans_on_east_spans": "06:05:00",
+          "east_demolition": "06:10:00",
+          "west_demolition": "06:45:00",
+          "roll_call": "07:05:00"
+        },
+        "repairMgSuppressedPct": 4,
+        "health": 76,
+        "activeSeconds": 1095.8,
+        "checkpoints": [
+          "cp_m01_a_orientacao",
+          "cp_m01_b_reorganizacao",
+          "cp_m01_c_engenheiros",
+          "cp_m01_d_retirada"
+        ],
+        "lethalRounds": 6,
+        "enemyFire": 1977
+      }
+    ],
+    "summary": {
+      "help": {
+        "repairRealSeconds": [
+          212,
+          212
+        ],
+        "repairEnd": [
+          "05:09:27"
+        ],
+        "repairPins": [
+          19,
+          19
+        ],
+        "gateMgSuppressedPct": [
+          97,
+          97
+        ],
+        "survivors": [
+          16,
+          16
+        ],
+        "health": [
+          100,
+          100
+        ],
+        "activeSeconds": [
+          1093.1,
+          1093.1
+        ]
+      },
+      "ignore": {
+        "repairRealSeconds": [
+          216,
+          216
+        ],
+        "repairEnd": [
+          "05:10:03"
+        ],
+        "repairPins": [
+          54,
+          54
+        ],
+        "gateMgSuppressedPct": [
+          4,
+          4
+        ],
+        "survivors": [
+          12,
+          12
+        ],
+        "health": [
+          76,
+          76
+        ],
+        "activeSeconds": [
+          1095.8,
+          1095.8
+        ]
+      }
+    }
+  },
+  "policyReplayPredecessor": {
+    "runs": [
+      {
+        "seed": 1,
+        "mode": "help",
+        "shots": 50,
+        "repair": {
+          "deliveredAt": 207.3500000000129,
+          "start": "04:42:08",
+          "end": "05:09:27",
+          "realSeconds": 212,
+          "pins": 19
+        },
+        "casualties": [
+          "06:06:04",
+          "06:08:04"
+        ],
+        "repairMgSuppressed": 157.7000000000016,
+        "repairUnderFire": 162.9500000000028,
+        "germanCasualties": [
+          "04:45:42",
+          "06:06:32"
+        ],
+        "survivors": 16,
+        "times": {
+          "order_demolish": "05:30:00",
+          "east_platoon_withdraws": "06:00:00",
+          "germans_on_east_spans": "06:05:00",
+          "east_demolition": "06:10:00",
+          "west_demolition": "06:45:00",
+          "roll_call": "07:05:00"
+        },
+        "repairMgSuppressedPct": 97,
+        "health": 100,
+        "activeSeconds": 1093.1,
+        "checkpoints": [
+          "cp_m01_a_orientacao",
+          "cp_m01_b_reorganizacao",
+          "cp_m01_c_engenheiros",
+          "cp_m01_d_retirada"
+        ],
+        "lethalRounds": 2,
+        "enemyFire": 1718
+      },
+      {
+        "seed": 1,
+        "mode": "ignore",
+        "shots": 0,
+        "repair": {
+          "deliveredAt": 207.3500000000129,
+          "start": "04:42:08",
+          "end": "05:10:03",
+          "realSeconds": 216,
+          "pins": 54
+        },
+        "casualties": [
+          "06:05:23",
+          "06:05:43",
+          "06:06:04",
+          "06:06:24",
+          "06:06:44",
+          "06:07:04"
+        ],
+        "repairMgSuppressed": 5.999999999999987,
+        "repairUnderFire": 166.9500000000037,
+        "survivors": 12,
+        "times": {
+          "order_demolish": "05:30:00",
+          "east_platoon_withdraws": "06:00:00",
+          "germans_on_east_spans": "06:05:00",
+          "east_demolition": "06:10:00",
+          "west_demolition": "06:45:00",
+          "roll_call": "07:05:00"
+        },
+        "repairMgSuppressedPct": 4,
+        "health": 76,
+        "activeSeconds": 1095.8,
+        "checkpoints": [
+          "cp_m01_a_orientacao",
+          "cp_m01_b_reorganizacao",
+          "cp_m01_c_engenheiros",
+          "cp_m01_d_retirada"
+        ],
+        "lethalRounds": 6,
+        "enemyFire": 1977
+      }
+    ],
+    "summary": {
+      "help": {
+        "repairRealSeconds": [
+          212,
+          212
+        ],
+        "repairEnd": [
+          "05:09:27"
+        ],
+        "repairPins": [
+          19,
+          19
+        ],
+        "gateMgSuppressedPct": [
+          97,
+          97
+        ],
+        "survivors": [
+          16,
+          16
+        ],
+        "health": [
+          100,
+          100
+        ],
+        "activeSeconds": [
+          1093.1,
+          1093.1
+        ]
+      },
+      "ignore": {
+        "repairRealSeconds": [
+          216,
+          216
+        ],
+        "repairEnd": [
+          "05:10:03"
+        ],
+        "repairPins": [
+          54,
+          54
+        ],
+        "gateMgSuppressedPct": [
+          4,
+          4
+        ],
+        "survivors": [
+          12,
+          12
+        ],
+        "health": [
+          76,
+          76
+        ],
+        "activeSeconds": [
+          1095.8,
+          1095.8
+        ]
+      }
+    }
+  },
+  "routes": [
+    {
+      "seed": 1,
+      "mode": "help",
+      "result": "PASS",
+      "checks": [
+        {
+          "label": "complete 1:1 dt/control replay",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY dt/control value and tick health/RNG/clocks exact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy outcome stat and full player state/health exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all other RAW outcome stats exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all original RAW actor health/alive exact; all original policy actor health/alive exact",
+          "result": "PASS"
+        },
+        {
+          "label": "full policy clocks/RNG/issued round count exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all health changes accounted for by actual player-hit + character impact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy health change/projectile/source/issue/arrival/hit exact",
+          "result": "PASS"
+        },
+        {
+          "label": "every RAW health change preserved exactly",
+          "result": "PASS"
+        },
+        {
+          "label": "first RAW/current difference is ONLY existing WEST last60s slowdown with exact prior authority and controls",
+          "result": "PASS"
+        },
+        {
+          "label": "extra impacts have exact real-projectile emission and measured WEST wait causality",
+          "result": "PASS"
+        },
+        {
+          "label": "EXACT current health = RAW health minus attributed extra real damage",
+          "result": "PASS"
+        },
+        {
+          "label": "all routes complete without death/restore or unfinished carry",
+          "result": "PASS"
+        }
+      ],
+      "diagnostics": {},
+      "ticks": 21863,
+      "controlSha256": "776af6828f4a9fe072c185e7bdae5366d82e8c7b2328b6e6cd53ae8d8061de5b",
+      "policyControlSha256": "776af6828f4a9fe072c185e7bdae5366d82e8c7b2328b6e6cd53ae8d8061de5b",
+      "carryScheduleSha256": "bc0683662fdf6c1ae42ec3dcf1a9b4b3bdc9b3292b85559d3579b50f7c7a591e",
+      "carryIntervals": [
+        {
+          "startTick": 16626,
+          "startClock": 831.2499999997917,
+          "endTick": 21491,
+          "endClock": 1074.5499999995704
+        }
+      ],
+      "rawDeltas": {
+        "health": 0,
+        "realSeconds": 64.04999999994175,
+        "activeSeconds": 64,
+        "enemyFire": 21,
+        "issuedRounds": 21,
+        "rngBefore": 2228355607,
+        "rngAfter": 3337594525,
+        "eventCounts": {
+          "checkpoint": 0,
+          "message": 139,
+          "m01-blast": 0,
+          "distant-shot": 0,
+          "npc-shot": 0,
+          "enemy-fire": 21,
+          "round-impact": 21,
+          "player-shot": 0,
+          "reload": 0,
+          "complete": 0
+        }
+      },
+      "tickAuthoritySha256": "ab0e4236d3aa530df2c924c0605e916abc5eca26aebca7701be434fc0debe2df",
+      "attributedExtraImpacts": [],
+      "attributedExtraDamage": 0,
+      "readinessBoundary": {
+        "tick1Based": 20141,
+        "previous": [
+          1006.9999999996319,
+          24240.424999996507,
+          4014744055,
+          100,
+          true
+        ],
+        "raw": [
+          1007.0499999996318,
+          24240.849999996506,
+          4014744055,
+          100,
+          true
+        ],
+        "current": [
+          1007.0499999996318,
+          24240.474999996506,
+          4014744055,
+          100,
+          true
+        ],
+        "controls": [
+          0.05,
+          {}
+        ],
+        "rawReady": true,
+        "currentReady": false,
+        "candidateCarry": {
+          "carry": {
+            "phase": "carry",
+            "startedAt": 832.8499999997917,
+            "duration": 1.6
+          },
+          "carriedBy": "leon_dudek"
+        }
+      },
+      "evidenceFile": "cap03-seed1-routes/1-help.json",
+      "evidenceSha256": "f29d19d6acb996c7eac1c5cc2e60a75e77ee335841d302d0ec87a40aa1187c7c"
+    },
+    {
+      "seed": 1,
+      "mode": "ignore",
+      "result": "PASS",
+      "checks": [
+        {
+          "label": "complete 1:1 dt/control replay",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY dt/control value and tick health/RNG/clocks exact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy outcome stat and full player state/health exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all other RAW outcome stats exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all original RAW actor health/alive exact; all original policy actor health/alive exact",
+          "result": "PASS"
+        },
+        {
+          "label": "full policy clocks/RNG/issued round count exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all health changes accounted for by actual player-hit + character impact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy health change/projectile/source/issue/arrival/hit exact",
+          "result": "PASS"
+        },
+        {
+          "label": "every RAW health change preserved exactly",
+          "result": "PASS"
+        },
+        {
+          "label": "first RAW/current difference is ONLY existing WEST last60s slowdown with exact prior authority and controls",
+          "result": "PASS"
+        },
+        {
+          "label": "extra impacts have exact real-projectile emission and measured WEST wait causality",
+          "result": "PASS"
+        },
+        {
+          "label": "EXACT current health = RAW health minus attributed extra real damage",
+          "result": "PASS"
+        },
+        {
+          "label": "all routes complete without death/restore or unfinished carry",
+          "result": "PASS"
+        }
+      ],
+      "diagnostics": {},
+      "ticks": 21916,
+      "controlSha256": "f1fcc837082b375084b1fbfa72ae1b77ee06a064aad6f35a825944a71ede6a41",
+      "policyControlSha256": "f1fcc837082b375084b1fbfa72ae1b77ee06a064aad6f35a825944a71ede6a41",
+      "carryScheduleSha256": "bfd0c0050a1cf8d646a8b2b9728f5c8436cbb54c39b95c3b4387285dc321e1e9",
+      "carryIntervals": [
+        {
+          "startTick": 16679,
+          "startClock": 833.8999999997893,
+          "endTick": 21544,
+          "endClock": 1077.199999999568
+        }
+      ],
+      "rawDeltas": {
+        "health": -8,
+        "realSeconds": 64.04999999994175,
+        "activeSeconds": 64.09999999999991,
+        "enemyFire": 25,
+        "issuedRounds": 25,
+        "rngBefore": 2203600739,
+        "rngAfter": 2704294441,
+        "eventCounts": {
+          "checkpoint": 0,
+          "message": 139,
+          "m01-blast": 0,
+          "distant-shot": 0,
+          "npc-shot": 0,
+          "enemy-fire": 25,
+          "round-impact": 25,
+          "player-hit": 1,
+          "complete": 0
+        }
+      },
+      "tickAuthoritySha256": "833b9587e48449b16028b2845b7d9d8770dbe897af764a1a41c760d1302b0bcc",
+      "attributedExtraImpacts": [
+        {
+          "clock": 1048.599999999594,
+          "battleClock": 24270,
+          "gate": {
+            "id": "evt_m01_west_demolition",
+            "started": 1039.2999999996025,
+            "hold": 9.299999999991542
+          },
+          "player": {
+            "id": "jan_wrona",
+            "space": "metres",
+            "x": -290.9989155475655,
+            "y": -3,
+            "z": 26.055431674440584,
+            "team": "player",
+            "health": 84,
+            "alive": true,
+            "active": true,
+            "state": "GUARD",
+            "facing": 0,
+            "shot": 0,
+            "radius": 0.36,
+            "crouched": false,
+            "suppressedUntil": 0,
+            "cooldown": 0,
+            "rounds": 5,
+            "angle": -3.0862775132847,
+            "pitch": 0,
+            "aiming": false,
+            "moveBlend": 0,
+            "sprinting": false,
+            "weaponShotAt": -1000000000,
+            "carrying": null,
+            "headgear": "pl_helmet_wz31"
+          },
+          "bak": {
+            "carry": {
+              "phase": "carry",
+              "startedAt": 835.4999999997893,
+              "duration": 1.6
+            },
+            "carriedBy": "leon_dudek"
+          },
+          "candidateCarryAtTickStart": {
+            "carry": {
+              "phase": "carry",
+              "startedAt": 835.4999999997893,
+              "duration": 1.6
+            },
+            "carriedBy": "leon_dudek"
+          },
+          "round": {
+            "id": "m01_round_1982",
+            "by": "de_east_11",
+            "weapon": "kar98k",
+            "kind": "player",
+            "ox": 1053,
+            "oy": 0.6399999999999999,
+            "oz": 27.5,
+            "ax": -290.99896840896497,
+            "ay": -1.596305133448381,
+            "az": 26.10461291585432,
+            "h": 10.838011030624077,
+            "firedAt": 1046.399999999596,
+            "arriveAt": 1048.5677414381105,
+            "tracer": false,
+            "victim": null
+          },
+          "healthBefore": 84,
+          "healthAfter": 76,
+          "events": [
+            {
+              "type": "player-hit"
+            },
+            {
+              "type": "round-impact",
+              "kind": "player",
+              "by": "de_east_11",
+              "point": {
+                "x": -290.7089155475655,
+                "y": -1.5867417359952107,
+                "z": 26.104914058954897
+              },
+              "material": "character",
+              "crack": true,
+              "distance": 0.29419127515484583,
+              "pass": "crack",
+              "victim": null,
+              "pinned": [
+                "leon_dudek"
+              ]
+            }
+          ],
+          "issue": {
+            "round": {
+              "id": "m01_round_1982",
+              "by": "de_east_11",
+              "weapon": "kar98k",
+              "kind": "player",
+              "ox": 1053,
+              "oy": 0.6399999999999999,
+              "oz": 27.5,
+              "ax": -290.99896840896497,
+              "ay": -1.596305133448381,
+              "az": 26.10461291585432,
+              "h": 10.838011030624077,
+              "firedAt": 1046.399999999596,
+              "arriveAt": 1048.5677414381105,
+              "tracer": false,
+              "victim": null
+            },
+            "context": {
+              "clock": 1046.399999999596,
+              "battleClock": 24270,
+              "gate": {
+                "id": "evt_m01_west_demolition",
+                "started": 1039.2999999996025,
+                "hold": 7.099999999993543
+              },
+              "player": {
+                "id": "jan_wrona",
+                "space": "metres",
+                "x": -290.9989155475655,
+                "y": -3,
+                "z": 26.055431674440584,
+                "team": "player",
+                "health": 84,
+                "alive": true,
+                "active": true,
+                "state": "GUARD",
+                "facing": 0,
+                "shot": 0,
+                "radius": 0.36,
+                "crouched": false,
+                "suppressedUntil": 0,
+                "cooldown": 0,
+                "rounds": 5,
+                "angle": -3.0862775132847,
+                "pitch": 0,
+                "aiming": false,
+                "moveBlend": 0,
+                "sprinting": false,
+                "weaponShotAt": -1000000000,
+                "carrying": null,
+                "headgear": "pl_helmet_wz31"
+              },
+              "bak": {
+                "carry": {
+                  "phase": "carry",
+                  "startedAt": 835.4999999997893,
+                  "duration": 1.6
+                },
+                "carriedBy": "leon_dudek"
+              },
+              "candidateCarryAtTickStart": {
+                "carry": {
+                  "phase": "carry",
+                  "startedAt": 835.4999999997893,
+                  "duration": 1.6
+                },
+                "carriedBy": "leon_dudek"
+              }
+            }
+          },
+          "emission": {
+            "round": {
+              "id": "m01_round_1982",
+              "by": "de_east_11",
+              "weapon": "kar98k",
+              "kind": "player",
+              "ox": 1053,
+              "oy": 0.6399999999999999,
+              "oz": 27.5,
+              "ax": -290.99896840896497,
+              "ay": -1.596305133448381,
+              "az": 26.10461291585432,
+              "h": 10.838011030624077,
+              "firedAt": 1046.399999999596,
+              "arriveAt": 1048.5677414381105,
+              "tracer": false,
+              "victim": null
+            },
+            "context": {
+              "clock": 1046.399999999596,
+              "battleClock": 24270,
+              "gate": {
+                "id": "evt_m01_west_demolition",
+                "started": 1039.2999999996025,
+                "hold": 7.099999999993543
+              },
+              "player": {
+                "id": "jan_wrona",
+                "space": "metres",
+                "x": -290.9989155475655,
+                "y": -3,
+                "z": 26.055431674440584,
+                "team": "player",
+                "health": 84,
+                "alive": true,
+                "active": true,
+                "state": "GUARD",
+                "facing": 0,
+                "shot": 0,
+                "radius": 0.36,
+                "crouched": false,
+                "suppressedUntil": 0,
+                "cooldown": 0,
+                "rounds": 5,
+                "angle": -3.0862775132847,
+                "pitch": 0,
+                "aiming": false,
+                "moveBlend": 0,
+                "sprinting": false,
+                "weaponShotAt": -1000000000,
+                "carrying": null,
+                "headgear": "pl_helmet_wz31"
+              },
+              "bak": {
+                "carry": {
+                  "phase": "carry",
+                  "startedAt": 835.4999999997893,
+                  "duration": 1.6
+                },
+                "carriedBy": "leon_dudek"
+              },
+              "candidateCarryAtTickStart": {
+                "carry": {
+                  "phase": "carry",
+                  "startedAt": 835.4999999997893,
+                  "duration": 1.6
+                },
+                "carriedBy": "leon_dudek"
+              }
+            },
+            "events": [
+              {
+                "type": "enemy-fire",
+                "origin": {
+                  "x": 1053,
+                  "y": 0.6399999999999999,
+                  "z": 27.5
+                },
+                "rounds": 1,
+                "interval": 0.075,
+                "weapon": "kar98k",
+                "at": 1046.399999999596
+              }
+            ]
+          },
+          "exposure": {
+            "rawWestConsumed": 1016.6999999996231,
+            "issueStage": "frozen-west-gate",
+            "impactStage": "frozen-west-gate",
+            "kind": "additional-issued"
+          }
+        }
+      ],
+      "attributedExtraDamage": 8,
+      "readinessBoundary": {
+        "tick1Based": 20194,
+        "previous": [
+          1009.6499999996295,
+          24240.424999996507,
+          3045514169,
+          84,
+          true
+        ],
+        "raw": [
+          1009.6999999996294,
+          24240.849999996506,
+          3045514169,
+          84,
+          true
+        ],
+        "current": [
+          1009.6999999996294,
+          24240.474999996506,
+          3045514169,
+          84,
+          true
+        ],
+        "controls": [
+          0.05,
+          {}
+        ],
+        "rawReady": true,
+        "currentReady": false,
+        "candidateCarry": {
+          "carry": {
+            "phase": "carry",
+            "startedAt": 835.4999999997893,
+            "duration": 1.6
+          },
+          "carriedBy": "leon_dudek"
+        }
+      },
+      "evidenceFile": "cap03-seed1-routes/1-ignore.json",
+      "evidenceSha256": "792dbf15038a1768796748a4f22d707bd5108171e883a85c1b584acaa014eff2"
+    }
+  ],
+  "exactStatsAndSummary": "PASS",
+  "result": "PASS"
+}

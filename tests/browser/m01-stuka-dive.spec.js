@@ -107,24 +107,35 @@ async function capture(browser,info,{name,snapshot,needBomb=false,expectDiagnost
     // frame happen here, still paused, so the capped 0.25 s steps of slow first running frames do not carry the 1.5 s bomb flight past
     // the framing window (CI 38871227131, shard 3: the sample landed ~0.1 s before the blast).
     await page.waitForFunction(()=>{const b=window.gameDiagnostics?.().m01?.bridgeFinish;return b?.status==='ready'&&b.boundMeshes>0;},null,{timeout:240000});
+    // Arm in the page BEFORE Continue: waiting for click() to return can spend the entire short bomb flight.
+    // The callback samples a real drawn frame and releases native pointer lock in that same callback.
+    await page.evaluate(({needBomb,restoredClock})=>{
+      const sampling=window.__m01StukaCapture={armedAt:performance.now(),armedClock:window.gameDiagnostics().clock};
+      const sampleFrame=()=>{
+        const d=window.gameDiagnostics?.();
+        if(!d||d.paused||document.pointerLockElement?.id!=='game'||!d.m01||d.clock<restoredClock||
+          d.m01.demolition.clock!==d.clock||d.m01.renderedFrames<(needBomb?1:3))return requestAnimationFrame(sampleFrame);
+        const a=d.m01.aircraft;if(!a.path||(needBomb&&a.bombs.visible<1))return requestAnimationFrame(sampleFrame);
+        sampling.live=JSON.parse(JSON.stringify({clock:d.clock,aircraft:a,eventIds:d.eventIds,damage:d.m01.damage}));
+        sampling.sampledAt=performance.now();sampling.sampledFrame=d.m01.renderedFrames;
+        document.exitPointerLock();
+      };
+      requestAnimationFrame(sampleFrame);
+    },{needBomb,restoredClock:snapshot.clock});
     await page.locator('#continue').click();
-    // Wait for the exact condition to be true in a live frame, keep that diagnostics sample and release the pointer lock in the SAME
-    // callback (the game stops ticking at once because it also needs the lock), so the frozen frame is the one that was sampled.
-    // needBomb: the 1.5 s flight is short, so the sample is the first running frame that draws a bomb.
-    const handle=await page.waitForFunction(({needBomb})=>{
-      const d=window.gameDiagnostics?.();if(!d||d.paused||!d.m01||d.m01.renderedFrames<(needBomb?1:3))return false;
-      const a=d.m01.aircraft;if(!a.path||(needBomb&&a.bombs.visible<1))return false;
-      const sample=JSON.parse(JSON.stringify({clock:d.clock,aircraft:a,eventIds:d.eventIds,damage:d.m01.damage}));
-      document.exitPointerLock();return sample;
-    },{needBomb},{timeout:240000,polling:'raf'});
-    const live=await handle.jsonValue();
+    // This wait only retrieves the sample already captured in-page; Node/driver latency cannot delay capture.
+    const handle=await page.waitForFunction(()=>window.__m01StukaCapture?.live,null,{timeout:240000,polling:'raf'});
+    const live=await handle.jsonValue(),sampling=await page.evaluate(()=>{
+      const {live,...timing}=window.__m01StukaCapture;return timing;
+    });
+    fs.writeFileSync(info.outputPath(name+'-sample.json'),JSON.stringify({live,sampling},null,2));
     await expectDiagnostics?.(live,page);
     await expect(page.locator('#pause')).toBeVisible();
     const paused=await page.evaluate(()=>window.gameDiagnostics());
     // The lock is released asynchronously by the browser: at most a few frames (bounded) run between the sample and the pause.
     expect(paused.clock-live.clock).toBeGreaterThanOrEqual(0);expect(paused.clock-live.clock).toBeLessThan(.75);
     await page.screenshot({path:info.outputPath(name+'.png'),style:'#pause,#hud,#menu{visibility:hidden!important}',timeout:120000});
-    const report={live,pausedClock:paused.clock,pausedBombs:paused.m01.aircraft.bombs,pausedPath:paused.m01.aircraft.path};
+    const report={live,sampling,pausedClock:paused.clock,pausedBombs:paused.m01.aircraft.bombs,pausedPath:paused.m01.aircraft.path};
     if(track){
       const spec={view:{player:snapshot.player},planes:track.planes,bomb:track.bomb};
       report.framing={framing:FRAMING,live:projectDiagnostics(live,spec),paused:projectDiagnostics(paused.m01,spec)};

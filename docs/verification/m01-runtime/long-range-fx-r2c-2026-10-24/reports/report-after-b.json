@@ -1,0 +1,583 @@
+{
+  "label": "after",
+  "quality": "medium",
+  "viewport": [
+    1366,
+    768
+  ],
+  "from": 3.5,
+  "step": 0.12,
+  "count": 10,
+  "shots": [
+    {
+      "name": "deck-polish-10",
+      "errors": [],
+      "files": [
+        {
+          "file": "deck-polish-10-after-00.png",
+          "clock": 854.066699999771,
+          "offset": 3.567,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 0,
+            "puff": 0,
+            "spark": 0,
+            "smoke": 3,
+            "chip": 0,
+            "speck": 0
+          },
+          "longRange": {
+            "events": 1,
+            "scheduled": 1,
+            "dropped": 0,
+            "live": 0,
+            "pending": 1,
+            "drawn": 0,
+            "airborne": 0,
+            "tracers": {
+              "drawn": 0,
+              "quota": 12,
+              "suppressed": 0
+            },
+            "sample": [
+              {
+                "x": 223.84170973336748,
+                "y": -0.042729611758958175,
+                "z": 38.65593776913711,
+                "at": 854.1510326397793,
+                "material": "stone"
+              }
+            ]
+          },
+          "camera": {
+            "position": [
+              29.05133705909752,
+              1.64,
+              39.999885073935104
+            ],
+            "quaternion": [
+              0,
+              -0.7071496112237752,
+              0,
+              0.7070639485549124
+            ],
+            "fov": 70
+          },
+          "draw": 501,
+          "triangles": 866949
+        },
+        {
+          "file": "deck-polish-10-after-01.png",
+          "clock": 854.3166999997708,
+          "offset": 3.817,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 0,
+            "puff": 5,
+            "spark": 0,
+            "smoke": 2,
+            "chip": 2,
+            "speck": 2
+          },
+          "longRange": {
+            "events": 1,
+            "scheduled": 2,
+            "dropped": 0,
+            "live": 2,
+            "pending": 0,
+            "drawn": 2,
+            "airborne": 0,
+            "tracers": {
+              "drawn": 0,
+              "quota": 12,
+              "suppressed": 0
+            },
+            "sample": [
+              {
+                "x": 223.84170973336748,
+                "y": -0.042729611758958175,
+                "z": 38.65593776913711,
+                "at": 854.1510326397793,
+                "material": "stone"
+              },
+              {
+                "x": -68.02194687519918,
+                "y": -0.04234265829002504,
+                "z": 37.358715905816275,
+                "at": 854.2166999997709,
+                "material": "earth"
+              }
+            ]
+          },
+          "camera": {
+            "position": [
+              29.0498012948769,
+              1.6425497348699747,
+              39.999885073935104
+            ],
+            "quaternion": [
+              -0.00007750878768944786,
+              -0.7071496069760091,
+              0.00007749939843219817,
+              0.707063944307661
+            ],
+            "fov": 70
+          },
+          "draw": 504,
+          "triangles": 863219
+        },
+        {
+          "file": "deck-polish-10-after-02.png",
+          "clock": 854.5666999997705,
+          "offset": 4.067,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 0,
+            "puff": 5,
+            "spark": 0,
+            "smoke": 2,
+            "chip": 2,
+            "speck": 2
+          },
+          "longRange": {
+            "events": 1,
+            "scheduled": 2,
+            "dropped": 0,
+            "live": 2,
+            "pending": 0,
+            "drawn": 2,
+            "airborne": 0,
+            "tracers": {
+              "drawn": 0,
+              "quota": 12,
+              "suppressed": 0
+            },
+            "sample": [
+              {
+                "x": 223.84170973336748,
+                "y": -0.042729611758958175,
+                "z": 38.65593776913711,
+                "at": 854.1510326397793,
+                "material": "stone"
+              },
+              {
+                "x": -68.02194687519918,
+                "y": -0.04234265829002504,
+                "z": 37.358715905816275,
+                "at": 854.2166999997709,
+                "material": "earth"
+              }
+            ]
+          },
+          "camera": {
+            "position": [
+              29.051375896734886,
+              1.639619726377585,
+              39.999885073935104
+            ],
+            "quaternion": [
+              -0.00007277261352622558,
+              -0.7071496074792681,
+              0.00007276379799950276,
+              0.707063944810859
+            ],
+            "fov": 70
+          },
+          "draw": 504,
+          "triangles": 863219
+        },
+        {
+          "file": "deck-polish-10-after-03.png",
+          "clock": 854.8166999997703,
+          "offset": 4.317,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 0,
+            "puff": 5,
+            "spark": 0,
+            "smoke": 2,
+            "chip": 2,
+            "speck": 2
+          },
+          "longRange": {
+            "events": 1,
+            "scheduled": 2,
+            "dropped": 0,
+            "live": 2,
+            "pending": 0,
+            "drawn": 2,
+            "airborne": 0,
+            "tracers": {
+              "drawn": 0,
+              "quota": 12,
+              "suppressed": 0
+            },
+            "sample": [
+              {
+                "x": 223.84170973336748,
+                "y": -0.042729611758958175,
+                "z": 38.65593776913711,
+                "at": 854.1510326397793,
+                "material": "stone"
+              },
+              {
+                "x": -68.02194687519918,
+                "y": -0.04234265829002504,
+                "z": 37.358715905816275,
+                "at": 854.2166999997709,
+                "material": "earth"
+              }
+            ]
+          },
+          "camera": {
+            "position": [
+              29.05140856172744,
+              1.639974607354311,
+              39.999885073935104
+            ],
+            "quaternion": [
+              -0.000036537241368668026,
+              -0.707149610279866,
+              0.00003653281532139479,
+              0.7070639476111176
+            ],
+            "fov": 70
+          },
+          "draw": 504,
+          "triangles": 868005
+        },
+        {
+          "file": "deck-polish-10-after-04.png",
+          "clock": 855.0666999997701,
+          "offset": 4.567,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 0,
+            "puff": 5,
+            "spark": 0,
+            "smoke": 1,
+            "chip": 2,
+            "speck": 1
+          },
+          "longRange": {
+            "events": 1,
+            "scheduled": 2,
+            "dropped": 0,
+            "live": 1,
+            "pending": 0,
+            "drawn": 1,
+            "airborne": 0,
+            "tracers": {
+              "drawn": 0,
+              "quota": 12,
+              "suppressed": 0
+            },
+            "sample": [
+              {
+                "x": 223.84170973336748,
+                "y": -0.042729611758958175,
+                "z": 38.65593776913711,
+                "at": 854.1510326397793,
+                "material": "stone"
+              },
+              {
+                "x": -68.02194687519918,
+                "y": -0.04234265829002504,
+                "z": 37.358715905816275,
+                "at": 854.2166999997709,
+                "material": "earth"
+              }
+            ]
+          },
+          "camera": {
+            "position": [
+              29.051348562879223,
+              1.6400331456660633,
+              39.999885073935104
+            ],
+            "quaternion": [
+              -0.0000070826121587849006,
+              -0.7071496111883064,
+              0.000007081754185520951,
+              0.707063948519448
+            ],
+            "fov": 70
+          },
+          "draw": 504,
+          "triangles": 867483
+        },
+        {
+          "file": "deck-polish-10-after-05.png",
+          "clock": 855.3166999997699,
+          "offset": 4.817,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 0,
+            "puff": 0,
+            "spark": 0,
+            "smoke": 0,
+            "chip": 0,
+            "speck": 0
+          },
+          "longRange": {
+            "events": 1,
+            "scheduled": 2,
+            "dropped": 0,
+            "live": 0,
+            "pending": 0,
+            "drawn": 0,
+            "airborne": 0,
+            "tracers": {
+              "drawn": 0,
+              "quota": 12,
+              "suppressed": 0
+            },
+            "sample": []
+          },
+          "camera": {
+            "position": [
+              29.05133705909752,
+              1.64,
+              39.999885073935104
+            ],
+            "quaternion": [
+              0,
+              -0.7071496112237752,
+              0,
+              0.7070639485549124
+            ],
+            "fov": 70
+          },
+          "draw": 500,
+          "triangles": 866943
+        },
+        {
+          "file": "deck-polish-10-after-06.png",
+          "clock": 855.5666999997696,
+          "offset": 5.067,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 0,
+            "puff": 0,
+            "spark": 0,
+            "smoke": 0,
+            "chip": 0,
+            "speck": 0
+          },
+          "longRange": {
+            "events": 1,
+            "scheduled": 2,
+            "dropped": 0,
+            "live": 0,
+            "pending": 0,
+            "drawn": 0,
+            "airborne": 0,
+            "tracers": {
+              "drawn": 0,
+              "quota": 12,
+              "suppressed": 0
+            },
+            "sample": []
+          },
+          "camera": {
+            "position": [
+              29.05133705909752,
+              1.64,
+              39.999885073935104
+            ],
+            "quaternion": [
+              0,
+              -0.7071496112237752,
+              0,
+              0.7070639485549124
+            ],
+            "fov": 70
+          },
+          "draw": 500,
+          "triangles": 866943
+        },
+        {
+          "file": "deck-polish-10-after-07.png",
+          "clock": 855.8166999997694,
+          "offset": 5.317,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 0,
+            "puff": 0,
+            "spark": 0,
+            "smoke": 0,
+            "chip": 0,
+            "speck": 0
+          },
+          "longRange": {
+            "events": 1,
+            "scheduled": 2,
+            "dropped": 0,
+            "live": 0,
+            "pending": 0,
+            "drawn": 0,
+            "airborne": 0,
+            "tracers": {
+              "drawn": 0,
+              "quota": 12,
+              "suppressed": 0
+            },
+            "sample": []
+          },
+          "camera": {
+            "position": [
+              29.05133705909752,
+              1.64,
+              39.999885073935104
+            ],
+            "quaternion": [
+              0,
+              -0.7071496112237752,
+              0,
+              0.7070639485549124
+            ],
+            "fov": 70
+          },
+          "draw": 500,
+          "triangles": 866943
+        },
+        {
+          "file": "deck-polish-10-after-08.png",
+          "clock": 856.0666999997692,
+          "offset": 5.567,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 0,
+            "puff": 0,
+            "spark": 0,
+            "smoke": 0,
+            "chip": 0,
+            "speck": 0
+          },
+          "longRange": {
+            "events": 1,
+            "scheduled": 2,
+            "dropped": 0,
+            "live": 0,
+            "pending": 0,
+            "drawn": 0,
+            "airborne": 0,
+            "tracers": {
+              "drawn": 0,
+              "quota": 12,
+              "suppressed": 0
+            },
+            "sample": []
+          },
+          "camera": {
+            "position": [
+              29.05133705909752,
+              1.64,
+              39.999885073935104
+            ],
+            "quaternion": [
+              0,
+              -0.7071496112237752,
+              0,
+              0.7070639485549124
+            ],
+            "fov": 70
+          },
+          "draw": 500,
+          "triangles": 866943
+        },
+        {
+          "file": "deck-polish-10-after-09.png",
+          "clock": 856.316699999769,
+          "offset": 5.817,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 0,
+            "puff": 0,
+            "spark": 0,
+            "smoke": 0,
+            "chip": 0,
+            "speck": 0
+          },
+          "longRange": {
+            "events": 1,
+            "scheduled": 2,
+            "dropped": 0,
+            "live": 0,
+            "pending": 0,
+            "drawn": 0,
+            "airborne": 0,
+            "tracers": {
+              "drawn": 0,
+              "quota": 12,
+              "suppressed": 0
+            },
+            "sample": []
+          },
+          "camera": {
+            "position": [
+              29.05133705909752,
+              1.64,
+              39.999885073935104
+            ],
+            "quaternion": [
+              0,
+              -0.7071496112237752,
+              0,
+              0.7070639485549124
+            ],
+            "fov": 70
+          },
+          "draw": 500,
+          "triangles": 866943
+        }
+      ],
+      "diag": {
+        "clock": 856.8166999997685,
+        "drawCalls": 504,
+        "triangles": 868031,
+        "player": {
+          "x": 29.05133705909752,
+          "y": 0,
+          "z": 39.999885073935104,
+          "angle": 0.00012114530817196701,
+          "pitch": 0,
+          "health": 92,
+          "crouched": false,
+          "aiming": false
+        },
+        "longRange": {
+          "events": 1,
+          "scheduled": 4,
+          "dropped": 0,
+          "live": 2,
+          "pending": 0,
+          "drawn": 2,
+          "airborne": 0,
+          "tracers": {
+            "drawn": 0,
+            "quota": 12,
+            "suppressed": 0
+          },
+          "sample": [
+            {
+              "x": -34.726520616618515,
+              "y": -0.04666150908107647,
+              "z": 44.7772635579009,
+              "at": 856.3666999997689,
+              "material": "earth"
+            },
+            {
+              "x": -33.94565737881749,
+              "y": -0.04130759248418414,
+              "z": 37.820356712367094,
+              "at": 856.4166999997689,
+              "material": "earth"
+            }
+          ]
+        },
+        "memory": null
+      }
+    }
+  ]
+}

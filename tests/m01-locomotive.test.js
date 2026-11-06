@@ -8,6 +8,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {M01Locomotive,locomotiveLOD} from '../src/render/m01-locomotive.js';
 import {M01Simulation} from '../src/game/m01-simulation.js';
 import {integratedPresentation} from './helpers/m01-byte-guard-allowlist.js';
+import {withoutT47,amendment22DocPair,AMENDMENT22_DOCS} from './helpers/m01-layout-t47-delta.js';
 const base='5f3cc34f53c61beec52255d67f8babd7194c9f7f',dir=new URL('../assets/models/production/m01/locomotive/',import.meta.url);
 const manifest=JSON.parse(readFileSync(new URL('manifest.json',dir)));
 const data=lod=>{const b=readFileSync(new URL(manifest.files[lod].file,dir)),n=b.readUInt32LE(12);return {b,j:JSON.parse(b.subarray(20,20+n)),bin:b.subarray(28+n)};};
@@ -42,12 +43,15 @@ test('integration preserves gameplay, RNG, hitboxes/muzzle modules, missions and
   if(integratedPresentation.has(p))continue;
   const baseline=execFileSync('git',['show',base+':'+p],{maxBuffer:32*1024*1024});
   const actual=readFileSync(new URL('../'+p,import.meta.url));
+  if(AMENDMENT22_DOCS.includes(p)){const [now,expected]=amendment22DocPair(p,actual,(c,q)=>execFileSync('git',['show',c+':'+q],{maxBuffer:32*1024*1024}));assert.deepEqual(now,expected,p);continue;}   // golden amendment 22 documentation edits (42a94dd8, af38cf6d, 0cd865f1)
   if(p==='missions/m01-tczew/ENGINE_CONTRACT.md'){
     // PR #43 prepends a documentation-only animation contract. Lock the original gameplay contract byte-for-byte.
     const oldBodyStart=baseline.indexOf(Buffer.from('Dados revistos nos PRs #8 e #10;'));
     assert.ok(oldBodyStart>=0,'baseline engine contract marker');
     assert.ok(actual.includes(baseline.subarray(oldBodyStart)),'the pre-existing M01 engine contract must remain unmodified');
     assert.match(actual.toString('utf8'),/## Apresentação das animações — V1 \(schema 2\)/);
+  }else if(p==='missions/m01-tczew/map-layout.json'||p==='missions/m01-tczew/HISTORICAL_RESEARCH.md'||p==='missions/m01-tczew/MAP.md'){
+    assert.deepEqual(withoutT47(p,actual),baseline,p);   // T47: only the named hunks (three layout hunks, one research row, four MAP.md hunks) differ from the base
   }else{
     assert.deepEqual(actual,baseline,p);
   }

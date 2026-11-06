@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "role": "independent_reviewer_critical",
+  "decision": "ACCEPT",
+  "run_id": "M01-PARTIALS-COMPLETION-20261014",
+  "task_id": "M01-PARTIALS-COMPLETION-INTEGRATION-V1",
+  "accepted_code_head": "e377a0739906507dee63cd4006a3428efd22c56b",
+  "reviewed_metadata_head": "0d480771397e02aada06f8219d255780f203f34e",
+  "retained_production_evidence_head": "9a679c50cdbe9a19330aba72961cb51cda808a5d",
+  "predecessor": "bc8f6a21a57ccd926d4e0655481908d90d6b1978",
+  "verifier_attempt": 5,
+  "verifier_status": "PASS",
+  "context_packet": "VALID at entry and immediately before report writes",
+  "tasks_accepted": ["T02", "T03", "T05", "T06", "T07", "T14", "T24", "T26", "T34", "T36", "T41"],
+  "criteria": {
+    "acceptance": "PASS under original clauses and explicit prospective CAP01/02/03",
+    "scope": "PASS",
+    "evidence": "SUFFICIENT; source-mapped composite browser coverage",
+    "correctness": "PASS; no blocking defect found",
+    "regression_risk": "ACCEPTABLE within authorized scope and stated limits",
+    "architecture": "PASS"
+  },
+  "independent_review_checks": {
+    "all_original_criteria_verbatim_in_roadmap": true,
+    "accepted_source_ancestors": 4,
+    "forbidden_file_delta": [],
+    "production_identity_9a_to_e377": true,
+    "historical_golden_immutable": true,
+    "full_raw_causal_route_hashes_verified": 24,
+    "causal_route_index_passes": 24,
+    "fresh_original_stuka_cases": 5,
+    "fresh_stuka_unexpected_skipped_flaky": [0, 0, 0],
+    "paired_full_state_camera_equal": true,
+    "paired_control_patch_changed_pixels": 0,
+    "paired_whole_frame_control_changed_pixels": [0, 0],
+    "actual_pngs_viewed": ["m01-stuka-bomb.png at e377", "current-0610-13.png at 9a"],
+    "new_expensive_suite_executions": 0
+  },
+  "approved_variances": ["T24-CAMERA-01 / CAPTAIN_AMENDMENT_01", "T36-EXPOSURE-01 / CAPTAIN_AMENDMENT_02/03"],
+  "required_fixes": [],
+  "known_limits": [
+    "Canonical T24 view10 remains physically occluded; clear-line >=1km proof is the approved replacement.",
+    "Finite carry readiness extends combat exposure; two actual additional 8HP impacts are causally attributed under CAP02/03.",
+    "Original matrix42/44 and retry13/14 remain FAIL; fresh Stuka5/5 plus unchanged passed cases is composite proof, not a single full44PASS.",
+    "Black fresh station-release PNG is not body proof; prior independent unmasked crew proof reused only with exact relevant source identity.",
+    "No human playtest, target hardware FPS, physical VRAM or overall M01 production completion claim."
+  ],
+  "budgets_preserved": {"formal_fixes_used": 4, "formal_fixes_max": 4, "prior_ci_retry_used": 1, "prior_ci_retry_max": 1, "historical_failures_retained": true, "reset": false},
+  "report": "docs/verification/m01-runtime/partials-completion-integration-v1/REVIEW.md",
+  "next_action": "Captain records acceptance and completes authorized work-branch PR/integration; no main operation authorized or performed by this review.",
+  "reviewer_mutations": "Only REVIEW.md and REVIEW_RESULT.json; no production/test/tool edits, commit, push, integration or global count changes."
+}

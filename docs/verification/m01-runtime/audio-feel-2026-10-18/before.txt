@@ -1,0 +1,199 @@
+# Audio feel measurement, 200 events per class, distinct keys, deterministic
+
+## single shot kb_wz29 @1 m
+   distinct layer structures: 1/200   10.9% of event pairs indistinguishable
+   crack      n=200/200 freqCV=1.7% gainSD=0.15dB atSD=0.0ms
+   body       n=200/200 freqCV=1.8% gainSD=0.15dB atSD=0.0ms
+   blast      n=200/200 freqCV=1.7% gainSD=0.15dB atSD=0.0ms
+   tail       n=200/200 freqCV=0.0% gainSD=0.14dB atSD=0.0ms
+   echo       n=200/200 freqCV=0.0% gainSD=0.14dB atSD=11.5ms
+## single shot kar98k @15 m
+   distinct layer structures: 1/200   0.9% of event pairs indistinguishable
+   crack      n=200/200 freqCV=3.5% gainSD=0.32dB atSD=0.0ms
+   body       n=200/200 freqCV=3.2% gainSD=0.30dB atSD=0.0ms
+   blast      n=200/200 freqCV=3.4% gainSD=0.29dB atSD=0.0ms
+   mechanism  n=200/200 freqCV=3.3% gainSD=0.00dB atSD=0.0ms
+   tail       n=200/200 freqCV=0.0% gainSD=0.30dB atSD=0.0ms
+   echo       n=200/200 freqCV=0.0% gainSD=0.28dB atSD=14.4ms
+## single shot kar98k @150 m
+   distinct layer structures: 1/200   0.1% of event pairs indistinguishable
+   crack      n=200/200 freqCV=3.5% gainSD=0.32dB atSD=0.0ms
+   body       n=200/200 freqCV=3.2% gainSD=0.30dB atSD=0.0ms
+   blast      n=200/200 freqCV=3.4% gainSD=0.29dB atSD=0.0ms
+   tail       n=200/200 freqCV=0.0% gainSD=0.30dB atSD=0.0ms
+   echo       n=400/200 freqCV=25.9% gainSD=3.04dB atSD=52.9ms
+## single shot kar98k @600 m
+   distinct layer structures: 1/200   0.0% of event pairs indistinguishable
+   crack      n=200/200 freqCV=3.5% gainSD=0.32dB atSD=0.0ms
+   body       n=200/200 freqCV=3.2% gainSD=0.30dB atSD=0.0ms
+   blast      n=200/200 freqCV=3.4% gainSD=0.29dB atSD=0.0ms
+   tail       n=200/200 freqCV=0.0% gainSD=0.30dB atSD=0.0ms
+   echo       n=600/200 freqCV=36.6% gainSD=3.96dB atSD=231.0ms
+## single shot ally_rifle @15 m
+   distinct layer structures: 1/200   0.9% of event pairs indistinguishable
+   crack      n=200/200 freqCV=3.4% gainSD=0.32dB atSD=0.0ms
+   body       n=200/200 freqCV=3.5% gainSD=0.29dB atSD=0.0ms
+   blast      n=200/200 freqCV=3.3% gainSD=0.30dB atSD=0.0ms
+   mechanism  n=200/200 freqCV=3.5% gainSD=0.00dB atSD=0.0ms
+   tail       n=200/200 freqCV=0.0% gainSD=0.31dB atSD=0.0ms
+   echo       n=200/200 freqCV=0.0% gainSD=0.30dB atSD=14.3ms
+## single shot ally_rifle @150 m
+   distinct layer structures: 1/200   0.1% of event pairs indistinguishable
+   crack      n=200/200 freqCV=3.4% gainSD=0.32dB atSD=0.0ms
+   body       n=200/200 freqCV=3.5% gainSD=0.29dB atSD=0.0ms
+   blast      n=200/200 freqCV=3.3% gainSD=0.30dB atSD=0.0ms
+   tail       n=200/200 freqCV=0.0% gainSD=0.31dB atSD=0.0ms
+   echo       n=400/200 freqCV=25.9% gainSD=3.03dB atSD=55.3ms
+## single shot ally_rifle @600 m
+   distinct layer structures: 1/200   0.0% of event pairs indistinguishable
+   crack      n=200/200 freqCV=3.4% gainSD=0.32dB atSD=0.0ms
+   body       n=200/200 freqCV=3.5% gainSD=0.29dB atSD=0.0ms
+   blast      n=200/200 freqCV=3.3% gainSD=0.30dB atSD=0.0ms
+   tail       n=200/200 freqCV=0.0% gainSD=0.31dB atSD=0.0ms
+   echo       n=600/200 freqCV=36.6% gainSD=3.95dB atSD=238.7ms
+## single shot mg34 @15 m
+   distinct layer structures: 1/200   1.0% of event pairs indistinguishable
+   crack      n=200/200 freqCV=2.9% gainSD=0.23dB atSD=0.0ms
+   body       n=200/200 freqCV=2.7% gainSD=0.27dB atSD=0.0ms
+   blast      n=200/200 freqCV=2.8% gainSD=0.26dB atSD=0.0ms
+   mechanism  n=400/200 freqCV=40.0% gainSD=0.00dB atSD=7.0ms
+   tail       n=200/200 freqCV=0.0% gainSD=0.26dB atSD=0.0ms
+   echo       n=200/200 freqCV=0.0% gainSD=0.26dB atSD=13.6ms
+## single shot mg34 @150 m
+   distinct layer structures: 1/200   0.2% of event pairs indistinguishable
+   crack      n=200/200 freqCV=2.9% gainSD=0.23dB atSD=0.0ms
+   body       n=200/200 freqCV=2.7% gainSD=0.27dB atSD=0.0ms
+   blast      n=200/200 freqCV=2.8% gainSD=0.26dB atSD=0.0ms
+   tail       n=200/200 freqCV=0.0% gainSD=0.26dB atSD=0.0ms
+   echo       n=400/200 freqCV=25.9% gainSD=3.01dB atSD=47.6ms
+## single shot mg34 @600 m
+   distinct layer structures: 1/200   0.0% of event pairs indistinguishable
+   crack      n=200/200 freqCV=2.9% gainSD=0.23dB atSD=0.0ms
+   body       n=200/200 freqCV=2.7% gainSD=0.27dB atSD=0.0ms
+   blast      n=200/200 freqCV=2.8% gainSD=0.26dB atSD=0.0ms
+   tail       n=200/200 freqCV=0.0% gainSD=0.26dB atSD=0.0ms
+   echo       n=600/200 freqCV=36.6% gainSD=3.94dB atSD=220.2ms
+## single shot rkm_wz28 @15 m
+   distinct layer structures: 1/200   1.0% of event pairs indistinguishable
+   crack      n=200/200 freqCV=2.9% gainSD=0.24dB atSD=0.0ms
+   body       n=200/200 freqCV=2.8% gainSD=0.26dB atSD=0.0ms
+   blast      n=200/200 freqCV=2.7% gainSD=0.25dB atSD=0.0ms
+   mechanism  n=400/200 freqCV=45.4% gainSD=1.25dB atSD=2.0ms
+   tail       n=200/200 freqCV=0.0% gainSD=0.25dB atSD=0.0ms
+   echo       n=200/200 freqCV=0.0% gainSD=0.26dB atSD=16.4ms
+## single shot rkm_wz28 @150 m
+   distinct layer structures: 1/200   0.1% of event pairs indistinguishable
+   crack      n=200/200 freqCV=2.9% gainSD=0.24dB atSD=0.0ms
+   body       n=200/200 freqCV=2.8% gainSD=0.26dB atSD=0.0ms
+   blast      n=200/200 freqCV=2.7% gainSD=0.25dB atSD=0.0ms
+   tail       n=200/200 freqCV=0.0% gainSD=0.25dB atSD=0.0ms
+   echo       n=400/200 freqCV=25.9% gainSD=3.01dB atSD=60.3ms
+## single shot rkm_wz28 @600 m
+   distinct layer structures: 1/200   0.0% of event pairs indistinguishable
+   crack      n=200/200 freqCV=2.9% gainSD=0.24dB atSD=0.0ms
+   body       n=200/200 freqCV=2.8% gainSD=0.26dB atSD=0.0ms
+   blast      n=200/200 freqCV=2.7% gainSD=0.25dB atSD=0.0ms
+   tail       n=200/200 freqCV=0.0% gainSD=0.25dB atSD=0.0ms
+   echo       n=600/200 freqCV=36.6% gainSD=3.94dB atSD=246.8ms
+## single shot ckm_wz30 @15 m
+   distinct layer structures: 1/200   1.6% of event pairs indistinguishable
+   crack      n=200/200 freqCV=2.4% gainSD=0.20dB atSD=0.0ms
+   body       n=200/200 freqCV=2.3% gainSD=0.20dB atSD=0.0ms
+   blast      n=200/200 freqCV=2.3% gainSD=0.20dB atSD=0.0ms
+   mechanism  n=400/200 freqCV=64.8% gainSD=1.05dB atSD=14.0ms
+   tail       n=200/200 freqCV=0.0% gainSD=0.20dB atSD=0.0ms
+   echo       n=200/200 freqCV=0.0% gainSD=0.20dB atSD=18.8ms
+## single shot ckm_wz30 @150 m
+   distinct layer structures: 1/200   0.1% of event pairs indistinguishable
+   crack      n=200/200 freqCV=2.4% gainSD=0.20dB atSD=0.0ms
+   body       n=200/200 freqCV=2.3% gainSD=0.20dB atSD=0.0ms
+   blast      n=200/200 freqCV=2.3% gainSD=0.20dB atSD=0.0ms
+   tail       n=200/200 freqCV=0.0% gainSD=0.20dB atSD=0.0ms
+   echo       n=400/200 freqCV=25.9% gainSD=3.00dB atSD=70.4ms
+## single shot ckm_wz30 @600 m
+   distinct layer structures: 1/200   0.0% of event pairs indistinguishable
+   crack      n=200/200 freqCV=2.4% gainSD=0.20dB atSD=0.0ms
+   body       n=200/200 freqCV=2.3% gainSD=0.20dB atSD=0.0ms
+   blast      n=200/200 freqCV=2.3% gainSD=0.20dB atSD=0.0ms
+   tail       n=200/200 freqCV=0.0% gainSD=0.20dB atSD=0.0ms
+   echo       n=600/200 freqCV=36.6% gainSD=3.93dB atSD=266.4ms
+## burst mg34 interval 0.075s: gap mean=75.00ms sd=0.00ms (min 75.0 max 75.0)
+## burst rkm_wz28 interval 0.11s: gap mean=110.00ms sd=0.00ms (min 110.0 max 110.0)
+## burst ckm_wz30 interval 0.1s: gap mean=100.00ms sd=0.00ms (min 100.0 max 100.0)
+## display-fire burst mg34 (cadenceJitter .06): gap mean=75.00ms sd=0.00ms (min 75.0 max 75.0)
+## variants per family: none (every event of a class has one structure)
+## impact earth @8 m
+   distinct layer structures: 1/200   0.0% of event pairs indistinguishable
+   hit        n=200/200 freqCV=6.0% gainSD=0.00dB atSD=0.0ms
+   thud       n=200/200 freqCV=5.7% gainSD=0.00dB atSD=0.0ms
+   spray      n=600/200 freqCV=17.6% gainSD=0.00dB atSD=45.6ms
+## impact wood @8 m
+   distinct layer structures: 1/200   2.8% of event pairs indistinguishable
+   hit        n=200/200 freqCV=5.7% gainSD=0.00dB atSD=0.0ms
+   knock      n=200/200 freqCV=5.9% gainSD=0.00dB atSD=0.0ms
+   splinter   n=400/200 freqCV=0.0% gainSD=0.00dB atSD=18.5ms
+## impact metal @8 m
+   distinct layer structures: 2/200   1.2% of event pairs indistinguishable
+   hit        n=200/200 freqCV=5.8% gainSD=0.00dB atSD=0.0ms
+   ring       n=600/200 freqCV=33.7% gainSD=4.30dB atSD=0.0ms
+   ricochet   n= 88/200 freqCV=11.4% gainSD=0.00dB atSD=0.0ms
+   ricochet-air n= 88/200 freqCV=11.4% gainSD=0.00dB atSD=0.0ms
+## impact stone @8 m
+   distinct layer structures: 2/200   0.1% of event pairs indistinguishable
+   hit        n=200/200 freqCV=5.7% gainSD=0.00dB atSD=0.0ms
+   knock      n=200/200 freqCV=5.7% gainSD=0.00dB atSD=0.0ms
+   chips      n=600/200 freqCV=0.0% gainSD=0.00dB atSD=39.8ms
+   ricochet   n= 54/200 freqCV=11.7% gainSD=0.00dB atSD=0.0ms
+   ricochet-air n= 54/200 freqCV=11.7% gainSD=0.00dB atSD=0.0ms
+## impact brick @8 m
+   distinct layer structures: 1/200   0.2% of event pairs indistinguishable
+   hit        n=200/200 freqCV=5.9% gainSD=0.00dB atSD=0.0ms
+   knock      n=200/200 freqCV=5.5% gainSD=0.00dB atSD=0.0ms
+   chips      n=600/200 freqCV=0.0% gainSD=0.00dB atSD=40.0ms
+## impact water @8 m
+   distinct layer structures: 1/200   9.9% of event pairs indistinguishable
+   plop       n=200/200 freqCV=5.7% gainSD=0.00dB atSD=0.0ms
+   splash     n=200/200 freqCV=5.7% gainSD=0.00dB atSD=0.0ms
+## explosion small @60 m
+   distinct layer structures: 1/200   0.0% of event pairs indistinguishable
+   transient  n=200/200 freqCV=5.5% gainSD=0.00dB atSD=0.0ms
+   blast      n=200/200 freqCV=5.9% gainSD=0.00dB atSD=0.0ms
+   body       n=200/200 freqCV=6.0% gainSD=0.00dB atSD=0.0ms
+   sub        n=200/200 freqCV=5.6% gainSD=0.00dB atSD=0.0ms
+   tail       n=200/200 freqCV=0.0% gainSD=0.00dB atSD=0.0ms
+   echo       n=400/200 freqCV=23.1% gainSD=2.34dB atSD=181.8ms
+## explosion large @60 m
+   distinct layer structures: 1/200   0.0% of event pairs indistinguishable
+   transient  n=200/200 freqCV=5.9% gainSD=0.00dB atSD=0.0ms
+   blast      n=200/200 freqCV=5.8% gainSD=0.00dB atSD=0.0ms
+   body       n=200/200 freqCV=6.2% gainSD=0.00dB atSD=0.0ms
+   sub        n=200/200 freqCV=5.9% gainSD=0.00dB atSD=0.0ms
+   tail       n=200/200 freqCV=0.0% gainSD=0.00dB atSD=0.0ms
+   echo       n=400/200 freqCV=23.1% gainSD=2.34dB atSD=188.4ms
+## bullet crack (near miss)
+   distinct layer structures: 1/200   5.7% of event pairs indistinguishable
+   crack      n=200/200 freqCV=4.5% gainSD=0.41dB atSD=0.0ms
+   snap       n=200/200 freqCV=4.6% gainSD=0.00dB atSD=0.0ms
+   flutter    n=200/200 freqCV=4.6% gainSD=0.00dB atSD=0.0ms
+## bullet whizz
+   distinct layer structures: 1/200   15.0% of event pairs indistinguishable
+   whizz      n=200/200 freqCV=4.5% gainSD=0.41dB atSD=0.0ms
+   whizz-tone n=200/200 freqCV=4.6% gainSD=0.00dB atSD=0.0ms
+## wz29 bolt mechanism: 1/40 perceptually distinct renderings; 3.0 sources and 18.0 new nodes per call
+## wz29 reload clip: 1/40 perceptually distinct renderings; 3.0 sources and 18.0 new nodes per call
+## wz29 reload (reload()): 1/40 perceptually distinct renderings; 4.0 sources and 24.0 new nodes per call
+## player hit: 1/40 perceptually distinct renderings; 1.0 sources and 6.0 new nodes per call
+## landing speed 6: 1/40 perceptually distinct renderings; 2.0 sources and 12.0 new nodes per call
+## wz29 shot (player): 36/40 perceptually distinct renderings; 5.0 sources and 18.0 new nodes per call
+## kar98k 150 m: 40/40 perceptually distinct renderings; 6.0 sources and 21.0 new nodes per call
+## footstep (if present): 1/40 perceptually distinct renderings; 0.0 sources and 0.0 new nodes per call
+## distance model (acousticShape, weapon): d gain filterHz send
+       1 m  gain=1.000 lp=17813 send=0.14 delay=3ms band=close
+       5 m  gain=0.986 lp=17100 send=0.15 delay=15ms band=close
+      15 m  gain=0.864 lp=15545 send=0.16 delay=44ms band=close
+      45 m  gain=0.631 lp=12214 send=0.20 delay=131ms band=mid
+     100 m  gain=0.422 lp=8769 send=0.28 delay=292ms band=mid
+     220 m  gain=0.245 lp=5429 send=0.45 delay=641ms band=distant
+     450 m  gain=0.136 lp=3138 send=0.78 delay=1312ms band=distant
+     950 m  gain=0.069 lp=1636 send=0.82 delay=2770ms band=very-distant
+    2000 m  gain=0.034 lp=816 send=0.82 delay=5831ms band=very-distant

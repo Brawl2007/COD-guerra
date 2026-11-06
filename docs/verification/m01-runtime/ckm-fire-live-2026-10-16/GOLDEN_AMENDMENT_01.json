@@ -1,0 +1,192 @@
+{
+  "task": "M01-T47-CKM-LIVE-FIRE-V1",
+  "amendment": "amendment-01",
+  "beforeCommit": "ab98199c7b50a6682a5deef2e461dc83b7737247",
+  "beforeSourceSha256": "0c6e4eb354f7643e416e72a5c077c5bc362873fd8139fcbd6f15bea375ecfe8c",
+  "beforeFixture": "tests/fixtures/m01-t47-gameplay-baseline-before-amendment-01.json",
+  "beforeFixtureSha256": "45facd521d1bf86cf88099c91b5724c5e73b0f86a5a7f950fe73f2fda8340963",
+  "beforeAudit": "docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT_BEFORE_AMENDMENT_01.json",
+  "beforeAuditSha256": "c980f82cace48e0dfb172258da7c2d7ddc92efb9a5b92e716480703e97889088",
+  "afterSourceSha256": "276215dae9b74831e08dbc3f01b3c7748277a679a547343d982641e742b7d3f3",
+  "afterFixtureSha256": "0556f0e3704f79764acce35144bb847aeeb901edfc6ce1faf318169378dba663",
+  "afterAuditSha256": "2a7dd733454a4a3598dba3f400488a81b756ac2fb8bf2c2f1886f02a7e45fb29",
+  "change": "A round of the ckm beaten zone that lands within 3 m of one of the two MG34 gunners suppresses or hits him like any other German (they are still never chosen as the target); BEFORE shielded them.",
+  "rule": "Per-tick gameplay frames (state, nested checkpoint, events; presentation fields removed as in the golden) are byte-identical until the first tick at which a landed ckm round touches an MG34 gunner, where the first difference is a field of that MG34 gunner; on a route where none does, every tick of the route is byte-identical. The old simulation on this tree reproduces the first golden, so nothing but the source moved.",
+  "routes": [
+    {
+      "seed": 19390901,
+      "support": false,
+      "firstMg34Effect": {
+        "tick": 5320,
+        "clock": 266.0000000000262,
+        "round": "ckm_0_0",
+        "id": "de_east_0",
+        "effect": "suppressed"
+      },
+      "firstDivergenceTick": 5320,
+      "identicalTicksBeforeIt": 5319,
+      "firstDifferencePath": "$.state.actors.12.suppressedUntil",
+      "firstDifferenceActor": "de_east_0",
+      "firstDifferenceWeapon": "mg34",
+      "identicalBlocks": 10,
+      "firstDifferingBlockTick": 5632,
+      "oldTicks": 21632,
+      "newTicks": 21828,
+      "oldBlocks": 43,
+      "newBlocks": 43,
+      "complete": true,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "liveBefore": {
+        "bursts": 78,
+        "roundsIssued": 624,
+        "hits": 6,
+        "kills": [
+          "de_east_3"
+        ],
+        "menHit": [
+          "de_east_12",
+          "de_east_3",
+          "de_east_10",
+          "de_east_5",
+          "de_east_7"
+        ],
+        "menSuppressed": [
+          "de_east_13",
+          "de_east_12",
+          "de_east_6",
+          "de_east_7",
+          "de_east_8",
+          "de_east_9",
+          "de_east_5",
+          "de_east_11",
+          "de_east_10",
+          "de_east_3",
+          "de_east_4",
+          "de_east_2"
+        ],
+        "suppressionEvents": 607,
+        "repairPins": 37,
+        "repairCompleteSec": 402.05000000005714
+      },
+      "liveAfter": {
+        "bursts": 77,
+        "roundsIssued": 616,
+        "hits": 7,
+        "kills": [
+          "de_east_5"
+        ],
+        "menHit": [
+          "de_east_5",
+          "de_east_1",
+          "de_east_13",
+          "de_east_4",
+          "de_east_8",
+          "de_east_3"
+        ],
+        "menSuppressed": [
+          "de_east_0",
+          "de_east_13",
+          "de_east_12",
+          "de_east_6",
+          "de_east_7",
+          "de_east_8",
+          "de_east_9",
+          "de_east_5",
+          "de_east_11",
+          "de_east_10",
+          "de_east_2",
+          "de_east_3",
+          "de_east_1",
+          "de_east_4"
+        ],
+        "suppressionEvents": 688,
+        "repairPins": 47,
+        "repairCompleteSec": 416.70000000006047
+      }
+    },
+    {
+      "seed": 7,
+      "support": true,
+      "firstMg34Effect": null,
+      "firstDivergenceTick": null,
+      "identicalTicksBeforeIt": 21296,
+      "firstDifferencePath": null,
+      "firstDifferenceActor": null,
+      "firstDifferenceWeapon": null,
+      "identicalBlocks": 42,
+      "firstDifferingBlockTick": null,
+      "oldTicks": 21296,
+      "newTicks": 21296,
+      "oldBlocks": 42,
+      "newBlocks": 42,
+      "complete": true,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "liveBefore": {
+        "bursts": 72,
+        "roundsIssued": 576,
+        "hits": 4,
+        "kills": [],
+        "menHit": [
+          "de_east_6",
+          "de_east_13",
+          "de_east_3",
+          "de_east_2"
+        ],
+        "menSuppressed": [
+          "de_east_8",
+          "de_east_12",
+          "de_east_13",
+          "de_east_10",
+          "de_east_11",
+          "de_east_9",
+          "de_east_6",
+          "de_east_7",
+          "de_east_2",
+          "de_east_3",
+          "de_east_5"
+        ],
+        "suppressionEvents": 528,
+        "repairPins": 7,
+        "repairCompleteSec": 376.8000000000514
+      },
+      "liveAfter": {
+        "bursts": 72,
+        "roundsIssued": 576,
+        "hits": 4,
+        "kills": [],
+        "menHit": [
+          "de_east_6",
+          "de_east_13",
+          "de_east_3",
+          "de_east_2"
+        ],
+        "menSuppressed": [
+          "de_east_8",
+          "de_east_12",
+          "de_east_13",
+          "de_east_10",
+          "de_east_11",
+          "de_east_9",
+          "de_east_6",
+          "de_east_7",
+          "de_east_2",
+          "de_east_3",
+          "de_east_5"
+        ],
+        "suppressionEvents": 528,
+        "repairPins": 7,
+        "repairCompleteSec": 376.8000000000514
+      }
+    }
+  ]
+}

@@ -1,0 +1,2418 @@
+{
+  "task": "M01-NPC-NAVIGATION-V1",
+  "amendment": "amendment-05",
+  "predecessor": "c7d834126e9f94195379b331370b14ebb465224c",
+  "predecessorSourceSha256": "64523d0c78cddde49c0e87eac38790f55738743cd4bc6d562853c8d2a5f39482",
+  "sourceSha256": "e961cc5566a0acad80115dff5f2ad1be971b86a7604c6f62800b2fe13075c2b8",
+  "previousGolden": {
+    "task": "M01-T47-CKM-LIVE-FIRE-V1",
+    "file": "tests/fixtures/m01-t47-gameplay-baseline.json",
+    "sha256": "acd056fef28ae28eeb07662f8f98b785fd56f6fd2eec2be46af0f634831bc251",
+    "sourceSha256": "64523d0c78cddde49c0e87eac38790f55738743cd4bc6d562853c8d2a5f39482"
+  },
+  "navigationFields": "^\\$\\.(state|checkpoint)\\.actors\\.\\d+\\.(x|y|z|facing|state|crouched|nav)$",
+  "routes": [
+    {
+      "seed": 19390901,
+      "support": false,
+      "oldTicks": 21885,
+      "newTicks": 21888,
+      "firstDifference": {
+        "tick": 356,
+        "clock": 17.800000000000118,
+        "path": "$.state.actors.2.x",
+        "actor": "tadeusz_nowicki",
+        "predecessor": 16.821342178050205,
+        "live": 16.82002004565962,
+        "missing": false
+      },
+      "identicalTicksBeforeIt": 355,
+      "identicalBlocks": 0,
+      "routeWindows": {
+        "tadeusz_nowicki": {
+          "firstClock": 17.800000000000118,
+          "lastClock": 23.900000000000205,
+          "ticks": 123
+        },
+        "jozef_bak": {
+          "firstClock": 467.0500000000719,
+          "lastClock": 485.8500000000762,
+          "ticks": 377
+        },
+        "pl_east_17": {
+          "firstClock": 705.599999999906,
+          "lastClock": 705.599999999906,
+          "ticks": 1
+        },
+        "ckm_reserve": {
+          "firstClock": 771.1499999998464,
+          "lastClock": 771.2499999998463,
+          "ticks": 3
+        },
+        "leon_dudek": {
+          "firstClock": 796.3499999998235,
+          "lastClock": 803.399999999817,
+          "ticks": 142
+        }
+      },
+      "endState": {
+        "identical": {
+          "objectives": true,
+          "checkpoints": true,
+          "consumedEventIds": true,
+          "survivors": true,
+          "finalBattleClock": true,
+          "complete": true
+        },
+        "predecessorOwnRoute": {
+          "ticks": 21885,
+          "battleClock": 25500,
+          "survivors": 12,
+          "playerHealth": 92
+        },
+        "live": {
+          "ticks": 21888,
+          "battleClock": 25500,
+          "survivors": 12,
+          "playerHealth": 92
+        },
+        "movedEvents": [
+          {
+            "event": "evt_m01_debrief",
+            "predecessorOwnRoute": 1094.2499999995525,
+            "live": 1094.3999999995524,
+            "shiftSec": 0.14999999999986358
+          },
+          {
+            "event": "evt_m01_kozliny_attack_distant",
+            "predecessorOwnRoute": 1094.1999999995526,
+            "live": 1094.3499999995524,
+            "shiftSec": 0.14999999999986358
+          },
+          {
+            "event": "evt_m01_roll_call",
+            "predecessorOwnRoute": 1094.1999999995526,
+            "live": 1094.3499999995524,
+            "shiftSec": 0.14999999999986358
+          },
+          {
+            "event": "evt_m01_west_demolition",
+            "predecessorOwnRoute": 1079.1999999995662,
+            "live": 1079.349999999566,
+            "shiftSec": 0.14999999999986358
+          }
+        ]
+      },
+      "measured": {
+        "clipping": {
+          "predecessor": {
+            "ticks": 21885,
+            "events": 14,
+            "list": [
+              "1 t=0.05 marek_zielinski [-/-/GUARD] overlap player:prop:player:t12_82:jerrycans at (-71.1,21.5)",
+              "456 t=22.8 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_portal_pier_s_5 at (-1.04,5.22)",
+              "464 t=23.2 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_portal_pier_s_4 at (-1.04,6.81)",
+              "472 t=23.6 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_abutment_parapet_s at (-1.04,8.34)",
+              "472 t=23.6 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_portal_pier_s_3 at (-1.04,8.34)",
+              "480 t=24 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_portal_pier_s_2 at (-1.04,9.82)",
+              "9345 t=467.25 jozef_bak [-/-/ADVANCE] overlap player:prop:player:t12_82:jerrycans at (-71.61,20.74)",
+              "9639 t=481.95 jozef_bak [-/-/ADVANCE] overlap player:bridge:player:road_abutment_parapet_n at (-21.85,30.59)",
+              "9720 t=486 jozef_bak [-/-/ADVANCE] overlap player:bridge:player:road_portal_pier_n_2 at (-7.4,32.55)",
+              "9747 t=487.35 jozef_bak [-/-/ADVANCE] overlap player:bridge:player:road_portal_pier_n_3 at (-7.04,37.51)",
+              "15425 t=771.25 ckm_reserve [grp_ckm_crew/-/RETREAT] overlap sandbag:ckm_sandbag_back_2 at (5.03,24.6)",
+              "15429 t=771.45 ckm_gunner [grp_ckm_crew/-/RETREAT] overlap sandbag:ckm_sandbag_back_2 at (5.12,25.94)",
+              "15434 t=771.7 ckm_loader [grp_ckm_crew/-/RETREAT] overlap sandbag:ckm_sandbag_back_2 at (5.09,25.45)",
+              "16381 t=819.05 leon_dudek [-/evacuate_bak/ADVANCE] overlap player:bridge:player:road_portal_pier_n_3 at (-6.96,37.52)"
+            ],
+            "placements": 16
+          },
+          "live": {
+            "ticks": 21888,
+            "events": 0,
+            "list": [],
+            "placements": 16
+          }
+        },
+        "stacked": {
+          "predecessor": {
+            "pairs": 49,
+            "longestStayTicks": 6260,
+            "list": [
+              {
+                "pair": "marek_zielinski|staszek_pawlak",
+                "first": 71.1,
+                "episodes": 2,
+                "longestTicks": 5995
+              },
+              {
+                "pair": "leon_dudek|generic_rifleman",
+                "first": 215.3,
+                "episodes": 1,
+                "longestTicks": 4
+              },
+              {
+                "pair": "szymon_kowal|jozef_bak",
+                "first": 468,
+                "episodes": 1,
+                "longestTicks": 3
+              },
+              {
+                "pair": "pl_east_0|pl_east_1",
+                "first": 696.75,
+                "episodes": 2,
+                "longestTicks": 1206
+              },
+              {
+                "pair": "pl_east_16|pl_east_17",
+                "first": 698.65,
+                "episodes": 1,
+                "longestTicks": 600
+              },
+              {
+                "pair": "pl_east_8|pl_east_9",
+                "first": 700,
+                "episodes": 2,
+                "longestTicks": 1114
+              },
+              {
+                "pair": "marek_zielinski|sapper_3",
+                "first": 781.2,
+                "episodes": 1,
+                "longestTicks": 6260
+              },
+              {
+                "pair": "sapper_2|sapper_3",
+                "first": 781.45,
+                "episodes": 1,
+                "longestTicks": 6255
+              },
+              {
+                "pair": "marek_zielinski|sapper_2",
+                "first": 781.5,
+                "episodes": 1,
+                "longestTicks": 6254
+              },
+              {
+                "pair": "pawel_krawiec|sapper_2",
+                "first": 781.85,
+                "episodes": 1,
+                "longestTicks": 6247
+              },
+              {
+                "pair": "pawel_krawiec|sapper_3",
+                "first": 781.85,
+                "episodes": 1,
+                "longestTicks": 6247
+              },
+              {
+                "pair": "marek_zielinski|pawel_krawiec",
+                "first": 781.9,
+                "episodes": 1,
+                "longestTicks": 6246
+              },
+              {
+                "pair": "staszek_pawlak|sapper_2",
+                "first": 794.4,
+                "episodes": 1,
+                "longestTicks": 5996
+              },
+              {
+                "pair": "staszek_pawlak|sapper_3",
+                "first": 794.4,
+                "episodes": 1,
+                "longestTicks": 5996
+              },
+              {
+                "pair": "pawel_krawiec|staszek_pawlak",
+                "first": 794.45,
+                "episodes": 1,
+                "longestTicks": 5995
+              },
+              {
+                "pair": "staszek_pawlak|east_platoon_voice",
+                "first": 794.6,
+                "episodes": 1,
+                "longestTicks": 5992
+              },
+              {
+                "pair": "marek_zielinski|east_platoon_voice",
+                "first": 794.65,
+                "episodes": 1,
+                "longestTicks": 5991
+              },
+              {
+                "pair": "pawel_krawiec|east_platoon_voice",
+                "first": 794.65,
+                "episodes": 1,
+                "longestTicks": 5991
+              },
+              {
+                "pair": "sapper_2|east_platoon_voice",
+                "first": 794.65,
+                "episodes": 1,
+                "longestTicks": 5991
+              },
+              {
+                "pair": "sapper_3|east_platoon_voice",
+                "first": 794.65,
+                "episodes": 1,
+                "longestTicks": 5991
+              },
+              {
+                "pair": "szymon_kowal|staszek_pawlak",
+                "first": 795.25,
+                "episodes": 1,
+                "longestTicks": 5979
+              },
+              {
+                "pair": "szymon_kowal|sapper_3",
+                "first": 795.25,
+                "episodes": 1,
+                "longestTicks": 5979
+              },
+              {
+                "pair": "szymon_kowal|east_platoon_voice",
+                "first": 795.25,
+                "episodes": 1,
+                "longestTicks": 5979
+              },
+              {
+                "pair": "marek_zielinski|szymon_kowal",
+                "first": 795.3,
+                "episodes": 1,
+                "longestTicks": 5978
+              },
+              {
+                "pair": "pawel_krawiec|szymon_kowal",
+                "first": 795.3,
+                "episodes": 1,
+                "longestTicks": 5978
+              },
+              {
+                "pair": "szymon_kowal|sapper_2",
+                "first": 795.3,
+                "episodes": 1,
+                "longestTicks": 5978
+              },
+              {
+                "pair": "staszek_pawlak|ckm_gunner",
+                "first": 819.8,
+                "episodes": 1,
+                "longestTicks": 5488
+              },
+              {
+                "pair": "szymon_kowal|ckm_gunner",
+                "first": 819.85,
+                "episodes": 1,
+                "longestTicks": 5487
+              },
+              {
+                "pair": "sapper_2|ckm_gunner",
+                "first": 819.85,
+                "episodes": 1,
+                "longestTicks": 5487
+              },
+              {
+                "pair": "sapper_3|ckm_gunner",
+                "first": 819.85,
+                "episodes": 1,
+                "longestTicks": 5487
+              },
+              {
+                "pair": "east_platoon_voice|ckm_gunner",
+                "first": 819.85,
+                "episodes": 1,
+                "longestTicks": 5489
+              },
+              {
+                "pair": "marek_zielinski|ckm_gunner",
+                "first": 819.9,
+                "episodes": 1,
+                "longestTicks": 5486
+              },
+              {
+                "pair": "pawel_krawiec|ckm_gunner",
+                "first": 819.9,
+                "episodes": 1,
+                "longestTicks": 5486
+              },
+              {
+                "pair": "pl_east_6|pl_east_7",
+                "first": 896.05,
+                "episodes": 1,
+                "longestTicks": 862
+              },
+              {
+                "pair": "pl_east_0|pl_east_2",
+                "first": 937.6,
+                "episodes": 1,
+                "longestTicks": 3
+              },
+              {
+                "pair": "pl_east_0|pl_east_3",
+                "first": 937.8,
+                "episodes": 1,
+                "longestTicks": 3
+              },
+              {
+                "pair": "pl_east_1|pl_east_2",
+                "first": 937.9,
+                "episodes": 1,
+                "longestTicks": 3
+              },
+              {
+                "pair": "pl_east_1|pl_east_3",
+                "first": 938.1,
+                "episodes": 1,
+                "longestTicks": 2
+              },
+              {
+                "pair": "pl_east_4|pl_east_5",
+                "first": 938.1,
+                "episodes": 1,
+                "longestTicks": 2
+              },
+              {
+                "pair": "pl_east_4|pl_east_6",
+                "first": 938.35,
+                "episodes": 1,
+                "longestTicks": 3
+              },
+              {
+                "pair": "pl_east_2|pl_east_3",
+                "first": 938.4,
+                "episodes": 1,
+                "longestTicks": 3
+              },
+              {
+                "pair": "pl_east_4|pl_east_7",
+                "first": 938.45,
+                "episodes": 1,
+                "longestTicks": 2
+              },
+              {
+                "pair": "pl_east_5|pl_east_6",
+                "first": 938.7,
+                "episodes": 1,
+                "longestTicks": 2
+              },
+              {
+                "pair": "pl_east_5|pl_east_7",
+                "first": 938.75,
+                "episodes": 1,
+                "longestTicks": 3
+              },
+              {
+                "pair": "pl_east_8|pl_east_10",
+                "first": 939,
+                "episodes": 1,
+                "longestTicks": 2
+              },
+              {
+                "pair": "pl_east_8|pl_east_11",
+                "first": 939.15,
+                "episodes": 1,
+                "longestTicks": 3
+              },
+              {
+                "pair": "pl_east_9|pl_east_10",
+                "first": 939.25,
+                "episodes": 1,
+                "longestTicks": 3
+              },
+              {
+                "pair": "pl_east_9|pl_east_11",
+                "first": 939.4,
+                "episodes": 1,
+                "longestTicks": 3
+              },
+              {
+                "pair": "pl_east_10|pl_east_11",
+                "first": 939.75,
+                "episodes": 1,
+                "longestTicks": 2
+              }
+            ]
+          },
+          "live": {
+            "pairs": 0,
+            "longestStayTicks": 0,
+            "list": []
+          }
+        }
+      }
+    },
+    {
+      "seed": 7,
+      "support": true,
+      "oldTicks": 21399,
+      "newTicks": 21404,
+      "firstDifference": {
+        "tick": 356,
+        "clock": 17.800000000000118,
+        "path": "$.state.actors.2.x",
+        "actor": "tadeusz_nowicki",
+        "predecessor": 16.821342178050205,
+        "live": 16.82002004565962,
+        "missing": false
+      },
+      "identicalTicksBeforeIt": 355,
+      "identicalBlocks": 0,
+      "routeWindows": {
+        "tadeusz_nowicki": {
+          "firstClock": 17.800000000000118,
+          "lastClock": 23.900000000000205,
+          "ticks": 123
+        },
+        "jozef_bak": {
+          "firstClock": 441.9000000000662,
+          "lastClock": 460.7000000000705,
+          "ticks": 377
+        },
+        "pl_east_17": {
+          "firstClock": 680.4499999999289,
+          "lastClock": 680.4499999999289,
+          "ticks": 1
+        },
+        "ckm_reserve": {
+          "firstClock": 746.9499999998684,
+          "lastClock": 747.0499999998683,
+          "ticks": 3
+        },
+        "leon_dudek": {
+          "firstClock": 772.1499999998455,
+          "lastClock": 779.1999999998391,
+          "ticks": 142
+        }
+      },
+      "endState": {
+        "identical": {
+          "objectives": true,
+          "checkpoints": true,
+          "consumedEventIds": true,
+          "survivors": true,
+          "finalBattleClock": true,
+          "complete": true
+        },
+        "predecessorOwnRoute": {
+          "ticks": 21399,
+          "battleClock": 25500,
+          "survivors": 18,
+          "playerHealth": 100
+        },
+        "live": {
+          "ticks": 21404,
+          "battleClock": 25500,
+          "survivors": 18,
+          "playerHealth": 100
+        },
+        "movedEvents": [
+          {
+            "event": "evt_m01_debrief",
+            "predecessorOwnRoute": 1069.9499999995746,
+            "live": 1070.1999999995744,
+            "shiftSec": 0.24999999999977263
+          },
+          {
+            "event": "evt_m01_dudek_retrieves_bak",
+            "predecessorOwnRoute": 771.9999999998456,
+            "live": 772.0999999998455,
+            "shiftSec": 0.09999999999990905
+          },
+          {
+            "event": "evt_m01_east_demolition",
+            "predecessorOwnRoute": 743.7499999998713,
+            "live": 743.8499999998712,
+            "shiftSec": 0.09999999999990905
+          },
+          {
+            "event": "evt_m01_kozliny_attack_distant",
+            "predecessorOwnRoute": 1069.8999999995747,
+            "live": 1070.1499999995744,
+            "shiftSec": 0.24999999999977263
+          },
+          {
+            "event": "evt_m01_roll_call",
+            "predecessorOwnRoute": 1069.8999999995747,
+            "live": 1070.1499999995744,
+            "shiftSec": 0.24999999999977263
+          },
+          {
+            "event": "evt_m01_west_demolition",
+            "predecessorOwnRoute": 1054.8999999995883,
+            "live": 1055.149999999588,
+            "shiftSec": 0.24999999999977263
+          }
+        ]
+      },
+      "measured": {
+        "clipping": {
+          "predecessor": {
+            "ticks": 21399,
+            "events": 14,
+            "list": [
+              "1 t=0.05 marek_zielinski [-/-/GUARD] overlap player:prop:player:t12_82:jerrycans at (-71.1,21.5)",
+              "456 t=22.8 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_portal_pier_s_5 at (-1.04,5.22)",
+              "464 t=23.2 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_portal_pier_s_4 at (-1.04,6.81)",
+              "472 t=23.6 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_abutment_parapet_s at (-1.04,8.34)",
+              "472 t=23.6 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_portal_pier_s_3 at (-1.04,8.34)",
+              "480 t=24 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_portal_pier_s_2 at (-1.04,9.82)",
+              "8842 t=442.1 jozef_bak [-/-/ADVANCE] overlap player:prop:player:t12_82:jerrycans at (-71.61,20.74)",
+              "9136 t=456.8 jozef_bak [-/-/ADVANCE] overlap player:bridge:player:road_abutment_parapet_n at (-21.85,30.59)",
+              "9217 t=460.85 jozef_bak [-/-/ADVANCE] overlap player:bridge:player:road_portal_pier_n_2 at (-7.4,32.55)",
+              "9244 t=462.2 jozef_bak [-/-/ADVANCE] overlap player:bridge:player:road_portal_pier_n_3 at (-7.04,37.51)",
+              "14939 t=746.95 ckm_reserve [grp_ckm_crew/-/RETREAT] overlap sandbag:ckm_sandbag_back_2 at (5.03,24.6)",
+              "14943 t=747.15 ckm_gunner [grp_ckm_crew/-/RETREAT] overlap sandbag:ckm_sandbag_back_2 at (5.12,25.94)",
+              "14948 t=747.4 ckm_loader [grp_ckm_crew/-/RETREAT] overlap sandbag:ckm_sandbag_back_2 at (5.09,25.45)",
+              "15895 t=794.75 leon_dudek [-/evacuate_bak/ADVANCE] overlap player:bridge:player:road_portal_pier_n_3 at (-6.96,37.52)"
+            ],
+            "placements": 16
+          },
+          "live": {
+            "ticks": 21404,
+            "events": 0,
+            "list": [],
+            "placements": 16
+          }
+        },
+        "stacked": {
+          "predecessor": {
+            "pairs": 55,
+            "longestStayTicks": 6260,
+            "list": [
+              {
+                "pair": "marek_zielinski|staszek_pawlak",
+                "first": 71.1,
+                "episodes": 2,
+                "longestTicks": 5995
+              },
+              {
+                "pair": "leon_dudek|generic_rifleman",
+                "first": 215.3,
+                "episodes": 1,
+                "longestTicks": 4
+              },
+              {
+                "pair": "szymon_kowal|jozef_bak",
+                "first": 442.85,
+                "episodes": 1,
+                "longestTicks": 3
+              },
+              {
+                "pair": "pl_east_0|pl_east_1",
+                "first": 671.6,
+                "episodes": 2,
+                "longestTicks": 1206
+              },
+              {
+                "pair": "pl_east_16|pl_east_17",
+                "first": 673.5,
+                "episodes": 2,
+                "longestTicks": 1215
+              },
+              {
+                "pair": "pl_east_8|pl_east_9",
+                "first": 674.85,
+                "episodes": 2,
+                "longestTicks": 1114
+              },
+              {
+                "pair": "marek_zielinski|sapper_3",
+                "first": 756.9,
+                "episodes": 1,
+                "longestTicks": 6260
+              },
+              {
+                "pair": "sapper_2|sapper_3",
+                "first": 757.15,
+                "episodes": 1,
+                "longestTicks": 6255
+              },
+              {
+                "pair": "marek_zielinski|sapper_2",
+                "first": 757.2,
+                "episodes": 1,
+                "longestTicks": 6254
+              },
+              {
+                "pair": "pawel_krawiec|sapper_2",
+                "first": 757.55,
+                "episodes": 1,
+                "longestTicks": 6247
+              },
+              {
+                "pair": "pawel_krawiec|sapper_3",
+                "first": 757.55,
+                "episodes": 1,
+                "longestTicks": 6247
+              },
+              {
+                "pair": "marek_zielinski|pawel_krawiec",
+                "first": 757.6,
+                "episodes": 1,
+                "longestTicks": 6246
+              },
+              {
+                "pair": "staszek_pawlak|sapper_2",
+                "first": 770.1,
+                "episodes": 1,
+                "longestTicks": 5996
+              },
+              {
+                "pair": "staszek_pawlak|sapper_3",
+                "first": 770.1,
+                "episodes": 1,
+                "longestTicks": 5996
+              },
+              {
+                "pair": "pawel_krawiec|staszek_pawlak",
+                "first": 770.15,
+                "episodes": 1,
+                "longestTicks": 5995
+              },
+              {
+                "pair": "staszek_pawlak|east_platoon_voice",
+                "first": 770.3,
+                "episodes": 1,
+                "longestTicks": 5992
+              },
+              {
+                "pair": "marek_zielinski|east_platoon_voice",
+                "first": 770.35,
+                "episodes": 1,
+                "longestTicks": 5991
+              },
+              {
+                "pair": "pawel_krawiec|east_platoon_voice",
+                "first": 770.35,
+                "episodes": 1,
+                "longestTicks": 5991
+              },
+              {
+                "pair": "sapper_2|east_platoon_voice",
+                "first": 770.35,
+                "episodes": 1,
+                "longestTicks": 5991
+              },
+              {
+                "pair": "sapper_3|east_platoon_voice",
+                "first": 770.35,
+                "episodes": 1,
+                "longestTicks": 5991
+              },
+              {
+                "pair": "szymon_kowal|staszek_pawlak",
+                "first": 770.95,
+                "episodes": 1,
+                "longestTicks": 5979
+              },
+              {
+                "pair": "szymon_kowal|sapper_3",
+                "first": 770.95,
+                "episodes": 1,
+                "longestTicks": 5979
+              },
+              {
+                "pair": "szymon_kowal|east_platoon_voice",
+                "first": 770.95,
+                "episodes": 1,
+                "longestTicks": 5979
+              },
+              {
+                "pair": "marek_zielinski|szymon_kowal",
+                "first": 771,
+                "episodes": 1,
+                "longestTicks": 5978
+              },
+              {
+                "pair": "pawel_krawiec|szymon_kowal",
+                "first": 771,
+                "episodes": 1,
+                "longestTicks": 5978
+              },
+              {
+                "pair": "szymon_kowal|sapper_2",
+                "first": 771,
+                "episodes": 1,
+                "longestTicks": 5978
+              },
+              {
+                "pair": "staszek_pawlak|ckm_gunner",
+                "first": 795.5,
+                "episodes": 1,
+                "longestTicks": 5488
+              },
+              {
+                "pair": "szymon_kowal|ckm_gunner",
+                "first": 795.55,
+                "episodes": 1,
+                "longestTicks": 5487
+              },
+              {
+                "pair": "sapper_2|ckm_gunner",
+                "first": 795.55,
+                "episodes": 1,
+                "longestTicks": 5487
+              },
+              {
+                "pair": "sapper_3|ckm_gunner",
+                "first": 795.55,
+                "episodes": 1,
+                "longestTicks": 5487
+              },
+              {
+                "pair": "east_platoon_voice|ckm_gunner",
+                "first": 795.55,
+                "episodes": 1,
+                "longestTicks": 5489
+              },
+              {
+                "pair": "marek_zielinski|ckm_gunner",
+                "first": 795.6,
+                "episodes": 1,
+                "longestTicks": 5486
+              },
+              {
+                "pair": "pawel_krawiec|ckm_gunner",
+                "first": 795.6,
+                "episodes": 1,
+                "longestTicks": 5486
+              },
+              {
+                "pair": "pl_east_6|pl_east_7",
+                "first": 870.9,
+                "episodes": 1,
+                "longestTicks": 862
+              },
+              {
+                "pair": "pl_east_0|pl_east_2",
+                "first": 912.45,
+                "episodes": 1,
+                "longestTicks": 3
+              },
+              {
+                "pair": "pl_east_0|pl_east_3",
+                "first": 912.65,
+                "episodes": 1,
+                "longestTicks": 3
+              },
+              {
+                "pair": "pl_east_1|pl_east_2",
+                "first": 912.75,
+                "episodes": 1,
+                "longestTicks": 3
+              },
+              {
+                "pair": "pl_east_1|pl_east_3",
+                "first": 912.95,
+                "episodes": 1,
+                "longestTicks": 2
+              },
+              {
+                "pair": "pl_east_4|pl_east_5",
+                "first": 912.95,
+                "episodes": 1,
+                "longestTicks": 2
+              },
+              {
+                "pair": "pl_east_4|pl_east_6",
+                "first": 913.2,
+                "episodes": 1,
+                "longestTicks": 3
+              },
+              {
+                "pair": "pl_east_2|pl_east_3",
+                "first": 913.25,
+                "episodes": 1,
+                "longestTicks": 3
+              },
+              {
+                "pair": "pl_east_4|pl_east_7",
+                "first": 913.3,
+                "episodes": 1,
+                "longestTicks": 2
+              },
+              {
+                "pair": "pl_east_5|pl_east_6",
+                "first": 913.55,
+                "episodes": 1,
+                "longestTicks": 2
+              },
+              {
+                "pair": "pl_east_5|pl_east_7",
+                "first": 913.6,
+                "episodes": 1,
+                "longestTicks": 3
+              },
+              {
+                "pair": "pl_east_8|pl_east_10",
+                "first": 913.85,
+                "episodes": 1,
+                "longestTicks": 2
+              },
+              {
+                "pair": "pl_east_8|pl_east_11",
+                "first": 914,
+                "episodes": 1,
+                "longestTicks": 3
+              },
+              {
+                "pair": "pl_east_9|pl_east_10",
+                "first": 914.1,
+                "episodes": 1,
+                "longestTicks": 3
+              },
+              {
+                "pair": "pl_east_9|pl_east_11",
+                "first": 914.25,
+                "episodes": 1,
+                "longestTicks": 3
+              },
+              {
+                "pair": "pl_east_12|pl_east_13",
+                "first": 914.3,
+                "episodes": 1,
+                "longestTicks": 3
+              },
+              {
+                "pair": "pl_east_12|pl_east_14",
+                "first": 914.45,
+                "episodes": 1,
+                "longestTicks": 2
+              },
+              {
+                "pair": "pl_east_10|pl_east_11",
+                "first": 914.6,
+                "episodes": 1,
+                "longestTicks": 2
+              },
+              {
+                "pair": "pl_east_12|pl_east_15",
+                "first": 914.65,
+                "episodes": 1,
+                "longestTicks": 2
+              },
+              {
+                "pair": "pl_east_13|pl_east_14",
+                "first": 914.75,
+                "episodes": 1,
+                "longestTicks": 2
+              },
+              {
+                "pair": "pl_east_13|pl_east_15",
+                "first": 914.95,
+                "episodes": 1,
+                "longestTicks": 2
+              },
+              {
+                "pair": "pl_east_14|pl_east_15",
+                "first": 915.25,
+                "episodes": 1,
+                "longestTicks": 2
+              }
+            ]
+          },
+          "live": {
+            "pairs": 0,
+            "longestStayTicks": 0,
+            "list": []
+          }
+        }
+      }
+    }
+  ],
+  "otherRoutes": [
+    {
+      "seed": 3,
+      "support": false,
+      "clipping": {
+        "predecessor": {
+          "ticks": 22200,
+          "events": 14,
+          "list": [
+            "1 t=0.05 marek_zielinski [-/-/GUARD] overlap player:prop:player:t12_82:jerrycans at (-71.1,21.5)",
+            "456 t=22.8 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_portal_pier_s_5 at (-1.04,5.22)",
+            "464 t=23.2 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_portal_pier_s_4 at (-1.04,6.81)",
+            "472 t=23.6 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_abutment_parapet_s at (-1.04,8.34)",
+            "472 t=23.6 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_portal_pier_s_3 at (-1.04,8.34)",
+            "480 t=24 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_portal_pier_s_2 at (-1.04,9.82)",
+            "9660 t=483 jozef_bak [-/-/ADVANCE] overlap player:prop:player:t12_82:jerrycans at (-71.61,20.74)",
+            "9954 t=497.7 jozef_bak [-/-/ADVANCE] overlap player:bridge:player:road_abutment_parapet_n at (-21.85,30.59)",
+            "10035 t=501.75 jozef_bak [-/-/ADVANCE] overlap player:bridge:player:road_portal_pier_n_2 at (-7.4,32.55)",
+            "10062 t=503.1 jozef_bak [-/-/ADVANCE] overlap player:bridge:player:road_portal_pier_n_3 at (-7.04,37.51)",
+            "15740 t=787 ckm_reserve [grp_ckm_crew/-/RETREAT] overlap sandbag:ckm_sandbag_back_2 at (5.03,24.6)",
+            "15744 t=787.2 ckm_gunner [grp_ckm_crew/-/RETREAT] overlap sandbag:ckm_sandbag_back_2 at (5.12,25.94)",
+            "15749 t=787.45 ckm_loader [grp_ckm_crew/-/RETREAT] overlap sandbag:ckm_sandbag_back_2 at (5.09,25.45)",
+            "16696 t=834.8 leon_dudek [-/evacuate_bak/ADVANCE] overlap player:bridge:player:road_portal_pier_n_3 at (-6.96,37.52)"
+          ],
+          "placements": 16
+        },
+        "live": {
+          "ticks": 22203,
+          "events": 0,
+          "list": [],
+          "placements": 16
+        }
+      },
+      "stacked": {
+        "predecessor": {
+          "pairs": 49,
+          "longestStayTicks": 6260,
+          "list": [
+            {
+              "pair": "marek_zielinski|staszek_pawlak",
+              "first": 71.1,
+              "episodes": 2,
+              "longestTicks": 5995
+            },
+            {
+              "pair": "leon_dudek|generic_rifleman",
+              "first": 215.3,
+              "episodes": 1,
+              "longestTicks": 4
+            },
+            {
+              "pair": "szymon_kowal|jozef_bak",
+              "first": 483.75,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_0|pl_east_1",
+              "first": 712.5,
+              "episodes": 2,
+              "longestTicks": 1206
+            },
+            {
+              "pair": "pl_east_16|pl_east_17",
+              "first": 714.4,
+              "episodes": 1,
+              "longestTicks": 600
+            },
+            {
+              "pair": "pl_east_8|pl_east_9",
+              "first": 715.75,
+              "episodes": 2,
+              "longestTicks": 1114
+            },
+            {
+              "pair": "marek_zielinski|sapper_3",
+              "first": 796.95,
+              "episodes": 1,
+              "longestTicks": 6260
+            },
+            {
+              "pair": "sapper_2|sapper_3",
+              "first": 797.2,
+              "episodes": 1,
+              "longestTicks": 6255
+            },
+            {
+              "pair": "marek_zielinski|sapper_2",
+              "first": 797.25,
+              "episodes": 1,
+              "longestTicks": 6254
+            },
+            {
+              "pair": "pawel_krawiec|sapper_2",
+              "first": 797.6,
+              "episodes": 1,
+              "longestTicks": 6247
+            },
+            {
+              "pair": "pawel_krawiec|sapper_3",
+              "first": 797.6,
+              "episodes": 1,
+              "longestTicks": 6247
+            },
+            {
+              "pair": "marek_zielinski|pawel_krawiec",
+              "first": 797.65,
+              "episodes": 1,
+              "longestTicks": 6246
+            },
+            {
+              "pair": "staszek_pawlak|sapper_2",
+              "first": 810.15,
+              "episodes": 1,
+              "longestTicks": 5996
+            },
+            {
+              "pair": "staszek_pawlak|sapper_3",
+              "first": 810.15,
+              "episodes": 1,
+              "longestTicks": 5996
+            },
+            {
+              "pair": "pawel_krawiec|staszek_pawlak",
+              "first": 810.2,
+              "episodes": 1,
+              "longestTicks": 5995
+            },
+            {
+              "pair": "staszek_pawlak|east_platoon_voice",
+              "first": 810.35,
+              "episodes": 1,
+              "longestTicks": 5992
+            },
+            {
+              "pair": "marek_zielinski|east_platoon_voice",
+              "first": 810.4,
+              "episodes": 1,
+              "longestTicks": 5991
+            },
+            {
+              "pair": "pawel_krawiec|east_platoon_voice",
+              "first": 810.4,
+              "episodes": 1,
+              "longestTicks": 5991
+            },
+            {
+              "pair": "sapper_2|east_platoon_voice",
+              "first": 810.4,
+              "episodes": 1,
+              "longestTicks": 5991
+            },
+            {
+              "pair": "sapper_3|east_platoon_voice",
+              "first": 810.4,
+              "episodes": 1,
+              "longestTicks": 5991
+            },
+            {
+              "pair": "szymon_kowal|staszek_pawlak",
+              "first": 811,
+              "episodes": 1,
+              "longestTicks": 5979
+            },
+            {
+              "pair": "szymon_kowal|sapper_3",
+              "first": 811,
+              "episodes": 1,
+              "longestTicks": 5979
+            },
+            {
+              "pair": "szymon_kowal|east_platoon_voice",
+              "first": 811,
+              "episodes": 1,
+              "longestTicks": 5979
+            },
+            {
+              "pair": "marek_zielinski|szymon_kowal",
+              "first": 811.05,
+              "episodes": 1,
+              "longestTicks": 5978
+            },
+            {
+              "pair": "pawel_krawiec|szymon_kowal",
+              "first": 811.05,
+              "episodes": 1,
+              "longestTicks": 5978
+            },
+            {
+              "pair": "szymon_kowal|sapper_2",
+              "first": 811.05,
+              "episodes": 1,
+              "longestTicks": 5978
+            },
+            {
+              "pair": "staszek_pawlak|ckm_gunner",
+              "first": 835.55,
+              "episodes": 1,
+              "longestTicks": 5488
+            },
+            {
+              "pair": "szymon_kowal|ckm_gunner",
+              "first": 835.6,
+              "episodes": 1,
+              "longestTicks": 5487
+            },
+            {
+              "pair": "sapper_2|ckm_gunner",
+              "first": 835.6,
+              "episodes": 1,
+              "longestTicks": 5487
+            },
+            {
+              "pair": "sapper_3|ckm_gunner",
+              "first": 835.6,
+              "episodes": 1,
+              "longestTicks": 5487
+            },
+            {
+              "pair": "east_platoon_voice|ckm_gunner",
+              "first": 835.6,
+              "episodes": 1,
+              "longestTicks": 5489
+            },
+            {
+              "pair": "marek_zielinski|ckm_gunner",
+              "first": 835.65,
+              "episodes": 1,
+              "longestTicks": 5486
+            },
+            {
+              "pair": "pawel_krawiec|ckm_gunner",
+              "first": 835.65,
+              "episodes": 1,
+              "longestTicks": 5486
+            },
+            {
+              "pair": "pl_east_6|pl_east_7",
+              "first": 911.8,
+              "episodes": 1,
+              "longestTicks": 862
+            },
+            {
+              "pair": "pl_east_0|pl_east_2",
+              "first": 953.35,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_0|pl_east_3",
+              "first": 953.55,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_1|pl_east_2",
+              "first": 953.65,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_1|pl_east_3",
+              "first": 953.85,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_4|pl_east_5",
+              "first": 953.85,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_4|pl_east_6",
+              "first": 954.1,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_2|pl_east_3",
+              "first": 954.15,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_4|pl_east_7",
+              "first": 954.2,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_5|pl_east_6",
+              "first": 954.45,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_5|pl_east_7",
+              "first": 954.5,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_8|pl_east_10",
+              "first": 954.75,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_8|pl_east_11",
+              "first": 954.9,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_9|pl_east_10",
+              "first": 955,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_9|pl_east_11",
+              "first": 955.15,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_10|pl_east_11",
+              "first": 955.5,
+              "episodes": 1,
+              "longestTicks": 2
+            }
+          ]
+        },
+        "live": {
+          "pairs": 0,
+          "longestStayTicks": 0,
+          "list": []
+        }
+      },
+      "endState": {
+        "objectives": true,
+        "checkpoints": true,
+        "survivors": {
+          "predecessor": 12,
+          "live": 12
+        },
+        "battleClock": {
+          "predecessor": 25500,
+          "live": 25500
+        }
+      }
+    },
+    {
+      "seed": 3,
+      "support": true,
+      "clipping": {
+        "predecessor": {
+          "ticks": 21454,
+          "events": 14,
+          "list": [
+            "1 t=0.05 marek_zielinski [-/-/GUARD] overlap player:prop:player:t12_82:jerrycans at (-71.1,21.5)",
+            "456 t=22.8 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_portal_pier_s_5 at (-1.04,5.22)",
+            "464 t=23.2 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_portal_pier_s_4 at (-1.04,6.81)",
+            "472 t=23.6 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_abutment_parapet_s at (-1.04,8.34)",
+            "472 t=23.6 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_portal_pier_s_3 at (-1.04,8.34)",
+            "480 t=24 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_portal_pier_s_2 at (-1.04,9.82)",
+            "8897 t=444.85 jozef_bak [-/-/ADVANCE] overlap player:prop:player:t12_82:jerrycans at (-71.61,20.74)",
+            "9191 t=459.55 jozef_bak [-/-/ADVANCE] overlap player:bridge:player:road_abutment_parapet_n at (-21.85,30.59)",
+            "9272 t=463.6 jozef_bak [-/-/ADVANCE] overlap player:bridge:player:road_portal_pier_n_2 at (-7.4,32.55)",
+            "9299 t=464.95 jozef_bak [-/-/ADVANCE] overlap player:bridge:player:road_portal_pier_n_3 at (-7.04,37.51)",
+            "14994 t=749.7 ckm_reserve [grp_ckm_crew/-/RETREAT] overlap sandbag:ckm_sandbag_back_2 at (5.03,24.6)",
+            "14998 t=749.9 ckm_gunner [grp_ckm_crew/-/RETREAT] overlap sandbag:ckm_sandbag_back_2 at (5.12,25.94)",
+            "15003 t=750.15 ckm_loader [grp_ckm_crew/-/RETREAT] overlap sandbag:ckm_sandbag_back_2 at (5.09,25.45)",
+            "15950 t=797.5 leon_dudek [-/evacuate_bak/ADVANCE] overlap player:bridge:player:road_portal_pier_n_3 at (-6.96,37.52)"
+          ],
+          "placements": 16
+        },
+        "live": {
+          "ticks": 21459,
+          "events": 0,
+          "list": [],
+          "placements": 16
+        }
+      },
+      "stacked": {
+        "predecessor": {
+          "pairs": 57,
+          "longestStayTicks": 6260,
+          "list": [
+            {
+              "pair": "marek_zielinski|staszek_pawlak",
+              "first": 71.1,
+              "episodes": 2,
+              "longestTicks": 5995
+            },
+            {
+              "pair": "leon_dudek|generic_rifleman",
+              "first": 215.3,
+              "episodes": 1,
+              "longestTicks": 4
+            },
+            {
+              "pair": "szymon_kowal|jozef_bak",
+              "first": 445.6,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_0|pl_east_1",
+              "first": 674.35,
+              "episodes": 2,
+              "longestTicks": 1206
+            },
+            {
+              "pair": "pl_east_16|pl_east_17",
+              "first": 676.25,
+              "episodes": 2,
+              "longestTicks": 1215
+            },
+            {
+              "pair": "pl_east_8|pl_east_9",
+              "first": 677.6,
+              "episodes": 2,
+              "longestTicks": 1114
+            },
+            {
+              "pair": "de_spans_3|de_spans_6",
+              "first": 712.9,
+              "episodes": 1,
+              "longestTicks": 9
+            },
+            {
+              "pair": "de_spans_5|de_spans_8",
+              "first": 715.2,
+              "episodes": 1,
+              "longestTicks": 9
+            },
+            {
+              "pair": "marek_zielinski|sapper_3",
+              "first": 759.65,
+              "episodes": 1,
+              "longestTicks": 6260
+            },
+            {
+              "pair": "sapper_2|sapper_3",
+              "first": 759.9,
+              "episodes": 1,
+              "longestTicks": 6255
+            },
+            {
+              "pair": "marek_zielinski|sapper_2",
+              "first": 759.95,
+              "episodes": 1,
+              "longestTicks": 6254
+            },
+            {
+              "pair": "pawel_krawiec|sapper_2",
+              "first": 760.3,
+              "episodes": 1,
+              "longestTicks": 6247
+            },
+            {
+              "pair": "pawel_krawiec|sapper_3",
+              "first": 760.3,
+              "episodes": 1,
+              "longestTicks": 6247
+            },
+            {
+              "pair": "marek_zielinski|pawel_krawiec",
+              "first": 760.35,
+              "episodes": 1,
+              "longestTicks": 6246
+            },
+            {
+              "pair": "staszek_pawlak|sapper_2",
+              "first": 772.85,
+              "episodes": 1,
+              "longestTicks": 5996
+            },
+            {
+              "pair": "staszek_pawlak|sapper_3",
+              "first": 772.85,
+              "episodes": 1,
+              "longestTicks": 5996
+            },
+            {
+              "pair": "pawel_krawiec|staszek_pawlak",
+              "first": 772.9,
+              "episodes": 1,
+              "longestTicks": 5995
+            },
+            {
+              "pair": "staszek_pawlak|east_platoon_voice",
+              "first": 773.05,
+              "episodes": 1,
+              "longestTicks": 5992
+            },
+            {
+              "pair": "marek_zielinski|east_platoon_voice",
+              "first": 773.1,
+              "episodes": 1,
+              "longestTicks": 5991
+            },
+            {
+              "pair": "pawel_krawiec|east_platoon_voice",
+              "first": 773.1,
+              "episodes": 1,
+              "longestTicks": 5991
+            },
+            {
+              "pair": "sapper_2|east_platoon_voice",
+              "first": 773.1,
+              "episodes": 1,
+              "longestTicks": 5991
+            },
+            {
+              "pair": "sapper_3|east_platoon_voice",
+              "first": 773.1,
+              "episodes": 1,
+              "longestTicks": 5991
+            },
+            {
+              "pair": "szymon_kowal|staszek_pawlak",
+              "first": 773.7,
+              "episodes": 1,
+              "longestTicks": 5979
+            },
+            {
+              "pair": "szymon_kowal|sapper_3",
+              "first": 773.7,
+              "episodes": 1,
+              "longestTicks": 5979
+            },
+            {
+              "pair": "szymon_kowal|east_platoon_voice",
+              "first": 773.7,
+              "episodes": 1,
+              "longestTicks": 5979
+            },
+            {
+              "pair": "marek_zielinski|szymon_kowal",
+              "first": 773.75,
+              "episodes": 1,
+              "longestTicks": 5978
+            },
+            {
+              "pair": "pawel_krawiec|szymon_kowal",
+              "first": 773.75,
+              "episodes": 1,
+              "longestTicks": 5978
+            },
+            {
+              "pair": "szymon_kowal|sapper_2",
+              "first": 773.75,
+              "episodes": 1,
+              "longestTicks": 5978
+            },
+            {
+              "pair": "staszek_pawlak|ckm_gunner",
+              "first": 798.25,
+              "episodes": 1,
+              "longestTicks": 5488
+            },
+            {
+              "pair": "szymon_kowal|ckm_gunner",
+              "first": 798.3,
+              "episodes": 1,
+              "longestTicks": 5487
+            },
+            {
+              "pair": "sapper_2|ckm_gunner",
+              "first": 798.3,
+              "episodes": 1,
+              "longestTicks": 5487
+            },
+            {
+              "pair": "sapper_3|ckm_gunner",
+              "first": 798.3,
+              "episodes": 1,
+              "longestTicks": 5487
+            },
+            {
+              "pair": "east_platoon_voice|ckm_gunner",
+              "first": 798.3,
+              "episodes": 1,
+              "longestTicks": 5489
+            },
+            {
+              "pair": "marek_zielinski|ckm_gunner",
+              "first": 798.35,
+              "episodes": 1,
+              "longestTicks": 5486
+            },
+            {
+              "pair": "pawel_krawiec|ckm_gunner",
+              "first": 798.35,
+              "episodes": 1,
+              "longestTicks": 5486
+            },
+            {
+              "pair": "pl_east_6|pl_east_7",
+              "first": 873.65,
+              "episodes": 1,
+              "longestTicks": 862
+            },
+            {
+              "pair": "pl_east_0|pl_east_2",
+              "first": 915.2,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_0|pl_east_3",
+              "first": 915.4,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_1|pl_east_2",
+              "first": 915.5,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_1|pl_east_3",
+              "first": 915.7,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_4|pl_east_5",
+              "first": 915.7,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_4|pl_east_6",
+              "first": 915.95,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_2|pl_east_3",
+              "first": 916,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_4|pl_east_7",
+              "first": 916.05,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_5|pl_east_6",
+              "first": 916.3,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_5|pl_east_7",
+              "first": 916.35,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_8|pl_east_10",
+              "first": 916.6,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_8|pl_east_11",
+              "first": 916.75,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_9|pl_east_10",
+              "first": 916.85,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_9|pl_east_11",
+              "first": 917,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_12|pl_east_13",
+              "first": 917.05,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_12|pl_east_14",
+              "first": 917.2,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_10|pl_east_11",
+              "first": 917.35,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_12|pl_east_15",
+              "first": 917.4,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_13|pl_east_14",
+              "first": 917.5,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_13|pl_east_15",
+              "first": 917.7,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_14|pl_east_15",
+              "first": 918,
+              "episodes": 1,
+              "longestTicks": 2
+            }
+          ]
+        },
+        "live": {
+          "pairs": 0,
+          "longestStayTicks": 0,
+          "list": []
+        }
+      },
+      "endState": {
+        "objectives": true,
+        "checkpoints": true,
+        "survivors": {
+          "predecessor": 18,
+          "live": 18
+        },
+        "battleClock": {
+          "predecessor": 25500,
+          "live": 25500
+        }
+      }
+    },
+    {
+      "seed": 7,
+      "support": false,
+      "clipping": {
+        "predecessor": {
+          "ticks": 21882,
+          "events": 14,
+          "list": [
+            "1 t=0.05 marek_zielinski [-/-/GUARD] overlap player:prop:player:t12_82:jerrycans at (-71.1,21.5)",
+            "456 t=22.8 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_portal_pier_s_5 at (-1.04,5.22)",
+            "464 t=23.2 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_portal_pier_s_4 at (-1.04,6.81)",
+            "472 t=23.6 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_abutment_parapet_s at (-1.04,8.34)",
+            "472 t=23.6 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_portal_pier_s_3 at (-1.04,8.34)",
+            "480 t=24 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_portal_pier_s_2 at (-1.04,9.82)",
+            "9342 t=467.1 jozef_bak [-/-/ADVANCE] overlap player:prop:player:t12_82:jerrycans at (-71.61,20.74)",
+            "9636 t=481.8 jozef_bak [-/-/ADVANCE] overlap player:bridge:player:road_abutment_parapet_n at (-21.85,30.59)",
+            "9717 t=485.85 jozef_bak [-/-/ADVANCE] overlap player:bridge:player:road_portal_pier_n_2 at (-7.4,32.55)",
+            "9744 t=487.2 jozef_bak [-/-/ADVANCE] overlap player:bridge:player:road_portal_pier_n_3 at (-7.04,37.51)",
+            "15422 t=771.1 ckm_reserve [grp_ckm_crew/-/RETREAT] overlap sandbag:ckm_sandbag_back_2 at (5.03,24.6)",
+            "15426 t=771.3 ckm_gunner [grp_ckm_crew/-/RETREAT] overlap sandbag:ckm_sandbag_back_2 at (5.12,25.94)",
+            "15431 t=771.55 ckm_loader [grp_ckm_crew/-/RETREAT] overlap sandbag:ckm_sandbag_back_2 at (5.09,25.45)",
+            "16378 t=818.9 leon_dudek [-/evacuate_bak/ADVANCE] overlap player:bridge:player:road_portal_pier_n_3 at (-6.96,37.52)"
+          ],
+          "placements": 16
+        },
+        "live": {
+          "ticks": 21885,
+          "events": 0,
+          "list": [],
+          "placements": 16
+        }
+      },
+      "stacked": {
+        "predecessor": {
+          "pairs": 49,
+          "longestStayTicks": 6260,
+          "list": [
+            {
+              "pair": "marek_zielinski|staszek_pawlak",
+              "first": 71.1,
+              "episodes": 2,
+              "longestTicks": 5995
+            },
+            {
+              "pair": "leon_dudek|generic_rifleman",
+              "first": 215.3,
+              "episodes": 1,
+              "longestTicks": 4
+            },
+            {
+              "pair": "szymon_kowal|jozef_bak",
+              "first": 467.85,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_0|pl_east_1",
+              "first": 696.6,
+              "episodes": 2,
+              "longestTicks": 1206
+            },
+            {
+              "pair": "pl_east_16|pl_east_17",
+              "first": 698.5,
+              "episodes": 1,
+              "longestTicks": 600
+            },
+            {
+              "pair": "pl_east_8|pl_east_9",
+              "first": 699.85,
+              "episodes": 2,
+              "longestTicks": 1114
+            },
+            {
+              "pair": "marek_zielinski|sapper_3",
+              "first": 781.05,
+              "episodes": 1,
+              "longestTicks": 6260
+            },
+            {
+              "pair": "sapper_2|sapper_3",
+              "first": 781.3,
+              "episodes": 1,
+              "longestTicks": 6255
+            },
+            {
+              "pair": "marek_zielinski|sapper_2",
+              "first": 781.35,
+              "episodes": 1,
+              "longestTicks": 6254
+            },
+            {
+              "pair": "pawel_krawiec|sapper_2",
+              "first": 781.7,
+              "episodes": 1,
+              "longestTicks": 6247
+            },
+            {
+              "pair": "pawel_krawiec|sapper_3",
+              "first": 781.7,
+              "episodes": 1,
+              "longestTicks": 6247
+            },
+            {
+              "pair": "marek_zielinski|pawel_krawiec",
+              "first": 781.75,
+              "episodes": 1,
+              "longestTicks": 6246
+            },
+            {
+              "pair": "staszek_pawlak|sapper_2",
+              "first": 794.25,
+              "episodes": 1,
+              "longestTicks": 5996
+            },
+            {
+              "pair": "staszek_pawlak|sapper_3",
+              "first": 794.25,
+              "episodes": 1,
+              "longestTicks": 5996
+            },
+            {
+              "pair": "pawel_krawiec|staszek_pawlak",
+              "first": 794.3,
+              "episodes": 1,
+              "longestTicks": 5995
+            },
+            {
+              "pair": "staszek_pawlak|east_platoon_voice",
+              "first": 794.45,
+              "episodes": 1,
+              "longestTicks": 5992
+            },
+            {
+              "pair": "marek_zielinski|east_platoon_voice",
+              "first": 794.5,
+              "episodes": 1,
+              "longestTicks": 5991
+            },
+            {
+              "pair": "pawel_krawiec|east_platoon_voice",
+              "first": 794.5,
+              "episodes": 1,
+              "longestTicks": 5991
+            },
+            {
+              "pair": "sapper_2|east_platoon_voice",
+              "first": 794.5,
+              "episodes": 1,
+              "longestTicks": 5991
+            },
+            {
+              "pair": "sapper_3|east_platoon_voice",
+              "first": 794.5,
+              "episodes": 1,
+              "longestTicks": 5991
+            },
+            {
+              "pair": "szymon_kowal|staszek_pawlak",
+              "first": 795.1,
+              "episodes": 1,
+              "longestTicks": 5979
+            },
+            {
+              "pair": "szymon_kowal|sapper_3",
+              "first": 795.1,
+              "episodes": 1,
+              "longestTicks": 5979
+            },
+            {
+              "pair": "szymon_kowal|east_platoon_voice",
+              "first": 795.1,
+              "episodes": 1,
+              "longestTicks": 5979
+            },
+            {
+              "pair": "marek_zielinski|szymon_kowal",
+              "first": 795.15,
+              "episodes": 1,
+              "longestTicks": 5978
+            },
+            {
+              "pair": "pawel_krawiec|szymon_kowal",
+              "first": 795.15,
+              "episodes": 1,
+              "longestTicks": 5978
+            },
+            {
+              "pair": "szymon_kowal|sapper_2",
+              "first": 795.15,
+              "episodes": 1,
+              "longestTicks": 5978
+            },
+            {
+              "pair": "staszek_pawlak|ckm_gunner",
+              "first": 819.65,
+              "episodes": 1,
+              "longestTicks": 5488
+            },
+            {
+              "pair": "szymon_kowal|ckm_gunner",
+              "first": 819.7,
+              "episodes": 1,
+              "longestTicks": 5487
+            },
+            {
+              "pair": "sapper_2|ckm_gunner",
+              "first": 819.7,
+              "episodes": 1,
+              "longestTicks": 5487
+            },
+            {
+              "pair": "sapper_3|ckm_gunner",
+              "first": 819.7,
+              "episodes": 1,
+              "longestTicks": 5487
+            },
+            {
+              "pair": "east_platoon_voice|ckm_gunner",
+              "first": 819.7,
+              "episodes": 1,
+              "longestTicks": 5489
+            },
+            {
+              "pair": "marek_zielinski|ckm_gunner",
+              "first": 819.75,
+              "episodes": 1,
+              "longestTicks": 5486
+            },
+            {
+              "pair": "pawel_krawiec|ckm_gunner",
+              "first": 819.75,
+              "episodes": 1,
+              "longestTicks": 5486
+            },
+            {
+              "pair": "pl_east_6|pl_east_7",
+              "first": 895.9,
+              "episodes": 1,
+              "longestTicks": 862
+            },
+            {
+              "pair": "pl_east_0|pl_east_2",
+              "first": 937.45,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_0|pl_east_3",
+              "first": 937.65,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_1|pl_east_2",
+              "first": 937.75,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_1|pl_east_3",
+              "first": 937.95,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_4|pl_east_5",
+              "first": 937.95,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_4|pl_east_6",
+              "first": 938.2,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_2|pl_east_3",
+              "first": 938.25,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_4|pl_east_7",
+              "first": 938.3,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_5|pl_east_6",
+              "first": 938.55,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_5|pl_east_7",
+              "first": 938.6,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_8|pl_east_10",
+              "first": 938.85,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_8|pl_east_11",
+              "first": 939,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_9|pl_east_10",
+              "first": 939.1,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_9|pl_east_11",
+              "first": 939.25,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_10|pl_east_11",
+              "first": 939.6,
+              "episodes": 1,
+              "longestTicks": 2
+            }
+          ]
+        },
+        "live": {
+          "pairs": 0,
+          "longestStayTicks": 0,
+          "list": []
+        }
+      },
+      "endState": {
+        "objectives": true,
+        "checkpoints": true,
+        "survivors": {
+          "predecessor": 12,
+          "live": 12
+        },
+        "battleClock": {
+          "predecessor": 25500,
+          "live": 25500
+        }
+      }
+    },
+    {
+      "seed": 7,
+      "support": true,
+      "clipping": {
+        "predecessor": {
+          "ticks": 21399,
+          "events": 14,
+          "list": [
+            "1 t=0.05 marek_zielinski [-/-/GUARD] overlap player:prop:player:t12_82:jerrycans at (-71.1,21.5)",
+            "456 t=22.8 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_portal_pier_s_5 at (-1.04,5.22)",
+            "464 t=23.2 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_portal_pier_s_4 at (-1.04,6.81)",
+            "472 t=23.6 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_abutment_parapet_s at (-1.04,8.34)",
+            "472 t=23.6 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_portal_pier_s_3 at (-1.04,8.34)",
+            "480 t=24 tadeusz_nowicki [-/-/ADVANCE] overlap player:bridge:player:rail_portal_pier_s_2 at (-1.04,9.82)",
+            "8842 t=442.1 jozef_bak [-/-/ADVANCE] overlap player:prop:player:t12_82:jerrycans at (-71.61,20.74)",
+            "9136 t=456.8 jozef_bak [-/-/ADVANCE] overlap player:bridge:player:road_abutment_parapet_n at (-21.85,30.59)",
+            "9217 t=460.85 jozef_bak [-/-/ADVANCE] overlap player:bridge:player:road_portal_pier_n_2 at (-7.4,32.55)",
+            "9244 t=462.2 jozef_bak [-/-/ADVANCE] overlap player:bridge:player:road_portal_pier_n_3 at (-7.04,37.51)",
+            "14939 t=746.95 ckm_reserve [grp_ckm_crew/-/RETREAT] overlap sandbag:ckm_sandbag_back_2 at (5.03,24.6)",
+            "14943 t=747.15 ckm_gunner [grp_ckm_crew/-/RETREAT] overlap sandbag:ckm_sandbag_back_2 at (5.12,25.94)",
+            "14948 t=747.4 ckm_loader [grp_ckm_crew/-/RETREAT] overlap sandbag:ckm_sandbag_back_2 at (5.09,25.45)",
+            "15895 t=794.75 leon_dudek [-/evacuate_bak/ADVANCE] overlap player:bridge:player:road_portal_pier_n_3 at (-6.96,37.52)"
+          ],
+          "placements": 16
+        },
+        "live": {
+          "ticks": 21404,
+          "events": 0,
+          "list": [],
+          "placements": 16
+        }
+      },
+      "stacked": {
+        "predecessor": {
+          "pairs": 55,
+          "longestStayTicks": 6260,
+          "list": [
+            {
+              "pair": "marek_zielinski|staszek_pawlak",
+              "first": 71.1,
+              "episodes": 2,
+              "longestTicks": 5995
+            },
+            {
+              "pair": "leon_dudek|generic_rifleman",
+              "first": 215.3,
+              "episodes": 1,
+              "longestTicks": 4
+            },
+            {
+              "pair": "szymon_kowal|jozef_bak",
+              "first": 442.85,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_0|pl_east_1",
+              "first": 671.6,
+              "episodes": 2,
+              "longestTicks": 1206
+            },
+            {
+              "pair": "pl_east_16|pl_east_17",
+              "first": 673.5,
+              "episodes": 2,
+              "longestTicks": 1215
+            },
+            {
+              "pair": "pl_east_8|pl_east_9",
+              "first": 674.85,
+              "episodes": 2,
+              "longestTicks": 1114
+            },
+            {
+              "pair": "marek_zielinski|sapper_3",
+              "first": 756.9,
+              "episodes": 1,
+              "longestTicks": 6260
+            },
+            {
+              "pair": "sapper_2|sapper_3",
+              "first": 757.15,
+              "episodes": 1,
+              "longestTicks": 6255
+            },
+            {
+              "pair": "marek_zielinski|sapper_2",
+              "first": 757.2,
+              "episodes": 1,
+              "longestTicks": 6254
+            },
+            {
+              "pair": "pawel_krawiec|sapper_2",
+              "first": 757.55,
+              "episodes": 1,
+              "longestTicks": 6247
+            },
+            {
+              "pair": "pawel_krawiec|sapper_3",
+              "first": 757.55,
+              "episodes": 1,
+              "longestTicks": 6247
+            },
+            {
+              "pair": "marek_zielinski|pawel_krawiec",
+              "first": 757.6,
+              "episodes": 1,
+              "longestTicks": 6246
+            },
+            {
+              "pair": "staszek_pawlak|sapper_2",
+              "first": 770.1,
+              "episodes": 1,
+              "longestTicks": 5996
+            },
+            {
+              "pair": "staszek_pawlak|sapper_3",
+              "first": 770.1,
+              "episodes": 1,
+              "longestTicks": 5996
+            },
+            {
+              "pair": "pawel_krawiec|staszek_pawlak",
+              "first": 770.15,
+              "episodes": 1,
+              "longestTicks": 5995
+            },
+            {
+              "pair": "staszek_pawlak|east_platoon_voice",
+              "first": 770.3,
+              "episodes": 1,
+              "longestTicks": 5992
+            },
+            {
+              "pair": "marek_zielinski|east_platoon_voice",
+              "first": 770.35,
+              "episodes": 1,
+              "longestTicks": 5991
+            },
+            {
+              "pair": "pawel_krawiec|east_platoon_voice",
+              "first": 770.35,
+              "episodes": 1,
+              "longestTicks": 5991
+            },
+            {
+              "pair": "sapper_2|east_platoon_voice",
+              "first": 770.35,
+              "episodes": 1,
+              "longestTicks": 5991
+            },
+            {
+              "pair": "sapper_3|east_platoon_voice",
+              "first": 770.35,
+              "episodes": 1,
+              "longestTicks": 5991
+            },
+            {
+              "pair": "szymon_kowal|staszek_pawlak",
+              "first": 770.95,
+              "episodes": 1,
+              "longestTicks": 5979
+            },
+            {
+              "pair": "szymon_kowal|sapper_3",
+              "first": 770.95,
+              "episodes": 1,
+              "longestTicks": 5979
+            },
+            {
+              "pair": "szymon_kowal|east_platoon_voice",
+              "first": 770.95,
+              "episodes": 1,
+              "longestTicks": 5979
+            },
+            {
+              "pair": "marek_zielinski|szymon_kowal",
+              "first": 771,
+              "episodes": 1,
+              "longestTicks": 5978
+            },
+            {
+              "pair": "pawel_krawiec|szymon_kowal",
+              "first": 771,
+              "episodes": 1,
+              "longestTicks": 5978
+            },
+            {
+              "pair": "szymon_kowal|sapper_2",
+              "first": 771,
+              "episodes": 1,
+              "longestTicks": 5978
+            },
+            {
+              "pair": "staszek_pawlak|ckm_gunner",
+              "first": 795.5,
+              "episodes": 1,
+              "longestTicks": 5488
+            },
+            {
+              "pair": "szymon_kowal|ckm_gunner",
+              "first": 795.55,
+              "episodes": 1,
+              "longestTicks": 5487
+            },
+            {
+              "pair": "sapper_2|ckm_gunner",
+              "first": 795.55,
+              "episodes": 1,
+              "longestTicks": 5487
+            },
+            {
+              "pair": "sapper_3|ckm_gunner",
+              "first": 795.55,
+              "episodes": 1,
+              "longestTicks": 5487
+            },
+            {
+              "pair": "east_platoon_voice|ckm_gunner",
+              "first": 795.55,
+              "episodes": 1,
+              "longestTicks": 5489
+            },
+            {
+              "pair": "marek_zielinski|ckm_gunner",
+              "first": 795.6,
+              "episodes": 1,
+              "longestTicks": 5486
+            },
+            {
+              "pair": "pawel_krawiec|ckm_gunner",
+              "first": 795.6,
+              "episodes": 1,
+              "longestTicks": 5486
+            },
+            {
+              "pair": "pl_east_6|pl_east_7",
+              "first": 870.9,
+              "episodes": 1,
+              "longestTicks": 862
+            },
+            {
+              "pair": "pl_east_0|pl_east_2",
+              "first": 912.45,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_0|pl_east_3",
+              "first": 912.65,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_1|pl_east_2",
+              "first": 912.75,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_1|pl_east_3",
+              "first": 912.95,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_4|pl_east_5",
+              "first": 912.95,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_4|pl_east_6",
+              "first": 913.2,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_2|pl_east_3",
+              "first": 913.25,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_4|pl_east_7",
+              "first": 913.3,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_5|pl_east_6",
+              "first": 913.55,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_5|pl_east_7",
+              "first": 913.6,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_8|pl_east_10",
+              "first": 913.85,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_8|pl_east_11",
+              "first": 914,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_9|pl_east_10",
+              "first": 914.1,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_9|pl_east_11",
+              "first": 914.25,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_12|pl_east_13",
+              "first": 914.3,
+              "episodes": 1,
+              "longestTicks": 3
+            },
+            {
+              "pair": "pl_east_12|pl_east_14",
+              "first": 914.45,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_10|pl_east_11",
+              "first": 914.6,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_12|pl_east_15",
+              "first": 914.65,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_13|pl_east_14",
+              "first": 914.75,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_13|pl_east_15",
+              "first": 914.95,
+              "episodes": 1,
+              "longestTicks": 2
+            },
+            {
+              "pair": "pl_east_14|pl_east_15",
+              "first": 915.25,
+              "episodes": 1,
+              "longestTicks": 2
+            }
+          ]
+        },
+        "live": {
+          "pairs": 0,
+          "longestStayTicks": 0,
+          "list": []
+        }
+      },
+      "endState": {
+        "objectives": true,
+        "checkpoints": true,
+        "survivors": {
+          "predecessor": 18,
+          "live": 18
+        },
+        "battleClock": {
+          "predecessor": 25500,
+          "live": 25500
+        }
+      }
+    }
+  ]
+}

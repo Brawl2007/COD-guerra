@@ -1,0 +1,127 @@
+{
+  "sourceHead": "5b76d24f57fdcfd0b0bd2b099aba3800eed0a9cf",
+  "codeHead": "2304a7df52ea61b6945d06d087c24e9ec05b4849",
+  "status": "FAIL / not accepted",
+  "at": "2026-10-15T19:16:12.275643+00:00",
+  "normalCI": {
+    "run": 38784359414,
+    "job": 116592404590,
+    "node": {
+      "tests": 874,
+      "pass": 873,
+      "fail": 1,
+      "durationMs": 761808.388908
+    },
+    "failure": "tests/m01-runtime.test.js91,assert96:39 old gate fixture expectsrelease withcarry unfinished",
+    "tooling": "not run after NodeFAIL",
+    "build": "not run after NodeFAIL",
+    "log": {
+      "local": "/workspace/scratch/partials-node-ci-5b.log",
+      "sha256": "35248156cd8031282e28c2a1c287e9aa268f84bf86ef0d870b684610b3a20821"
+    }
+  },
+  "localFullNode": {
+    "tests": 874,
+    "pass": 873,
+    "fail": 1,
+    "durationMs": 1927314.42769,
+    "log": "/workspace/scratch/partials-node-correction-01.log",
+    "result": "completedFAIL, not interrupted; same sole gate fixture"
+  },
+  "customCI": {
+    "run": 38784359449,
+    "shards": [
+      {
+        "shard": 1,
+        "job": 116592405334,
+        "pass": 15,
+        "fail": 0,
+        "additionalCrew": {
+          "pass": 6,
+          "fail": 0
+        },
+        "log": {
+          "local": "/workspace/scratch/partials-browser1-ci-5b.log",
+          "sha256": "49a0a498faa17c6d4652a9618a6e3a86c1b117c85711f2899ec9d2e0e0d3818d"
+        }
+      },
+      {
+        "shard": 2,
+        "job": 116592405305,
+        "pass": 14,
+        "fail": 1,
+        "failure": "m01-mg34-prone.spec.js46/49 exactprone2 after new two loaders produce4",
+        "log": {
+          "local": "/workspace/scratch/partials-browser2-ci-5b.log",
+          "sha256": "5fdb8d632aee1ae029fced5f3e07ecd7716dd848af426c9f25ea8f9e68ad1bf9"
+        }
+      },
+      {
+        "shard": 3,
+        "job": 116592404919,
+        "pass": 14,
+        "fail": 0,
+        "log": {
+          "local": "/workspace/scratch/partials-browser3-ci-5b.log",
+          "sha256": "d83096a52b0311851658ddb5ee43fef3825ecc388ac100d847f66fa4816c0c1c"
+        }
+      }
+    ],
+    "enumeration": {
+      "all": 44,
+      "counts": [
+        15,
+        15,
+        14
+      ],
+      "sameCases": true,
+      "noDuplicates": true,
+      "proof": "/workspace/scratch/partials-shard-plan-5b76d24/PLAN.json"
+    },
+    "combinedCaseResult": "43/44 across3shards, plus6crewPASS; not full pass/singleinvocation"
+  },
+  "authority": {
+    "job": 116592405304,
+    "result": "FAIL",
+    "strictGoldenRoutes": "PASS22247/21378ticks",
+    "rawCover": "3/24rows before seed1ignorehealth84to76 fails",
+    "fullCurrentOwnerFutures24": "not run after failure",
+    "artifact": {
+      "id": 11997906187,
+      "bytes": 24174,
+      "sha256": "1a24cea9ce6fede6089054ce7956e569e5ae6d6e990bea109f798e56542c621e",
+      "verifiedExtracted": "/workspace/scratch/partials-authority-ci5b",
+      "files": 4
+    },
+    "log": {
+      "local": "/workspace/scratch/partials-authority-ci-5b.log",
+      "sha256": "ae9ec2a1a2f406c1f0c41f8abf8f2485ee96912f6d04ffe9d2b335c88a61582f"
+    }
+  },
+  "bridge": {
+    "job": 116592405408,
+    "off": {
+      "pass": 1,
+      "fail": 0
+    },
+    "on": {
+      "pass": 4,
+      "fail": 0
+    },
+    "comparison": "FAIL0610controlwholeframe318pixels expected0; all6skycontrolpatches0;0430wholecontrol0",
+    "coupledRegressions": "not run after comparatorfail",
+    "artifact": {
+      "id": 11998069595,
+      "bytes": 78041683,
+      "sha256": "75f0683e2d245e58d85c017370b0e280c63cc9e854293ee5fbe79074da5439a8",
+      "verifiedExtracted": "/workspace/scratch/partials-bridge-ci5b",
+      "files": 143
+    },
+    "log": {
+      "local": "/workspace/scratch/partials-bridge-ci-5b.log",
+      "sha256": "c91e7a5a3e423687dc7eae8edf4721ff671da1214ad9f5cb360a2a6b9438c4a7"
+    }
+  },
+  "independent": "VERIFIER_ATTEMPT_2.md/json FAIL;7narrow actualproductioncases completed and inspected;840filefreezePASS; no acceptance",
+  "next": "Prospective CAPTAIN-AMENDMENT-02 and correction2/3; retain every failure. No production change yet after5b."
+}

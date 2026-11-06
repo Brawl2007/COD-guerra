@@ -1,4 +1,5 @@
 import { traceShot } from '../world/spatial.js';
+import { DECK_SAFE_X } from './m01-deck-assault.js';
 
 // Fogo alemão de M01 como dados puros: cada tiro guarda origem, ponto visado, flecha e horas de partida e chegada.
 // A apresentação (clarão, traçante, impacto, som) só lê estes registos e os eventos que a simulação emite.
@@ -44,10 +45,11 @@ export function makeRound({id,by,weapon,kind,origin,aim,firedAt,bias,cone,gauss,
     h:ARC_K*R*R,firedAt,arriveAt:firedAt+R/ROUND_SPEED,tracer,victim};
 }
 
+// Combat slice 2: a round of the deck assault (grp_de_spans) leaves from the deck, never west of the safety line DECK_SAFE_X; every other German round from x >= 690.
 export function validRound(r,clock){
   return r&&typeof r.id==='string'&&typeof r.by==='string'&&/^de_(east|spans)_\d+$/.test(r.by)&&['mg34','kar98k'].includes(r.weapon)&&
     ROUND_KINDS.includes(r.kind)&&[r.ox,r.oy,r.oz,r.ax,r.ay,r.az,r.h,r.firedAt,r.arriveAt].every(Number.isFinite)&&
-    r.ox>=690&&r.h>=0&&r.h<=40&&r.arriveAt>=r.firedAt&&r.arriveAt-clock<=10&&typeof r.tracer==='boolean'&&
+    r.ox>=(/^de_spans_/.test(r.by)?DECK_SAFE_X:690)&&r.h>=0&&r.h<=40&&r.arriveAt>=r.firedAt&&r.arriveAt-clock<=10&&typeof r.tracer==='boolean'&&
     (r.victim===null||(typeof r.victim==='string'&&/^pl_east_\d+$/.test(r.victim)))&&
     (r.kind!=='attrition'||(r.weapon==='kar98k'&&ATTRITION_SHOOTER.test(r.by)&&ATTRITION_VICTIM.test(r.victim??'')));
 }

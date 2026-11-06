@@ -1,0 +1,47 @@
+{
+ "card": {
+  "act": "act_vii_a_north",
+  "scene": "cs_np_entry",
+  "phase": "NP_ENTRY",
+  "complete": false,
+  "clock": 3.416699999999998,
+  "player": {
+   "x": -412,
+   "y": -3,
+   "z": -1078,
+   "angle": -1.5707963267948966,
+   "pitch": 0,
+   "health": 100,
+   "crouched": false,
+   "aiming": false
+  },
+  "alive": 13,
+  "clockText": "MANHÃ · ~07:00",
+  "objective": "",
+  "card": "Perímetro norte de Tczew1 de setembro de 1939 · manhã, pouco depois da chamadaO ataque de ~07:00 vindo do norte continua · hora de fonte única (T08)Reforço da secção: dramatização · trincheira e posições: reconstrução",
+  "frames": 43
+ },
+ "after": {
+  "act": "act_vii_a_north",
+  "scene": null,
+  "phase": "NP_ARRIVAL",
+  "complete": false,
+  "clock": 4.583399999999992,
+  "player": {
+   "x": -412,
+   "y": -3,
+   "z": -1078,
+   "angle": -1.5707963267948966,
+   "pitch": 0,
+   "health": 100,
+   "crouched": false,
+   "aiming": false
+  },
+  "alive": 13,
+  "clockText": "MANHÃ · ~07:00",
+  "objective": "Junte-se à secção no parapeito norte",
+  "card": "",
+  "frames": 52
+ },
+ "errors": []
+}

@@ -1,0 +1,224 @@
+{
+  "schema_version": 1,
+  "role": "independent_verifier",
+  "status": "FAIL",
+  "source_head": "9a1535b5a530ea39186a09ab5465a14449d27569",
+  "implementation_head": "e0d494e",
+  "predecessor": "bc8f6a21a57ccd926d4e0655481908d90d6b1978",
+  "created_at": "2026-10-15T09:32:40.019137+00:00",
+  "context_packet": "VALID at verification entry",
+  "evidence_sufficient": "NO",
+  "review_acceptance_decision": null,
+  "per_task": {
+    "T02": {
+      "status": "BLOCKED",
+      "finding": "Focused continuity/pre-roll tests pass; complete strict predecessor route audit and twelve-seed cover gate still running."
+    },
+    "T03": {
+      "status": "BLOCKED",
+      "finding": "Focused grounded blasts and actual grenade-puff expiry/continuation pass; complete continuation and integrated browser gate still running."
+    },
+    "T05": {
+      "status": "BLOCKED",
+      "finding": "Focused typed-event/closest-pass tests pass; physical layout bytes preserved; full Node and authority gates pending."
+    },
+    "T06": {
+      "status": "BLOCKED",
+      "finding": "Production audio pressure evidence and merged core inspected; fresh complete Node and browser/offline-waveform gates pending."
+    },
+    "T07": {
+      "status": "BLOCKED",
+      "finding": "Focused legacy/corrupt/prone/continuation tests pass; 86/89/97 roster and schema2 production browser gates pending."
+    },
+    "T14": {
+      "status": "BLOCKED",
+      "finding": "299 protected predecessor files and author-only manifest verified; fresh authored viewer and paired six-view material/colour matrix not yet concluded or inspected."
+    },
+    "T24": {
+      "status": "FAIL",
+      "finding": "Exact roadmap view-10 lamp visibility is not demonstrated and implementation explicitly records physical occlusion. Unobstructed oblique 1000.528m proof cannot satisfy the exact view-10 clause."
+    },
+    "T26": {
+      "status": "BLOCKED",
+      "finding": "Implementation four-scene images inspected in part and focused cue tests are present; fresh integrated browser pause/reload/camera matrix pending."
+    },
+    "T34": {
+      "status": "BLOCKED",
+      "finding": "Focused auxiliary corridor/combat exclusion tests pass; station/lantern implementation specimen inspected; fresh integrated browser matrix pending."
+    },
+    "T36": {
+      "status": "FAIL",
+      "finding": "Real route finishes with Bak still carried, no putdown; violates F10 delivery before west readiness. Real reload/feed frame also shows loader standing proxy rather than feed presentation."
+    },
+    "T41": {
+      "status": "BLOCKED",
+      "finding": "Disabled-owner fix and 299 protected bytes verified statically; fresh native-frame disabled cards, allocations, 24 futures, coupled regressions and paired camera matrix pending."
+    }
+  },
+  "checks": [
+    {
+      "command": "node --test tests/m01-partials-completion.test.js",
+      "status": "PASS",
+      "tests": 22,
+      "passed": 22,
+      "failed": 0,
+      "log": "test-results/partials-independent/focused-partials.log"
+    },
+    {
+      "command": "npm run build",
+      "status": "PASS",
+      "log": "test-results/partials-independent/build.log",
+      "runtime_bundle_identical_before_after": true,
+      "bundle_sha_files": [
+        "test-results/partials-independent/runtime-bundle-before.sha256",
+        "test-results/partials-independent/runtime-bundle-after.sha256"
+      ]
+    },
+    {
+      "command": "node tools/verification/m01-bridge-finish-v2-authority.mjs --current-authority",
+      "status": "PASS",
+      "protected_files": 299,
+      "log": "test-results/partials-independent/protected-bytes.log"
+    },
+    {
+      "command": "Four ancestry checks; forbidden French/package-lock diff; historical golden comparison",
+      "status": "PASS",
+      "evidence": "test-results/partials-independent/source-pinned.json"
+    },
+    {
+      "command": "node tools/verification/m01-bridge-finish-v2-source.mjs --check test-results/partials-independent/source-freeze.json",
+      "status": "PASS",
+      "source_files": 145,
+      "digest": "e33ca2b34d23e7a43bd4028f6f624a9146210c7cd3b38773c2b47b5df395ee7d"
+    },
+    {
+      "command": "node test-results/partials-independent/carry-route-check.mjs",
+      "status": "FAIL",
+      "meaning": "20966 genuine control ticks reproduce F10 counterexample; script records observations without altering production",
+      "evidence": [
+        "test-results/partials-independent/carry-route-check.json",
+        "test-results/partials-independent/carry-route-check.log"
+      ]
+    },
+    {
+      "command": "node test-results/partials-independent/crew-runtime.mjs",
+      "status": "COMPLETED_WITH_FINDINGS",
+      "cases": 4,
+      "page_errors": 0,
+      "exact_full_snapshot_unchanged": true,
+      "findings": "Pickup/carry proxies at344m; late putdown pair clips selected at t0.35; gunner reload selected but feed loader standing proxy at1084m. These are four inspected frames, not four acceptance-test passes.",
+      "evidence": "test-results/partials-independent/crew-runtime-results.json"
+    }
+  ],
+  "failures": [
+    {
+      "id": "T24-VIEW10",
+      "criterion": "vista 10 com fumo e lâmpada a 1 km",
+      "evidence": [
+        "docs/verification/m01-runtime/partials-completion-integration-v1/TASK_CRITERIA.json",
+        "docs/verification/m01-runtime/partials-completion-integration-v1/train-1km-final-proof.json",
+        "test-results/partials-completion-evidence/production/train-canonical-view10.png"
+      ],
+      "provenance": "Implementation artifacts personally inspected, not fresh CI artifacts. Implementation expressly disclaims canonical lamp visibility.",
+      "minimal_next_action": "Captain must resolve the exact-view physical-occlusion conflict explicitly through change control or provide compliant evidence. Preserve original criterion and occlusion; do not make lamp draw through geometry."
+    },
+    {
+      "id": "T36-F10",
+      "criterion": "Bak continua entregue antes da prontidao da demolicao oeste (rota completa)",
+      "seed": 19390901,
+      "support": false,
+      "ticks": 20966,
+      "first_west_ready": {
+        "battle_time": "06:32:01",
+        "bak_x": -90.01576921378182,
+        "phase": "carry"
+      },
+      "west_demolition": {
+        "battle_time": "06:45:00",
+        "bak_x": -236.51497927370366,
+        "phase": "carry"
+      },
+      "mission_complete": {
+        "battle_time": "07:05:00",
+        "bak_x": -260.57185992184077,
+        "phase": "carry"
+      },
+      "putdown_ticks": 0,
+      "minimal_next_action": "Correct only the authorized transport timing/path/lifecycle so the complete real route delivers Bak before west readiness, retaining1.6m/s and finite phases unless Captain explicitly amends that choice; add a true route delivery assertion, then strict delta audit without rewriting historical golden."
+    },
+    {
+      "id": "T36-F12-PRESENTATION",
+      "criterion": "Municiador associado por ID, feed sincronizado com reload (4.8s)",
+      "battle_time": "04:56:50",
+      "gunner_clip": "mg34_prone_reload",
+      "gunner_clip_time": 0.3500000000001364,
+      "loader_sim_phase": "feed",
+      "loader_proxy_pose": "standing",
+      "loader_in_skinned_diagnostics": false,
+      "player_distance_m": 1084.0553806238574,
+      "evidence": [
+        "test-results/partials-independent/crew-feed.png",
+        "test-results/partials-independent/crew-feed.json"
+      ],
+      "minimal_next_action": "Give actual visible loader a phase-correct prone/feed presentation in the relevant distance tier/fallback; preserve existing actor/draw budget and prove same real reload frame."
+    }
+  ],
+  "ci": {
+    "normal": {
+      "run": 38712314965,
+      "url": "https://github.com/Brawl2007/COD-guerra/actions/runs/38712314965",
+      "status": "in_progress",
+      "evidence": "test-results/partials-independent/normal-ci-status.json"
+    },
+    "integration": {
+      "run": 38712315225,
+      "url": "https://github.com/Brawl2007/COD-guerra/actions/runs/38712315225",
+      "status": "in_progress",
+      "evidence": "test-results/partials-independent/integration-ci-status.json"
+    },
+    "note": "Both headSha independently confirmed exact source_head; no final counts or passed jobs inferred. Integrated build/colliders/route setup steps successful; expensive suites remain pending."
+  },
+  "images_examined": [
+    {
+      "path": "test-results/partials-completion-evidence/production/train-canonical-view10.png",
+      "provenance": "implementation"
+    },
+    {
+      "path": "test-results/partials-completion-evidence/production/train-1km-both.png",
+      "provenance": "implementation"
+    },
+    {
+      "path": "test-results/partials-completion-evidence/production/life-043600.png",
+      "provenance": "implementation"
+    },
+    {
+      "path": "test-results/partials-completion-evidence/production/cs_m01_order.png",
+      "provenance": "implementation"
+    },
+    {
+      "path": "test-results/partials-independent/crew-pickup.png",
+      "provenance": "independent production capture; paused real route snapshot, editorial camera only"
+    },
+    {
+      "path": "test-results/partials-independent/crew-carry.png",
+      "provenance": "independent production capture; paused real route snapshot, editorial camera only"
+    },
+    {
+      "path": "test-results/partials-independent/crew-putdown.png",
+      "provenance": "independent production capture; paused real route snapshot, editorial camera only"
+    },
+    {
+      "path": "test-results/partials-independent/crew-feed.png",
+      "provenance": "independent production capture; paused real route snapshot, editorial camera only"
+    }
+  ],
+  "intentionally_not_run": [
+    "Full local Node/browser/cover/futures duplication while exact same-source CI is running.",
+    "No fresh local complete bridge paired matrix or material viewer.",
+    "No human playtest or hardware/FPS measurement."
+  ],
+  "production_modified": false,
+  "fixtures_or_goldens_modified": false,
+  "commits_pushes_checkouts_spawned": false,
+  "recommended_next_action": "Return to implementer for bounded fix attempt1/3 covering T36 delivery/presentation and Captain resolution of T24 exact-view conflict. Preserve this FAIL and historical bridge failures; rerun failed focused checks on a newly pinned source, then finish pending CI gates and independent review."
+}

@@ -1,0 +1,240 @@
+{
+ "tool": "tools/verification/m01-escort-coordination-metrics.mjs",
+ "rev": "4e2588faeb8054cea70f8bd014d3aa0dcd3effba",
+ "routes": [
+  {
+   "seed": 19390901,
+   "support": false,
+   "timeline": {
+    "eastDemolition": 860.9,
+    "atFiringPoint": 912.4,
+    "escortOrder": null,
+    "bakOnShoulder": 925.2,
+    "bakDelivered": 1168.7,
+    "westDemolition": 1172.2,
+    "missionEnd": 1187.3,
+    "missionMin": 19.79,
+    "corridorSec": 311.3
+   },
+   "idle": {
+    "corridorIdleSec": 233,
+    "longestStillSec": 257.8
+   },
+   "contact": {
+    "corridorMoments": 56,
+    "longestGapEastToWestSec": 30.4,
+    "longestGapFiringPointToWestSec": 27.3,
+    "longestGapTrain963ToWestSec": 30.4
+   },
+   "escort": null,
+   "squad": {
+    "bounds": [],
+    "linesSaid": [],
+    "kowalCoverBursts": 0
+   },
+   "guard": {
+    "clipping": 0,
+    "stacked": 0,
+    "minPlayerHealth": 92,
+    "survivors": 12,
+    "bak": "rescued_by_dudek",
+    "complete": true
+   }
+  },
+  {
+   "seed": 7,
+   "support": true,
+   "timeline": {
+    "eastDemolition": 756.6,
+    "atFiringPoint": 809.5,
+    "escortOrder": null,
+    "bakOnShoulder": 820.9,
+    "bakDelivered": 1064.4,
+    "westDemolition": 1067.9,
+    "missionEnd": 1083,
+    "missionMin": 18.05,
+    "corridorSec": 311.3
+   },
+   "idle": {
+    "corridorIdleSec": 233,
+    "longestStillSec": 256.5
+   },
+   "contact": {
+    "corridorMoments": 20,
+    "longestGapEastToWestSec": 44.1,
+    "longestGapFiringPointToWestSec": 44.1,
+    "longestGapTrain963ToWestSec": 51.4
+   },
+   "escort": null,
+   "squad": {
+    "bounds": [],
+    "linesSaid": [],
+    "kowalCoverBursts": 0
+   },
+   "guard": {
+    "clipping": 0,
+    "stacked": 0,
+    "minPlayerHealth": 100,
+    "survivors": 18,
+    "bak": "rescued_by_dudek",
+    "complete": true
+   }
+  },
+  {
+   "seed": 3,
+   "support": false,
+   "timeline": {
+    "eastDemolition": 879.1,
+    "atFiringPoint": 930.6,
+    "escortOrder": null,
+    "bakOnShoulder": 943.4,
+    "bakDelivered": 1186.9,
+    "westDemolition": 1190.4,
+    "missionEnd": 1205.5,
+    "missionMin": 20.09,
+    "corridorSec": 311.3
+   },
+   "idle": {
+    "corridorIdleSec": 233,
+    "longestStillSec": 257.8
+   },
+   "contact": {
+    "corridorMoments": 50,
+    "longestGapEastToWestSec": 41.2,
+    "longestGapFiringPointToWestSec": 41.2,
+    "longestGapTrain963ToWestSec": 41.2
+   },
+   "escort": null,
+   "squad": {
+    "bounds": [],
+    "linesSaid": [],
+    "kowalCoverBursts": 0
+   },
+   "guard": {
+    "clipping": 0,
+    "stacked": 0,
+    "minPlayerHealth": 92,
+    "survivors": 12,
+    "bak": "rescued_by_dudek",
+    "complete": true
+   }
+  },
+  {
+   "seed": 3,
+   "support": true,
+   "timeline": {
+    "eastDemolition": 827.1,
+    "atFiringPoint": 879.9,
+    "escortOrder": null,
+    "bakOnShoulder": 891.4,
+    "bakDelivered": 1134.8,
+    "westDemolition": 1138.4,
+    "missionEnd": 1153.4,
+    "missionMin": 19.22,
+    "corridorSec": 311.3
+   },
+   "idle": {
+    "corridorIdleSec": 233,
+    "longestStillSec": 256.5
+   },
+   "contact": {
+    "corridorMoments": 25,
+    "longestGapEastToWestSec": 52,
+    "longestGapFiringPointToWestSec": 52,
+    "longestGapTrain963ToWestSec": 90.6
+   },
+   "escort": null,
+   "squad": {
+    "bounds": [],
+    "linesSaid": [],
+    "kowalCoverBursts": 0
+   },
+   "guard": {
+    "clipping": 0,
+    "stacked": 0,
+    "minPlayerHealth": 68,
+    "survivors": 18,
+    "bak": "rescued_by_dudek",
+    "complete": true
+   }
+  },
+  {
+   "seed": 7,
+   "support": false,
+   "timeline": {
+    "eastDemolition": 872.4,
+    "atFiringPoint": 923.8,
+    "escortOrder": null,
+    "bakOnShoulder": 936.7,
+    "bakDelivered": 1180.1,
+    "westDemolition": 1183.7,
+    "missionEnd": 1198.7,
+    "missionMin": 19.98,
+    "corridorSec": 311.3
+   },
+   "idle": {
+    "corridorIdleSec": 233,
+    "longestStillSec": 257.8
+   },
+   "contact": {
+    "corridorMoments": 55,
+    "longestGapEastToWestSec": 27.2,
+    "longestGapFiringPointToWestSec": 27.2,
+    "longestGapTrain963ToWestSec": 27.2
+   },
+   "escort": null,
+   "squad": {
+    "bounds": [],
+    "linesSaid": [],
+    "kowalCoverBursts": 0
+   },
+   "guard": {
+    "clipping": 0,
+    "stacked": 0,
+    "minPlayerHealth": 84,
+    "survivors": 12,
+    "bak": "rescued_by_dudek",
+    "complete": true
+   }
+  },
+  {
+   "seed": 19390901,
+   "support": true,
+   "timeline": {
+    "eastDemolition": 822.5,
+    "atFiringPoint": 875.3,
+    "escortOrder": null,
+    "bakOnShoulder": 886.8,
+    "bakDelivered": 1130.2,
+    "westDemolition": 1133.8,
+    "missionEnd": 1148.8,
+    "missionMin": 19.15,
+    "corridorSec": 311.3
+   },
+   "idle": {
+    "corridorIdleSec": 233,
+    "longestStillSec": 256.5
+   },
+   "contact": {
+    "corridorMoments": 21,
+    "longestGapEastToWestSec": 43.6,
+    "longestGapFiringPointToWestSec": 43.6,
+    "longestGapTrain963ToWestSec": 71.6
+   },
+   "escort": null,
+   "squad": {
+    "bounds": [],
+    "linesSaid": [],
+    "kowalCoverBursts": 0
+   },
+   "guard": {
+    "clipping": 0,
+    "stacked": 0,
+    "minPlayerHealth": 100,
+    "survivors": 18,
+    "bak": "rescued_by_dudek",
+    "complete": true
+   }
+  }
+ ]
+}

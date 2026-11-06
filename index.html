@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#151a15" />
   <title>Estrada de Cinzas — COD Guerra</title>
   <link rel="icon" href="data:," />
+  <link rel="preload" href="/assets/fonts/barlow/Barlow-Regular.ttf" as="font" type="font/ttf" crossorigin />
 </head>
 <body>
   <main id="game-shell">
@@ -17,6 +18,7 @@
         <p class="eyebrow" id="mission-place">POLÓNIA · 1 SETEMBRO 1939</p>
         <h1 id="mission-title">A PRIMEIRA<br><span>MANHÃ</span></h1>
         <p class="briefing" id="mission-briefing">Tczew, 04:30. Leve a mensagem ao posto da ponte. Mantenha contacto com a secção e cubra os sapadores.</p>
+        <label class="difficulty-choice" id="difficulty-choice" for="difficulty">DIFICULDADE<select id="difficulty"><option value="recruta">Recruta</option><option value="soldado" selected>Soldado</option><option value="veterano">Veterano</option></select><small>Aplica-se a novas missões. CONTINUAR CHECKPOINT mantém a dificuldade guardada.</small></label>
         <div id="m01-loading" class="m01-loading" data-phase="loading" aria-live="polite">
           <div class="m01-loading-header"><span id="m01-loading-stage">A preparar a missão…</span><strong id="m01-loading-percent">0%</strong></div>
           <div class="m01-loading-track"><div id="m01-loading-bar" class="m01-loading-bar" role="progressbar" aria-label="Carregamento dos recursos da M01" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div></div>
@@ -25,7 +27,14 @@
         <div class="menu-actions"><button id="start">INICIAR MISSÃO <span>→</span></button><button id="continue" class="secondary hidden">CONTINUAR CHECKPOINT</button></div>
         <div class="settings">
           <label for="quality">QUALIDADE<select id="quality"><option value="low">Baixa</option><option value="medium">Média</option><option value="high">Alta</option></select></label>
-          <label for="volume">VOLUME<input id="volume" type="range" min="0" max="1" step=".01" value=".68" /></label>
+          <label for="volume">VOLUME GERAL<input id="volume" type="range" min="0" max="1" step=".01" value=".68" /></label>
+          <details class="audio-mix"><summary>MISTURA</summary><div class="audio-mix-panel">
+          <label for="volume-sfx">EFEITOS<input id="volume-sfx" type="range" min="0" max="1" step=".01" value="1" /></label>
+          <label for="volume-voice">VOZES<input id="volume-voice" type="range" min="0" max="1" step=".01" value="1" /></label>
+          <label for="volume-music">MÚSICA<input id="volume-music" type="range" min="0" max="1" step=".01" value="1" /></label>
+          <label for="reduce-tinnitus" class="check"><input id="reduce-tinnitus" type="checkbox" />REDUZIR ZUMBIDO</label>
+          <p class="audio-status" id="audio-status">Áudio provisório sintetizado — gravações finais pendentes (T45)</p>
+          </div></details>
         </div>
         <p class="controls">WASD mover · Rato olhar · Clique disparar · Botão direito mirar<br>R recarregar · G granada · Shift correr · C agachar · E interagir<br>V alça de mira · Espaço saltar cena · Esc pausa</p>
         <p class="controls touch-hint hidden">TÁTIL: joystick à esquerda para andar · arraste à direita para olhar · botões FOGO / MIRA / REC / GRN / USAR / AGA</p>
@@ -33,18 +42,20 @@
       <div class="mission-note"><span id="mission-note">AS PONTES DO VÍSTULA</span><p>Mantenha contacto.<br>Avance sob cobertura.</p></div>
       <p class="menu-footer" id="mission-status">PROTÓTIPO JOGÁVEL · MODELOS E ÁUDIO PROVISÓRIOS</p>
     </section>
-    <section id="pause" class="overlay centered hidden"><p class="eyebrow">MISSÃO SUSPENSA</p><h2>PAUSADO</h2><p id="pause-text"></p><p id="pause-objective"></p><button id="resume">RETOMAR</button><button id="restart-checkpoint" class="secondary">REINICIAR CHECKPOINT</button><button id="back-menu" class="quiet">VOLTAR AO MENU</button></section>
+    <section id="pause" class="overlay centered hidden"><p class="eyebrow">MISSÃO SUSPENSA</p><h2>PAUSADO</h2><p id="pause-text"></p><p id="pause-objective"></p><p id="pause-difficulty"></p><p class="audio-status" id="pause-audio-status">Áudio provisório sintetizado — gravações finais pendentes (T45)</p><button id="resume">RETOMAR</button><button id="restart-checkpoint" class="secondary">REINICIAR CHECKPOINT</button><button id="back-menu" class="quiet">VOLTAR AO MENU</button></section>
+    <section id="death-offer" class="overlay centered hidden" aria-live="assertive"><p class="eyebrow">CAIU DE NOVO</p><h2>MESMO PONTO</h2><p id="death-offer-text"></p><button id="death-lower">CONTINUAR EM NÍVEL MAIS BAIXO</button><button id="death-retry" class="secondary">TENTAR DE NOVO</button><button id="death-menu" class="quiet">VOLTAR AO MENU</button></section>
     <section id="complete" class="overlay centered hidden"><p class="eyebrow" id="complete-place">TCZEW · 1 SETEMBRO 1939</p><h2>MISSÃO CONCLUÍDA</h2><div id="debrief"></div><button id="replay">JOGAR NOVAMENTE</button><button id="complete-menu" class="secondary">VOLTAR AO MENU</button></section>
     <section id="error" class="error-panel hidden" role="alert"><h2>Não foi possível continuar</h2><p id="error-text"></p><button id="close-error" class="secondary">FECHAR</button></section>
     <div id="hud" class="hidden">
       <div id="damage-vignette"></div><div id="low-health" aria-hidden="true"></div>
       <div id="objective"><small id="objective-label">OBJECTIVO</small><strong id="objective-text">AVANCE PELA ALDEIA</strong><span id="objective-status"></span></div>
       <div id="objective-update" aria-live="polite"></div>
-      <div id="clock-wrap"><small id="clock-date">1 · IX · 1939</small><time id="battle-clock"></time><div id="checkpoint" role="status"><i aria-hidden="true"></i><span>PROGRESSO GUARDADO</span><small id="checkpoint-name"></small></div></div>
+      <div id="clock-wrap"><small id="clock-date">1 · IX · 1939</small><time id="battle-clock"></time><div id="checkpoint" role="status"><i aria-hidden="true"></i><span>PROGRESSO GUARDADO</span><small id="checkpoint-name"></small></div><small id="difficulty-badge" aria-label="Dificuldade"></small></div>
       <div id="crosshair"><i></i><i></i><i></i><i></i></div>
       <div id="hit-marker" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
       <div id="letterbox" aria-hidden="true"><i></i><i></i></div>
       <div id="fade" aria-hidden="true"></div>
+      <div id="death-beat" aria-live="assertive"><small id="death-eyebrow">BAIXA</small><strong id="death-cause"></strong><span id="death-note"></span></div>
       <div id="title-card" aria-live="polite"></div><div id="resume-card"></div>
       <div id="interaction"></div>
       <div id="captions"><div id="message" aria-live="polite"></div><div id="subtitle"></div></div>

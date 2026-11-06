@@ -1,0 +1,494 @@
+{
+  "task": "M01-BOMB-EFFECTS-V1",
+  "what": "the properties behind the seed re-pins of the deck-assault and rearguard tests, on the predecessor (e7f5f28) and on the working tree, same seeds and pilots; deterministic, no clock, no path",
+  "predecessor": "e7f5f2879b1bdbddad7c94ae12fad97627758758",
+  "deckSeeds": [
+    19390901,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "rearguardSeeds": [
+    7,
+    5,
+    19390901,
+    3,
+    4,
+    11,
+    1,
+    8
+  ],
+  "deck": {
+    "predecessor": {
+      "seedsWithTheCase": [
+        3,
+        4,
+        5,
+        6,
+        8
+      ],
+      "share": "5/12",
+      "rows": [
+        {
+          "seed": 19390901,
+          "deadOnSpans": [],
+          "deadElsewhere": [
+            "de_spans_0",
+            "de_spans_1",
+            "de_spans_4"
+          ],
+          "case": false
+        },
+        {
+          "seed": 1,
+          "deadOnSpans": [],
+          "deadElsewhere": [
+            "de_spans_0",
+            "de_spans_1",
+            "de_spans_5"
+          ],
+          "case": false
+        },
+        {
+          "seed": 2,
+          "deadOnSpans": [],
+          "deadElsewhere": [
+            "de_spans_0",
+            "de_spans_1",
+            "de_spans_5"
+          ],
+          "case": false
+        },
+        {
+          "seed": 3,
+          "deadOnSpans": [
+            "de_spans_8"
+          ],
+          "deadElsewhere": [
+            "de_spans_0",
+            "de_spans_1"
+          ],
+          "case": true
+        },
+        {
+          "seed": 4,
+          "deadOnSpans": [
+            "de_spans_8"
+          ],
+          "deadElsewhere": [
+            "de_spans_0",
+            "de_spans_1",
+            "de_spans_5"
+          ],
+          "case": true
+        },
+        {
+          "seed": 5,
+          "deadOnSpans": [
+            "de_spans_7"
+          ],
+          "deadElsewhere": [
+            "de_spans_0",
+            "de_spans_1",
+            "de_spans_5"
+          ],
+          "case": true
+        },
+        {
+          "seed": 6,
+          "deadOnSpans": [
+            "de_spans_4"
+          ],
+          "deadElsewhere": [
+            "de_spans_0",
+            "de_spans_1",
+            "de_spans_5",
+            "de_spans_7"
+          ],
+          "case": true
+        },
+        {
+          "seed": 7,
+          "deadOnSpans": [],
+          "deadElsewhere": [
+            "de_spans_0",
+            "de_spans_1",
+            "de_spans_7"
+          ],
+          "case": false
+        },
+        {
+          "seed": 8,
+          "deadOnSpans": [
+            "de_spans_8"
+          ],
+          "deadElsewhere": [
+            "de_spans_0",
+            "de_spans_1",
+            "de_spans_5",
+            "de_spans_6",
+            "de_spans_7"
+          ],
+          "case": true
+        },
+        {
+          "seed": 9,
+          "deadOnSpans": [],
+          "deadElsewhere": [
+            "de_spans_0",
+            "de_spans_1",
+            "de_spans_5"
+          ],
+          "case": false
+        },
+        {
+          "seed": 10,
+          "deadOnSpans": [],
+          "deadElsewhere": [
+            "de_spans_0",
+            "de_spans_1",
+            "de_spans_6"
+          ],
+          "case": false
+        },
+        {
+          "seed": 11,
+          "deadOnSpans": [],
+          "deadElsewhere": [
+            "de_spans_0",
+            "de_spans_1"
+          ],
+          "case": false
+        }
+      ]
+    },
+    "live": {
+      "seedsWithTheCase": [
+        1,
+        2,
+        3,
+        6,
+        7,
+        10,
+        11
+      ],
+      "share": "7/12",
+      "rows": [
+        {
+          "seed": 19390901,
+          "deadOnSpans": [],
+          "deadElsewhere": [
+            "de_spans_0",
+            "de_spans_1",
+            "de_spans_7",
+            "de_spans_8"
+          ],
+          "case": false
+        },
+        {
+          "seed": 1,
+          "deadOnSpans": [
+            "de_spans_8"
+          ],
+          "deadElsewhere": [
+            "de_spans_0",
+            "de_spans_1"
+          ],
+          "case": true
+        },
+        {
+          "seed": 2,
+          "deadOnSpans": [
+            "de_spans_8"
+          ],
+          "deadElsewhere": [
+            "de_spans_0",
+            "de_spans_1"
+          ],
+          "case": true
+        },
+        {
+          "seed": 3,
+          "deadOnSpans": [
+            "de_spans_5",
+            "de_spans_7",
+            "de_spans_8"
+          ],
+          "deadElsewhere": [
+            "de_spans_0",
+            "de_spans_1"
+          ],
+          "case": true
+        },
+        {
+          "seed": 4,
+          "deadOnSpans": [],
+          "deadElsewhere": [
+            "de_spans_0",
+            "de_spans_1",
+            "de_spans_7"
+          ],
+          "case": false
+        },
+        {
+          "seed": 5,
+          "deadOnSpans": [],
+          "deadElsewhere": [
+            "de_spans_0",
+            "de_spans_1"
+          ],
+          "case": false
+        },
+        {
+          "seed": 6,
+          "deadOnSpans": [
+            "de_spans_7"
+          ],
+          "deadElsewhere": [
+            "de_spans_0",
+            "de_spans_1",
+            "de_spans_5"
+          ],
+          "case": true
+        },
+        {
+          "seed": 7,
+          "deadOnSpans": [
+            "de_spans_7",
+            "de_spans_8"
+          ],
+          "deadElsewhere": [
+            "de_spans_0",
+            "de_spans_1",
+            "de_spans_6"
+          ],
+          "case": true
+        },
+        {
+          "seed": 8,
+          "deadOnSpans": [],
+          "deadElsewhere": [
+            "de_spans_0",
+            "de_spans_1",
+            "de_spans_5",
+            "de_spans_7"
+          ],
+          "case": false
+        },
+        {
+          "seed": 9,
+          "deadOnSpans": [],
+          "deadElsewhere": [
+            "de_spans_0",
+            "de_spans_1",
+            "de_spans_4",
+            "de_spans_5",
+            "de_spans_6"
+          ],
+          "case": false
+        },
+        {
+          "seed": 10,
+          "deadOnSpans": [
+            "de_spans_5",
+            "de_spans_9"
+          ],
+          "deadElsewhere": [
+            "de_spans_0",
+            "de_spans_1",
+            "de_spans_8"
+          ],
+          "case": true
+        },
+        {
+          "seed": 11,
+          "deadOnSpans": [
+            "de_spans_4",
+            "de_spans_8",
+            "de_spans_9"
+          ],
+          "deadElsewhere": [
+            "de_spans_0",
+            "de_spans_1"
+          ],
+          "case": true
+        }
+      ]
+    }
+  },
+  "rearguard": {
+    "predecessor": {
+      "neverLonger": "8/8",
+      "seedsLonger": [],
+      "meanDeltaSec": -7.72,
+      "pinnedSeeds": [
+        19390901,
+        5,
+        3,
+        4,
+        11
+      ],
+      "pinnedSumWithoutSec": 1311.5,
+      "pinnedSumWithSec": 1269.9,
+      "rows": [
+        {
+          "seed": 7,
+          "without": 261.95,
+          "withIt": 261.95,
+          "delta": 0,
+          "rounds": 24,
+          "neverLonger": true
+        },
+        {
+          "seed": 5,
+          "without": 262.3,
+          "withIt": 251.8,
+          "delta": -10.5,
+          "rounds": 16,
+          "neverLonger": true
+        },
+        {
+          "seed": 19390901,
+          "without": 262.3,
+          "withIt": 253.5,
+          "delta": -8.8,
+          "rounds": 17,
+          "neverLonger": true
+        },
+        {
+          "seed": 3,
+          "without": 262.3,
+          "withIt": 262.3,
+          "delta": 0,
+          "rounds": 17,
+          "neverLonger": true
+        },
+        {
+          "seed": 4,
+          "without": 262.3,
+          "withIt": 240,
+          "delta": -22.3,
+          "rounds": 20,
+          "neverLonger": true
+        },
+        {
+          "seed": 11,
+          "without": 262.3,
+          "withIt": 262.3,
+          "delta": 0,
+          "rounds": 19,
+          "neverLonger": true
+        },
+        {
+          "seed": 1,
+          "without": 262.3,
+          "withIt": 262.3,
+          "delta": 0,
+          "rounds": 25,
+          "neverLonger": true
+        },
+        {
+          "seed": 8,
+          "without": 262.3,
+          "withIt": 242.1,
+          "delta": -20.2,
+          "rounds": 14,
+          "neverLonger": true
+        }
+      ]
+    },
+    "live": {
+      "neverLonger": "7/8",
+      "seedsLonger": [
+        {
+          "seed": 7,
+          "deltaSec": 0.95
+        }
+      ],
+      "meanDeltaSec": -7.54,
+      "pinnedSeeds": [
+        19390901,
+        5,
+        3,
+        4,
+        11
+      ],
+      "pinnedSumWithoutSec": 1311.5,
+      "pinnedSumWithSec": 1259.65,
+      "rows": [
+        {
+          "seed": 7,
+          "without": 261.35,
+          "withIt": 262.3,
+          "delta": 0.95,
+          "rounds": 20,
+          "neverLonger": false
+        },
+        {
+          "seed": 5,
+          "without": 262.3,
+          "withIt": 251.6,
+          "delta": -10.7,
+          "rounds": 23,
+          "neverLonger": true
+        },
+        {
+          "seed": 19390901,
+          "without": 262.3,
+          "withIt": 235.6,
+          "delta": -26.7,
+          "rounds": 17,
+          "neverLonger": true
+        },
+        {
+          "seed": 3,
+          "without": 262.3,
+          "withIt": 262.3,
+          "delta": 0,
+          "rounds": 15,
+          "neverLonger": true
+        },
+        {
+          "seed": 4,
+          "without": 262.3,
+          "withIt": 247.85,
+          "delta": -14.45,
+          "rounds": 14,
+          "neverLonger": true
+        },
+        {
+          "seed": 11,
+          "without": 262.3,
+          "withIt": 262.3,
+          "delta": 0,
+          "rounds": 27,
+          "neverLonger": true
+        },
+        {
+          "seed": 1,
+          "without": 260.95,
+          "withIt": 257.65,
+          "delta": -3.3,
+          "rounds": 24,
+          "neverLonger": true
+        },
+        {
+          "seed": 8,
+          "without": 262.3,
+          "withIt": 256.15,
+          "delta": -6.15,
+          "rounds": 15,
+          "neverLonger": true
+        }
+      ]
+    }
+  }
+}

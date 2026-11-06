@@ -1,0 +1,66 @@
+{
+  "status": "IMPLEMENTED_PENDING_INDEPENDENT_VERIFICATION",
+  "attempt": 1,
+  "baseHead": "94887416d8588a8d75b39af95a563d7aff4ff24d",
+  "sourceSha256": {
+    "src/game/m01-simulation.js": "1e5c17fbc45d876dee4c5fbabeeebc426325eab5d0180a1d596e81423908ccde",
+    "src/render/m01-actor-pose.js": "1ac1800858490728379b0973ee6a7cf17a0d7161a31f8f5d52639516757699bc",
+    "src/render/m01-characters.js": "00fa46617ce42fba4bc8bd66eeecb6bb17ec2bd74db614ecd84907b3d4861cea",
+    "src/render/m01-station-damage.js": "714f7bb9c73e10c501faedae1aa5939439ac7aaf68b2a2861424b6e6944bff5d",
+    "src/render/m01-view.js": "07747daa1985aa557704043835e00886378ca29f277a47bff48fb8a4b22e7a10",
+    "src/render/m01-viewmodel.js": "147227b78d949f559210bd06fa9fb253de615312d31f0e7ec3164f3012a06149",
+    "tests/browser/m01-battlefield-audio-runtime.spec.js": "f363dba3200ed23872c73d141d9cb94eed17f55d74a180dad6d3e521217f5ddb",
+    "tests/browser/m01-bridge-finish-runtime.spec.js": "1f336da9fe29bfef36e4a6bc350f930f70082d83c22141105ae01082c7cba1c3",
+    "tests/browser/m01-station-architecture.spec.js": "d436939693d5aa80b44283701d80a57a26c71e63e10fbe3ca290dd3734abe0ed",
+    "tests/helpers/m01-cover.js": "f0ef4ab8ecd586963ad24639473ff4da56b39b1f2a6ba284e6ced2b14fc2f8cb",
+    "tools/verification/m01-partials-cover-policy-audit.mjs": "848a930a6380fb9438f116745de308b95334bf073379893b48d2915e2e24e09f",
+    "tools/verification/m01-partials-bridge-correction-proof.mjs": "0be2dd94d2d8df51e746664b0eb3b172eddee64b344782f019707b372cb7d0af"
+  },
+  "checks": {
+    "build": {
+      "result": "PASS",
+      "log": "/workspace/scratch/partials-build-correction-01.log"
+    },
+    "audioStationBrowser": {
+      "result": "PASS",
+      "cases": 4,
+      "duration": "6.4m",
+      "log": "/workspace/scratch/partials-browser-correction-audio-station.log",
+      "report": "test-results/partials-completion-evidence/browser-report.json"
+    },
+    "displayMarkerGuard": {
+      "result": "PASS",
+      "cases": 2,
+      "log": "/workspace/scratch/partials-display-marker-tight-guard.log"
+    },
+    "focusedCoverPolicy": {
+      "result": "PASS",
+      "seeds": [
+        19390901
+      ],
+      "routes": 2,
+      "report": "/workspace/scratch/partials-cover-policy-focused.json"
+    },
+    "boundedBridge": {
+      "result": "PASS",
+      "wholeFrameControlChangedPixels": 0,
+      "scope": "Cold0610 whole-frame ownerON/OFF and high-quality actual far-disable-enable-exactnear return only",
+      "report": "test-results/partials-correction-01/bridge/correction-proof.json"
+    },
+    "fullNode": {
+      "result": "RUNNING",
+      "log": "/workspace/scratch/partials-node-correction-01.log"
+    },
+    "fullCoverPolicy": {
+      "result": "PENDING"
+    },
+    "independentCertification": {
+      "result": "PENDING"
+    }
+  },
+  "historicalGoldenSha256": "e0fb4ecbc1e483f9d9e177fd63c8a5a063529787238500d5a8a91e80e696b958",
+  "limitations": [
+    "Original failures remain preserved. No final suite or independent acceptance is claimed.",
+    "Complete paired bridge matrix and full24-route policy audit remain mandatory certification gates."
+  ]
+}

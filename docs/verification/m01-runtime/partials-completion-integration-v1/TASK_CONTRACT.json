@@ -9,8 +9,9 @@
   "git": {
     "base_branch": "codex/m01-continuity-raid-integration-v1",
     "base_head": "529e7de5ccbb69408304196a8d4fab27529ecd60",
-    "work_branch": "codex/m01-partials-completion-integration-v1",
-    "starting_head": "529e7de5ccbb69408304196a8d4fab27529ecd60"
+    "work_branch": "codex/m01-partials-browser-sampling-repair-v1",
+    "starting_head": "529e7de5ccbb69408304196a8d4fab27529ecd60",
+    "original_work_branch": "codex/m01-partials-completion-integration-v1"
   },
   "policy": {
     "gameplay_change_allowed": true,
@@ -86,7 +87,7 @@
   },
   "acceptance": {
     "criteria": [
-      "Every one of the eleven task acceptance clauses from docs/M01_FINAL_ROADMAP.md is implemented and individually evidenced; never close merely on symbols/file presence.",
+      "Every one of the eleven task acceptance clauses from docs/M01_FINAL_ROADMAP.md is implemented and individually evidenced, subject to the explicit D34-approved T24 editorial-camera variance and T36 timing/exposure policy in CAPTAIN-AMENDMENT-01/02; never close merely on symbols/file presence.",
       "Existing accepted deliveries and original mission combat cadences/damage/LOS/mission gates/CP-A..D preserved except explicitly authorized task data/decoration changes. French sandbox unchanged.",
       "Atomic persistence and backwards compatibility for any optional new fields/actors, full continuation invariants.",
       "T14/T41 confirmed author, disabled-card, allocation, camera-wait and evidence-isolation blockers resolved with all required original matrix/authority/regression proofs. Historical failure evidence retained.",
@@ -99,6 +100,27 @@
       "Focused production browser captures and raw diagnostics on pinned source",
       "Real-control route/continuation and golden audit",
       "Source/ref integration manifest and retained historical blocker record"
+    ],
+    "approved_variances": [
+      {
+        "id": "T24-CAMERA-01",
+        "approval": "Captain under permanent user D34; CAPTAIN_AMENDMENT_01.json",
+        "original_requirement": "vista 10 com fumo e l\u00e2mpada a 1 km",
+        "replacement": "Retain canonical occluded view10 capture with honest visibility limit; prove actual lamp and smoke in a measured unobstructed >=1km production world ROI, two small target perturbations, and zero lamp through original occluder. Preserve depth, original gates and all other T24 clauses."
+      },
+      {
+        "id": "T36-EXPOSURE-01",
+        "approval": "Captain under permanent user D34; CAPTAIN_AMENDMENT_02.json clarified prospectively by CAPTAIN_AMENDMENT_03.json",
+        "original_requirement": "Unchanged complete-route outcomes and additional conservative raw player-health equality.",
+        "replacement": "Exact full health/stats/control and per-tick health/RNG against the sole WEST-readiness replay; raw player-health loss only from each causally attributed extra real impact during the existing readiness slowdown/clamp, including a shared-issued projectile avoided by RAW exit after WEST. Prove first causal divergence and actual RAW issue/impact/exit. Preserve all other raw outcomes and original actor health; retain every full report and all24 complete routes."
+      }
+    ],
+    "authorized_policy_deltas": [
+      {
+        "task": "T36",
+        "policy": "Unfinished B\u0105k carry/putdown blocks west-demolition readiness via the existing battle-clock hold; actual delivery must precede readiness before06:45. Source audit explicitly records and isolates this delay; cadences/damage/RNG algorithms and fixed event battle-clock instants remain unchanged.",
+        "verification": "CAPTAIN_AMENDMENT_02.json plus prospective CAPTAIN_AMENDMENT_03.json: existing WEST last60-second slowdown and30-second clamp, strict causal attribution for additional-issued and shared-issued extra impacts, exact full policy health/stats/controls/tick RNG and all other RAW invariants."
+      }
     ]
   },
   "verification": {
@@ -117,11 +139,13 @@
     ]
   },
   "execution": {
-    "max_fix_attempts": 3,
+    "max_fix_attempts": 4,
     "max_review_rejections": 2,
     "production_mode": "focused",
     "prior_bridge_attempts": 3,
-    "bridge_continuation_authorization": "User on 2026-10-14 explicitly requested completing ALL partial tasks and integrating; renewed scope includes T14/T41. Preserve earlier 3/3 record; this batch has a new bounded correction budget, not a historical reset."
+    "bridge_continuation_authorization": "User on 2026-10-14 explicitly requested completing ALL partial tasks and integrating; renewed scope includes T14/T41. Preserve earlier 3/3 record; this batch has a new bounded correction budget, not a historical reset.",
+    "original_max_fix_attempts": 3,
+    "prospective_extension": "CAPTAIN_EXTENSION_04.json: one extra sampling-harness-only correction under D34/latest user continuation; same RUN, original3/3 and CIretry1/1 preserved. No production changes or assertion relaxation; block if it fails."
   },
   "routing": {
     "policy": "repository required sequential implementer/verifier/reviewer",
@@ -159,17 +183,22 @@
     ]
   },
   "state": {
-    "status": "PLANNED",
-    "current_node": "context_audit",
-    "current_owner": "root",
-    "next_action": "merge prior work and delegate implementation"
+    "status": "ACCEPTED",
+    "current_node": "handoff",
+    "current_owner": "captain",
+    "next_action": "Publish reviewed metadata and source-identical playable target by normal atomic fast-forward, open draftPR to main, verify remotes and finish graph. No main merge/push."
   },
   "result": {
-    "final_head": "",
-    "tests": [],
-    "build": "",
-    "runtime": "",
-    "review": "",
-    "final_status": ""
+    "final_head": "e377a0739906507dee63cd4006a3428efd22c56b",
+    "tests": [
+      "Fresh874Node/173tooling PASS",
+      "Freshoriginal5Stuka PASS, zero retries/skips/flaky",
+      "Retained9a source-identical24causal/299protected/24owner/paired0/coupled44 gates PASS"
+    ],
+    "build": "PASS",
+    "runtime": "IndependentverifierPASS, compositeproof; no singlefull44PASS",
+    "review": "ACCEPT: REVIEW.md",
+    "final_status": "ACCEPTED",
+    "verification_head": "e377a0739906507dee63cd4006a3428efd22c56b"
   }
 }

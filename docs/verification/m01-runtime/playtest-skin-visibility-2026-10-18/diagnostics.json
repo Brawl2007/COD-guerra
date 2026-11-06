@@ -1,0 +1,402 @@
+{
+ "note": "gameDiagnostics().m01.characters/impostors, ?debug=1, quality High, SwiftShader 1280x720, restored snapshots (tests/helpers/m01-route.js route), paused at the same sim clock +-0.2 s. before = f6913a0. after = LOD/budget logic identical in every capture; the German rim/fill shader differs between intermediate builds (v1/v2/v3) for runs other than t0610_de45, t0610_de90 and t0610_declose, which are from the final build. Counts and submittedMeshes do not depend on the shader. renderer.info was not collected. Follow-up (first-load / civilians) views use the f6913a0..19b0104 build as before and the follow-up commit as after; the failed-fetch views abort m01_soldier_*_lod2.glb (or all soldier GLBs) with Playwright route.abort().",
+ "views": {
+  "opening_allies": {
+   "before": {
+    "activeSkinned": 13,
+    "budget": 28,
+    "lodBands": [
+     5,
+     3,
+     5
+    ],
+    "submittedMeshes": 81,
+    "failures": [],
+    "impostors": {
+     "pl": 0,
+     "de": 0
+    },
+    "preset": "high"
+   },
+   "after": {
+    "activeSkinned": 14,
+    "budget": 48,
+    "lodBands": [
+     5,
+     3,
+     6
+    ],
+    "submittedMeshes": 87,
+    "failures": [],
+    "impostors": {
+     "pl": 0,
+     "de": 0
+    },
+    "preset": "high"
+   }
+  },
+  "raid0536_east": {
+   "before": {
+    "activeSkinned": 10,
+    "budget": 28,
+    "lodBands": [
+     0,
+     4,
+     6
+    ],
+    "submittedMeshes": 64,
+    "failures": [],
+    "impostors": {
+     "pl": 21,
+     "de": 38
+    },
+    "preset": "high"
+   },
+   "after": {
+    "activeSkinned": 15,
+    "budget": 48,
+    "lodBands": [
+     0,
+     4,
+     11
+    ],
+    "submittedMeshes": 98,
+    "failures": [],
+    "impostors": {
+     "pl": 20,
+     "de": 38
+    },
+    "preset": "high"
+   }
+  },
+  "repairThreat_mid": {
+   "before": {
+    "activeSkinned": 14,
+    "budget": 28,
+    "lodBands": [
+     3,
+     2,
+     9
+    ],
+    "submittedMeshes": 94,
+    "failures": [],
+    "impostors": {
+     "pl": 24,
+     "de": 38
+    },
+    "preset": "high"
+   },
+   "after": {
+    "activeSkinned": 15,
+    "budget": 48,
+    "lodBands": [
+     3,
+     2,
+     10
+    ],
+    "submittedMeshes": 98,
+    "failures": [],
+    "impostors": {
+     "pl": 24,
+     "de": 38
+    },
+    "preset": "high"
+   }
+  },
+  "t0610_declose": {
+   "before": {
+    "activeSkinned": 28,
+    "budget": 28,
+    "lodBands": [
+     2,
+     22,
+     4
+    ],
+    "submittedMeshes": 168,
+    "failures": [],
+    "impostors": {
+     "pl": 31,
+     "de": 0
+    },
+    "preset": "high"
+   },
+   "after": {
+    "activeSkinned": 48,
+    "budget": 48,
+    "lodBands": [
+     2,
+     22,
+     24
+    ],
+    "submittedMeshes": 288,
+    "failures": [],
+    "impostors": {
+     "pl": 31,
+     "de": 0
+    },
+    "preset": "high"
+   }
+  },
+  "t0610_de45": {
+   "before": {
+    "activeSkinned": 28,
+    "budget": 28,
+    "lodBands": [
+     0,
+     1,
+     27
+    ],
+    "submittedMeshes": 168,
+    "failures": [],
+    "impostors": {
+     "pl": 31,
+     "de": 0
+    },
+    "preset": "high"
+   },
+   "after": {
+    "activeSkinned": 48,
+    "budget": 48,
+    "lodBands": [
+     0,
+     1,
+     47
+    ],
+    "submittedMeshes": 288,
+    "failures": [],
+    "impostors": {
+     "pl": 31,
+     "de": 0
+    },
+    "preset": "high"
+   }
+  },
+  "t0610_de90": {
+   "before": {
+    "activeSkinned": 28,
+    "budget": 28,
+    "lodBands": [
+     0,
+     0,
+     28
+    ],
+    "submittedMeshes": 168,
+    "failures": [],
+    "impostors": {
+     "pl": 31,
+     "de": 0
+    },
+    "preset": "high"
+   },
+   "after": {
+    "activeSkinned": 48,
+    "budget": 48,
+    "lodBands": [
+     0,
+     0,
+     48
+    ],
+    "submittedMeshes": 288,
+    "failures": [],
+    "impostors": {
+     "pl": 31,
+     "de": 0
+    },
+    "preset": "high"
+   }
+  },
+  "t0610_east450": {
+   "before": {
+    "activeSkinned": 20,
+    "budget": 28,
+    "lodBands": [
+     18,
+     0,
+     2
+    ],
+    "submittedMeshes": 128,
+    "failures": [],
+    "impostors": {
+     "pl": 13,
+     "de": 44
+    },
+    "preset": "high"
+   },
+   "after": {
+    "activeSkinned": 20,
+    "budget": 48,
+    "lodBands": [
+     18,
+     0,
+     2
+    ],
+    "submittedMeshes": 128,
+    "failures": [],
+    "impostors": {
+     "pl": 13,
+     "de": 44
+    },
+    "preset": "high"
+   }
+  },
+  "t0610_far700": {
+   "before": {
+    "activeSkinned": 2,
+    "budget": 28,
+    "lodBands": [
+     0,
+     0,
+     2
+    ],
+    "submittedMeshes": 20,
+    "failures": [],
+    "impostors": {
+     "pl": 10,
+     "de": 44
+    },
+    "preset": "high"
+   },
+   "after": {
+    "activeSkinned": 25,
+    "budget": 48,
+    "lodBands": [
+     0,
+     0,
+     25
+    ],
+    "submittedMeshes": 150,
+    "failures": [],
+    "impostors": {
+     "pl": 8,
+     "de": 44
+    },
+    "preset": "high"
+   }
+  },
+  "repairThreat_t_generic_rifleman": {
+   "before": {
+    "activeSkinned": 14,
+    "budget": 28,
+    "lodBands": [
+     3,
+     2,
+     9
+    ],
+    "submittedMeshes": 94,
+    "failures": [],
+    "impostors": {
+     "pl": 24,
+     "de": 38
+    },
+    "preset": "high"
+   },
+   "after": {
+    "activeSkinned": 15,
+    "budget": 48,
+    "lodBands": [
+     3,
+     2,
+     10
+    ],
+    "submittedMeshes": 98,
+    "failures": [],
+    "impostors": {
+     "pl": 24,
+     "de": 38
+    },
+    "preset": "high"
+   }
+  },
+  "t0610_de90_lod2_fetch_failed": {
+   "before": {
+    "activeSkinned": 0,
+    "lodBands": [
+     0,
+     0,
+     0
+    ],
+    "submittedMeshes": 0,
+    "failures": [
+     "m01_soldier_pl_lod2.glb",
+     "m01_soldier_de_lod2.glb"
+    ]
+   },
+   "after": {
+    "activeSkinned": 48,
+    "lodBands": [
+     0,
+     48,
+     0
+    ],
+    "submittedMeshes": 288,
+    "failures": [
+     "m01_soldier_pl_lod2.glb",
+     "m01_soldier_de_lod2.glb"
+    ]
+   }
+  },
+  "opening_allies_all_soldier_glb_failed": {
+   "after": {
+    "activeSkinned": 0,
+    "lodBands": [
+     0,
+     0,
+     0
+    ],
+    "submittedMeshes": 0,
+    "failures": [
+     "m01_soldier_pl_lod0.glb",
+     "m01_soldier_pl_lod1.glb",
+     "m01_soldier_pl_lod2.glb",
+     "m01_soldier_de_lod2.glb",
+     "m01_soldier_de_lod0.glb",
+     "m01_soldier_de_lod1.glb"
+    ]
+   }
+  },
+  "t0620_yard": {
+   "before": {
+    "activeSkinned": 15,
+    "lodBands": [
+     0,
+     1,
+     14
+    ],
+    "submittedMeshes": 100,
+    "failures": []
+   },
+   "after": {
+    "activeSkinned": 20,
+    "lodBands": [
+     0,
+     4,
+     16
+    ],
+    "submittedMeshes": 110,
+    "failures": []
+   }
+  },
+  "opening_lipski": {
+   "before": {
+    "activeSkinned": 14,
+    "lodBands": [
+     5,
+     3,
+     6
+    ],
+    "submittedMeshes": 87,
+    "failures": []
+   },
+   "after": {
+    "activeSkinned": 19,
+    "lodBands": [
+     5,
+     4,
+     10
+    ],
+    "submittedMeshes": 97,
+    "failures": []
+   }
+  }
+ }
+}

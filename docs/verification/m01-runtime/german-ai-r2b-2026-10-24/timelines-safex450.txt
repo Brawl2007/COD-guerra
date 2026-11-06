@@ -1,0 +1,211 @@
+# safex450 19390901:0
+0.00 ENTRY
+262.30 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+262.30 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+262.30 CASUALTY de_spans_2 by demolition at x 948 (clear, speed 0.0)
+262.30 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+262.30 DEMOLITION
+# safex450 1:0
+0.00 ENTRY
+140.15 PLAYER WOUND -8 by de_spans_8 (kar98k/player) health 84
+168.65 CASUALTY de_spans_6 by rearguard at x 502 (fallback, speed 5.2)
+180.30 CASUALTY de_spans_5 by rearguard at x 633 (fallback, speed 5.2)
+262.30 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+262.30 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+262.30 CASUALTY de_spans_2 by demolition at x 954 (clear, speed 0.0)
+262.30 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+262.30 DEMOLITION
+# safex450 2:0
+0.00 ENTRY
+91.80 PLAYER WOUND -8 by de_spans_2 (kar98k/player) health 92
+210.65 PLAYER WOUND -8 by de_east_20 (kar98k/player) health 84
+253.80 PLAYER WOUND -8 by de_spans_0 (kar98k/player) health 76
+262.30 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+262.30 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+262.30 CASUALTY de_spans_2 by demolition at x 948 (clear, speed 0.0)
+262.30 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+262.30 DEMOLITION
+# safex450 3:0
+0.00 ENTRY
+218.80 CASUALTY de_spans_6 by rearguard at x 763 (fallback, speed 5.2)
+262.30 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+262.30 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+262.30 CASUALTY de_spans_2 by demolition at x 948 (clear, speed 0.0)
+262.30 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+262.30 DEMOLITION
+# safex450 4:0
+0.00 ENTRY
+39.50 PLAYER WOUND -8 by de_spans_3 (kar98k/player) health 84
+202.00 CASUALTY de_spans_6 by rearguard at x 675 (fallback, speed 5.2)
+262.30 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+262.30 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+262.30 CASUALTY de_spans_2 by demolition at x 948 (clear, speed 0.0)
+262.30 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+262.30 DEMOLITION
+# safex450 5:0
+0.00 ENTRY
+166.70 CASUALTY de_spans_5 by rearguard at x 565 (fallback, speed 5.2)
+187.35 CASUALTY de_spans_4 by rearguard at x 575 (fallback, speed 5.2)
+194.00 PLAYER WOUND -8 by de_spans_2 (kar98k/player) health 92
+251.60 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+251.60 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+251.60 CASUALTY de_spans_2 by demolition at x 954 (clear, speed 0.0)
+251.60 CASUALTY de_spans_3 by demolition at x 951 (clear, speed 0.0)
+251.60 DEMOLITION
+# safex450 6:0
+0.00 ENTRY
+91.15 PLAYER WOUND -8 by de_spans_2 (kar98k/player) health 92
+109.45 PLAYER WOUND -8 by de_east_20 (kar98k/player) health 84
+189.60 CASUALTY de_spans_4 by rearguard at x 587 (fallback, speed 5.2)
+257.65 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+257.65 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+257.65 CASUALTY de_spans_2 by demolition at x 951 (clear, speed 0.0)
+257.65 CASUALTY de_spans_3 by demolition at x 948 (clear, speed 0.0)
+257.65 DEMOLITION
+# safex450 7:0
+0.00 ENTRY
+169.45 CASUALTY de_spans_8 by rearguard at x 624 (fallback, speed 5.2)
+193.25 PLAYER WOUND -8 by de_spans_3 (kar98k/player) health 92
+212.75 CASUALTY de_spans_4 by rearguard at x 707 (fallback, speed 5.2)
+217.20 CASUALTY de_spans_5 by rearguard at x 806 (fallback, speed 5.2)
+240.70 PLAYER WOUND -8 by de_spans_7 (kar98k/player) health 84
+255.15 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+255.15 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+255.15 CASUALTY de_spans_2 by demolition at x 954 (clear, speed 0.0)
+255.15 CASUALTY de_spans_3 by demolition at x 951 (clear, speed 0.0)
+255.15 DEMOLITION
+# safex450 8:0
+0.00 ENTRY
+152.60 PLAYER WOUND -8 by de_east_15 (kar98k/player) health 92
+262.30 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+262.30 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+262.30 CASUALTY de_spans_2 by demolition at x 948 (clear, speed 0.0)
+262.30 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+262.30 DEMOLITION
+# safex450 9:0
+0.00 ENTRY
+77.80 PLAYER WOUND -8 by de_east_17 (kar98k/player) health 92
+185.30 PLAYER WOUND -8 by de_east_16 (kar98k/player) health 84
+189.00 PLAYER WOUND -8 by de_spans_2 (kar98k/player) health 76
+203.80 CASUALTY de_spans_4 by rearguard at x 661 (fallback, speed 5.2)
+209.55 PLAYER WOUND -8 by de_east_19 (kar98k/player) health 68
+225.90 PLAYER WOUND -8 by de_east_14 (kar98k/player) health 60
+257.65 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+257.65 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+257.65 CASUALTY de_spans_2 by demolition at x 951 (clear, speed 0.0)
+257.65 CASUALTY de_spans_3 by demolition at x 948 (clear, speed 0.0)
+257.65 DEMOLITION
+# safex450 10:0
+0.00 ENTRY
+171.50 CASUALTY de_spans_4 by rearguard at x 493 (fallback, speed 5.2)
+252.30 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+252.30 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+252.30 CASUALTY de_spans_2 by demolition at x 951 (clear, speed 0.0)
+252.30 CASUALTY de_spans_3 by demolition at x 948 (clear, speed 0.0)
+252.30 DEMOLITION
+# safex450 11:0
+0.00 ENTRY
+203.00 CASUALTY de_spans_4 by rearguard at x 656 (fallback, speed 5.2)
+218.20 PLAYER WOUND -8 by de_spans_2 (kar98k/player) health 84
+250.00 PLAYER WOUND -8 by de_spans_2 (kar98k/player) health 76
+253.20 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+253.20 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+253.20 CASUALTY de_spans_2 by demolition at x 951 (clear, speed 0.0)
+253.20 CASUALTY de_spans_3 by demolition at x 948 (clear, speed 0.0)
+253.20 DEMOLITION
+# safex450 19390901:1
+0.00 ENTRY
+126.55 CASUALTY de_spans_8 by player at x 792 (fallback, speed 5.2)
+134.75 CASUALTY de_spans_5 by rearguard at x 507 (hold, speed 0.0)
+234.10 PLAYER WOUND -8 by de_east_14 (kar98k/player) health 84
+239.95 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+239.95 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+239.95 CASUALTY de_spans_2 by demolition at x 951 (clear, speed 0.0)
+239.95 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+239.95 DEMOLITION
+# safex450 1:1
+0.00 ENTRY
+61.00 CASUALTY de_spans_8 by player at x 767 (advance, speed 5.2)
+242.40 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+242.40 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+242.40 CASUALTY de_spans_2 by demolition at x 948 (clear, speed 0.0)
+242.40 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+242.40 DEMOLITION
+# safex450 2:1
+0.00 ENTRY
+51.30 PLAYER WOUND -8 by de_spans_2 (kar98k/player) health 84
+134.70 CASUALTY de_spans_5 by rearguard at x 507 (hold, speed 0.0)
+178.75 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+178.75 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+178.75 CASUALTY de_spans_2 by demolition at x 951 (clear, speed 0.0)
+178.75 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+178.75 DEMOLITION
+# safex450 3:1
+0.00 ENTRY
+120.80 CASUALTY de_spans_8 by player at x 756 (fallback, speed 5.2)
+135.85 CASUALTY de_spans_5 by section at x 507 (hold, speed 0.0)
+178.10 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+178.10 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+178.10 CASUALTY de_spans_2 by demolition at x 951 (clear, speed 0.0)
+178.10 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+178.10 DEMOLITION
+# safex450 4:1
+0.00 ENTRY
+185.50 CASUALTY de_spans_5 by rearguard at x 661 (fallback, speed 5.2)
+189.25 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+189.25 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+189.25 CASUALTY de_spans_2 by demolition at x 951 (clear, speed 0.0)
+189.25 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+189.25 DEMOLITION
+# safex450 5:1
+0.00 ENTRY
+245.90 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+245.90 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+245.90 CASUALTY de_spans_2 by demolition at x 948 (clear, speed 0.0)
+245.90 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+245.90 DEMOLITION
+# safex450 6:1
+0.00 ENTRY
+262.30 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+262.30 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+262.30 CASUALTY de_spans_2 by demolition at x 948 (clear, speed 0.0)
+262.30 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+262.30 DEMOLITION
+# safex450 7:1
+0.00 ENTRY
+241.85 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+241.85 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+241.85 CASUALTY de_spans_2 by demolition at x 948 (clear, speed 0.0)
+241.85 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+241.85 DEMOLITION
+# safex450 8:1
+0.00 ENTRY
+252.65 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+252.65 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+252.65 CASUALTY de_spans_2 by demolition at x 948 (clear, speed 0.0)
+252.65 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+252.65 DEMOLITION
+# safex450 9:1
+0.00 ENTRY
+243.80 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+243.80 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+243.80 CASUALTY de_spans_2 by demolition at x 948 (clear, speed 0.0)
+243.80 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+243.80 DEMOLITION
+# safex450 10:1
+0.00 ENTRY
+93.20 CASUALTY de_spans_9 by player at x 679 (advance, speed 5.2)
+146.25 PLAYER WOUND -8 by de_east_14 (kar98k/player) health 92
+248.40 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+248.40 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+248.40 CASUALTY de_spans_2 by demolition at x 948 (clear, speed 0.0)
+248.40 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+248.40 DEMOLITION
+# safex450 11:1
+0.00 ENTRY
+32.25 CASUALTY de_spans_8 by player at x 871 (advance, speed 5.2)
+253.10 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+253.10 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+253.10 CASUALTY de_spans_2 by demolition at x 948 (clear, speed 0.0)
+253.10 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+253.10 DEMOLITION

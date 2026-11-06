@@ -1,0 +1,257 @@
+{
+ "source": "git show 5a169ba:src/render/m01-characters.js (pre-T37 M01Characters), scene tests/helpers/m01-pre-t37-oracle.js, quality high, CPU-parsed production GLBs",
+ "snapshots": {
+  "rail embankment south flank|t=5|marek_zielinski": {
+   "bones": 61,
+   "sha256": "61e814f55f1f1c8ceb16dcad7ec3b51b4b6c066e253fdf6c6fde26edc0346c7e"
+  },
+  "rail embankment south flank|t=5|pl_walker": {
+   "bones": 61,
+   "sha256": "8cb653d52e9783481e04da8bb6938439cf9630dfd0f9ab9ca3854ecc0b82841c"
+  },
+  "rail embankment south flank|t=5|pl_runner": {
+   "bones": 61,
+   "sha256": "a4b2a4fb76adcc04981354284ca82fa94e7febd654f309015337008ba36c9a35"
+  },
+  "rail embankment south flank|t=5|pawel_krawiec": {
+   "bones": 61,
+   "sha256": "f226b5ccab7582dc697df504d23b673d86090d137ea2089b4daace1b318a4a2d"
+  },
+  "rail embankment south flank|t=5|pl_pinned": {
+   "bones": 61,
+   "sha256": "9d98867d43bc7b4fca123b5d3be2f6f19f29a1951aa1ac97d805333289fd672c"
+  },
+  "rail embankment south flank|t=5|de_rifle_1": {
+   "bones": 61,
+   "sha256": "36d315df7917b73a81d966a5cbeb3e5c6b34d3f8d1bc7d89ddf8acf745f08f33"
+  },
+  "rail embankment south flank|t=5|de_walker": {
+   "bones": 61,
+   "sha256": "1667143eddbc8f03708679ae73867a87e3351c397238acff02b381668de7e5ba"
+  },
+  "rail embankment south flank|t=5.4|marek_zielinski": {
+   "bones": 61,
+   "sha256": "8f99ab1568a31b7c7411642a17c45e0b5af765c3c1323936ca36dd7811262d0c"
+  },
+  "rail embankment south flank|t=5.4|pl_walker": {
+   "bones": 61,
+   "sha256": "8cb653d52e9783481e04da8bb6938439cf9630dfd0f9ab9ca3854ecc0b82841c"
+  },
+  "rail embankment south flank|t=5.4|pl_runner": {
+   "bones": 61,
+   "sha256": "a4b2a4fb76adcc04981354284ca82fa94e7febd654f309015337008ba36c9a35"
+  },
+  "rail embankment south flank|t=5.4|pawel_krawiec": {
+   "bones": 61,
+   "sha256": "59e1b0533a5e2bfc16d79c908ff531aff67e637cff5752aa541cd9c72128b54a"
+  },
+  "rail embankment south flank|t=5.4|pl_pinned": {
+   "bones": 61,
+   "sha256": "8cfd441b3509e47bc52f847e9729a93d1ecc4c07f50136cd347133a8c34b20e8"
+  },
+  "rail embankment south flank|t=5.4|de_rifle_1": {
+   "bones": 61,
+   "sha256": "b2d4fe2c4e71094f16b6a59205aa244a49fc6609671b9aa9bc448ef45855e97e"
+  },
+  "rail embankment south flank|t=5.4|de_walker": {
+   "bones": 61,
+   "sha256": "1667143eddbc8f03708679ae73867a87e3351c397238acff02b381668de7e5ba"
+  },
+  "rail embankment south flank|t=6.2|marek_zielinski": {
+   "bones": 61,
+   "sha256": "e3d63f60cca5ec5709c382a0adbef445b0b8f35e657181d76907af2ac0302683"
+  },
+  "rail embankment south flank|t=6.2|pl_walker": {
+   "bones": 61,
+   "sha256": "8cb653d52e9783481e04da8bb6938439cf9630dfd0f9ab9ca3854ecc0b82841c"
+  },
+  "rail embankment south flank|t=6.2|pl_runner": {
+   "bones": 61,
+   "sha256": "a4b2a4fb76adcc04981354284ca82fa94e7febd654f309015337008ba36c9a35"
+  },
+  "rail embankment south flank|t=6.2|pawel_krawiec": {
+   "bones": 61,
+   "sha256": "155612fbc794b88bb758b08c11073460009b843a2aa56c4aaaa39bad032d18c8"
+  },
+  "rail embankment south flank|t=6.2|pl_pinned": {
+   "bones": 61,
+   "sha256": "d73f98abb4d4775fc1b906b66076680ec24f8e2d176d4efe27b41c6a17c83089"
+  },
+  "rail embankment south flank|t=6.2|de_rifle_1": {
+   "bones": 61,
+   "sha256": "ceaf3dedd400fb8965a59b933ca492bb89e4ee1e902ac06523b712205394dc1c"
+  },
+  "rail embankment south flank|t=6.2|de_walker": {
+   "bones": 61,
+   "sha256": "1667143eddbc8f03708679ae73867a87e3351c397238acff02b381668de7e5ba"
+  },
+  "road approach north flank|t=5|marek_zielinski": {
+   "bones": 61,
+   "sha256": "ba2ee991707b2039a2926214a935f8916a776d4dacd2b0b6def8966e534ebbd1"
+  },
+  "road approach north flank|t=5|pl_walker": {
+   "bones": 61,
+   "sha256": "81ef7f3a4bbeef95462a1d6c4fd7857ebe057e37b74912c93ee07a7c347c3419"
+  },
+  "road approach north flank|t=5|pl_runner": {
+   "bones": 61,
+   "sha256": "ff7200d3b216c6bc82711899828ab565d89d757ce6712764f0daf46862e54a98"
+  },
+  "road approach north flank|t=5|pawel_krawiec": {
+   "bones": 61,
+   "sha256": "1fb8cff79219bfac5ef0b0447bb9c197a4d48401c34a2221a8af0d8f2605a21a"
+  },
+  "road approach north flank|t=5|pl_pinned": {
+   "bones": 61,
+   "sha256": "7ed78ac76e04ff10c38083b66125b0ab5971c6f0df8585cc2eb35805ad8edef4"
+  },
+  "road approach north flank|t=5|de_rifle_1": {
+   "bones": 61,
+   "sha256": "2398f6a1dc2a9673193e4cf09848fee281a08971745f39d5aa7148bd2e067376"
+  },
+  "road approach north flank|t=5|de_walker": {
+   "bones": 61,
+   "sha256": "3a2f2ab4c78f6f3fa7f39503c1a20c2fba75b9698cdbe7f746715098d903609f"
+  },
+  "road approach north flank|t=5.4|marek_zielinski": {
+   "bones": 61,
+   "sha256": "5c2de36afab32e302daeb27f5801a71586931f95dede4937b4a9b18f2a063d04"
+  },
+  "road approach north flank|t=5.4|pl_walker": {
+   "bones": 61,
+   "sha256": "81ef7f3a4bbeef95462a1d6c4fd7857ebe057e37b74912c93ee07a7c347c3419"
+  },
+  "road approach north flank|t=5.4|pl_runner": {
+   "bones": 61,
+   "sha256": "ff7200d3b216c6bc82711899828ab565d89d757ce6712764f0daf46862e54a98"
+  },
+  "road approach north flank|t=5.4|pawel_krawiec": {
+   "bones": 61,
+   "sha256": "e193f01964d7ff9f5fb538f2f80b753fc340ffad16312580e65aad65f247324d"
+  },
+  "road approach north flank|t=5.4|pl_pinned": {
+   "bones": 61,
+   "sha256": "46fa6c9736f349e06e8ed0718776d735c0526b40a80f0be5c04eee588ad66d37"
+  },
+  "road approach north flank|t=5.4|de_rifle_1": {
+   "bones": 61,
+   "sha256": "5466bd2c3fb8555f8c3fafccc12ff3a26079f0ad7f5d08fbec60f6cabbbbba2d"
+  },
+  "road approach north flank|t=5.4|de_walker": {
+   "bones": 61,
+   "sha256": "3a2f2ab4c78f6f3fa7f39503c1a20c2fba75b9698cdbe7f746715098d903609f"
+  },
+  "road approach north flank|t=6.2|marek_zielinski": {
+   "bones": 61,
+   "sha256": "f6872ed938b5d1c3dd80b10842ab22416a2119b5613401c1982eccc7b9df01ea"
+  },
+  "road approach north flank|t=6.2|pl_walker": {
+   "bones": 61,
+   "sha256": "81ef7f3a4bbeef95462a1d6c4fd7857ebe057e37b74912c93ee07a7c347c3419"
+  },
+  "road approach north flank|t=6.2|pl_runner": {
+   "bones": 61,
+   "sha256": "ff7200d3b216c6bc82711899828ab565d89d757ce6712764f0daf46862e54a98"
+  },
+  "road approach north flank|t=6.2|pawel_krawiec": {
+   "bones": 61,
+   "sha256": "c63665cfddca3ac2c9a7896c6d32cba4c1f79f47c52648d60a1f09aafd800f29"
+  },
+  "road approach north flank|t=6.2|pl_pinned": {
+   "bones": 61,
+   "sha256": "76a69609d33449300c33753abbb9bd6eef56471e4bd9d520d17e645ece78eb71"
+  },
+  "road approach north flank|t=6.2|de_rifle_1": {
+   "bones": 61,
+   "sha256": "f9158b989848997a42f274ed83feb02c523105d0ba7f1e18f363a98f1265525f"
+  },
+  "road approach north flank|t=6.2|de_walker": {
+   "bones": 61,
+   "sha256": "3a2f2ab4c78f6f3fa7f39503c1a20c2fba75b9698cdbe7f746715098d903609f"
+  },
+  "far west embankment|t=5|marek_zielinski": {
+   "bones": 61,
+   "sha256": "479582c949740fde56755764b8fe7b20675f6e1047a212faf69c6aebc8d5a28e"
+  },
+  "far west embankment|t=5|pl_walker": {
+   "bones": 61,
+   "sha256": "7e77a04f8808f7989b9756632e94a3fad50fa02e6c1a07d3d9f5e28f36e07729"
+  },
+  "far west embankment|t=5|pl_runner": {
+   "bones": 61,
+   "sha256": "b251994b9d99855b35bf5dbf676e9f65e7fd08f4ed989793cef121f31bb0a8e1"
+  },
+  "far west embankment|t=5|pawel_krawiec": {
+   "bones": 61,
+   "sha256": "3ba36918a8c75ac497c4c8bcbc3d0f2e4802d622460ed265d5dd4fe5c77ef425"
+  },
+  "far west embankment|t=5|pl_pinned": {
+   "bones": 61,
+   "sha256": "9035d736c825d4ed7ee52f255e3c1a9c856dd6d3606b11f499dcfda8e1629977"
+  },
+  "far west embankment|t=5|de_rifle_1": {
+   "bones": 61,
+   "sha256": "23ed6c0b62946e40858bdb54ea27715cc3be2f324cc6c7c779c8a07077e39278"
+  },
+  "far west embankment|t=5|de_walker": {
+   "bones": 61,
+   "sha256": "c50106110bdbb58b83d40d6c59ceaed4884c41d4158225512a17942d1a6b9648"
+  },
+  "far west embankment|t=5.4|marek_zielinski": {
+   "bones": 61,
+   "sha256": "b077a574e81dbfaa6c113beedbb89c6d1a0785c9d5b8607a8c1f130093a1ca5d"
+  },
+  "far west embankment|t=5.4|pl_walker": {
+   "bones": 61,
+   "sha256": "7e77a04f8808f7989b9756632e94a3fad50fa02e6c1a07d3d9f5e28f36e07729"
+  },
+  "far west embankment|t=5.4|pl_runner": {
+   "bones": 61,
+   "sha256": "b251994b9d99855b35bf5dbf676e9f65e7fd08f4ed989793cef121f31bb0a8e1"
+  },
+  "far west embankment|t=5.4|pawel_krawiec": {
+   "bones": 61,
+   "sha256": "977a9104463cf701d63011996f8be08cde4e243ff27b98d07b8427828ae9d904"
+  },
+  "far west embankment|t=5.4|pl_pinned": {
+   "bones": 61,
+   "sha256": "3411f658575b0962dba0929906de0543ee2a832b65ab9a42959f6d8ce1d8d9d3"
+  },
+  "far west embankment|t=5.4|de_rifle_1": {
+   "bones": 61,
+   "sha256": "6832a50f4442d4ec45cddc1c36bfff063cbdf990e0370cfbdd1d7f7f2ca79e19"
+  },
+  "far west embankment|t=5.4|de_walker": {
+   "bones": 61,
+   "sha256": "c50106110bdbb58b83d40d6c59ceaed4884c41d4158225512a17942d1a6b9648"
+  },
+  "far west embankment|t=6.2|marek_zielinski": {
+   "bones": 61,
+   "sha256": "731b8c4803f9b5953e444a19e54a2dafad3e6066fd6e8c5ae3f355bf87ad6780"
+  },
+  "far west embankment|t=6.2|pl_walker": {
+   "bones": 61,
+   "sha256": "7e77a04f8808f7989b9756632e94a3fad50fa02e6c1a07d3d9f5e28f36e07729"
+  },
+  "far west embankment|t=6.2|pl_runner": {
+   "bones": 61,
+   "sha256": "b251994b9d99855b35bf5dbf676e9f65e7fd08f4ed989793cef121f31bb0a8e1"
+  },
+  "far west embankment|t=6.2|pawel_krawiec": {
+   "bones": 61,
+   "sha256": "24378a71100210ff9984f3bcad3bab7fcce51a30c03ee110a4a9267bee9a34ef"
+  },
+  "far west embankment|t=6.2|pl_pinned": {
+   "bones": 61,
+   "sha256": "f73d3c60e2a82bd96a209c78f16fc911ea69b17fef6aa2eecd62d8047c50336d"
+  },
+  "far west embankment|t=6.2|de_rifle_1": {
+   "bones": 61,
+   "sha256": "b644a6895ed964990c99b093607eff5c4cb6418bb72c3b4403965064ed864e1a"
+  },
+  "far west embankment|t=6.2|de_walker": {
+   "bones": 61,
+   "sha256": "c50106110bdbb58b83d40d6c59ceaed4884c41d4158225512a17942d1a6b9648"
+  }
+ }
+}

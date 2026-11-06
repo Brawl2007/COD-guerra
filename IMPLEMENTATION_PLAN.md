@@ -1,5 +1,13 @@
 # Plano de implementação
 
+## Onze tarefas parciais aceites — 2026-10-16
+
+O lote `M01-PARTIALS-COMPLETION-INTEGRATION-V1` fecha T02/T03/T05/T06/T07/T14/T24/T26/T34/T36/T41. Fonte aceite `e377a0739906507dee63cd4006a3428efd22c56b`, branch `codex/m01-partials-browser-sampling-repair-v1`; produção idêntica à certificada `9a679c50`. Verificador independente PASS e revisão crítica ACCEPT; provas, limites e histórico no `docs/verification/m01-runtime/partials-completion-integration-v1/HANDOFF.md`. Node874/874, tooling173, build,24rotas causais,24futuros ON/OFF,299ficheiros protegidos, controlos integrais das pontes0 e44regressões acopladas passaram. A captura Stuka foi corrigida e validada separadamente; os runs anteriores42/44 e13/14 continuam FAIL, sem alegar uma execução integral44/44. O handoff contém a execução final e os resultados exatos da correção.
+
+**37 tarefas principais confirmadas;15 por fechar**, incluindo T53. T21/PR65 e T50/PR66 são candidatos existentes fora deste lote. M01 continua PROTÓTIPO JOGÁVEL; playtest humano e performance no PC-alvo pendentes. As variâncias T24-CAMERA-01 e T36-EXPOSURE-01 e os FAIL históricos permanecem explícitos; main não é modificada.
+
+O conteúdo abaixo é histórico e conserva o estado da respetiva data.
+
 Os critérios completos estão na secção 77 de `docs/PROMPT_MESTRE.txt`.
 
 | Marco | Estado | Critério / dependência |

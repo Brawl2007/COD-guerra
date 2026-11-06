@@ -1,0 +1,124 @@
+route ok true validations 619 bad null
+04:34:22 r74.0 CALL casualty by szymon_kowal -> pl_west_0 [zie:look paw:look voice:look bak:look]
+04:34:22 r74.0 CALL casualty by szymon_kowal -> pl_west_1 [zie:look paw:look voice:look bak:drop]
+04:34:30 r76.4 ORDER sector to szymon_kowal pl_west_0
+04:34:55 r83.4 ORDER sector to szymon_kowal pl_west_1
+04:35:16 r89.6 CALL casualty by east_platoon_voice -> pl_west_2 [zie:look kow:look paw:drop bak:drop]
+04:35:27 r92.8 ORDER sector to east_platoon_voice pl_west_2
+04:37:34 r129.0 CALL casualty by marek_zielinski -> pl_west_4 [kow:look paw:drop voice:drop bak:look]
+04:37:48 r132.9 ORDER sector to staszek_pawlak pl_west_4
+04:45:17 r258.3 CALL gate/left by marek_zielinski -> de_east_2 [kow:look paw:look voice:fire bak:fire]
+04:46:05 r263.7 CALL gate/right by marek_zielinski -> de_east_10 [kow:look paw:look voice:fire bak:drop]
+04:47:42 r274.5 CALL mg/right by marek_zielinski -> de_east_0 [kow:look paw:fire voice:fire bak:fire]
+04:47:57 r276.1 ORDER focus/right to szymon_kowal,staszek_pawlak,east_platoon_voice de_east_0
+04:48:31 r279.9 CALL mg/left by marek_zielinski -> de_east_1 [kow:look paw:look voice:look bak:drop]
+04:52:50 r308.7 CALL gate/left by marek_zielinski -> de_east_2 [kow:look paw:drop voice:look bak:fire]
+04:53:39 r314.1 CALL gate/right by marek_zielinski -> de_east_12 [kow:look paw:fire voice:fire bak:drop]
+04:54:27 r319.5 CALL mg/right by marek_zielinski -> de_east_0 [kow:look paw:fire voice:fire bak:fire]
+04:54:42 r321.1 ORDER focus/right to szymon_kowal,staszek_pawlak,east_platoon_voice de_east_0
+04:55:48 r328.5 CALL mg/left by marek_zielinski -> de_east_1 [kow:look paw:fire voice:look bak:drop]
+04:57:02 r336.7 ORDER hold to szymon_kowal,staszek_pawlak,east_platoon_voice 
+04:57:16 r338.2 CALL pinned by east_platoon_voice -> - [zie:look kow:look paw:drop bak:drop]
+05:00:24 r359.1 CALL gate/left by marek_zielinski -> de_east_7 [kow:look paw:fire voice:fire bak:look]
+05:01:12 r364.5 CALL gate/right by marek_zielinski -> de_east_9 [kow:look paw:fire voice:look bak:fire]
+05:02:50 r375.3 CALL mg/left by marek_zielinski -> de_east_1 [kow:look paw:drop voice:fire bak:fire]
+05:03:04 r376.9 ORDER focus/left to szymon_kowal,staszek_pawlak,east_platoon_voice de_east_1
+05:03:54 r382.5 CALL mg/right by marek_zielinski -> de_east_0 [kow:look paw:look voice:drop bak:look]
+05:06:17 r398.3 ORDER hold to szymon_kowal,staszek_pawlak,east_platoon_voice 
+05:07:57 r409.5 CALL gate/left by marek_zielinski -> de_east_4 [kow:look paw:look voice:drop bak:look]
+05:09:02 r416.7 CALL mg/left by marek_zielinski -> de_east_1 [kow:look paw:drop voice:fire bak:fire]
+05:09:17 r418.3 ORDER focus/left to szymon_kowal,staszek_pawlak,east_platoon_voice de_east_1
+05:11:09 r425.7 CALL gate/right by marek_zielinski -> de_east_9 [kow:look paw:drop voice:look bak:fire]
+05:14:20 r432.7 CALL pinned by staszek_pawlak -> - [zie:look kow:look voice:look bak:drop]
+05:16:49 r438.3 CALL mg/right by marek_zielinski -> de_east_0 [kow:look paw:fire voice:look bak:fire]
+05:26:06 r458.9 CALL pinned by east_platoon_voice -> - [zie:look kow:look paw:look bak:look]
+05:28:58 r465.3 CALL gate/left by marek_zielinski -> de_east_4 [kow:look paw:fire voice:fire bak:fire]
+05:30:36 r472.0 CALL mg/left by jozef_bak -> de_east_1 [zie:look kow:look paw:drop voice:look]
+05:30:48 r473.6 ORDER focus/left to szymon_kowal,staszek_pawlak,east_platoon_voice de_east_1
+05:31:22 r477.9 CALL gate/right by marek_zielinski -> de_east_12 [kow:look paw:fire voice:drop bak:look]
+05:32:45 r488.2 CALL dike by jozef_bak -> de_east_25 [zie:look kow:look paw:look voice:look]
+05:33:59 r497.4 CALL pinned by staszek_pawlak -> - [zie:look kow:look voice:drop bak:drop]
+05:34:12 r499.0 ORDER shift to staszek_pawlak,east_platoon_voice 
+05:35:57 r503.5 CALL mg/right by staszek_pawlak -> de_east_0 [zie:look kow:look voice:drop bak:look]
+05:41:00 r516.1 CALL gate/left by marek_zielinski -> de_east_5 [kow:look paw:look voice:fire]
+05:41:39 r517.8 ORDER focus/right to szymon_kowal,staszek_pawlak,east_platoon_voice de_east_0
+05:44:28 r524.8 ORDER return to staszek_pawlak,east_platoon_voice 
+05:47:18 r531.9 ORDER hold to szymon_kowal,staszek_pawlak,east_platoon_voice 
+05:48:12 r534.1 CALL gate/right by marek_zielinski -> de_east_10 [kow:look paw:drop voice:drop]
+05:52:12 r544.1 CALL mg/right by marek_zielinski -> de_east_0 [kow:look paw:look voice:fire]
+05:54:36 r550.1 CALL mg/left by marek_zielinski -> de_east_1 [kow:look paw:look voice:drop]
+05:55:18 r551.9 ORDER shift to staszek_pawlak,east_platoon_voice 
+05:56:50 r555.7 CALL pinned by east_platoon_voice -> - [zie:look kow:look paw:look bak:look]
+05:58:07 r558.9 ORDER focus/right to szymon_kowal,staszek_pawlak,east_platoon_voice de_east_0
+05:59:43 r566.5 ORDER return to staszek_pawlak,east_platoon_voice 
+05:59:56 r568.1 CALL gate by marek_zielinski -> de_east_6 [kow:look paw:look voice:look]
+06:00:40 r573.6 CALL dike by jozef_bak -> de_east_14 [kow:look paw:look voice:look]
+06:00:53 r575.3 ORDER deck to staszek_pawlak,east_platoon_voice 
+06:02:20 r586.1 CALL gate/right by marek_zielinski -> de_east_10 [kow:look paw:look voice:look]
+06:03:40 r596.2 CALL pinned by staszek_pawlak -> - [kow:look voice:drop bak:drop]
+06:04:10 r599.9 CALL casualty by staszek_pawlak -> jozef_bak [kow:look voice:look]
+06:04:39 r603.5 ORDER sector to staszek_pawlak jozef_bak
+06:05:00 r606.1 CALL mg/right by marek_zielinski -> de_east_0 [kow:look]
+06:05:35 r610.5 ORDER focus/right to szymon_kowal,staszek_pawlak,east_platoon_voice de_east_0
+06:05:48 r612.1 CALL mg/left by marek_zielinski -> de_east_1 [kow:look]
+06:06:32 r617.6 ORDER hold to szymon_kowal,staszek_pawlak,east_platoon_voice 
+06:06:40 r618.6 CALL deck by staszek_pawlak -> de_spans_7 [kow:look voice:look]
+06:07:24 r624.1 CALL gate/left by marek_zielinski -> de_east_5 [kow:look]
+06:08:06 r629.3 CALL pinned by east_platoon_voice -> - [kow:look paw:drop]
+06:09:02 r638.1 CALL gate/right by marek_zielinski -> de_east_12 [kow:look]
+06:09:10 r646.6 CALL dike by staszek_pawlak -> de_east_19 [kow:look voice:look]
+06:09:14 r650.6 ORDER focus to szymon_kowal,staszek_pawlak,east_platoon_voice de_east_19
+06:09:16 r652.6 CALL pinned by staszek_pawlak -> - [kow:look voice:look]
+06:09:24 r660.6 CALL advance by staszek_pawlak -> de_spans_7 [kow:look voice:look]
+06:09:30 r675.9 CALL pinned by east_platoon_voice -> - [kow:look paw:drop]
+06:09:30 r681.1 CALL advance by east_platoon_voice -> de_spans_7 [kow:look paw:fire]
+06:09:30 r698.6 CALL advance by staszek_pawlak -> de_spans_7 [kow:look voice:drop]
+06:09:30 r707.6 CALL pinned by staszek_pawlak -> - [kow:look voice:drop]
+06:09:30 r715.1 CALL dike by east_platoon_voice -> de_east_19 [kow:look paw:look]
+06:09:30 r716.7 ORDER focus to szymon_kowal,staszek_pawlak,east_platoon_voice de_east_19
+06:09:30 r720.6 CALL advance by staszek_pawlak -> de_spans_6 [kow:look voice:drop]
+06:09:30 r734.5 CALL pinned by east_platoon_voice -> - [kow:look paw:look]
+06:09:30 r740.6 CALL advance by staszek_pawlak -> de_spans_6 [kow:look voice:fire]
+06:09:30 r746.6 CALL fallback by staszek_pawlak -> de_spans_6 [kow:look voice:fire]
+06:09:30 r753.1 CALL down by east_platoon_voice -> de_spans_4 [kow:look paw:look]
+06:09:30 r756.8 ORDER focus to szymon_kowal,staszek_pawlak,east_platoon_voice de_spans_4
+06:09:30 r767.5 CALL pinned by staszek_pawlak -> - [kow:look voice:look]
+06:09:30 r772.6 CALL down by staszek_pawlak -> de_spans_6 [kow:look voice:drop]
+06:09:30 r778.6 CALL dike by staszek_pawlak -> de_east_14 [kow:look voice:drop]
+06:09:30 r784.1 CALL pinned by east_platoon_voice -> - [kow:look paw:drop]
+06:09:30 r790.6 CALL down by staszek_pawlak -> de_spans_8 [kow:look voice:look]
+06:09:30 r796.8 ORDER focus to szymon_kowal,staszek_pawlak,east_platoon_voice de_spans_8
+06:09:30 r814.8 CALL pinned by staszek_pawlak -> - [kow:look voice:drop]
+06:09:30 r831.3 CALL pinned by east_platoon_voice -> - [kow:look paw:drop]
+04:35:16 r89.6 SAY dlg_m01_183 Soldado do pelotão leste: Atingiram o posto! Sanitário!
+04:37:48 r132.9 SAY dlg_m01_195 Marek Zieliński: Tu! Assume o lado dele!
+04:47:42 r274.5 SAY dlg_m01_166 Stanisław „Staszek” Pawlak: Metralhadora à direita do portão!
+04:54:42 r321.1 SAY dlg_m01_188 Marek Zieliński: Todos no da direita! Fogo!
+04:57:16 r338.2 SAY dlg_m01_181 Soldado do pelotão leste: Estão em cima de nós! Abaixo!
+05:00:24 r359.1 SAY dlg_m01_168 Soldado do pelotão leste: Atiradores nos portões!
+05:02:50 r375.3 SAY dlg_m01_164 Stanisław „Staszek” Pawlak: Metralhadora à esquerda do portão!
+05:28:58 r465.3 SAY dlg_m01_169 Józef Bąk: Mais um no portão! Vi o clarão!
+05:32:45 r488.2 SAY dlg_m01_170 Józef Bąk: Atiradores no dique! Cabeças baixas!
+05:35:57 r503.5 SAY dlg_m01_167 Józef Bąk: A da direita começou! Abaixem-se!
+05:52:12 r544.1 SAY dlg_m01_167 Józef Bąk: A da direita começou! Abaixem-se!
+05:59:19 r563.6 SAY dlg_m01_198 Stanisław „Staszek” Pawlak: Na trincheira!
+05:59:56 r568.1 SAY dlg_m01_168 Soldado do pelotão leste: Atiradores nos portões!
+06:03:40 r596.2 SAY dlg_m01_180 Stanisław „Staszek” Pawlak: Apontam-nos! Cabeças baixas!
+06:09:02 r638.1 SAY dlg_m01_169 Józef Bąk: Mais um no portão! Vi o clarão!
+06:09:16 r652.6 SAY dlg_m01_180 Stanisław „Staszek” Pawlak: Apontam-nos! Cabeças baixas!
+06:09:30 r675.9 SAY dlg_m01_181 Soldado do pelotão leste: Estão em cima de nós! Abaixo!
+06:09:30 r707.6 SAY dlg_m01_180 Stanisław „Staszek” Pawlak: Apontam-nos! Cabeças baixas!
+06:09:30 r715.1 SAY dlg_m01_171 Stanisław „Staszek” Pawlak: Dique! Atiram do dique!
+06:09:30 r734.5 SAY dlg_m01_181 Soldado do pelotão leste: Estão em cima de nós! Abaixo!
+06:09:30 r740.6 SAY dlg_m01_174 Stanisław „Staszek” Pawlak: Avançam! Mais um lanço!
+06:09:30 r778.6 SAY dlg_m01_170 Józef Bąk: Atiradores no dique! Cabeças baixas!
+06:14:40 r874.7 SAY dlg_m01_163 Szymon Kowal: Clarão nos portões! Atiram para a estrada!
+06:21:27 r922.6 SAY dlg_m01_162 Marek Zieliński: Wrona! O Dudek ainda vem pela estrada com o Bąk. Volte e cubra-os!
+06:26:53 r960.9 SAY dlg_m01_160 Leon Dudek: Atiram sobre nós! Wrona, cubra-me!
+06:27:45 r967.0 SAY dlg_m01_161 Leon Dudek: Assim. Fique do lado do rio.
+06:32:37 r1001.4 SAY dlg_m01_160 Leon Dudek: Atiram sobre nós! Wrona, cubra-me!
+06:41:05 r1061.1 SAY dlg_m01_160 Leon Dudek: Atiram sobre nós! Wrona, cubra-me!
+06:44:02 r1083.7 SAY dlg_m01_163 Szymon Kowal: Clarão nos portões! Atiram para a estrada!
+06:44:30 r1128.6 SAY dlg_m01_163 Szymon Kowal: Clarão nos portões! Atiram para a estrada!
+rows 91 section lines 30 shots {"jozef_bak":19,"east_platoon_voice":30,"staszek_pawlak":29,"pl_east_2":14,"pl_east_0":5,"pl_east_1":11}
+hp 84 survivors 12

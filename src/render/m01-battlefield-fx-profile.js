@@ -1,4 +1,5 @@
 // Presentation-only battlefield FX profiles. No simulation state or RNG lives here.
+import {DECK_SUPPORT_ID} from '../game/m01-deck-assault.js';
 export const M01_FX_QUALITY_DENSITY=Object.freeze({low:.55,medium:.78,high:1});
 
 export const M01_FX_PROFILES=Object.freeze({
@@ -14,6 +15,14 @@ export const M01_FX_PROFILES=Object.freeze({
     counts:Object.freeze({flash:2,core:5,fire:9,dust:11,smoke:11,shard:12}),
     vertical:1.12,dustReach:1.02,smokeRise:1.18,lightPeak:3.6,lightDistance:82
   }),
+  // Artillery shell (Act VII-b, damage ids np_shell_crater_*): bigger and heavier than a grenade, shorter than an aerial bomb; a longer, brighter flash (a field-gun burst is not a spark), a fountain of
+  // earth and a low dark smoke. The flash lasts long enough to be on screen for at least one frame on a slow machine (see updateBattlefieldFx: the burst is aged from its first drawn frame).
+  shell:Object.freeze({
+    scale:14,duration:4.3,flashEnd:.17,coreEnd:.40,fireStart:.05,fireEnd:.74,
+    dustStart:.05,dustEnd:1.4,smokeStart:.15,smokeEnd:4.0,shardStart:.02,shardEnd:1.08,
+    counts:Object.freeze({flash:2,core:5,fire:7,dust:12,smoke:9,shard:12}),
+    vertical:1.2,dustReach:.98,smokeRise:1.0,lightPeak:3.2,lightDistance:68
+  }),
   demolition:Object.freeze({
     scale:29,duration:6.45,flashEnd:.12,coreEnd:.48,fireStart:.045,fireEnd:1.18,
     dustStart:.055,dustEnd:1.95,smokeStart:.20,smokeEnd:6.25,shardStart:.018,shardEnd:1.42,
@@ -24,6 +33,8 @@ export const M01_FX_PROFILES=Object.freeze({
 
 export function battlefieldBlastKind(id='',aerial=false){
   if(id.endsWith('_demolition'))return 'demolition';
+  // The damage record carries no blast kind, so the id decides: the Act VII-b craters and the German supporting round of Act I (amendment 22) are shells.
+  if(id.startsWith('np_shell_crater_')||id===DECK_SUPPORT_ID)return 'shell';
   if(aerial||/bomb|raid/.test(id))return 'bombing';
   return 'small';
 }

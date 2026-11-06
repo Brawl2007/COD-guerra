@@ -1,0 +1,191 @@
+{
+ "tool": "tools/verification/m01-squad-coordination-metrics.mjs --summary",
+ "summary": {
+  "before": {
+   "routes": 24,
+   "windowRealSec": {
+    "mean": 380.98
+   },
+   "reactiveLinesPerMin": {
+    "mean": 2.07,
+    "min": 1.73,
+    "max": 2.69
+   },
+   "callLinesPerMin": {
+    "mean": 1.22,
+    "min": 0.77,
+    "max": 1.54
+   },
+   "orderAnswerLinesPerMin": {
+    "mean": 0
+   },
+   "maxRepeatOfOneReactiveId": {
+    "mean": 3,
+    "max": 3
+   },
+   "distinctReactiveIds": {
+    "mean": 9.46,
+    "acrossAllRoutes": 17
+   },
+   "calloutEventsPerMin": {
+    "mean": 0,
+    "min": 0,
+    "max": 0
+   },
+   "distinctLineIds": {
+    "mean": 20.42
+   },
+   "maxRepeatOfOneId": {
+    "max": 10,
+    "mean": 6.21
+   },
+   "patternsPerRoute": {
+    "mean": 0,
+    "min": 0,
+    "max": 0
+   },
+   "patternsAcrossAllRoutes": 0,
+   "rkmBursts": {
+    "mean": 62.96
+   },
+   "ckmBursts": {
+    "mean": 27.54
+   },
+   "rifleShots": {
+    "mean": 34.04,
+    "min": 22,
+    "max": 43
+   },
+   "roundsAtCalledTarget": {
+    "mean": 0,
+    "min": 0,
+    "max": 0
+   },
+   "coverMoves": {
+    "mean": 0,
+    "min": 0,
+    "max": 0
+   },
+   "longestQuietNearPlayerRealSec": {
+    "mean": 203.19,
+    "median": 209.6,
+    "max": 224.8
+   },
+   "playerHitEvents": {
+    "mean": 2.04,
+    "max": 4
+   },
+   "minHealth": {
+    "min": 68,
+    "mean": 83.67
+   },
+   "germanRoundsNear25m": {
+    "mean": 138.67
+   },
+   "complete": "24/24",
+   "checkpoints4": "24/24",
+   "survivors": {
+    "12": 12,
+    "18": 12
+   },
+   "clippingEvents": null,
+   "stackedPairs": null,
+   "routeRealSec": {
+    "mean": 1169.98
+   }
+  },
+  "after": {
+   "routes": 24,
+   "windowRealSec": {
+    "mean": 380.98
+   },
+   "reactiveLinesPerMin": {
+    "mean": 3.7,
+    "min": 3.03,
+    "max": 4.49
+   },
+   "callLinesPerMin": {
+    "mean": 2.87,
+    "min": 2.23,
+    "max": 3.66
+   },
+   "orderAnswerLinesPerMin": {
+    "mean": 0.23
+   },
+   "maxRepeatOfOneReactiveId": {
+    "mean": 3,
+    "max": 3
+   },
+   "distinctReactiveIds": {
+    "mean": 17.17,
+    "acrossAllRoutes": 39
+   },
+   "calloutEventsPerMin": {
+    "mean": 5.49,
+    "min": 4.33,
+    "max": 6.57
+   },
+   "distinctLineIds": {
+    "mean": 28.13
+   },
+   "maxRepeatOfOneId": {
+    "max": 10,
+    "mean": 6.21
+   },
+   "patternsPerRoute": {
+    "mean": 24.92,
+    "min": 19,
+    "max": 32
+   },
+   "patternsAcrossAllRoutes": 110,
+   "rkmBursts": {
+    "mean": 62.96
+   },
+   "ckmBursts": {
+    "mean": 27.54
+   },
+   "rifleShots": {
+    "mean": 60.79,
+    "min": 48,
+    "max": 73
+   },
+   "roundsAtCalledTarget": {
+    "mean": 45.29,
+    "min": 29,
+    "max": 67
+   },
+   "coverMoves": {
+    "mean": 6.5,
+    "min": 2,
+    "max": 14
+   },
+   "longestQuietNearPlayerRealSec": {
+    "mean": 26.3,
+    "median": 26.7,
+    "max": 38.5
+   },
+   "playerHitEvents": {
+    "mean": 2.04,
+    "max": 4
+   },
+   "minHealth": {
+    "min": 68,
+    "mean": 83.67
+   },
+   "germanRoundsNear25m": {
+    "mean": 138.67
+   },
+   "complete": "24/24",
+   "checkpoints4": "24/24",
+   "survivors": {
+    "12": 12,
+    "18": 12
+   },
+   "clippingEvents": null,
+   "stackedPairs": null,
+   "routeRealSec": {
+    "mean": 1169.98
+   }
+  }
+ }
+}

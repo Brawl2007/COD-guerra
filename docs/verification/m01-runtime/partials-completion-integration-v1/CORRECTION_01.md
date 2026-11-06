@@ -1,0 +1,41 @@
+# Correction 01 — implementation record
+
+This is the existing first correction under CAPTAIN-AMENDMENT-01, continued after the runtime interruption. The original verification FAIL and original CI failures remain historical evidence. This record does not confer verifier/reviewer acceptance.
+
+## Production correction
+
+West readiness now rejects an unfinished Bąk `carry` or legacy `carriedBy`, using the existing battle-clock hold. Carry speed remains 1.6 m/s and pickup/putdown remain 1.6 s. Original routes 19390901/ignore and 7/help deliver at 06:44:30; the next tick actually releases the gate at 06:44:30.425, before 06:45, and normal outro Skip still completes. Interrupted/dead transport releases the lock. No new settling timer exists.
+
+Distant linked MG34 loaders now participate in the existing actor budget and sample their actual saved prone/feed phase in the original optional rigs. Procedural fallback uses the same low state and hides an invented rifle; death/inactivity cleans up the linked presentation. No shot, cadence, RNG draw or health change is created. Procedural actor/contact capacities cover the authorized 97-actor optional roster. The first-person viewmodel supports the existing minimal simulation fixture without requiring an actor lookup method.
+
+The station damage owner's opaque breakage and transparent soot planes now have deterministic render order and 0.15 m separation, in front of the original station glass. Original station assets and ordinary depth tests remain intact. Cold owner ON/OFF whole-frame controls must still be exactly identical; no pixel waiver is authorized.
+
+## Meaningful harness updates
+
+The 36 original Node failures included superseded roster/presentation fields and historical byte locks. The corrections construct an actual 86-actor legacy roster, expect the authorized 97 actors while comparing all prior IDs, use initialized unknown death stamps, and retain the no-display-rounds save boundary while permitting only the actor marker `displayOnly`. The display-fire positive control emits a well-typed real event. Dialogue 019 is checked after actual reorganization. Merged far wagon geometry is compared vertex-by-vertex against the original transformed GLB stream.
+
+Historical spatial locks reverse only four exact approved T07/T36 hunks, each required once, then retain the original remaining-byte SHA. Generic soldier sampling locks reverse exact approved adapter hunks pinned by SHA and preserve every other byte. The terrain authority lock reverses exactly the accepted PT05 collider integration, and unchanged terrain protection still includes the six inactive T23 reserves inside the original 20 m buffer. Global `window` access remains forbidden; a nested data field named `window` is distinguished from that global.
+
+The original combined browser invocation passed 41/44 and failed three assertions. Its bridge trace captures a constructor camera `[-66,-1.36,22]` at call@436 while the saved player is already `[-48,-1.6713094068922087,9]`. The return-camera wait correctly rejected that stale camera. The harness now requires the actual restored player-camera frame before recording the return pose; the same frame counter, exact position and quaternion checks remain.
+
+The original live-audio trace initially counts one distant-bed MG request, rather than an already-heard real gun. The saved real MG emits at 487.300/487.375 simulation seconds from over 1 km away. The harness derives both acoustic arrivals through the production `enemyFireSoundPlan`, waits for their authoritative deadline, and then requires actual `mg34@` source history and the original audio limits/intensity. It neither invents a shot nor changes simulation progression.
+
+Station lifecycle verification now freezes the actual Restart control, retains exact full snapshot/checkpoint/events across quality/restart/reload, and compares every resident resource/batch field. `runtime.revision` is asserted separately: quality and restored-world rebuilds increase the same owner's counter; a fresh page has a positive newly initialized counter. Original CI observed 15 versus 6 because the owners had different lifecycle histories.
+
+The bridge pixel comparator keeps 3200 pixels per unaffected patch and zero tolerance. Decoded preserved paired frames show that the old patches in views12/13 intersected changed bridge steel. The qualified world sky patches are view12 [600,0,80,40] and view13 [0,0,80,40]; view04 remains [600,4,80,40]. The two complete unaffected control images still require zero changed pixels.
+
+## Authority, golden and exposure provenance
+
+The immutable historical gameplay fixture remains SHA256 `e0fb4ecbc1e483f9d9e177fd63c8a5a063529787238500d5a8a91e80e696b958`. The pre-amendment candidate fixture and audit are archived separately. The current candidate fixture was regenerated only after strict per-tick comparison against immutable predecessor `bc8f6a21a57ccd926d4e0655481908d90d6b1978` with the explicit, recorded WEST-readiness replay. No global clock/RNG/health/events mask was added.
+
+The persisted strict audit reports PASS at 22247 and 21378 ticks, maximum real narrative gap 30.25 s, delivery and next-tick gate release as above. It also retains raw unmodified predecessor results: the authorized phase duration adds 64.05 real seconds and respectively 20/8 issued enemy rounds, with explicit RNG/event differences. Those differences are exposure caused by the authorized hold and are not represented as raw historical equality.
+
+`m01-partials-cover-policy-audit.mjs` extends that same explicit policy to all 12 seeds and both original cover routes. It retains complete raw predecessor, current and policy-replay runs/summary. Every stat and summary must exactly equal the policy replay, with an exact dt/control-stream hash. Raw repair outcomes, player health/survivors/shots, casualty times, checkpoints, historical battle instants and lethal rounds must also remain exact. Only real duration and enemy-fire counts are disclosed exposure deltas; clocks/RNG/issued rounds/events and original actor health/alive are retained in full. The report records source/helper hashes, exact policy function, carry interval boundaries and the candidate per-tick carry-schedule hash. Immutable predecessor files are never edited.
+
+Reproduce: `M01_PARTIALS_BASELINE=<clean bc8f6a2 worktree> node tools/verification/m01-partials-cover-policy-audit.mjs --out evidence/cover-policy-replay.json`. Default seeds are 19390901,1..11; `--seeds` is available only for focused diagnosis.
+
+## Local checks and remaining gates
+
+Production build passed after the preserved production edits. The focused live-MG, east-demolition, station lifecycle and optional-assets browser cases passed 4/4 in 6.4 minutes. Acoustic arrivals were 490.45677159480795 / 490.5317828393207; the browser reached 490.8668000000773 and recorded nine MG requests, including real `mg34@` sources. Station owner revisions were 15 before restart, 17 after restart and 6 after fresh reload, with full authority/resident equality. The tightened display-marker guard passed 2/2 and removes only `displayOnly:true` on the eight authorized actor IDs, including nested checkpoints. The focused cover policy audit passed both 19390901 routes (21410/22247 ticks, +64.05 s and +18/20 rounds). The bounded production bridge proof passed cold 06:10 owner ON/OFF full-frame zero pixels and the actual restored-camera → far → disabled → enabled → exact-near return. Its unchanged browser helper source is pinned in `test-results/partials-correction-01/bridge/correction-proof.json`. Full Node and full 12-seed policy replay are still running/pending; the complete independent bridge matrix and fresh source-pinned certification remain gates. No final full-suite, paired-control or independent acceptance PASS is claimed yet.
+
+Bounded bridge reproduction: start the current production preview, then run `CHROME_EXECUTABLE=/usr/bin/chromium node tools/verification/m01-partials-bridge-correction-proof.mjs`. This reuses the exact production spec helpers and records 1280×800 paired world PNGs, full states and exact zero-tolerance control pixels; it does not claim the complete bridge matrix.

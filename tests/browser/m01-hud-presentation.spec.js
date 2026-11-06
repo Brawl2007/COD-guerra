@@ -1,24 +1,30 @@
-import {test,expect} from '@playwright/test';
-import {driver} from '../helpers/m01-route.js';
+import {test} from '@playwright/test';
+import {expect,gameBooted,expectPaused,slowGlPage,slowGlTestTimeout,simWaitTimeout} from '../helpers/m01-browser-boot.js';
+import {driver,route} from '../helpers/m01-route.js';
+import {M01Simulation} from '../../src/game/m01-simulation.js';
+import {newBarkState} from '../../src/game/m01-barks.js';
 
 // Apresentação do HUD de M01: cena real da introdução, controlos reais e snapshot alcançado pela rota da simulação.
 // Verifica apresentação e contratos de texto; não é playtest humano nem medição de desempenho.
 const key='cod-guerra:checkpoint:m01:v2';
 async function open(page){
-  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  const errors=[];slowGlPage(page);page.on('pageerror',e=>errors.push(e.message));
   await page.goto('?debug=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9);
-  await expect(page.locator('#start')).toBeEnabled({timeout:60000});return errors;
+  await gameBooted(page);return errors;
 }
 const hud=page=>page.evaluate(()=>window.gameDiagnostics().m01.hudPresentation);
 const opacity=(page,id)=>page.evaluate(id=>Number(getComputedStyle(document.getElementById(id)).opacity),id);
+// Waiting for a SIMULATED clock is frame-bound: at most 0.25 s of simulation per rendered frame, and a software-GL frame took 2.5-10 s under load (tests/helpers/m01-browser-boot.js).
 async function pauseAt(page,clock){
-  await page.waitForFunction(t=>{if(window.gameDiagnostics().clock>=t){document.exitPointerLock();return true;}return false;},clock,{polling:'raf',timeout:120000});
-  await expect(page.locator('#pause')).toBeVisible();
+  const now=await page.evaluate(()=>window.gameDiagnostics().clock);
+  await page.waitForFunction(t=>{if(window.gameDiagnostics().clock>=t){document.exitPointerLock();return true;}return false;},clock,{polling:'raf',timeout:simWaitTimeout(Math.max(clock-now,0))+60000});
+  await expectPaused(page);
 }
 function boxesOverlap(a,b){return a&&b&&a.w&&b.w&&a.h&&b.h&&a.x<b.x+b.w&&b.x<a.x+a.w&&a.y<b.y+b.h&&b.y<a.y+a.h;}
 
 test('the intro is presented as black screen, typed title card and letterbox; skipping reveals the objective and checkpoint',async({page},info)=>{
-  test.setTimeout(process.env.CI?180000:90000);
+  // 5.5 s of intro clock + 0.8 s after the skip are 26 frames at the very least; the skip, the resume and the two screenshots take a few more.
+  test.setTimeout(slowGlTestTimeout({simSeconds:8,frames:12}));
   const errors=await open(page);await page.locator('#start').click();
   await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');
   await pauseAt(page,5.5);
@@ -44,7 +50,9 @@ test('the intro is presented as black screen, typed title card and letterbox; sk
   h=await hud(page);expect(h.cinematic).toBe(false);expect(h.fade).toBe(0);expect(h.banner).toEqual({kind:'new',id:'obj_m01_deliver_message'});
   expect(h.checkpoint).toBeGreaterThan(.9);
   await expect(page.locator('#objective-update')).toContainText('Leve a mensagem e o café ao posto da ponte');
-  await expect(page.locator('#checkpoint-name')).toHaveText('CP-A · Orientação');
+  // 2026-10-22 (integration): the checkpoint card carries the difficulty level since H9 D5 (game.js: `${label} · ${name} · ${level}`; a new game starts on soldado), as tests/browser/m01-difficulty-ui.spec.js
+  // already expects; this assertion kept the text from before the level was on the card. Same assertion, the text the card now has.
+  await expect(page.locator('#checkpoint-name')).toHaveText('CP-A · Orientação · Soldado');
   const d=await page.evaluate(()=>window.gameDiagnostics());
   expect(await page.locator('#objective-text').textContent()).toBe('Leve a mensagem e o café ao posto da ponte');
   expect(await page.locator('#objective-status').textContent()).toBe(d.m01.threat.status);
@@ -54,8 +62,11 @@ test('the intro is presented as black screen, typed title card and letterbox; sk
 });
 
 test('a continued save shows the place card and keyed interaction prompt; HUD fits common resolutions without overlap',async({page},info)=>{
-  test.setTimeout(process.env.CI?180000:90000);
-  const route=driver();route.step({skip:true});route.walk(-66,26);route.walk(-15,26);route.walk(-15,2);route.walk(16,2);
+  // 1.6 s of clock (7 frames), then five viewport sizes with a resize + a screenshot (one composited frame each).
+  test.setTimeout(slowGlTestTimeout({simSeconds:2,frames:16}));
+  // 2026-10-18 (integration integ-pc): the player body physics (D44) made the old waypoint x -15 run into a solid on the way to (-15,2); this is the detour of
+  // tests/helpers/m01-route.js (toRepair), which the Node routes already use. Only the path to the post changed, not what the test asserts.
+  const route=driver();route.step({skip:true});route.walk(-66,26);route.walk(-30,26);route.walk(-30,2);route.walk(16,2);
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:route.sim.snapshot()});
   const errors=await open(page);await page.locator('#continue').click();
   await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');
@@ -75,5 +86,60 @@ test('a continued save shows the place card and keyed interaction prompt; HUD fi
       expect(boxesOverlap(boxes[a],boxes[b]),`${a} × ${b} @${width}x${height}`).toBeFalsy();
     await page.screenshot({path:info.outputPath(`m01-hud-continue-${width}x${height}.png`),style:'#pause{visibility:hidden!important}'});
   }
+  expect(errors).toEqual([]);
+});
+
+// Reactive dialogue (src/game/m01-barks.js): the subtitles of a real run reach the page with the speaker's name, 118 and 119 are two different voices, and the caption block
+// does not touch the rest of the HUD at 1366x768. The save is made by the Node pilot: the golden control route up to the east demolition, then a quiet minute (the director's ledger
+// cleared: at this point the route has just spoken five lines and a priority-3 remark has to wait for the budget) with the player standing by the ckm crew as it retreats along the
+// embankment, stopped one tick before the second man asks the way (118). It proves the page shows what the simulation says; not a playtest.
+function crewSave(){
+  const sim=new M01Simulation();
+  sim.restoreSnapshot(route(19390901).combatSnapshots.eastDemolitionOutside);sim.drainEvents();
+  sim.timers.barks=newBarkState();sim.subtitle=null;sim.dialogueQueue=[];
+  for(let i=0;i<400;i++){
+    const crew=sim.actor('ckm_reserve'),x=crew.x+6;
+    Object.assign(sim.player,{x,z:crew.z,y:sim.world.heightAt(x,crew.z)});
+    const before=sim.snapshot();sim.tick(.05,{});
+    if(sim.dialogueConsumed.includes('dlg_m01_118#1'))return before;
+  }
+  throw new Error('the crew never asked the way');
+}
+test('reactive dialogue: the subtitles render with their speaker, 118 and 119 show two different names, and the captions overlap nothing at 1366x768',async({page},info)=>{
+  // crewSave() runs a whole Node route inside the test (ROUTE_TIMEOUT: 107 s at load 30), then the second voice is on screen 2.7 s of simulation after the restore (measured in Node).
+  test.setTimeout(slowGlTestTimeout({route:true,simSeconds:4,frames:10}));
+  const snapshot=crewSave();
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
+  const errors=await open(page);
+  await page.setViewportSize({width:1366,height:768});
+  // every subtitle that appears, in order (speaker and text as the page shows them)
+  await page.evaluate(()=>{window.__subtitles=[];const node=document.getElementById('subtitle');
+    new MutationObserver(()=>{const speaker=node.querySelector('.subtitle-speaker')?.textContent??'',text=node.querySelector('.subtitle-text')?.textContent.trim()??'';
+      if(speaker&&window.__subtitles.at(-1)?.text!==text)window.__subtitles.push({speaker,text});}).observe(node,{childList:true,subtree:true,characterData:true});});
+  await page.locator('#continue').click();
+  await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');
+  // pause on the frame that shows the second voice, so that the page is measured with the subtitle on it
+  await page.waitForFunction(()=>{const node=document.getElementById('subtitle');
+    if(node.classList.contains('show')&&node.textContent.includes('De lá também atira')){document.exitPointerLock();return true;}return false;},null,{polling:'raf',timeout:simWaitTimeout(4)+60000});
+  await expectPaused(page);
+  const heard=await page.evaluate(()=>window.__subtitles);
+  const first=heard.find(l=>l.text.includes('Wrona, pelo aterro para oeste?')),second=heard.find(l=>l.text.includes('Pelo aterro. De lá também atira.'));
+  expect(first,JSON.stringify(heard)).toBeTruthy();expect(second).toBeTruthy();
+  expect(first.speaker).toBe('Soldado da ckm:');expect(second.speaker).toBe('Atirador da ckm:');
+  expect(first.speaker).not.toBe(second.speaker);
+  expect(heard.indexOf(second)).toBeGreaterThan(heard.indexOf(first));
+  await expect(page.locator('#subtitle .subtitle-speaker')).toHaveText('Atirador da ckm:');
+  // the caption block fits the window and touches nothing else of the HUD
+  const ids=['subtitle','message','captions','objective','clock-wrap','objective-update','interaction','health-wrap','ammo','crosshair'];
+  const boxes=await page.evaluate(ids=>Object.fromEntries(ids.map(id=>{const r=document.getElementById(id)?.getBoundingClientRect();return [id,r?{x:r.x,y:r.y,w:r.width,h:r.height}:null];})),ids);
+  expect(boxes.subtitle.w,'the subtitle has a box').toBeGreaterThan(0);
+  for(const id of ['subtitle','captions','health-wrap','ammo'])if(boxes[id]?.w){
+    expect(boxes[id].x,id).toBeGreaterThanOrEqual(0);expect(boxes[id].y,id).toBeGreaterThanOrEqual(0);
+    expect(boxes[id].x+boxes[id].w,id).toBeLessThanOrEqual(1366.5);expect(boxes[id].y+boxes[id].h,id).toBeLessThanOrEqual(768.5);
+  }
+  for(const other of ['objective','clock-wrap','objective-update','interaction','health-wrap','ammo','crosshair'])
+    expect(boxesOverlap(boxes.subtitle,boxes[other]),`subtitle x ${other} @1366x768`).toBeFalsy();
+  expect(boxesOverlap(boxes.captions,boxes['health-wrap'])).toBeFalsy();expect(boxesOverlap(boxes.captions,boxes.ammo)).toBeFalsy();
+  await page.screenshot({path:info.outputPath('m01-hud-dialogue-1366x768.png'),style:'#pause{visibility:hidden!important}'});
   expect(errors).toEqual([]);
 });

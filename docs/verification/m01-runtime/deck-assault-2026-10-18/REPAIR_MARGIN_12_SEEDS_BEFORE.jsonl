@@ -1,0 +1,12 @@
+{"seed":19390901,"margin":38.7,"ignore":{"t":199.2,"pins":{"gate:repair":6,"mg:repair":35},"mgSupp":0.12,"repairPins":41},"help":{"t":160.5,"pins":{"gate:player":1,"gate:repair":2},"mgSupp":0.01,"repairPins":3}}
+{"seed":1,"margin":17.35,"ignore":{"t":181.35,"pins":{"mg:repair":43},"mgSupp":0.09,"repairPins":43},"help":{"t":164,"pins":{"gate:repair":4},"mgSupp":0.01,"repairPins":4}}
+{"seed":2,"margin":34.25,"ignore":{"t":200.45,"pins":{"gate:repair":6,"mg:repair":30},"mgSupp":0.1,"repairPins":36},"help":{"t":166.2,"pins":{"gate:repair":2,"gate:player":3},"mgSupp":0.11,"repairPins":5}}
+{"seed":3,"margin":30.85,"ignore":{"t":205.35,"pins":{"gate:repair":6,"mg:repair":43},"mgSupp":0.13,"repairPins":49},"help":{"t":174.5,"pins":{"gate:player":5,"gate:repair":2},"mgSupp":0.03,"repairPins":7}}
+{"seed":4,"margin":4.9,"ignore":{"t":179.15,"pins":{"gate:repair":4,"mg:repair":21},"mgSupp":0.11,"repairPins":25},"help":{"t":174.25,"pins":{"gate:repair":6,"gate:player":2},"mgSupp":0.02,"repairPins":8}}
+{"seed":5,"margin":21.9,"ignore":{"t":188.9,"pins":{"gate:repair":4,"mg:repair":42},"mgSupp":0.12,"repairPins":46},"help":{"t":167,"pins":{"gate:player":6,"gate:repair":1},"mgSupp":0.13,"repairPins":7}}
+{"seed":6,"margin":31.3,"ignore":{"t":199.05,"pins":{"mg:repair":48,"gate:repair":4},"mgSupp":0.14,"repairPins":52},"help":{"t":167.75,"pins":{"gate:player":2,"mg:player":2,"gate:repair":3},"mgSupp":0.02,"repairPins":7}}
+{"seed":7,"margin":23.3,"ignore":{"t":194.45,"pins":{"mg:repair":38,"gate:repair":2},"mgSupp":0.08,"repairPins":40},"help":{"t":171.15,"pins":{"gate:repair":3,"gate:player":4},"mgSupp":0.02,"repairPins":7}}
+{"seed":8,"margin":13.15,"ignore":{"t":181.75,"pins":{"gate:repair":5,"mg:repair":23},"mgSupp":0.11,"repairPins":28},"help":{"t":168.6,"pins":{"gate:player":5,"gate:repair":1},"mgSupp":0.03,"repairPins":6}}
+{"seed":9,"margin":42.3,"ignore":{"t":199.55,"pins":{"mg:repair":35,"gate:repair":5},"mgSupp":0.06,"repairPins":40},"help":{"t":157.25,"pins":{"mg:player":3,"gate:player":1},"mgSupp":0.06,"repairPins":4}}
+{"seed":10,"margin":25.2,"ignore":{"t":207.95,"pins":{"mg:repair":37,"gate:repair":6},"mgSupp":0.1,"repairPins":43},"help":{"t":182.75,"pins":{"gate:player":4,"gate:repair":6},"mgSupp":0.05,"repairPins":10}}
+{"seed":11,"margin":27.95,"ignore":{"t":195.65,"pins":{"gate:repair":3,"mg:repair":32},"mgSupp":0.12,"repairPins":35},"help":{"t":167.7,"pins":{"mg:player":2,"gate:repair":3,"gate:player":2},"mgSupp":0.02,"repairPins":7}}

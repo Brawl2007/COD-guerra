@@ -1,0 +1,3584 @@
+{
+  "task": "M01-PARTIALS-COMPLETION-INTEGRATION-V1",
+  "predecessor": "bc8f6a21a57ccd926d4e0655481908d90d6b1978",
+  "historicalGoldenSha256": "e0fb4ecbc1e483f9d9e177fd63c8a5a063529787238500d5a8a91e80e696b958",
+  "projectionSource": "function projection(raw){const s=structuredClone(raw);delete s.resumeCheckpoint;\n for(const key of ['dialogueConsumed','dialogueQueue','subtitle','scene','sceneDone'])delete s[key];\n s.actors=s.actors.filter(a=>!AUXILIARY_IDS.includes(a.id));\n const carrying=Object.hasOwn(raw.consumed,'evt_m01_dudek_retrieves_bak')||raw.flags['m01.bak_status']==='rescued_by_player';\n const exiting=Object.hasOwn(raw.consumed,'evt_m01_east_demolition');\n for(const a of s.actors){for(const key of PRESENTATION_FIELDS)delete a[key];\n  // T36 loader/belt/reload/fade are optional presentation data; issued rounds remain exact below.\n  delete a.mg34Prone;\n  if(a.weapon==='kar98k')delete a.rounds;\n  if(carrying&&['jozef_bak','leon_dudek'].includes(a.id)){for(const k of ['x','y','z','state','facing','carriedBy','task','target','crouched','suppressedUntil'])delete a[k];}\n  if(a.ckm){delete a.ckm;if(exiting)for(const k of ['x','y','z','state','facing'])delete a[k];}\n }\n for(const d of s.sectors.damage)delete d.smokeSeconds;\n return s;\n}",
+  "eventProjectionSource": "function eventProjection(events,sim){const transport=Object.hasOwn(sim.consumed,'evt_m01_dudek_retrieves_bak')||sim.flags['m01.bak_status']==='rescued_by_player';\n const preActions=sim.definition.cutscenes.flatMap(c=>c.preRoll?.timeline??[]).map(b=>b.action).filter(Boolean);\n return structuredClone(events).filter(e=>!e.continuity&&!(e.type==='message'&&preActions.includes(e.message))).map(e=>{\n  if(e.type==='m01-blast')delete e.kind;if(e.type==='npc-shot')delete e.weapon;if(e.type==='round-impact'){delete e.pass;if(transport)e.pinned=e.pinned.filter(id=>!['jozef_bak','leon_dudek'].includes(id));}return e;\n });\n}",
+  "routes": [
+    {
+      "seed": 19390901,
+      "support": false,
+      "ticks": 20966,
+      "strictAuthority": "PASS",
+      "firstDifference": null,
+      "phaseTimes": {
+        "evt_m01_intro_card": {
+          "clock": 0,
+          "battleClock": 16244.05
+        },
+        "evt_m01_prelude_start": {
+          "clock": 0.05,
+          "battleClock": 16244.05
+        },
+        "evt_m01_railway_worker_report": {
+          "clock": 16.000000000000092,
+          "battleClock": 16259.999999999767
+        },
+        "evt_m01_planes_heard": {
+          "clock": 17.750000000000117,
+          "battleClock": 16390
+        },
+        "evt_m01_bombing_0434": {
+          "clock": 67.7499999999983,
+          "battleClock": 16439.999999999272
+        },
+        "evt_m01_cable_cut": {
+          "clock": 67.7499999999983,
+          "battleClock": 16439.999999999272
+        },
+        "evt_m01_forward_post_bombed": {
+          "clock": 69.89999999999817,
+          "battleClock": 16447.34999999997
+        },
+        "evt_m01_nowicki_lost": {
+          "clock": 72.79999999999801,
+          "battleClock": 16457.499999999927
+        },
+        "evt_m01_wounded_dragged": {
+          "clock": 93.54999999999683,
+          "battleClock": 16530.124999999625
+        },
+        "evt_m01_second_air_pass": {
+          "clock": 170.70000000000456,
+          "battleClock": 16800.149999998503
+        },
+        "evt_m01_train963_arrives": {
+          "clock": 256.400000000024,
+          "battleClock": 17100
+        },
+        "evt_m01_panzerzug_arrives": {
+          "clock": 303.10000000003464,
+          "battleClock": 17520.30000000068
+        },
+        "evt_m01_repair_complete": {
+          "clock": 448.1500000000676,
+          "battleClock": 18825.75000000279
+        },
+        "evt_m01_order_demolish": {
+          "clock": 484.25000000007583,
+          "battleClock": 19800
+        },
+        "evt_m01_bombing_0530": {
+          "clock": 484.25000000007583,
+          "battleClock": 19800
+        },
+        "evt_m01_runner_pressure_report": {
+          "clock": 559.2500000000391,
+          "battleClock": 20400.000000002183
+        },
+        "evt_m01_north_contact_distant": {
+          "clock": 634.2499999999709,
+          "battleClock": 21000.000000004366
+        },
+        "evt_m01_east_platoon_withdraws": {
+          "clock": 709.2499999999027,
+          "battleClock": 21600.00000000655
+        },
+        "evt_m01_bak_wounded": {
+          "clock": 739.2499999998754,
+          "battleClock": 21840.00000000742
+        },
+        "evt_m01_germans_on_east_spans": {
+          "clock": 746.7499999998686,
+          "battleClock": 21900.00000000764
+        },
+        "evt_m01_east_demolition": {
+          "clock": 786.1499999998327,
+          "battleClock": 22200
+        },
+        "evt_m01_dudek_retrieves_bak": {
+          "clock": 814.399999999807,
+          "battleClock": 22440.12499999959
+        },
+        "evt_m01_west_demolition": {
+          "clock": 1033.249999999608,
+          "battleClock": 24300
+        },
+        "evt_m01_roll_call": {
+          "clock": 1048.2499999995944,
+          "battleClock": 25500
+        },
+        "evt_m01_kozliny_attack_distant": {
+          "clock": 1048.2499999995944,
+          "battleClock": 25500
+        },
+        "evt_m01_debrief": {
+          "clock": 1048.2999999995943,
+          "battleClock": 25500
+        }
+      },
+      "cueContinuations": [
+        {
+          "label": "04:34:30",
+          "ticks": 12,
+          "firstDivergence": null,
+          "clock": 76.99999999999777,
+          "rng": 19390901
+        },
+        {
+          "label": "04:44:30",
+          "ticks": 12,
+          "firstDivergence": null,
+          "clock": 248.45000000002224,
+          "rng": 19390901
+        },
+        {
+          "label": "04:46:00",
+          "ticks": 12,
+          "firstDivergence": null,
+          "clock": 263.7000000000257,
+          "rng": 243256041
+        },
+        {
+          "label": "06:38:30",
+          "ticks": 12,
+          "firstDivergence": null,
+          "clock": 987.9499999996492,
+          "rng": 110528745
+        }
+      ],
+      "carrySpatialSuppression": [
+        {
+          "tick": 18787,
+          "clock": 939.3499999996934,
+          "battleClock": 23502.19999999777,
+          "oldDudek": {
+            "id": "leon_dudek",
+            "space": "metres",
+            "x": -213.6469560994413,
+            "y": -3,
+            "z": 29.1899947398828,
+            "team": "ally",
+            "health": 100,
+            "alive": true,
+            "active": true,
+            "state": "ADVANCE",
+            "facing": -3.097768923768744,
+            "shot": 0,
+            "radius": 0.3,
+            "crouched": false,
+            "suppressedUntil": 940.8499999996934,
+            "cooldown": 0,
+            "rounds": 5,
+            "role": "MEDIC",
+            "essential": false,
+            "civilian": false,
+            "motion": {
+              "speed": 2.9999999999998206,
+              "odometer": 1187.3334598133797,
+              "gait": "carry",
+              "gaitSince": 850.4499999997743
+            },
+            "bodyYaw": -3.097768923768744,
+            "posture": "stand",
+            "postureSince": 215.10000000001466,
+            "task": "evacuate_bak",
+            "target": {
+              "x": -170,
+              "z": 22
+            },
+            "suppressedAt": 939.3499999996934
+          },
+          "newDudek": {
+            "id": "leon_dudek",
+            "space": "metres",
+            "x": -86.66898556879633,
+            "y": -1.5631223840171815,
+            "z": 34.7582080905194,
+            "team": "ally",
+            "health": 100,
+            "alive": true,
+            "active": true,
+            "state": "ADVANCE",
+            "facing": -3.097768923768726,
+            "shot": 0,
+            "radius": 0.3,
+            "crouched": false,
+            "suppressedUntil": 0,
+            "cooldown": 0,
+            "rounds": 5,
+            "role": "MEDIC",
+            "essential": false,
+            "civilian": false,
+            "motion": {
+              "speed": 1.5999999999999595,
+              "odometer": 1060.2334598133164,
+              "gait": "carry",
+              "gaitSince": 852.1499999997727
+            },
+            "bodyYaw": -3.097768923768726,
+            "posture": "stand",
+            "postureSince": 215.10000000001466,
+            "hitAt": -1000000000,
+            "hitYaw": 0,
+            "diedAt": -1000000000,
+            "deathYaw": 0,
+            "suppressedAt": -1000000000,
+            "postureProgress": 0,
+            "task": "evacuate_bak",
+            "target": {
+              "x": -170,
+              "z": 22
+            }
+          },
+          "oldBak": {
+            "id": "jozef_bak",
+            "space": "metres",
+            "x": -213.3971961259349,
+            "y": -1.85,
+            "z": 29.200947165828183,
+            "team": "ally",
+            "health": 100,
+            "alive": true,
+            "active": true,
+            "state": "WOUNDED",
+            "facing": -1.5269725969738475,
+            "shot": 0,
+            "radius": 0.3,
+            "crouched": false,
+            "suppressedUntil": 788.5499999998319,
+            "cooldown": 0,
+            "rounds": 5,
+            "role": "RIFLEMAN",
+            "essential": false,
+            "civilian": false,
+            "motion": {
+              "speed": 2.9999999999998206,
+              "odometer": 408.84751445404265,
+              "gait": "carry",
+              "gaitSince": 850.4499999997743
+            },
+            "bodyYaw": -1.5269725969738475,
+            "posture": "stand",
+            "postureSince": 0,
+            "suppressedAt": 787.0499999998319,
+            "target": null,
+            "hitAt": 739.2499999998754,
+            "carriedBy": "leon_dudek"
+          },
+          "newBak": {
+            "id": "jozef_bak",
+            "space": "metres",
+            "x": -86.41922559528994,
+            "y": -0.4131223840171816,
+            "z": 34.76916051646479,
+            "team": "ally",
+            "health": 100,
+            "alive": true,
+            "active": true,
+            "state": "WOUNDED",
+            "facing": -1.5269725969738293,
+            "shot": 0,
+            "radius": 0.3,
+            "crouched": false,
+            "suppressedUntil": 788.5499999998319,
+            "cooldown": 0,
+            "rounds": 5,
+            "role": "RIFLEMAN",
+            "essential": false,
+            "civilian": false,
+            "motion": {
+              "speed": 1.5999999999999595,
+              "odometer": 281.8875122367995,
+              "gait": "carry",
+              "gaitSince": 852.1499999997727
+            },
+            "bodyYaw": -1.5269725969738293,
+            "posture": "stand",
+            "postureSince": 0,
+            "hitAt": 739.2499999998754,
+            "hitYaw": 0.05903702562817644,
+            "diedAt": -1000000000,
+            "deathYaw": 0,
+            "suppressedAt": 787.0499999998319,
+            "postureProgress": 0,
+            "target": null,
+            "carriedBy": "leon_dudek",
+            "carry": {
+              "phase": "carry",
+              "startedAt": 852.0499999997743,
+              "duration": 1.6
+            }
+          },
+          "oldEvents": [
+            {
+              "type": "round-impact",
+              "kind": "player",
+              "by": "de_east_12",
+              "point": {
+                "x": -255.4097837833142,
+                "y": -3.0483764379520544,
+                "z": 26.746609262362366
+              },
+              "material": "earth",
+              "crack": false,
+              "distance": 35.595842821757806,
+              "victim": null,
+              "pinned": [
+                "leon_dudek"
+              ]
+            }
+          ],
+          "newEvents": [
+            {
+              "type": "round-impact",
+              "kind": "player",
+              "by": "de_east_12",
+              "point": {
+                "x": -255.4097837833142,
+                "y": -3.0483764379520544,
+                "z": 26.746609262362366
+              },
+              "material": "earth",
+              "crack": false,
+              "distance": 35.595842821757806,
+              "pass": "none",
+              "victim": null,
+              "pinned": []
+            }
+          ],
+          "flights": [
+            {
+              "id": "m01_round_1965",
+              "by": "de_east_12",
+              "weapon": "kar98k",
+              "kind": "player",
+              "ox": 1055,
+              "oy": 0.6399999999999999,
+              "oz": 29.5,
+              "ax": -291.00049297569257,
+              "ay": -4.294772847097567,
+              "az": 26.67182721307598,
+              "h": 10.870349674237026,
+              "firedAt": 937.1499999996954,
+              "arriveAt": 939.3209731014157,
+              "tracer": false,
+              "victim": null,
+              "oldApproach": 2.397148359105735,
+              "newApproach": 8.124660865456237
+            }
+          ]
+        },
+        {
+          "tick": 19147,
+          "clock": 957.349999999677,
+          "battleClock": 23655.19999999751,
+          "oldDudek": {
+            "id": "leon_dudek",
+            "space": "metres",
+            "x": -267.5951103768198,
+            "y": -3,
+            "z": 26.824270735680223,
+            "team": "ally",
+            "health": 100,
+            "alive": true,
+            "active": true,
+            "state": "ADVANCE",
+            "facing": -3.0977689237687454,
+            "shot": 0,
+            "radius": 0.3,
+            "crouched": false,
+            "suppressedUntil": 958.849999999677,
+            "cooldown": 0,
+            "rounds": 5,
+            "role": "MEDIC",
+            "essential": false,
+            "civilian": false,
+            "motion": {
+              "speed": 3.000000000000388,
+              "odometer": 1241.3334598134124,
+              "gait": "carry",
+              "gaitSince": 850.4499999997743
+            },
+            "bodyYaw": -3.0977689237687454,
+            "posture": "stand",
+            "postureSince": 215.10000000001466,
+            "task": "evacuate_bak",
+            "target": {
+              "x": -170,
+              "z": 22
+            },
+            "suppressedAt": 957.349999999677
+          },
+          "newDudek": {
+            "id": "leon_dudek",
+            "space": "metres",
+            "x": -115.44133451673136,
+            "y": -2.6729048929326655,
+            "z": 33.49648862161167,
+            "team": "ally",
+            "health": 100,
+            "alive": true,
+            "active": true,
+            "state": "ADVANCE",
+            "facing": -3.097768923768722,
+            "shot": 0,
+            "radius": 0.3,
+            "crouched": false,
+            "suppressedUntil": 0,
+            "cooldown": 0,
+            "rounds": 5,
+            "role": "MEDIC",
+            "essential": false,
+            "civilian": false,
+            "motion": {
+              "speed": 1.5999999999999654,
+              "odometer": 1089.0334598132902,
+              "gait": "carry",
+              "gaitSince": 852.1499999997727
+            },
+            "bodyYaw": -3.097768923768722,
+            "posture": "stand",
+            "postureSince": 215.10000000001466,
+            "hitAt": -1000000000,
+            "hitYaw": 0,
+            "diedAt": -1000000000,
+            "deathYaw": 0,
+            "suppressedAt": -1000000000,
+            "postureProgress": 0,
+            "task": "evacuate_bak",
+            "target": {
+              "x": -170,
+              "z": 22
+            }
+          },
+          "oldBak": {
+            "id": "jozef_bak",
+            "space": "metres",
+            "x": -267.3453504033134,
+            "y": -1.85,
+            "z": 26.835223161625603,
+            "team": "ally",
+            "health": 100,
+            "alive": true,
+            "active": true,
+            "state": "WOUNDED",
+            "facing": -1.5269725969738488,
+            "shot": 0,
+            "radius": 0.3,
+            "crouched": false,
+            "suppressedUntil": 788.5499999998319,
+            "cooldown": 0,
+            "rounds": 5,
+            "role": "RIFLEMAN",
+            "essential": false,
+            "civilian": false,
+            "motion": {
+              "speed": 3.000000000000388,
+              "odometer": 462.8475144540389,
+              "gait": "carry",
+              "gaitSince": 850.4499999997743
+            },
+            "bodyYaw": -1.5269725969738488,
+            "posture": "stand",
+            "postureSince": 0,
+            "suppressedAt": 787.0499999998319,
+            "target": null,
+            "hitAt": 739.2499999998754,
+            "carriedBy": "leon_dudek"
+          },
+          "newBak": {
+            "id": "jozef_bak",
+            "space": "metres",
+            "x": -115.19157454322497,
+            "y": -1.5229048929326656,
+            "z": 33.50744104755706,
+            "team": "ally",
+            "health": 100,
+            "alive": true,
+            "active": true,
+            "state": "WOUNDED",
+            "facing": -1.5269725969738253,
+            "shot": 0,
+            "radius": 0.3,
+            "crouched": false,
+            "suppressedUntil": 788.5499999998319,
+            "cooldown": 0,
+            "rounds": 5,
+            "role": "RIFLEMAN",
+            "essential": false,
+            "civilian": false,
+            "motion": {
+              "speed": 1.5999999999999654,
+              "odometer": 310.6875122367938,
+              "gait": "carry",
+              "gaitSince": 852.1499999997727
+            },
+            "bodyYaw": -1.5269725969738253,
+            "posture": "stand",
+            "postureSince": 0,
+            "hitAt": 739.2499999998754,
+            "hitYaw": 0.05903702562817644,
+            "diedAt": -1000000000,
+            "deathYaw": 0,
+            "suppressedAt": 787.0499999998319,
+            "postureProgress": 0,
+            "target": null,
+            "carriedBy": "leon_dudek",
+            "carry": {
+              "phase": "carry",
+              "startedAt": 852.0499999997743,
+              "duration": 1.6
+            }
+          },
+          "oldEvents": [
+            {
+              "type": "round-impact",
+              "kind": "player",
+              "by": "de_east_0",
+              "point": {
+                "x": -308.74535544431666,
+                "y": -3.0476519408978904,
+                "z": 27.744166742411323
+              },
+              "material": "earth",
+              "crack": true,
+              "distance": 17.82660806600053,
+              "victim": null,
+              "pinned": [
+                "leon_dudek"
+              ]
+            }
+          ],
+          "newEvents": [
+            {
+              "type": "round-impact",
+              "kind": "player",
+              "by": "de_east_0",
+              "point": {
+                "x": -308.74535544431666,
+                "y": -3.0476519408978904,
+                "z": 27.744166742411323
+              },
+              "material": "earth",
+              "crack": true,
+              "distance": 17.82660806600053,
+              "pass": "crack",
+              "victim": null,
+              "pinned": []
+            }
+          ],
+          "flights": [
+            {
+              "id": "m01_round_1966",
+              "by": "de_east_0",
+              "weapon": "mg34",
+              "kind": "player",
+              "ox": 1053.7315536546048,
+              "oy": 0.3695089,
+              "oz": 31.896455945356,
+              "ax": -291.00648562543205,
+              "ay": -2.421493053150294,
+              "az": 27.798227781632978,
+              "h": 10.850004914191336,
+              "firedAt": 955.149999999679,
+              "arriveAt": 957.3189405719273,
+              "tracer": false,
+              "victim": null,
+              "oldApproach": 1.1458638577839328,
+              "newApproach": 6.943518684171118
+            }
+          ]
+        },
+        {
+          "tick": 19148,
+          "clock": 957.399999999677,
+          "battleClock": 23655.624999997508,
+          "oldDudek": {
+            "id": "leon_dudek",
+            "space": "metres",
+            "x": -267.7449663609236,
+            "y": -3,
+            "z": 26.817699280112993,
+            "team": "ally",
+            "health": 100,
+            "alive": true,
+            "active": true,
+            "state": "ADVANCE",
+            "facing": -3.0977689237687454,
+            "shot": 0,
+            "radius": 0.3,
+            "crouched": false,
+            "suppressedUntil": 958.899999999677,
+            "cooldown": 0,
+            "rounds": 5,
+            "role": "MEDIC",
+            "essential": false,
+            "civilian": false,
+            "motion": {
+              "speed": 3.000000000000388,
+              "odometer": 1241.4834598134125,
+              "gait": "carry",
+              "gaitSince": 850.4499999997743
+            },
+            "bodyYaw": -3.0977689237687454,
+            "posture": "stand",
+            "postureSince": 215.10000000001466,
+            "task": "evacuate_bak",
+            "target": {
+              "x": -170,
+              "z": 22
+            },
+            "suppressedAt": 957.399999999677
+          },
+          "newDudek": {
+            "id": "leon_dudek",
+            "space": "metres",
+            "x": -115.5212577082534,
+            "y": -2.675987622124098,
+            "z": 33.49298384530915,
+            "team": "ally",
+            "health": 100,
+            "alive": true,
+            "active": true,
+            "state": "ADVANCE",
+            "facing": -3.0977689237687223,
+            "shot": 0,
+            "radius": 0.3,
+            "crouched": false,
+            "suppressedUntil": 0,
+            "cooldown": 0,
+            "rounds": 5,
+            "role": "MEDIC",
+            "essential": false,
+            "civilian": false,
+            "motion": {
+              "speed": 1.5999999999999595,
+              "odometer": 1089.11345981329,
+              "gait": "carry",
+              "gaitSince": 852.1499999997727
+            },
+            "bodyYaw": -3.0977689237687223,
+            "posture": "stand",
+            "postureSince": 215.10000000001466,
+            "hitAt": -1000000000,
+            "hitYaw": 0,
+            "diedAt": -1000000000,
+            "deathYaw": 0,
+            "suppressedAt": -1000000000,
+            "postureProgress": 0,
+            "task": "evacuate_bak",
+            "target": {
+              "x": -170,
+              "z": 22
+            }
+          },
+          "oldBak": {
+            "id": "jozef_bak",
+            "space": "metres",
+            "x": -267.4952063874172,
+            "y": -1.85,
+            "z": 26.828651706058373,
+            "team": "ally",
+            "health": 100,
+            "alive": true,
+            "active": true,
+            "state": "WOUNDED",
+            "facing": -1.5269725969738488,
+            "shot": 0,
+            "radius": 0.3,
+            "crouched": false,
+            "suppressedUntil": 788.5499999998319,
+            "cooldown": 0,
+            "rounds": 5,
+            "role": "RIFLEMAN",
+            "essential": false,
+            "civilian": false,
+            "motion": {
+              "speed": 3.000000000000388,
+              "odometer": 462.99751445403894,
+              "gait": "carry",
+              "gaitSince": 850.4499999997743
+            },
+            "bodyYaw": -1.5269725969738488,
+            "posture": "stand",
+            "postureSince": 0,
+            "suppressedAt": 787.0499999998319,
+            "target": null,
+            "hitAt": 739.2499999998754,
+            "carriedBy": "leon_dudek"
+          },
+          "newBak": {
+            "id": "jozef_bak",
+            "space": "metres",
+            "x": -115.27149773474702,
+            "y": -1.5259876221240982,
+            "z": 33.50393627125454,
+            "team": "ally",
+            "health": 100,
+            "alive": true,
+            "active": true,
+            "state": "WOUNDED",
+            "facing": -1.5269725969738257,
+            "shot": 0,
+            "radius": 0.3,
+            "crouched": false,
+            "suppressedUntil": 788.5499999998319,
+            "cooldown": 0,
+            "rounds": 5,
+            "role": "RIFLEMAN",
+            "essential": false,
+            "civilian": false,
+            "motion": {
+              "speed": 1.5999999999999595,
+              "odometer": 310.7675122367938,
+              "gait": "carry",
+              "gaitSince": 852.1499999997727
+            },
+            "bodyYaw": -1.5269725969738257,
+            "posture": "stand",
+            "postureSince": 0,
+            "hitAt": 739.2499999998754,
+            "hitYaw": 0.05903702562817644,
+            "diedAt": -1000000000,
+            "deathYaw": 0,
+            "suppressedAt": 787.0499999998319,
+            "postureProgress": 0,
+            "target": null,
+            "carriedBy": "leon_dudek",
+            "carry": {
+              "phase": "carry",
+              "startedAt": 852.0499999997743,
+              "duration": 1.6
+            }
+          },
+          "oldEvents": [
+            {
+              "type": "round-impact",
+              "kind": "player",
+              "by": "de_east_0",
+              "point": {
+                "x": -298.00516286536384,
+                "y": -3.0469623911186043,
+                "z": 28.500166082896822
+              },
+              "material": "earth",
+              "crack": true,
+              "distance": 7.420527461444119,
+              "victim": null,
+              "pinned": [
+                "leon_dudek"
+              ]
+            }
+          ],
+          "newEvents": [
+            {
+              "type": "round-impact",
+              "kind": "player",
+              "by": "de_east_0",
+              "point": {
+                "x": -298.00516286536384,
+                "y": -3.0469623911186043,
+                "z": 28.500166082896822
+              },
+              "material": "earth",
+              "crack": true,
+              "distance": 7.420527461444119,
+              "pass": "crack",
+              "victim": null,
+              "pinned": []
+            }
+          ],
+          "flights": [
+            {
+              "id": "m01_round_1967",
+              "by": "de_east_0",
+              "weapon": "mg34",
+              "kind": "player",
+              "ox": 1053.735390529541,
+              "oy": 0.37711648916851,
+              "oz": 31.897363084175105,
+              "ax": -291.00961258935854,
+              "ay": -2.798030199122748,
+              "az": 28.517747313525916,
+              "h": 10.850066892619642,
+              "firedAt": 955.2249999996791,
+              "arriveAt": 957.3939467667327,
+              "tracer": true,
+              "victim": null,
+              "oldApproach": 1.7610542327641032,
+              "newApproach": 6.2607595463451045
+            }
+          ]
+        },
+        {
+          "tick": 19150,
+          "clock": 957.4999999996769,
+          "battleClock": 23656.474999997507,
+          "oldDudek": {
+            "id": "leon_dudek",
+            "space": "metres",
+            "x": -268.04467832913133,
+            "y": -3,
+            "z": 26.804556368978535,
+            "team": "ally",
+            "health": 100,
+            "alive": true,
+            "active": true,
+            "state": "ADVANCE",
+            "facing": -3.0977689237687454,
+            "shot": 0,
+            "radius": 0.3,
+            "crouched": false,
+            "suppressedUntil": 958.9999999996769,
+            "cooldown": 0,
+            "rounds": 5,
+            "role": "MEDIC",
+            "essential": false,
+            "civilian": false,
+            "motion": {
+              "speed": 3.000000000000388,
+              "odometer": 1241.7834598134127,
+              "gait": "carry",
+              "gaitSince": 850.4499999997743
+            },
+            "bodyYaw": -3.0977689237687454,
+            "posture": "stand",
+            "postureSince": 215.10000000001466,
+            "task": "evacuate_bak",
+            "target": {
+              "x": -170,
+              "z": 22
+            },
+            "suppressedAt": 957.4999999996769
+          },
+          "newDudek": {
+            "id": "leon_dudek",
+            "space": "metres",
+            "x": -115.68110409129748,
+            "y": -2.682153080506964,
+            "z": 33.4859742927041,
+            "team": "ally",
+            "health": 100,
+            "alive": true,
+            "active": true,
+            "state": "ADVANCE",
+            "facing": -3.0977689237687223,
+            "shot": 0,
+            "radius": 0.3,
+            "crouched": false,
+            "suppressedUntil": 0,
+            "cooldown": 0,
+            "rounds": 5,
+            "role": "MEDIC",
+            "essential": false,
+            "civilian": false,
+            "motion": {
+              "speed": 1.5999999999999595,
+              "odometer": 1089.27345981329,
+              "gait": "carry",
+              "gaitSince": 852.1499999997727
+            },
+            "bodyYaw": -3.0977689237687223,
+            "posture": "stand",
+            "postureSince": 215.10000000001466,
+            "hitAt": -1000000000,
+            "hitYaw": 0,
+            "diedAt": -1000000000,
+            "deathYaw": 0,
+            "suppressedAt": -1000000000,
+            "postureProgress": 0,
+            "task": "evacuate_bak",
+            "target": {
+              "x": -170,
+              "z": 22
+            }
+          },
+          "oldBak": {
+            "id": "jozef_bak",
+            "space": "metres",
+            "x": -267.79491835562493,
+            "y": -1.85,
+            "z": 26.815508794923915,
+            "team": "ally",
+            "health": 100,
+            "alive": true,
+            "active": true,
+            "state": "WOUNDED",
+            "facing": -1.5269725969738488,
+            "shot": 0,
+            "radius": 0.3,
+            "crouched": false,
+            "suppressedUntil": 788.5499999998319,
+            "cooldown": 0,
+            "rounds": 5,
+            "role": "RIFLEMAN",
+            "essential": false,
+            "civilian": false,
+            "motion": {
+              "speed": 3.000000000000388,
+              "odometer": 463.297514454039,
+              "gait": "carry",
+              "gaitSince": 850.4499999997743
+            },
+            "bodyYaw": -1.5269725969738488,
+            "posture": "stand",
+            "postureSince": 0,
+            "suppressedAt": 787.0499999998319,
+            "target": null,
+            "hitAt": 739.2499999998754,
+            "carriedBy": "leon_dudek"
+          },
+          "newBak": {
+            "id": "jozef_bak",
+            "space": "metres",
+            "x": -115.4313441177911,
+            "y": -1.5321530805069643,
+            "z": 33.49692671864949,
+            "team": "ally",
+            "health": 100,
+            "alive": true,
+            "active": true,
+            "state": "WOUNDED",
+            "facing": -1.5269725969738257,
+            "shot": 0,
+            "radius": 0.3,
+            "crouched": false,
+            "suppressedUntil": 788.5499999998319,
+            "cooldown": 0,
+            "rounds": 5,
+            "role": "RIFLEMAN",
+            "essential": false,
+            "civilian": false,
+            "motion": {
+              "speed": 1.5999999999999595,
+              "odometer": 310.92751223679375,
+              "gait": "carry",
+              "gaitSince": 852.1499999997727
+            },
+            "bodyYaw": -1.5269725969738257,
+            "posture": "stand",
+            "postureSince": 0,
+            "hitAt": 739.2499999998754,
+            "hitYaw": 0.05903702562817644,
+            "diedAt": -1000000000,
+            "deathYaw": 0,
+            "suppressedAt": 787.0499999998319,
+            "postureProgress": 0,
+            "target": null,
+            "carriedBy": "leon_dudek",
+            "carry": {
+              "phase": "carry",
+              "startedAt": 852.0499999997743,
+              "duration": 1.6
+            }
+          },
+          "oldEvents": [
+            {
+              "type": "round-impact",
+              "kind": "player",
+              "by": "de_east_0",
+              "point": {
+                "x": -289.4380807402009,
+                "y": -3.0417224520001582,
+                "z": 28.952376567609615
+              },
+              "material": "earth",
+              "crack": true,
+              "distance": 3.2906678668530156,
+              "victim": null,
+              "pinned": [
+                "leon_dudek"
+              ]
+            }
+          ],
+          "newEvents": [
+            {
+              "type": "round-impact",
+              "kind": "player",
+              "by": "de_east_0",
+              "point": {
+                "x": -289.4380807402009,
+                "y": -3.0417224520001582,
+                "z": 28.952376567609615
+              },
+              "material": "earth",
+              "crack": true,
+              "distance": 3.2906678668530156,
+              "pass": "crack",
+              "victim": null,
+              "pinned": []
+            }
+          ],
+          "flights": [
+            {
+              "id": "m01_round_1968",
+              "by": "de_east_0",
+              "weapon": "mg34",
+              "kind": "player",
+              "ox": 1053.7386755281454,
+              "oy": 0.3843987384524238,
+              "oz": 31.894115546637426,
+              "ax": -291.0114787611607,
+              "ay": -3.095079883037034,
+              "az": 28.948930612886098,
+              "h": 10.850119674488793,
+              "firedAt": 955.299999999679,
+              "arriveAt": 957.4689520423187,
+              "tracer": false,
+              "victim": null,
+              "oldApproach": 2.2044328758089247,
+              "newApproach": 5.809131214418166
+            }
+          ]
+        },
+        {
+          "tick": 19151,
+          "clock": 957.5499999996769,
+          "battleClock": 23656.899999997506,
+          "oldDudek": {
+            "id": "leon_dudek",
+            "space": "metres",
+            "x": -268.1945343132352,
+            "y": -3,
+            "z": 26.797984913411305,
+            "team": "ally",
+            "health": 100,
+            "alive": true,
+            "active": true,
+            "state": "ADVANCE",
+            "facing": -3.0977689237687454,
+            "shot": 0,
+            "radius": 0.3,
+            "crouched": false,
+            "suppressedUntil": 959.0499999996769,
+            "cooldown": 0,
+            "rounds": 5,
+            "role": "MEDIC",
+            "essential": false,
+            "civilian": false,
+            "motion": {
+              "speed": 3.000000000000388,
+              "odometer": 1241.9334598134128,
+              "gait": "carry",
+              "gaitSince": 850.4499999997743
+            },
+            "bodyYaw": -3.0977689237687454,
+            "posture": "stand",
+            "postureSince": 215.10000000001466,
+            "task": "evacuate_bak",
+            "target": {
+              "x": -170,
+              "z": 22
+            },
+            "suppressedAt": 957.5499999996769
+          },
+          "newDudek": {
+            "id": "leon_dudek",
+            "space": "metres",
+            "x": -115.76102728281953,
+            "y": -2.685235809698394,
+            "z": 33.48246951640158,
+            "team": "ally",
+            "health": 100,
+            "alive": true,
+            "active": true,
+            "state": "ADVANCE",
+            "facing": -3.0977689237687223,
+            "shot": 0,
+            "radius": 0.3,
+            "crouched": false,
+            "suppressedUntil": 0,
+            "cooldown": 0,
+            "rounds": 5,
+            "role": "MEDIC",
+            "essential": false,
+            "civilian": false,
+            "motion": {
+              "speed": 1.5999999999999595,
+              "odometer": 1089.3534598132899,
+              "gait": "carry",
+              "gaitSince": 852.1499999997727
+            },
+            "bodyYaw": -3.0977689237687223,
+            "posture": "stand",
+            "postureSince": 215.10000000001466,
+            "hitAt": -1000000000,
+            "hitYaw": 0,
+            "diedAt": -1000000000,
+            "deathYaw": 0,
+            "suppressedAt": -1000000000,
+            "postureProgress": 0,
+            "task": "evacuate_bak",
+            "target": {
+              "x": -170,
+              "z": 22
+            }
+          },
+          "oldBak": {
+            "id": "jozef_bak",
+            "space": "metres",
+            "x": -267.9447743397288,
+            "y": -1.85,
+            "z": 26.808937339356685,
+            "team": "ally",
+            "health": 100,
+            "alive": true,
+            "active": true,
+            "state": "WOUNDED",
+            "facing": -1.5269725969738488,
+            "shot": 0,
+            "radius": 0.3,
+            "crouched": false,
+            "suppressedUntil": 788.5499999998319,
+            "cooldown": 0,
+            "rounds": 5,
+            "role": "RIFLEMAN",
+            "essential": false,
+            "civilian": false,
+            "motion": {
+              "speed": 3.000000000000388,
+              "odometer": 463.44751445403904,
+              "gait": "carry",
+              "gaitSince": 850.4499999997743
+            },
+            "bodyYaw": -1.5269725969738488,
+            "posture": "stand",
+            "postureSince": 0,
+            "suppressedAt": 787.0499999998319,
+            "target": null,
+            "hitAt": 739.2499999998754,
+            "carriedBy": "leon_dudek"
+          },
+          "newBak": {
+            "id": "jozef_bak",
+            "space": "metres",
+            "x": -115.51126730931314,
+            "y": -1.5352358096983942,
+            "z": 33.49342194234697,
+            "team": "ally",
+            "health": 100,
+            "alive": true,
+            "active": true,
+            "state": "WOUNDED",
+            "facing": -1.5269725969738257,
+            "shot": 0,
+            "radius": 0.3,
+            "crouched": false,
+            "suppressedUntil": 788.5499999998319,
+            "cooldown": 0,
+            "rounds": 5,
+            "role": "RIFLEMAN",
+            "essential": false,
+            "civilian": false,
+            "motion": {
+              "speed": 1.5999999999999595,
+              "odometer": 311.00751223679373,
+              "gait": "carry",
+              "gaitSince": 852.1499999997727
+            },
+            "bodyYaw": -1.5269725969738257,
+            "posture": "stand",
+            "postureSince": 0,
+            "hitAt": 739.2499999998754,
+            "hitYaw": 0.05903702562817644,
+            "diedAt": -1000000000,
+            "deathYaw": 0,
+            "suppressedAt": 787.0499999998319,
+            "postureProgress": 0,
+            "target": null,
+            "carriedBy": "leon_dudek",
+            "carry": {
+              "phase": "carry",
+              "startedAt": 852.0499999997743,
+              "duration": 1.6
+            }
+          },
+          "oldEvents": [
+            {
+              "type": "round-impact",
+              "kind": "player",
+              "by": "de_east_0",
+              "point": {
+                "x": -314.9936485603325,
+                "y": -3.0430509336910867,
+                "z": 28.20763521465482
+              },
+              "material": "earth",
+              "crack": true,
+              "distance": 24.09106042565333,
+              "victim": null,
+              "pinned": [
+                "leon_dudek"
+              ]
+            }
+          ],
+          "newEvents": [
+            {
+              "type": "round-impact",
+              "kind": "player",
+              "by": "de_east_0",
+              "point": {
+                "x": -314.9936485603325,
+                "y": -3.0430509336910867,
+                "z": 28.20763521465482
+              },
+              "material": "earth",
+              "crack": true,
+              "distance": 24.09106042565333,
+              "pass": "crack",
+              "victim": null,
+              "pinned": []
+            }
+          ],
+          "flights": [
+            {
+              "id": "m01_round_1969",
+              "by": "de_east_0",
+              "weapon": "mg34",
+              "kind": "player",
+              "ox": 1053.7387097665885,
+              "oy": 0.3899853497236419,
+              "oz": 31.898158108826305,
+              "ax": -291.0085476069375,
+              "ay": -2.199991095164527,
+              "az": 28.27230641472473,
+              "h": 10.850120510326422,
+              "firedAt": 955.3749999996791,
+              "arriveAt": 957.5439521258613,
+              "tracer": false,
+              "victim": null,
+              "oldApproach": 1.674661279973263,
+              "newApproach": 6.774197264874054
+            }
+          ]
+        }
+      ],
+      "continuity": [
+        {
+          "clock": 263.10000000002555,
+          "battleClock": 17160.300000000097,
+          "kind": "repair",
+          "slot": 0,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 37%."
+        },
+        {
+          "clock": 269.20000000002693,
+          "battleClock": 17215.200000000186,
+          "kind": "repair",
+          "slot": 1,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 38%."
+        },
+        {
+          "clock": 275.3000000000283,
+          "battleClock": 17270.100000000275,
+          "kind": "repair",
+          "slot": 2,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 42%."
+        },
+        {
+          "clock": 281.4000000000297,
+          "battleClock": 17325.000000000364,
+          "kind": "repair",
+          "slot": 3,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 42%."
+        },
+        {
+          "clock": 287.5500000000311,
+          "battleClock": 17380.350000000453,
+          "kind": "repair",
+          "slot": 4,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 44%."
+        },
+        {
+          "clock": 293.6500000000325,
+          "battleClock": 17435.250000000542,
+          "kind": "repair",
+          "slot": 5,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 46%."
+        },
+        {
+          "clock": 299.7500000000339,
+          "battleClock": 17490.15000000063,
+          "kind": "repair",
+          "slot": 6,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 46%."
+        },
+        {
+          "clock": 305.85000000003527,
+          "battleClock": 17545.05000000072,
+          "kind": "repair",
+          "slot": 7,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 47%."
+        },
+        {
+          "clock": 312.00000000003666,
+          "battleClock": 17600.40000000081,
+          "kind": "repair",
+          "slot": 8,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 50%."
+        },
+        {
+          "clock": 318.10000000003805,
+          "battleClock": 17655.300000000898,
+          "kind": "repair",
+          "slot": 9,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 52%."
+        },
+        {
+          "clock": 324.20000000003944,
+          "battleClock": 17710.200000000987,
+          "kind": "repair",
+          "slot": 10,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 54%."
+        },
+        {
+          "clock": 330.3000000000408,
+          "battleClock": 17765.100000001075,
+          "kind": "repair",
+          "slot": 11,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 54%."
+        },
+        {
+          "clock": 336.4000000000422,
+          "battleClock": 17820.000000001164,
+          "kind": "repair",
+          "slot": 12,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 56%."
+        },
+        {
+          "clock": 342.5500000000436,
+          "battleClock": 17875.350000001254,
+          "kind": "repair",
+          "slot": 13,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 57%."
+        },
+        {
+          "clock": 348.650000000045,
+          "battleClock": 17930.250000001342,
+          "kind": "repair",
+          "slot": 14,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 59%."
+        },
+        {
+          "clock": 354.7500000000464,
+          "battleClock": 17985.15000000143,
+          "kind": "repair",
+          "slot": 15,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 62%."
+        },
+        {
+          "clock": 360.85000000004777,
+          "battleClock": 18040.05000000152,
+          "kind": "repair",
+          "slot": 16,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 64%."
+        },
+        {
+          "clock": 367.00000000004917,
+          "battleClock": 18095.40000000161,
+          "kind": "repair",
+          "slot": 17,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 67%."
+        },
+        {
+          "clock": 373.10000000005056,
+          "battleClock": 18150.3000000017,
+          "kind": "repair",
+          "slot": 18,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 68%."
+        },
+        {
+          "clock": 379.20000000005194,
+          "battleClock": 18205.200000001787,
+          "kind": "repair",
+          "slot": 19,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 69%."
+        },
+        {
+          "clock": 385.30000000005333,
+          "battleClock": 18260.100000001876,
+          "kind": "repair",
+          "slot": 20,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 72%."
+        },
+        {
+          "clock": 391.4000000000547,
+          "battleClock": 18315.000000001965,
+          "kind": "repair",
+          "slot": 21,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 74%."
+        },
+        {
+          "clock": 397.5500000000561,
+          "battleClock": 18370.350000002054,
+          "kind": "repair",
+          "slot": 22,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 78%."
+        },
+        {
+          "clock": 403.6500000000575,
+          "battleClock": 18425.250000002143,
+          "kind": "repair",
+          "slot": 23,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 82%."
+        },
+        {
+          "clock": 409.7500000000589,
+          "battleClock": 18480.15000000223,
+          "kind": "repair",
+          "slot": 24,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 83%."
+        },
+        {
+          "clock": 415.8500000000603,
+          "battleClock": 18535.05000000232,
+          "kind": "repair",
+          "slot": 25,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 85%."
+        },
+        {
+          "clock": 422.0000000000617,
+          "battleClock": 18590.40000000241,
+          "kind": "repair",
+          "slot": 26,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 88%."
+        },
+        {
+          "clock": 428.10000000006306,
+          "battleClock": 18645.3000000025,
+          "kind": "repair",
+          "slot": 27,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 91%."
+        },
+        {
+          "clock": 434.20000000006445,
+          "battleClock": 18700.200000002587,
+          "kind": "repair",
+          "slot": 28,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 93%."
+        },
+        {
+          "clock": 440.30000000006584,
+          "battleClock": 18755.100000002676,
+          "kind": "repair",
+          "slot": 29,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 94%."
+        },
+        {
+          "clock": 446.4000000000672,
+          "battleClock": 18810.000000002765,
+          "kind": "repair",
+          "slot": 30,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 98%."
+        },
+        {
+          "clock": 449.65000000006796,
+          "battleClock": 18866.250000002747,
+          "kind": "repair",
+          "slot": 31,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 451.6500000000684,
+          "battleClock": 18920.25000000269,
+          "kind": "repair",
+          "slot": 32,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 453.7000000000689,
+          "battleClock": 18975.60000000263,
+          "kind": "repair",
+          "slot": 33,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 455.75000000006935,
+          "battleClock": 19030.95000000257,
+          "kind": "repair",
+          "slot": 34,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 457.8000000000698,
+          "battleClock": 19086.30000000251,
+          "kind": "repair",
+          "slot": 35,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 459.80000000007027,
+          "battleClock": 19140.30000000245,
+          "kind": "repair",
+          "slot": 36,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 461.85000000007074,
+          "battleClock": 19195.65000000239,
+          "kind": "repair",
+          "slot": 37,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 463.9000000000712,
+          "battleClock": 19251.000000002332,
+          "kind": "repair",
+          "slot": 38,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 465.90000000007166,
+          "battleClock": 19305.000000002274,
+          "kind": "repair",
+          "slot": 39,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 467.9500000000721,
+          "battleClock": 19360.350000002214,
+          "kind": "repair",
+          "slot": 40,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 470.0000000000726,
+          "battleClock": 19415.700000002154,
+          "kind": "repair",
+          "slot": 41,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 472.05000000007306,
+          "battleClock": 19471.050000002095,
+          "kind": "repair",
+          "slot": 42,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 474.0500000000735,
+          "battleClock": 19525.050000002037,
+          "kind": "repair",
+          "slot": 43,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 476.100000000074,
+          "battleClock": 19580.400000001977,
+          "kind": "repair",
+          "slot": 44,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 478.15000000007444,
+          "battleClock": 19635.750000001917,
+          "kind": "repair",
+          "slot": 45,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 480.2000000000749,
+          "battleClock": 19691.100000001858,
+          "kind": "repair",
+          "slot": 46,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 482.20000000007536,
+          "battleClock": 19745.1000000018,
+          "kind": "repair",
+          "slot": 47,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 484.25000000007583,
+          "battleClock": 19800,
+          "kind": "hold",
+          "slot": 0,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 491.1500000000774,
+          "battleClock": 19855.2000000002,
+          "kind": "hold",
+          "slot": 1,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 498.00000000007896,
+          "battleClock": 19910.0000000004,
+          "kind": "hold",
+          "slot": 2,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 504.9000000000805,
+          "battleClock": 19965.2000000006,
+          "kind": "hold",
+          "slot": 3,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 511.7500000000821,
+          "battleClock": 20020.0000000008,
+          "kind": "hold",
+          "slot": 4,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 518.650000000076,
+          "battleClock": 20075.200000001,
+          "kind": "hold",
+          "slot": 5,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 525.5000000000698,
+          "battleClock": 20130.0000000012,
+          "kind": "hold",
+          "slot": 6,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 532.4000000000635,
+          "battleClock": 20185.2000000014,
+          "kind": "hold",
+          "slot": 7,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 539.2500000000573,
+          "battleClock": 20240.0000000016,
+          "kind": "hold",
+          "slot": 8,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 546.150000000051,
+          "battleClock": 20295.2000000018,
+          "kind": "hold",
+          "slot": 9,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 553.0000000000448,
+          "battleClock": 20350.000000002,
+          "kind": "hold",
+          "slot": 10,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 559.9000000000385,
+          "battleClock": 20405.2000000022,
+          "kind": "hold",
+          "slot": 11,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 566.7500000000323,
+          "battleClock": 20460.0000000024,
+          "kind": "hold",
+          "slot": 12,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 573.650000000026,
+          "battleClock": 20515.200000002602,
+          "kind": "hold",
+          "slot": 13,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 580.5000000000198,
+          "battleClock": 20570.0000000028,
+          "kind": "hold",
+          "slot": 14,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 587.4000000000135,
+          "battleClock": 20625.200000003002,
+          "kind": "hold",
+          "slot": 15,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 594.2500000000073,
+          "battleClock": 20680.0000000032,
+          "kind": "hold",
+          "slot": 16,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 601.150000000001,
+          "battleClock": 20735.200000003402,
+          "kind": "hold",
+          "slot": 17,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 607.9999999999948,
+          "battleClock": 20790.0000000036,
+          "kind": "hold",
+          "slot": 18,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 614.8999999999885,
+          "battleClock": 20845.200000003802,
+          "kind": "hold",
+          "slot": 19,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 621.7499999999823,
+          "battleClock": 20900.000000004,
+          "kind": "hold",
+          "slot": 20,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 628.649999999976,
+          "battleClock": 20955.200000004203,
+          "kind": "hold",
+          "slot": 21,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 635.4999999999698,
+          "battleClock": 21010.000000004402,
+          "kind": "hold",
+          "slot": 22,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 642.3999999999635,
+          "battleClock": 21065.200000004603,
+          "kind": "hold",
+          "slot": 23,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 649.2499999999573,
+          "battleClock": 21120.000000004802,
+          "kind": "hold",
+          "slot": 24,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 656.149999999951,
+          "battleClock": 21175.200000005003,
+          "kind": "hold",
+          "slot": 25,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 662.9999999999447,
+          "battleClock": 21230.000000005202,
+          "kind": "hold",
+          "slot": 26,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 669.8999999999385,
+          "battleClock": 21285.200000005403,
+          "kind": "hold",
+          "slot": 27,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 676.7499999999322,
+          "battleClock": 21340.000000005602,
+          "kind": "hold",
+          "slot": 28,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 683.649999999926,
+          "battleClock": 21395.200000005803,
+          "kind": "hold",
+          "slot": 29,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 690.4999999999197,
+          "battleClock": 21450.000000006003,
+          "kind": "hold",
+          "slot": 30,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 697.3999999999135,
+          "battleClock": 21505.200000006203,
+          "kind": "hold",
+          "slot": 31,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 704.2499999999072,
+          "battleClock": 21560.000000006403,
+          "kind": "hold",
+          "slot": 32,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 709.2499999999027,
+          "battleClock": 21600.00000000655,
+          "kind": "withdrawal",
+          "slot": 0,
+          "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 18 homens no pelotão."
+        },
+        {
+          "clock": 714.8999999998975,
+          "battleClock": 21645.200000006713,
+          "kind": "withdrawal",
+          "slot": 1,
+          "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 18 homens no pelotão."
+        },
+        {
+          "clock": 720.4999999998925,
+          "battleClock": 21690.000000006876,
+          "kind": "withdrawal",
+          "slot": 2,
+          "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 18 homens no pelotão."
+        },
+        {
+          "clock": 726.1499999998873,
+          "battleClock": 21735.20000000704,
+          "kind": "withdrawal",
+          "slot": 3,
+          "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 18 homens no pelotão."
+        },
+        {
+          "clock": 731.7499999998822,
+          "battleClock": 21780.000000007203,
+          "kind": "withdrawal",
+          "slot": 4,
+          "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 18 homens no pelotão."
+        },
+        {
+          "clock": 737.3999999998771,
+          "battleClock": 21825.200000007368,
+          "kind": "withdrawal",
+          "slot": 5,
+          "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 18 homens no pelotão."
+        },
+        {
+          "clock": 742.999999999872,
+          "battleClock": 21870.00000000753,
+          "kind": "withdrawal",
+          "slot": 6,
+          "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 18 homens no pelotão."
+        },
+        {
+          "clock": 748.6499999998668,
+          "battleClock": 21915.200000007695,
+          "kind": "withdrawal",
+          "slot": 7,
+          "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 18 homens no pelotão."
+        },
+        {
+          "clock": 754.2499999998618,
+          "battleClock": 21960.000000007858,
+          "kind": "withdrawal",
+          "slot": 8,
+          "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 16 homens no pelotão."
+        },
+        {
+          "clock": 759.8999999998566,
+          "battleClock": 22005.200000008022,
+          "kind": "withdrawal",
+          "slot": 9,
+          "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 13 homens no pelotão."
+        },
+        {
+          "clock": 765.4999999998515,
+          "battleClock": 22050.000000008185,
+          "kind": "withdrawal",
+          "slot": 10,
+          "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 12 homens no pelotão."
+        },
+        {
+          "clock": 771.1499999998464,
+          "battleClock": 22095.20000000835,
+          "kind": "withdrawal",
+          "slot": 11,
+          "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 12 homens no pelotão."
+        },
+        {
+          "clock": 776.7499999998413,
+          "battleClock": 22140.000000008513,
+          "kind": "withdrawal",
+          "slot": 12,
+          "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 12 homens no pelotão."
+        },
+        {
+          "clock": 784.2999999998344,
+          "battleClock": 22185.35000000864,
+          "kind": "withdrawal",
+          "slot": 13,
+          "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 12 homens no pelotão."
+        },
+        {
+          "clock": 786.1499999998327,
+          "battleClock": 22200,
+          "kind": "corridor",
+          "slot": 0,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 792.6499999998268,
+          "battleClock": 22255.249999999905,
+          "kind": "corridor",
+          "slot": 1,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 799.099999999821,
+          "battleClock": 22310.07499999981,
+          "kind": "corridor",
+          "slot": 2,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 805.599999999815,
+          "battleClock": 22365.324999999717,
+          "kind": "corridor",
+          "slot": 3,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 812.0499999998092,
+          "battleClock": 22420.149999999623,
+          "kind": "corridor",
+          "slot": 4,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 818.5499999998033,
+          "battleClock": 22475.39999999953,
+          "kind": "corridor",
+          "slot": 5,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 824.9999999997974,
+          "battleClock": 22530.224999999435,
+          "kind": "corridor",
+          "slot": 6,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 831.4499999997915,
+          "battleClock": 22585.04999999934,
+          "kind": "corridor",
+          "slot": 7,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 837.9499999997856,
+          "battleClock": 22640.299999999246,
+          "kind": "corridor",
+          "slot": 8,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 844.3999999997798,
+          "battleClock": 22695.124999999152,
+          "kind": "corridor",
+          "slot": 9,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 850.8999999997739,
+          "battleClock": 22750.374999999058,
+          "kind": "corridor",
+          "slot": 10,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 857.349999999768,
+          "battleClock": 22805.199999998964,
+          "kind": "corridor",
+          "slot": 11,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 863.7999999997621,
+          "battleClock": 22860.02499999887,
+          "kind": "corridor",
+          "slot": 12,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 870.2999999997562,
+          "battleClock": 22915.274999998775,
+          "kind": "corridor",
+          "slot": 13,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 876.7499999997503,
+          "battleClock": 22970.09999999868,
+          "kind": "corridor",
+          "slot": 14,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 883.2499999997444,
+          "battleClock": 23025.349999998587,
+          "kind": "corridor",
+          "slot": 15,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 889.6999999997386,
+          "battleClock": 23080.174999998493,
+          "kind": "corridor",
+          "slot": 16,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 896.1999999997327,
+          "battleClock": 23135.4249999984,
+          "kind": "corridor",
+          "slot": 17,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 902.6499999997268,
+          "battleClock": 23190.249999998305,
+          "kind": "corridor",
+          "slot": 18,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 909.0999999997209,
+          "battleClock": 23245.07499999821,
+          "kind": "corridor",
+          "slot": 19,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 915.599999999715,
+          "battleClock": 23300.324999998116,
+          "kind": "corridor",
+          "slot": 20,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 922.0499999997091,
+          "battleClock": 23355.149999998022,
+          "kind": "corridor",
+          "slot": 21,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 928.5499999997032,
+          "battleClock": 23410.399999997928,
+          "kind": "corridor",
+          "slot": 22,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 934.9999999996974,
+          "battleClock": 23465.224999997834,
+          "kind": "corridor",
+          "slot": 23,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 941.4499999996915,
+          "battleClock": 23520.04999999774,
+          "kind": "corridor",
+          "slot": 24,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 947.9499999996856,
+          "battleClock": 23575.299999997646,
+          "kind": "corridor",
+          "slot": 25,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 954.3999999996797,
+          "battleClock": 23630.12499999755,
+          "kind": "corridor",
+          "slot": 26,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 960.8999999996738,
+          "battleClock": 23685.374999997457,
+          "kind": "corridor",
+          "slot": 27,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 967.349999999668,
+          "battleClock": 23740.199999997363,
+          "kind": "corridor",
+          "slot": 28,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 973.7999999996621,
+          "battleClock": 23795.02499999727,
+          "kind": "corridor",
+          "slot": 29,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 980.2999999996562,
+          "battleClock": 23850.274999997175,
+          "kind": "corridor",
+          "slot": 30,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 986.7499999996503,
+          "battleClock": 23905.09999999708,
+          "kind": "corridor",
+          "slot": 31,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 993.2499999996444,
+          "battleClock": 23960.349999996986,
+          "kind": "corridor",
+          "slot": 32,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 999.6999999996385,
+          "battleClock": 24015.174999996892,
+          "kind": "corridor",
+          "slot": 33,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 1006.1999999996326,
+          "battleClock": 24070.424999996798,
+          "kind": "corridor",
+          "slot": 34,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 1012.6499999996267,
+          "battleClock": 24125.249999996704,
+          "kind": "corridor",
+          "slot": 35,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 1019.0999999996209,
+          "battleClock": 24180.07499999661,
+          "kind": "corridor",
+          "slot": 36,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 1025.599999999615,
+          "battleClock": 24235.324999996516,
+          "kind": "corridor",
+          "slot": 37,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 1032.049999999609,
+          "battleClock": 24290.14999999642,
+          "kind": "corridor",
+          "slot": 38,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        }
+      ],
+      "dialogues": {
+        "018": {
+          "clock": 97.74999999999659,
+          "battleClock": 16544.824999999564
+        },
+        "038": {
+          "clock": 303.10000000003464,
+          "battleClock": 17520.30000000068
+        },
+        "048": {
+          "clock": 837.599999999786,
+          "battleClock": 22637.32499999925
+        },
+        "049": {
+          "clock": 840.1999999997836,
+          "battleClock": 22659.424999999213
+        },
+        "051": {
+          "clock": 987.3499999996498,
+          "battleClock": 23910.199999997072
+        }
+      },
+      "westReadyAt": 23521.324999997738,
+      "maxNarrativeGapSec": 56.24999999998181,
+      "activityDefinition": "Authored task-specific narrative messages only; excludes bullets, distant emitters, simulation ticks and RNG-driven ambient events.",
+      "final": {
+        "rng": 3312583128,
+        "checkpoints": [
+          "cp_m01_a_orientacao",
+          "cp_m01_b_reorganizacao",
+          "cp_m01_c_engenheiros",
+          "cp_m01_d_retirada"
+        ],
+        "westDemolition": {
+          "clock": 1033.249999999608,
+          "battleClock": 24300
+        },
+        "complete": true
+      }
+    },
+    {
+      "seed": 7,
+      "support": true,
+      "ticks": 20097,
+      "strictAuthority": "PASS",
+      "firstDifference": null,
+      "phaseTimes": {
+        "evt_m01_intro_card": {
+          "clock": 0,
+          "battleClock": 16244.05
+        },
+        "evt_m01_prelude_start": {
+          "clock": 0.05,
+          "battleClock": 16244.05
+        },
+        "evt_m01_railway_worker_report": {
+          "clock": 16.000000000000092,
+          "battleClock": 16259.999999999767
+        },
+        "evt_m01_planes_heard": {
+          "clock": 17.750000000000117,
+          "battleClock": 16390
+        },
+        "evt_m01_bombing_0434": {
+          "clock": 67.7499999999983,
+          "battleClock": 16439.999999999272
+        },
+        "evt_m01_cable_cut": {
+          "clock": 67.7499999999983,
+          "battleClock": 16439.999999999272
+        },
+        "evt_m01_forward_post_bombed": {
+          "clock": 69.89999999999817,
+          "battleClock": 16447.34999999997
+        },
+        "evt_m01_nowicki_lost": {
+          "clock": 72.79999999999801,
+          "battleClock": 16457.499999999927
+        },
+        "evt_m01_wounded_dragged": {
+          "clock": 93.54999999999683,
+          "battleClock": 16530.124999999625
+        },
+        "evt_m01_second_air_pass": {
+          "clock": 170.70000000000456,
+          "battleClock": 16800.149999998503
+        },
+        "evt_m01_train963_arrives": {
+          "clock": 256.400000000024,
+          "battleClock": 17100
+        },
+        "evt_m01_panzerzug_arrives": {
+          "clock": 303.10000000003464,
+          "battleClock": 17520.30000000068
+        },
+        "evt_m01_repair_complete": {
+          "clock": 382.9500000000528,
+          "battleClock": 18238.95000000184
+        },
+        "evt_m01_order_demolish": {
+          "clock": 440.80000000006595,
+          "battleClock": 19800
+        },
+        "evt_m01_bombing_0530": {
+          "clock": 440.80000000006595,
+          "battleClock": 19800
+        },
+        "evt_m01_runner_pressure_report": {
+          "clock": 515.8000000000786,
+          "battleClock": 20400.000000002183
+        },
+        "evt_m01_north_contact_distant": {
+          "clock": 590.8000000000104,
+          "battleClock": 21000.000000004366
+        },
+        "evt_m01_east_platoon_withdraws": {
+          "clock": 665.7999999999422,
+          "battleClock": 21600.00000000655
+        },
+        "evt_m01_bak_wounded": {
+          "clock": 695.7999999999149,
+          "battleClock": 21840.00000000742
+        },
+        "evt_m01_germans_on_east_spans": {
+          "clock": 703.2999999999081,
+          "battleClock": 21900.00000000764
+        },
+        "evt_m01_east_demolition": {
+          "clock": 742.6999999998723,
+          "battleClock": 22200
+        },
+        "evt_m01_dudek_retrieves_bak": {
+          "clock": 770.9499999998466,
+          "battleClock": 22440.12499999959
+        },
+        "evt_m01_west_demolition": {
+          "clock": 989.7999999996475,
+          "battleClock": 24300
+        },
+        "evt_m01_roll_call": {
+          "clock": 1004.7999999996339,
+          "battleClock": 25500
+        },
+        "evt_m01_kozliny_attack_distant": {
+          "clock": 1004.7999999996339,
+          "battleClock": 25500
+        },
+        "evt_m01_debrief": {
+          "clock": 1004.8499999996338,
+          "battleClock": 25500
+        }
+      },
+      "cueContinuations": [
+        {
+          "label": "04:34:30",
+          "ticks": 12,
+          "firstDivergence": null,
+          "clock": 76.99999999999777,
+          "rng": 7
+        },
+        {
+          "label": "04:44:30",
+          "ticks": 12,
+          "firstDivergence": null,
+          "clock": 248.45000000002224,
+          "rng": 7
+        },
+        {
+          "label": "04:46:00",
+          "ticks": 12,
+          "firstDivergence": null,
+          "clock": 263.7000000000257,
+          "rng": 2090643281
+        },
+        {
+          "label": "06:38:30",
+          "ticks": 12,
+          "firstDivergence": null,
+          "clock": 944.4999999996887,
+          "rng": 4135155283
+        }
+      ],
+      "carrySpatialSuppression": [
+        {
+          "tick": 19512,
+          "clock": 975.5999999996604,
+          "battleClock": 24179.64999999661,
+          "oldDudek": {
+            "id": "leon_dudek",
+            "space": "metres",
+            "x": -330.83433566864505,
+            "y": -3,
+            "z": 24.05111648630927,
+            "team": "ally",
+            "health": 100,
+            "alive": true,
+            "active": true,
+            "state": "GUARD",
+            "facing": -3.097768923768731,
+            "shot": 0,
+            "radius": 0.3,
+            "crouched": false,
+            "suppressedUntil": 977.0999999996604,
+            "cooldown": 0,
+            "rounds": 5,
+            "role": "MEDIC",
+            "essential": false,
+            "civilian": false,
+            "motion": {
+              "speed": 0,
+              "odometer": 1304.6334598134508,
+              "gait": "idle",
+              "gaitSince": 935.0499999996973
+            },
+            "bodyYaw": -3.097768923768731,
+            "posture": "stand",
+            "postureSince": 215.10000000001466,
+            "task": "stay_with_bak",
+            "target": null,
+            "suppressedAt": 975.5999999996604
+          },
+          "newDudek": {
+            "id": "leon_dudek",
+            "space": "metres",
+            "x": -214.06655285494617,
+            "y": -3,
+            "z": 29.17159466429694,
+            "team": "ally",
+            "health": 100,
+            "alive": true,
+            "active": true,
+            "state": "ADVANCE",
+            "facing": -3.0977689237687183,
+            "shot": 0,
+            "radius": 0.3,
+            "crouched": false,
+            "suppressedUntil": 0,
+            "cooldown": 0,
+            "rounds": 5,
+            "role": "MEDIC",
+            "essential": false,
+            "civilian": false,
+            "motion": {
+              "speed": 1.6000000000002463,
+              "odometer": 1187.7534598132004,
+              "gait": "carry",
+              "gaitSince": 808.6999999998122
+            },
+            "bodyYaw": -3.0977689237687183,
+            "posture": "stand",
+            "postureSince": 215.10000000001466,
+            "hitAt": -1000000000,
+            "hitYaw": 0,
+            "diedAt": -1000000000,
+            "deathYaw": 0,
+            "suppressedAt": -1000000000,
+            "postureProgress": 0,
+            "task": "evacuate_bak",
+            "target": {
+              "x": -170,
+              "z": 22
+            }
+          },
+          "oldBak": {
+            "id": "jozef_bak",
+            "space": "metres",
+            "x": -329.9343356686451,
+            "y": -3,
+            "z": 24.751116486309268,
+            "team": "ally",
+            "health": 100,
+            "alive": true,
+            "active": true,
+            "state": "WOUNDED",
+            "facing": -3.097768923768731,
+            "shot": 0,
+            "radius": 0.3,
+            "crouched": false,
+            "suppressedUntil": 977.0999999996604,
+            "cooldown": 0,
+            "rounds": 5,
+            "role": "RIFLEMAN",
+            "essential": false,
+            "civilian": false,
+            "motion": {
+              "speed": 0,
+              "odometer": 526.8437755498003,
+              "gait": "idle",
+              "gaitSince": 935.0499999996973
+            },
+            "bodyYaw": -3.097768923768731,
+            "posture": "stand",
+            "postureSince": 0,
+            "suppressedAt": 975.5999999996604,
+            "target": null,
+            "hitAt": 695.7999999999149,
+            "carriedBy": null
+          },
+          "newBak": {
+            "id": "jozef_bak",
+            "space": "metres",
+            "x": -213.81679288143977,
+            "y": -1.85,
+            "z": 29.182547090242327,
+            "team": "ally",
+            "health": 100,
+            "alive": true,
+            "active": true,
+            "state": "WOUNDED",
+            "facing": -1.5269725969738217,
+            "shot": 0,
+            "radius": 0.3,
+            "crouched": false,
+            "suppressedUntil": 641.2999999999658,
+            "cooldown": 0,
+            "rounds": 5,
+            "role": "RIFLEMAN",
+            "essential": false,
+            "civilian": false,
+            "motion": {
+              "speed": 1.6000000000002463,
+              "odometer": 409.40751223677415,
+              "gait": "carry",
+              "gaitSince": 808.6999999998122
+            },
+            "bodyYaw": -1.5269725969738217,
+            "posture": "stand",
+            "postureSince": 0,
+            "hitAt": 695.7999999999149,
+            "hitYaw": 0.05903702562817644,
+            "diedAt": -1000000000,
+            "deathYaw": 0,
+            "suppressedAt": 639.7999999999658,
+            "postureProgress": 0,
+            "target": null,
+            "carriedBy": "leon_dudek",
+            "carry": {
+              "phase": "carry",
+              "startedAt": 808.5999999998138,
+              "duration": 1.6
+            }
+          },
+          "oldEvents": [
+            {
+              "type": "round-impact",
+              "kind": "player",
+              "by": "de_east_12",
+              "point": {
+                "x": -379.4819322266912,
+                "y": -3.0408936854892623,
+                "z": 26.024028298218518
+              },
+              "material": "earth",
+              "crack": true,
+              "distance": 88.42387239193336,
+              "victim": null,
+              "pinned": [
+                "jozef_bak",
+                "leon_dudek",
+                "generic_rifleman"
+              ]
+            }
+          ],
+          "newEvents": [
+            {
+              "type": "round-impact",
+              "kind": "player",
+              "by": "de_east_12",
+              "point": {
+                "x": -379.4819322266912,
+                "y": -3.0408936854892623,
+                "z": 26.024028298218518
+              },
+              "material": "earth",
+              "crack": true,
+              "distance": 88.42387239193336,
+              "pass": "crack",
+              "victim": null,
+              "pinned": [
+                "generic_rifleman"
+              ]
+            }
+          ],
+          "flights": [
+            {
+              "id": "m01_round_1233",
+              "by": "de_east_12",
+              "weapon": "kar98k",
+              "kind": "player",
+              "ox": 1055,
+              "oy": 0.6399999999999999,
+              "oz": 29.5,
+              "ax": -291.05854068545113,
+              "ay": 0.0488889579077898,
+              "az": 26.238291859067832,
+              "h": 10.871305194646444,
+              "firedAt": 973.3999999996624,
+              "arriveAt": 975.5710685152187,
+              "tracer": false,
+              "victim": null,
+              "oldApproach": null,
+              "newApproach": 5.295884011156614
+            }
+          ]
+        }
+      ],
+      "continuity": [
+        {
+          "clock": 263.10000000002555,
+          "battleClock": 17160.300000000097,
+          "kind": "repair",
+          "slot": 0,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 36%."
+        },
+        {
+          "clock": 269.20000000002693,
+          "battleClock": 17215.200000000186,
+          "kind": "repair",
+          "slot": 1,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 38%."
+        },
+        {
+          "clock": 275.3000000000283,
+          "battleClock": 17270.100000000275,
+          "kind": "repair",
+          "slot": 2,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 43%."
+        },
+        {
+          "clock": 281.4000000000297,
+          "battleClock": 17325.000000000364,
+          "kind": "repair",
+          "slot": 3,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 47%."
+        },
+        {
+          "clock": 287.5500000000311,
+          "battleClock": 17380.350000000453,
+          "kind": "repair",
+          "slot": 4,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 48%."
+        },
+        {
+          "clock": 293.6500000000325,
+          "battleClock": 17435.250000000542,
+          "kind": "repair",
+          "slot": 5,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 52%."
+        },
+        {
+          "clock": 299.7500000000339,
+          "battleClock": 17490.15000000063,
+          "kind": "repair",
+          "slot": 6,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 56%."
+        },
+        {
+          "clock": 305.85000000003527,
+          "battleClock": 17545.05000000072,
+          "kind": "repair",
+          "slot": 7,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 60%."
+        },
+        {
+          "clock": 312.00000000003666,
+          "battleClock": 17600.40000000081,
+          "kind": "repair",
+          "slot": 8,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 61%."
+        },
+        {
+          "clock": 318.10000000003805,
+          "battleClock": 17655.300000000898,
+          "kind": "repair",
+          "slot": 9,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 65%."
+        },
+        {
+          "clock": 324.20000000003944,
+          "battleClock": 17710.200000000987,
+          "kind": "repair",
+          "slot": 10,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 67%."
+        },
+        {
+          "clock": 330.3000000000408,
+          "battleClock": 17765.100000001075,
+          "kind": "repair",
+          "slot": 11,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 69%."
+        },
+        {
+          "clock": 336.4000000000422,
+          "battleClock": 17820.000000001164,
+          "kind": "repair",
+          "slot": 12,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 73%."
+        },
+        {
+          "clock": 342.5500000000436,
+          "battleClock": 17875.350000001254,
+          "kind": "repair",
+          "slot": 13,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 77%."
+        },
+        {
+          "clock": 348.650000000045,
+          "battleClock": 17930.250000001342,
+          "kind": "repair",
+          "slot": 14,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 81%."
+        },
+        {
+          "clock": 354.7500000000464,
+          "battleClock": 17985.15000000143,
+          "kind": "repair",
+          "slot": 15,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 83%."
+        },
+        {
+          "clock": 360.85000000004777,
+          "battleClock": 18040.05000000152,
+          "kind": "repair",
+          "slot": 16,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 87%."
+        },
+        {
+          "clock": 367.00000000004917,
+          "battleClock": 18095.40000000161,
+          "kind": "repair",
+          "slot": 17,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 91%."
+        },
+        {
+          "clock": 373.10000000005056,
+          "battleClock": 18150.3000000017,
+          "kind": "repair",
+          "slot": 18,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 95%."
+        },
+        {
+          "clock": 379.20000000005194,
+          "battleClock": 18205.200000001787,
+          "kind": "repair",
+          "slot": 19,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 97%."
+        },
+        {
+          "clock": 383.750000000053,
+          "battleClock": 18260.55000000182,
+          "kind": "repair",
+          "slot": 20,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 385.80000000005344,
+          "battleClock": 18315.90000000176,
+          "kind": "repair",
+          "slot": 21,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 387.8500000000539,
+          "battleClock": 18371.2500000017,
+          "kind": "repair",
+          "slot": 22,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 389.85000000005437,
+          "battleClock": 18425.25000000164,
+          "kind": "repair",
+          "slot": 23,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 391.90000000005483,
+          "battleClock": 18480.60000000158,
+          "kind": "repair",
+          "slot": 24,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 393.9500000000553,
+          "battleClock": 18535.95000000152,
+          "kind": "repair",
+          "slot": 25,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 396.00000000005576,
+          "battleClock": 18591.30000000146,
+          "kind": "repair",
+          "slot": 26,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 398.0000000000562,
+          "battleClock": 18645.300000001404,
+          "kind": "repair",
+          "slot": 27,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 400.0500000000567,
+          "battleClock": 18700.650000001344,
+          "kind": "repair",
+          "slot": 28,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 402.10000000005715,
+          "battleClock": 18756.000000001284,
+          "kind": "repair",
+          "slot": 29,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 404.1000000000576,
+          "battleClock": 18810.000000001226,
+          "kind": "repair",
+          "slot": 30,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 406.15000000005807,
+          "battleClock": 18865.350000001166,
+          "kind": "repair",
+          "slot": 31,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 408.20000000005854,
+          "battleClock": 18920.700000001107,
+          "kind": "repair",
+          "slot": 32,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 410.250000000059,
+          "battleClock": 18976.050000001047,
+          "kind": "repair",
+          "slot": 33,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 412.25000000005946,
+          "battleClock": 19030.05000000099,
+          "kind": "repair",
+          "slot": 34,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 414.3000000000599,
+          "battleClock": 19085.40000000093,
+          "kind": "repair",
+          "slot": 35,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 416.3500000000604,
+          "battleClock": 19140.75000000087,
+          "kind": "repair",
+          "slot": 36,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 418.40000000006086,
+          "battleClock": 19196.10000000081,
+          "kind": "repair",
+          "slot": 37,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 420.4000000000613,
+          "battleClock": 19250.10000000075,
+          "kind": "repair",
+          "slot": 38,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 422.4500000000618,
+          "battleClock": 19305.450000000692,
+          "kind": "repair",
+          "slot": 39,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 424.50000000006224,
+          "battleClock": 19360.800000000632,
+          "kind": "repair",
+          "slot": 40,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 426.5500000000627,
+          "battleClock": 19416.150000000573,
+          "kind": "repair",
+          "slot": 41,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 428.55000000006316,
+          "battleClock": 19470.150000000514,
+          "kind": "repair",
+          "slot": 42,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 430.60000000006363,
+          "battleClock": 19525.500000000455,
+          "kind": "repair",
+          "slot": 43,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 432.6500000000641,
+          "battleClock": 19580.850000000395,
+          "kind": "repair",
+          "slot": 44,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 434.70000000006456,
+          "battleClock": 19636.200000000335,
+          "kind": "repair",
+          "slot": 45,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 436.700000000065,
+          "battleClock": 19690.200000000277,
+          "kind": "repair",
+          "slot": 46,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 438.7500000000655,
+          "battleClock": 19745.550000000218,
+          "kind": "repair",
+          "slot": 47,
+          "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+        },
+        {
+          "clock": 440.80000000006595,
+          "battleClock": 19800,
+          "kind": "hold",
+          "slot": 0,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 447.7000000000675,
+          "battleClock": 19855.2000000002,
+          "kind": "hold",
+          "slot": 1,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 454.5500000000691,
+          "battleClock": 19910.0000000004,
+          "kind": "hold",
+          "slot": 2,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 461.45000000007065,
+          "battleClock": 19965.2000000006,
+          "kind": "hold",
+          "slot": 3,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 468.3000000000722,
+          "battleClock": 20020.0000000008,
+          "kind": "hold",
+          "slot": 4,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 475.20000000007377,
+          "battleClock": 20075.200000001,
+          "kind": "hold",
+          "slot": 5,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 482.05000000007533,
+          "battleClock": 20130.0000000012,
+          "kind": "hold",
+          "slot": 6,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 488.9500000000769,
+          "battleClock": 20185.2000000014,
+          "kind": "hold",
+          "slot": 7,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 495.80000000007846,
+          "battleClock": 20240.0000000016,
+          "kind": "hold",
+          "slot": 8,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 502.70000000008,
+          "battleClock": 20295.2000000018,
+          "kind": "hold",
+          "slot": 9,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 509.5500000000816,
+          "battleClock": 20350.000000002,
+          "kind": "hold",
+          "slot": 10,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 516.450000000078,
+          "battleClock": 20405.2000000022,
+          "kind": "hold",
+          "slot": 11,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 523.3000000000718,
+          "battleClock": 20460.0000000024,
+          "kind": "hold",
+          "slot": 12,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 530.2000000000655,
+          "battleClock": 20515.200000002602,
+          "kind": "hold",
+          "slot": 13,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 537.0500000000593,
+          "battleClock": 20570.0000000028,
+          "kind": "hold",
+          "slot": 14,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 543.950000000053,
+          "battleClock": 20625.200000003002,
+          "kind": "hold",
+          "slot": 15,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 550.8000000000468,
+          "battleClock": 20680.0000000032,
+          "kind": "hold",
+          "slot": 16,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 557.7000000000405,
+          "battleClock": 20735.200000003402,
+          "kind": "hold",
+          "slot": 17,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 564.5500000000343,
+          "battleClock": 20790.0000000036,
+          "kind": "hold",
+          "slot": 18,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 571.450000000028,
+          "battleClock": 20845.200000003802,
+          "kind": "hold",
+          "slot": 19,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 578.3000000000218,
+          "battleClock": 20900.000000004,
+          "kind": "hold",
+          "slot": 20,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 585.2000000000155,
+          "battleClock": 20955.200000004203,
+          "kind": "hold",
+          "slot": 21,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 592.0500000000093,
+          "battleClock": 21010.000000004402,
+          "kind": "hold",
+          "slot": 22,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 598.950000000003,
+          "battleClock": 21065.200000004603,
+          "kind": "hold",
+          "slot": 23,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 605.7999999999968,
+          "battleClock": 21120.000000004802,
+          "kind": "hold",
+          "slot": 24,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 612.6999999999905,
+          "battleClock": 21175.200000005003,
+          "kind": "hold",
+          "slot": 25,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 619.5499999999843,
+          "battleClock": 21230.000000005202,
+          "kind": "hold",
+          "slot": 26,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 626.449999999978,
+          "battleClock": 21285.200000005403,
+          "kind": "hold",
+          "slot": 27,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 633.2999999999718,
+          "battleClock": 21340.000000005602,
+          "kind": "hold",
+          "slot": 28,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 640.1999999999655,
+          "battleClock": 21395.200000005803,
+          "kind": "hold",
+          "slot": 29,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 647.0499999999593,
+          "battleClock": 21450.000000006003,
+          "kind": "hold",
+          "slot": 30,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 653.949999999953,
+          "battleClock": 21505.200000006203,
+          "kind": "hold",
+          "slot": 31,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 660.7999999999467,
+          "battleClock": 21560.000000006403,
+          "kind": "hold",
+          "slot": 32,
+          "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+        },
+        {
+          "clock": 665.7999999999422,
+          "battleClock": 21600.00000000655,
+          "kind": "withdrawal",
+          "slot": 0,
+          "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 18 homens no pelotão."
+        },
+        {
+          "clock": 671.4499999999371,
+          "battleClock": 21645.200000006713,
+          "kind": "withdrawal",
+          "slot": 1,
+          "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 18 homens no pelotão."
+        },
+        {
+          "clock": 677.049999999932,
+          "battleClock": 21690.000000006876,
+          "kind": "withdrawal",
+          "slot": 2,
+          "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 18 homens no pelotão."
+        },
+        {
+          "clock": 682.6999999999268,
+          "battleClock": 21735.20000000704,
+          "kind": "withdrawal",
+          "slot": 3,
+          "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 18 homens no pelotão."
+        },
+        {
+          "clock": 688.2999999999217,
+          "battleClock": 21780.000000007203,
+          "kind": "withdrawal",
+          "slot": 4,
+          "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 18 homens no pelotão."
+        },
+        {
+          "clock": 693.9499999999166,
+          "battleClock": 21825.200000007368,
+          "kind": "withdrawal",
+          "slot": 5,
+          "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 18 homens no pelotão."
+        },
+        {
+          "clock": 699.5499999999115,
+          "battleClock": 21870.00000000753,
+          "kind": "withdrawal",
+          "slot": 6,
+          "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 18 homens no pelotão."
+        },
+        {
+          "clock": 705.1999999999064,
+          "battleClock": 21915.200000007695,
+          "kind": "withdrawal",
+          "slot": 7,
+          "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 18 homens no pelotão."
+        },
+        {
+          "clock": 710.7999999999013,
+          "battleClock": 21960.000000007858,
+          "kind": "withdrawal",
+          "slot": 8,
+          "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 18 homens no pelotão."
+        },
+        {
+          "clock": 716.4499999998961,
+          "battleClock": 22005.200000008022,
+          "kind": "withdrawal",
+          "slot": 9,
+          "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 18 homens no pelotão."
+        },
+        {
+          "clock": 722.049999999891,
+          "battleClock": 22050.000000008185,
+          "kind": "withdrawal",
+          "slot": 10,
+          "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 18 homens no pelotão."
+        },
+        {
+          "clock": 727.6999999998859,
+          "battleClock": 22095.20000000835,
+          "kind": "withdrawal",
+          "slot": 11,
+          "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 18 homens no pelotão."
+        },
+        {
+          "clock": 733.2999999998808,
+          "battleClock": 22140.000000008513,
+          "kind": "withdrawal",
+          "slot": 12,
+          "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 18 homens no pelotão."
+        },
+        {
+          "clock": 740.849999999874,
+          "battleClock": 22185.35000000864,
+          "kind": "withdrawal",
+          "slot": 13,
+          "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 18 homens no pelotão."
+        },
+        {
+          "clock": 742.6999999998723,
+          "battleClock": 22200,
+          "kind": "corridor",
+          "slot": 0,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 749.1999999998663,
+          "battleClock": 22255.249999999905,
+          "kind": "corridor",
+          "slot": 1,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 755.6499999998605,
+          "battleClock": 22310.07499999981,
+          "kind": "corridor",
+          "slot": 2,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 762.1499999998546,
+          "battleClock": 22365.324999999717,
+          "kind": "corridor",
+          "slot": 3,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 768.5999999998487,
+          "battleClock": 22420.149999999623,
+          "kind": "corridor",
+          "slot": 4,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 775.0999999998428,
+          "battleClock": 22475.39999999953,
+          "kind": "corridor",
+          "slot": 5,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 781.5499999998369,
+          "battleClock": 22530.224999999435,
+          "kind": "corridor",
+          "slot": 6,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 787.9999999998311,
+          "battleClock": 22585.04999999934,
+          "kind": "corridor",
+          "slot": 7,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 794.4999999998251,
+          "battleClock": 22640.299999999246,
+          "kind": "corridor",
+          "slot": 8,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 800.9499999998193,
+          "battleClock": 22695.124999999152,
+          "kind": "corridor",
+          "slot": 9,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 807.4499999998134,
+          "battleClock": 22750.374999999058,
+          "kind": "corridor",
+          "slot": 10,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 813.8999999998075,
+          "battleClock": 22805.199999998964,
+          "kind": "corridor",
+          "slot": 11,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 820.3499999998016,
+          "battleClock": 22860.02499999887,
+          "kind": "corridor",
+          "slot": 12,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 826.8499999997957,
+          "battleClock": 22915.274999998775,
+          "kind": "corridor",
+          "slot": 13,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 833.2999999997899,
+          "battleClock": 22970.09999999868,
+          "kind": "corridor",
+          "slot": 14,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 839.799999999784,
+          "battleClock": 23025.349999998587,
+          "kind": "corridor",
+          "slot": 15,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 846.2499999997781,
+          "battleClock": 23080.174999998493,
+          "kind": "corridor",
+          "slot": 16,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 852.7499999997722,
+          "battleClock": 23135.4249999984,
+          "kind": "corridor",
+          "slot": 17,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 859.1999999997663,
+          "battleClock": 23190.249999998305,
+          "kind": "corridor",
+          "slot": 18,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 865.6499999997604,
+          "battleClock": 23245.07499999821,
+          "kind": "corridor",
+          "slot": 19,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 872.1499999997545,
+          "battleClock": 23300.324999998116,
+          "kind": "corridor",
+          "slot": 20,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 878.5999999997487,
+          "battleClock": 23355.149999998022,
+          "kind": "corridor",
+          "slot": 21,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 885.0999999997427,
+          "battleClock": 23410.399999997928,
+          "kind": "corridor",
+          "slot": 22,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 891.5499999997369,
+          "battleClock": 23465.224999997834,
+          "kind": "corridor",
+          "slot": 23,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 897.999999999731,
+          "battleClock": 23520.04999999774,
+          "kind": "corridor",
+          "slot": 24,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 904.4999999997251,
+          "battleClock": 23575.299999997646,
+          "kind": "corridor",
+          "slot": 25,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 910.9499999997192,
+          "battleClock": 23630.12499999755,
+          "kind": "corridor",
+          "slot": 26,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 917.4499999997133,
+          "battleClock": 23685.374999997457,
+          "kind": "corridor",
+          "slot": 27,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 923.8999999997075,
+          "battleClock": 23740.199999997363,
+          "kind": "corridor",
+          "slot": 28,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 930.3499999997016,
+          "battleClock": 23795.02499999727,
+          "kind": "corridor",
+          "slot": 29,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 936.8499999996957,
+          "battleClock": 23850.274999997175,
+          "kind": "corridor",
+          "slot": 30,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 943.2999999996898,
+          "battleClock": 23905.09999999708,
+          "kind": "corridor",
+          "slot": 31,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 949.7999999996839,
+          "battleClock": 23960.349999996986,
+          "kind": "corridor",
+          "slot": 32,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 956.249999999678,
+          "battleClock": 24015.174999996892,
+          "kind": "corridor",
+          "slot": 33,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 962.7499999996721,
+          "battleClock": 24070.424999996798,
+          "kind": "corridor",
+          "slot": 34,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 969.1999999996663,
+          "battleClock": 24125.249999996704,
+          "kind": "corridor",
+          "slot": 35,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 975.6499999996604,
+          "battleClock": 24180.07499999661,
+          "kind": "corridor",
+          "slot": 36,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 982.1499999996545,
+          "battleClock": 24235.324999996516,
+          "kind": "corridor",
+          "slot": 37,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        },
+        {
+          "clock": 988.5999999996486,
+          "battleClock": 24290.14999999642,
+          "kind": "corridor",
+          "slot": 38,
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        }
+      ],
+      "dialogues": {
+        "018": {
+          "clock": 97.74999999999659,
+          "battleClock": 16544.824999999564
+        },
+        "038": {
+          "clock": 303.10000000003464,
+          "battleClock": 17520.30000000068
+        },
+        "048": {
+          "clock": 795.4999999998242,
+          "battleClock": 22648.79999999923
+        },
+        "049": {
+          "clock": 798.0999999998219,
+          "battleClock": 22670.899999999194
+        },
+        "051": {
+          "clock": 943.8999999996893,
+          "battleClock": 23910.199999997072
+        }
+      },
+      "westReadyAt": 23521.324999997738,
+      "maxNarrativeGapSec": 55.350000000089494,
+      "activityDefinition": "Authored task-specific narrative messages only; excludes bullets, distant emitters, simulation ticks and RNG-driven ambient events.",
+      "final": {
+        "rng": 1663516278,
+        "checkpoints": [
+          "cp_m01_a_orientacao",
+          "cp_m01_b_reorganizacao",
+          "cp_m01_c_engenheiros",
+          "cp_m01_d_retirada"
+        ],
+        "westDemolition": {
+          "clock": 989.7999999996475,
+          "battleClock": 24300
+        },
+        "complete": true
+      }
+    }
+  ]
+}

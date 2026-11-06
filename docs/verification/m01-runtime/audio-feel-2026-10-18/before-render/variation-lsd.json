@@ -1,0 +1,85 @@
+{
+  "sampleRate": 22050,
+  "repeats": 8,
+  "srcRoot": "../../../../tmp/claude-0/-home-user-COD-guerra/2e266534-2f3a-5797-a5ca-4d7af2b9f0a3/scratchpad/before-src",
+  "classes": {
+    "wz29-player-shot": {
+      "meanLsdDb": 2.0719376225589485,
+      "minLsdDb": 1.8743389004503082,
+      "peakSdDb": 0.8257554066853952,
+      "peakDbMean": -12.063948228577454
+    },
+    "kar98k-40m": {
+      "meanLsdDb": 2.4752670209212093,
+      "minLsdDb": 2.2225174192752735,
+      "peakSdDb": 1.0839448178401867,
+      "peakDbMean": -17.982095794271302
+    },
+    "ally-rifle-40m": {
+      "meanLsdDb": 2.371745194895096,
+      "minLsdDb": 2.1554994703572743,
+      "peakSdDb": 0.9906557258641668,
+      "peakDbMean": -21.028624972652988
+    },
+    "mg34-burst5-40m": {
+      "meanLsdDb": 2.2966774045043232,
+      "minLsdDb": 2.080372779627521,
+      "peakSdDb": 0.7253849447799736,
+      "peakDbMean": -19.674318532506952
+    },
+    "ckm-burst4-60m": {
+      "meanLsdDb": 2.4968036332806993,
+      "minLsdDb": 2.272584346301824,
+      "peakSdDb": 1.4065300901540858,
+      "peakDbMean": -23.970120454498634
+    },
+    "impact-wood": {
+      "meanLsdDb": 2.2631243673397186,
+      "minLsdDb": 1.426558114417489,
+      "peakSdDb": 1.0747078831175365,
+      "peakDbMean": -27.697786241830503
+    },
+    "impact-metal": {
+      "meanLsdDb": 6.969125507030191,
+      "minLsdDb": 2.034840983390423,
+      "peakSdDb": 0.6834032642786498,
+      "peakDbMean": -22.146217349817654
+    },
+    "impact-earth": {
+      "meanLsdDb": 3.541751464955476,
+      "minLsdDb": 2.4485940197137945,
+      "peakSdDb": 2.4712051172629357,
+      "peakDbMean": -28.602243974928378
+    },
+    "impact-stone": {
+      "meanLsdDb": 3.888862657746446,
+      "minLsdDb": 1.4849149980293512,
+      "peakSdDb": 0.6372239610623315,
+      "peakDbMean": -27.013421971694783
+    },
+    "grenade-30m": {
+      "meanLsdDb": 4.326356803582682,
+      "minLsdDb": 3.3614675931260214,
+      "peakSdDb": 0.8737430642634724,
+      "peakDbMean": -14.170018258293716
+    },
+    "wz29-bolt-cycle": {
+      "meanLsdDb": 4.134665718643714,
+      "minLsdDb": 0.6441873228807808,
+      "peakSdDb": 10.440639129932338,
+      "peakDbMean": -14.477370181006796
+    },
+    "player-hit": {
+      "meanLsdDb": 0,
+      "minLsdDb": 0,
+      "peakSdDb": 0,
+      "peakDbMean": -29.717326409551504
+    },
+    "landing-8mps": {
+      "meanLsdDb": 2.035820728828969,
+      "minLsdDb": 1.6531709821499383,
+      "peakSdDb": 1.1295557022107,
+      "peakDbMean": -18.837925120113436
+    }
+  }
+}

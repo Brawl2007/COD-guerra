@@ -15,6 +15,7 @@ import {generateImpulse} from './ir.js';
  * Every node goes through `track` so AudioManager's nodesCreated === nodesDisposed invariant holds; `dispose()`
  * disconnects them all. Optional capabilities (DynamicsCompressor, Convolver) degrade gracefully when the context lacks them.
  */
+export const ZONE_WET=Object.freeze({A:.55,B:.72,interior:.85});   // reverb return level by zone (A was the single fixed .55 before)
 export class MixGraph{
   constructor(ctx,{quality='high',volume=.68,track=null}={}){
     this.ctx=ctx;this.track=track;this.nodes=[];this.disposed=false;this.zone=null;
@@ -71,6 +72,8 @@ export class MixGraph{
     if(!zone||zone===this.zone)return false;
     this.zone=zone;const tau=ZONE_RAMP_SEC/3,b=zone.reverb==='B';
     if(this.sends.A){this._param(this.sends.A.gain,b?0:1,tau);this._param(this.sends.B.gain,b?1:0,tau);}
+    // Wet level per zone: the open riverbank lets sound escape (A), the steel truss rings back harder (B), and a closed interior (station) most.
+    if(this.reverbReturn)this._param(this.reverbReturn.gain,zone.interiorLowpassHz!==null&&zone.interiorLowpassHz!==undefined?ZONE_WET.interior:b?ZONE_WET.B:ZONE_WET.A,tau);
     this._param(this.zoneFilter.frequency,zone.interiorLowpassHz??OPEN_LOWPASS_HZ,tau);
     return true;
   }

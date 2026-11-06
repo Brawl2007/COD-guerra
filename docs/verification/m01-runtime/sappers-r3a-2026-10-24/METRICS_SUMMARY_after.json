@@ -1,0 +1,241 @@
+{
+ "tool": "tools/verification/m01-sappers-metrics.mjs --summary",
+ "summary": {
+  "after-working-tree": {
+   "control": {
+    "routes": 12,
+    "repairSec": {
+     "mean": 215.79,
+     "min": 192.05,
+     "max": 241.85
+    },
+    "completeBattle": {
+     "latest": "05:14:49",
+     "minMarginTo0530Sec": 910.8,
+     "beforeOrder": "12/12"
+    },
+    "pins": {
+     "mean": 47.92,
+     "min": 32,
+     "max": 71
+    },
+    "episodes": {
+     "mean": 11.25,
+     "meanSec": 5.85,
+     "stoppedSec": 65.81
+    },
+    "mgSuppressedPct": 13.93,
+    "byShooter": {
+     "gate_rifle": 2.67,
+     "mg34_0": 8.58
+    },
+    "byStage": {
+     "inspect": {
+      "episodes": 0,
+      "realSec": 13.95,
+      "workSec": 13.95
+     },
+     "splice": {
+      "episodes": 2.58,
+      "realSec": 67.25,
+      "workSec": 52
+     },
+     "test": {
+      "episodes": 0.5,
+      "realSec": 8.42,
+      "workSec": 6
+     },
+     "fail": {
+      "episodes": 0.33,
+      "realSec": 5.7,
+      "workSec": 4
+     },
+     "relocate": {
+      "episodes": 1.17,
+      "realSec": 17.29,
+      "workSec": 10
+     },
+     "inspect2": {
+      "episodes": 0.67,
+      "realSec": 11.9,
+      "workSec": 8
+     },
+     "splice2": {
+      "episodes": 5.42,
+      "realSec": 78.01,
+      "workSec": 46
+     },
+     "test2": {
+      "episodes": 0.58,
+      "realSec": 13.26,
+      "workSec": 10.05
+     }
+    },
+    "realMinutes": {
+     "orderReal": 471.58,
+     "eastReal": 939.22,
+     "routeReal": 1266.58
+    },
+    "integrity": {
+     "complete": "12/12",
+     "checkpoints4": "12/12",
+     "survivors": {
+      "12c": 12
+     },
+     "clipping": null,
+     "stackedPairs": null
+    }
+   },
+   "support": {
+    "routes": 12,
+    "repairSec": {
+     "mean": 166.41,
+     "min": 157,
+     "max": 182.15
+    },
+    "completeBattle": {
+     "latest": "05:05:52",
+     "minMarginTo0530Sec": 1448.1,
+     "beforeOrder": "12/12"
+    },
+    "pins": {
+     "mean": 5.17,
+     "min": 2,
+     "max": 10
+    },
+    "episodes": {
+     "mean": 4.25,
+     "meanSec": 3.85,
+     "stoppedSec": 16.43
+    },
+    "mgSuppressedPct": 100,
+    "byShooter": {
+     "gate_rifle": 4.25
+    },
+    "byStage": {
+     "inspect": {
+      "episodes": 0,
+      "realSec": 13.95,
+      "workSec": 13.95
+     },
+     "splice": {
+      "episodes": 1.33,
+      "realSec": 57.33,
+      "workSec": 52
+     },
+     "test": {
+      "episodes": 0.33,
+      "realSec": 7.46,
+      "workSec": 6
+     },
+     "fail": {
+      "episodes": 0.08,
+      "realSec": 4.29,
+      "workSec": 4
+     },
+     "relocate": {
+      "episodes": 0.25,
+      "realSec": 10.88,
+      "workSec": 10
+     },
+     "inspect2": {
+      "episodes": 0.25,
+      "realSec": 8.88,
+      "workSec": 8
+     },
+     "splice2": {
+      "episodes": 1.5,
+      "realSec": 51.31,
+      "workSec": 46
+     },
+     "test2": {
+      "episodes": 0.5,
+      "realSec": 12.32,
+      "workSec": 10.05
+     }
+    },
+    "realMinutes": {
+     "orderReal": 438.65,
+     "eastReal": 800.81,
+     "routeReal": 1129.8
+    },
+    "integrity": {
+     "complete": "12/12",
+     "checkpoints4": "12/12",
+     "survivors": {
+      "18s": 12
+     },
+     "clipping": null,
+     "stackedPairs": null
+    }
+   },
+   "playerCover": {
+    "marginsIgnoreMinusHelp": [
+     {
+      "seed": 19390901,
+      "marginSec": 45.8,
+      "pinsGap": 47
+     },
+     {
+      "seed": 1,
+      "marginSec": 39.3,
+      "pinsGap": 41
+     },
+     {
+      "seed": 2,
+      "marginSec": 62.8,
+      "pinsGap": 47
+     },
+     {
+      "seed": 3,
+      "marginSec": 49.4,
+      "pinsGap": 48
+     },
+     {
+      "seed": 4,
+      "marginSec": 21.3,
+      "pinsGap": 25
+     },
+     {
+      "seed": 5,
+      "marginSec": 74.9,
+      "pinsGap": 64
+     },
+     {
+      "seed": 6,
+      "marginSec": 47.3,
+      "pinsGap": 58
+     },
+     {
+      "seed": 7,
+      "marginSec": 56.5,
+      "pinsGap": 42
+     },
+     {
+      "seed": 8,
+      "marginSec": 41.1,
+      "pinsGap": 33
+     },
+     {
+      "seed": 9,
+      "marginSec": 50.3,
+      "pinsGap": 34
+     },
+     {
+      "seed": 10,
+      "marginSec": 42.8,
+      "pinsGap": 37
+     },
+     {
+      "seed": 11,
+      "marginSec": 61.2,
+      "pinsGap": 37
+     }
+    ],
+    "minMarginSec": 21.3,
+    "meanMarginSec": 49.39,
+    "meanPinsGap": 42.75
+   }
+  }
+ }
+}

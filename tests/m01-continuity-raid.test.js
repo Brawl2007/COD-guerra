@@ -42,6 +42,7 @@ test('T02 dialogue 019 follows the actual destruction impact and never the early
   let impactRecorded=false;const original=s.impact.bind(s);s.impact=(...args)=>{const result=original(...args);impactRecorded=true;return result;};
   const line=s.line.bind(s);s.line=(id,...args)=>{if(id==='dlg_m01_019')assert.equal(impactRecorded,true);return line(id,...args);};
   s.consume(E('forward_post_bombed'));assert.equal(impactRecorded,true);assert.equal(s.flags['m01.forward_post_state'],'destroyed');
+  assert.ok(!s.dialogueQueue.some(d=>d.id==='dlg_m01_019'),'wait for actual reorganization');
   assert.equal(s.consume(E('forward_post_bombed')),false);
   // T02 (partials): 019 now belongs to the reorganization beat and is spoken only when the actual impact destroyed the post.
   const reorganize=sim=>{sim.activate('follow_sergeant');Object.assign(sim.player,sim.world.point('rally_point'));sim.updateObjectives(.05,false);};

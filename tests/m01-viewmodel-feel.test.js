@@ -324,7 +324,8 @@ test('real mission: the rifle lowers at the road portal wall on the sim collisio
     both({skip:true});for(let i=0;i<20;i++)both({});
     const nav=(x,z)=>{for(let i=0;i<3000;i++){const p=d.sim.player,dx=x-p.x,dz=z-p.z;if(Math.hypot(dx,dz)<1.2)return;
       let turn=Math.atan2(dz,dx)-p.angle;turn=Math.atan2(Math.sin(turn),Math.cos(turn));both({lookX:turn/.0022,forward:1,sprint:true});}throw new Error('walk');};
-    nav(-10.9,32.8);
+    // The road abutment is a block 1.1 m above the ground at its west face (x = -22): the old straight line walked through it. The road itself rises to the abutment at z = 40.
+    nav(-40,40);nav(-16,38);nav(-10.9,32.8);
     const face=angle=>{let turn=angle-d.sim.player.angle;turn=Math.atan2(Math.sin(turn),Math.cos(turn));both({lookX:turn/.0022});};
     face(0);assert.ok(Math.abs(d.sim.player.angle)<1e-9);
     const frame=(label)=>{

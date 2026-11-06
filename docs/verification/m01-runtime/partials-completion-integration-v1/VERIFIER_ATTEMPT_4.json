@@ -1,0 +1,328 @@
+{
+  "schema_version": 1,
+  "role": "independent_verifier",
+  "attempt": 4,
+  "status": "FAIL",
+  "created_at": "2026-10-16T07:43:14.896688+00:00",
+  "source_head": "9a679c50cdbe9a19330aba72961cb51cda808a5d",
+  "implementation_head": "d7266b3d347045597f384f3df1320ec99070e693",
+  "schema_correction_head": "ddd84abe63fd495c4ade340e2400ef6116f9522a",
+  "predecessor": "bc8f6a21a57ccd926d4e0655481908d90d6b1978",
+  "context_packet": "VALID/check+show at entry; VALID after suspensions and immediately before report writes",
+  "budget": {
+    "formal_fixes_used": 3,
+    "max_formal_fixes": 3,
+    "read_only_ci_job_retries_used": 1,
+    "max_read_only_ci_job_retries": 1,
+    "verification_telemetry_attempt": 5,
+    "independent_phase": 4,
+    "review_rejections": 0,
+    "reset": false
+  },
+  "evidence_sufficient": "YES for FAIL; NO for acceptance",
+  "review_acceptance_decision": null,
+  "failures": [
+    {
+      "id": "F4-STUKA-AIRBORNE-CAPTURE",
+      "status": "FAIL",
+      "kind": "unresolved_mandatory_browser_regression_sampling",
+      "path": "tests/browser/m01-stuka-dive.spec.js:189",
+      "check": "bomb: the first bomb falls from the lead plane towards the station point,1.5s before its blast",
+      "exact": "Expected flight.position[1] > flight.target[1] (−3); received−3.",
+      "initial_job": 116731431562,
+      "bounded_retry_job": 116860048172,
+      "same_head": "9a679c50cdbe9a19330aba72961cb51cda808a5d",
+      "initial_matrix": "42/44PASS+6crews;FAIL",
+      "retry": "13/14PASS;FAIL; stationrecovered, Stuka repeats",
+      "classification": "Original trace proves sampled authoritative impact endpoint s1/clock196/pathsince0, position=target[-400,-3,37.5]; pure production model permits endpoint. Poll starts2.810308s afterContinue returns while helper requires onlyvisible>=1 then assertsairborne. No incorrect trajectory or new combat defect inferred. However one bounded unchanged-source retry repeats the required assertion failure; temporary recovery was not demonstrated, so the mandatory gate remainsFAIL and needs an upstream harness correction/decision outside this spent budget.",
+      "retry_provenance": "Verifier personally inspected Captain-MCP-downloaded completed raw retry log:13/14PASS; sameStuka189ground−3 failure; stationPASS."
+    }
+  ],
+  "recovered_initial_failure": {
+    "station_restart": {
+      "initial": "runtime.revision expected>15;received15",
+      "initial_trace": "beforeframes24/rev15;restartsampleframes25/rev15. Helper does not await restored-world/props generation. Restore constructs newworld; first actual propssync must increment revision.",
+      "classification": "Renderer synchronization race; bounded unchanged-source retryPASS",
+      "retention": "OriginalFAIL/trace/artifact unchanged; recovery does not erase failure."
+    }
+  },
+  "source_frozen": {
+    "pinned_files": 837,
+    "unchanged": true,
+    "production_tests_audittools_assets_missions_package_vite_playwright_identical_016b": true,
+    "four_accepted_source_ancestors": true,
+    "forbidden_French_world_sandbox_package_lock_unchanged": true,
+    "protected_predecessor_files": 299,
+    "exception": "Pre-existing exact author-only impostor manifest metadata",
+    "historical_golden_sha256": "e0fb4ecbc1e483f9d9e177fd63c8a5a063529787238500d5a8a91e80e696b958",
+    "preserved_history_sha256": {
+      "VERIFIER_ATTEMPT_1.md": "fbd879f3de216831e7b5580b75ca4dac9ed86b4320d9feddb7170cece3fe1d3e",
+      "VERIFIER_ATTEMPT_1.json": "db228c43111ecac8e868e52bf297a65d1d272533f6ec01382f4ee1dbeb351a0f",
+      "VERIFIER_ATTEMPT_2.md": "72c8d05dce88ce37df3c85892c382b06f4ccaae64a4e3caa14b59085e9079962",
+      "VERIFIER_ATTEMPT_2.json": "2e54b3b478e390ce24360dddcc72c5fab1d7535a97e927744d1758943378d89d",
+      "VERIFIER_ATTEMPT_3.md": "30283b1582211cff696cc8b0bd5fcef1f395381aca53805c98ccfb912c002f1f",
+      "VERIFIER_ATTEMPT_3.json": "78a1ce3884bebb98ebe7ee2f8e813c7280467f5c28dd463c324f059be371b588",
+      "CORRECTION_02_PRE_CLARIFICATION.json": "7d766efa84f3d774028199a662f00684a14b0a68f1b3ac6f63cba8b57dbb33c4"
+    }
+  },
+  "checks": {
+    "schema_correction": {
+      "status": "PASS",
+      "proof": "Exact embeddedprogramSHA8bd799a9...; independently run actualfocused count-adapted positive, explicitlysynthetic24shape positive and32rejectednegatives. Full freshCI report also passed correctedguard. Both archivedschemafiles exactSHA/bytes. Synthetic fixture is not24route evidence."
+    },
+    "full_node_tooling_build": {
+      "status": "PASS",
+      "run": 38824982012,
+      "job": 116730625762,
+      "node": {
+        "tests": 874,
+        "pass": 874,
+        "fail": 0,
+        "skip": 0
+      },
+      "python_tooling": 173,
+      "build": "PASS",
+      "provenance": "Personally inspected fresh exactHEAD raw node.log."
+    },
+    "strict_predecessor_routes": {
+      "status": "PASS",
+      "cases": [
+        [
+          19390901,
+          false
+        ],
+        [
+          7,
+          true
+        ]
+      ],
+      "ticks": [
+        22247,
+        21378
+      ],
+      "max_narrative_battle_gap_seconds": [
+        56.24999999998181,
+        55.350000000089494
+      ],
+      "max_narrative_real_gap_seconds": 30.249999999972488,
+      "delivery_before_gate_release": true,
+      "provenance": "Fresh immutable-predecessor per-tick audit and committed fixture reproduction; originalgolden unchanged; only named authorized projection/readiness replay."
+    },
+    "cover_all24_CAP03": {
+      "status": "PASS",
+      "seeds": 12,
+      "routes": 24,
+      "full_raw_rows_SHA_verified_and_parsed": 24,
+      "current_policy_every_control_tickclock_rng_health_readiness": "EXACT",
+      "full_stats_summary_player": "EXACT current/policy; all otherRAWoutcomes and originalactorhealth preserved",
+      "extra_damage": [
+        {
+          "seed": 1,
+          "mode": "ignore",
+          "damage": 8,
+          "round": "m01_round_1982",
+          "weapon": "kar98k",
+          "kind": "additional-issued"
+        },
+        {
+          "seed": 6,
+          "mode": "help",
+          "damage": 8,
+          "round": "m01_round_1659",
+          "weapon": "mg34",
+          "kind": "shared-issued additionalimpact; actualRAWearthmiss/exit retained"
+        }
+      ],
+      "no_unexplained_health_changes": true,
+      "all_complete_without_carry_death_restore": true,
+      "scope": "Only sole WEST-readiness replay; per-hit projection onlyT05pass and namedBak/Dudek pinned membership; allraw events retained. CAP02 local23/24 remainsFAIL."
+    },
+    "current_owner_futures": {
+      "status": "PASS",
+      "routes": 24,
+      "candidate_and_baseline_head": "9a679c50cdbe9a19330aba72961cb51cda808a5d",
+      "full_tick_events_save_checkpoints_parts": "EXACT withactualbridgeownerON/OFF",
+      "provenance": "Source assertions inspected; fresh24 reportfinal/checkpointpairSHAs personally checked. CPU actualGLB/PNG fixture, notGPU/humanplaytest."
+    },
+    "original_bridge_paired": {
+      "status": "PASS",
+      "owner_off_cases": 1,
+      "owner_on_cases": 4,
+      "authored_phase_views": 6,
+      "control_full_frames": {
+        "0430": 0,
+        "0610": 0
+      },
+      "all_six_control_patches": 0,
+      "full_state_camera_clock_parts_collapse": "EXACT",
+      "independent_comparator_rerun": "PASS",
+      "frozen_source_files": 145,
+      "frozen_source_sha256": "e2258bfc36ba478c2fb680f54afd1bf65b3d7d2f316628213d8269eda56f25d9",
+      "personally_viewed": "All6phasePNGs and authoredmaterialviewer; readable detail and desaturatedbrick, dawn shading retained."
+    },
+    "bridge_coupled_regressions": {
+      "status": "PASS",
+      "cases": 44,
+      "workers": 1,
+      "retries": 0,
+      "job": 116731431254,
+      "provenance": "Fresh raw bridge.log44passed and sourcefrozencheckPASS."
+    },
+    "integrated_browser": {
+      "status": "FAIL",
+      "run": 38824981887,
+      "first_matrix": {
+        "shard1": [
+          15,
+          15
+        ],
+        "shard2": [
+          15,
+          15
+        ],
+        "shard3": [
+          12,
+          14
+        ],
+        "whole": "42/44PASS;FAIL"
+      },
+      "one_bounded_same_SHA_retry": {
+        "job": 116860048172,
+        "shard3": [
+          13,
+          14
+        ],
+        "status": "FAIL",
+        "workers": 1,
+        "automatic_retries": 0
+      },
+      "no_single_full44_pass_claim": true,
+      "crew_extra": {
+        "pass": 6,
+        "cases": 6,
+        "workers": 1,
+        "retries": 0
+      }
+    },
+    "scene_presentation": {
+      "status": "PASS",
+      "scenes": 4,
+      "full_state_camera_saved_cues_pause_actual_reload": "EXACT; all letterbox+lookprompt",
+      "provenance": "Personally parsed12freshcaptureJSONs and inspectedworldcuePNG."
+    },
+    "train_T24_variance": {
+      "status": "PASS underCAP01 variance; no canonicalpositive claim",
+      "clear_distance_metres": 1000.527985615595,
+      "clear_world_ROI_pixels": {
+        "lamp": 2,
+        "smoke": 7
+      },
+      "two_target_perturbation_lamp_pixels": [
+        1,
+        3
+      ],
+      "original_occluder_lamp_pixels": 0,
+      "native_stock_draw_calls": [
+        7,
+        7,
+        11
+      ],
+      "budget": 12,
+      "provenance": "FreshactualPNGs independently decoded RGBthreshold3/255 to reproduce everyROIcount; all65finalanchors/monotonicity/continuation covered by freshNode."
+    },
+    "T36_crew": {
+      "status": "PASS focused evidence; integratedgate stillFAIL",
+      "fresh_six_existing_crew_obligations": 6,
+      "fresh_optional_prone_fallback": "Four namedgunner/loaderIDs, actualmuzzle, fullauthority+reload exact; attachment personallydecoded",
+      "prior_independent_actual_visual_reuse": "Exact5bsourceidentity of simulation/characters/actor-pose/animation-presentation; viewonlyatlas2cachekeys changed. Prior1084mLOD2/nearfeed/fallback/finiteputdown/reload/death proof retained and relevantPNGs personallyviewed.",
+      "limit": "Inherited fresh station-releasePNG is black underresumeoverlay and is not counted as bodyappearance proof; prior independent unmaskedproduction proof supplies that narrow visual evidence."
+    },
+    "atlas_correction_causality": {
+      "status": "PASS",
+      "scope": "Retained actualstale/readyPNGs exactly historicalCI5bON/OFFSHA; oldframes6→6/GPU1 andfixed7→8/GPU2; fullstate/cameraexact;318actual lateatlas pixels;final0pixels. Fresh originalpairedmatrix nowalsozero. Temporaryhooks absent."
+    }
+  },
+  "per_task": {
+    "T02": {
+      "status": "BLOCKED fromacceptance",
+      "proof": "Continuity/pre-roll/dialogue/near-miss checks and strict2routes gaps<=60; all24otherRAWoutcomes preserved under disclosedT36policy."
+    },
+    "T03": {
+      "status": "BLOCKED fromacceptance",
+      "proof": "Fresh terrain/safeImpact/grenade20slegacy pooled-puff/continuation testsPASS."
+    },
+    "T05": {
+      "status": "BLOCKED fromacceptance",
+      "proof": "Transientaudiofields, closestapproach, legacy and physical-layout ownership testsPASS; exactstrictaudit."
+    },
+    "T06": {
+      "status": "BLOCKED fromacceptance",
+      "proof": "Freshcore/director/scheduling/fallback/offlinewaveform checksPASS;32voiceproductionpressure2572requests/1drop=0.03888%,339/339enemyfireheard."
+    },
+    "T07": {
+      "status": "BLOCKED fromacceptance",
+      "proof": "Freshlegacy/atomiccorruption/prone/continuation/schema2suitePASS; exactauthority plus explicitT36exposure variance."
+    },
+    "T14": {
+      "status": "BLOCKED fromacceptance",
+      "proof": "Protected299/colliders/actualmaterialviewer/all6views and bothfullframecontrolsPASS."
+    },
+    "T24": {
+      "status": "BLOCKED fromacceptance",
+      "proof": "Fresharrival/65anchors/native7/7/11 and measuredclear>=1km/perturbations/negativecontrolPASS; canonicalocclusionhonest."
+    },
+    "T26": {
+      "status": "BLOCKED fromacceptance",
+      "proof": "All4freesce​​nes fullstate/camera/cues exactpause/reload; visibleletterbox+promptPASS."
+    },
+    "T34": {
+      "status": "BLOCKED fromacceptance",
+      "proof": "Freshoptionalroster/corridor90s/combat-exclusion tests and04:36/05:41yardcapturesPASS."
+    },
+    "T36": {
+      "status": "BLOCKED fromacceptance",
+      "proof": "Actualdelivery/gate/finitephases/feed/fallback/death/reload and disabledCKMproofPASS; all24causalhealth measured."
+    },
+    "T41": {
+      "status": "BLOCKED fromacceptance",
+      "proof": "Freshdisabledwarm/nativeLOD/failure/restore/owner24futures and originalpaired/coupledPASS."
+    }
+  },
+  "archive_provenance": [
+    {
+      "name": "authority",
+      "bytes": 66548199,
+      "sha256": "5de68fc50920644496aeef9a255cf3a04266e932600ee40006f843a210ec4e0e"
+    },
+    {
+      "name": "bridge",
+      "bytes": 192720086,
+      "sha256": "d4986bdde16a8d817ade65da0f5ce267375bc9ac451bdeb6421c35a1b450772b"
+    },
+    {
+      "name": "browser1",
+      "bytes": 63757892,
+      "sha256": "a9de827eff577b370b06ececbb768b665c6dbb099a3c0df5f0013272c917b2d8"
+    },
+    {
+      "name": "browser2",
+      "bytes": 85240290,
+      "sha256": "1dac3b09a1888cb4d56407b61c370a0bbbcec592b3be2aa74bb418dcbd99d10f"
+    },
+    {
+      "name": "browser3",
+      "bytes": 49175846,
+      "sha256": "a750404c14630e43e99f47d3dfd9027fbe73395eb61a432b4ad8fbfff7af2580"
+    }
+  ],
+  "evidence_root": "/workspace/scratch/partials-ci9a679",
+  "independent_outputs": "test-results/partials-independent-attempt4",
+  "historical_status": "FAIL1@9a1535, FAIL2@5b76d24 and FAIL3@016b248 remainFAIL. Superseded016bCI cancellation remainsCANCELLED, notPASS. Originalfinal9a firstmatrixFAIL and boundedretryFAIL both retained. All11tasks remainunaccepted/global26; no review/integration decision.",
+  "intentionally_not_run": "No duplicate fullNode/fullbrowser/all24local simulations. No production/test/tool/workflow fixes, push, spawn, cancellation or budgetreset by verifier.",
+  "next_action": "STOP verification withFAIL. Formalfix3/3 and authorizedsameSHAjobretry1/1 are spent. Captain owns any prospectivecontract/budget/escalation decision; no further automaticretry or implementation is authorized by this report. Preserve rawfailures; do notreview/integrate asaccepted.",
+  "retry_log": {
+    "path": "/workspace/scratch/partials-ci9a679/browser3-retry.log",
+    "bytes": 114967,
+    "sha256": "3049d0388978c9e4dc3ac77357cc736ccaf9c3fc68ead2f64c882854b30a1103"
+  }
+}

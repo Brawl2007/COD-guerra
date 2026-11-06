@@ -1,0 +1,16 @@
+{
+  "AUDIT_STATUS": "PASS",
+  "at": "2026-10-15T09:37:21.001786+00:00",
+  "branch": "codex/m01-partials-completion-integration-v1",
+  "verified_source_head": "9a1535b5a530ea39186a09ab5465a14449d27569",
+  "implementation_sources_changed_since_verifier": false,
+  "contract_amendment": "CAPTAIN_AMENDMENT_01.json",
+  "authorisation": "D34 permanent Captain design/approval authority + current explicit all-partials integration request",
+  "formal_fix_attempt": 1,
+  "max_fix_attempts": 3,
+  "prior_bridge_failures_preserved": 3,
+  "main_write_allowed": false,
+  "integration_target": "claude/m01-integration",
+  "independent_fail_preserved": "VERIFIER_ATTEMPT_1.json",
+  "no_test_claim": "Only context/change-control provenance; no production verification or task acceptance claimed."
+}

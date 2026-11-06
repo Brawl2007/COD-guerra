@@ -1,5 +1,6 @@
 import {test,expect} from '@playwright/test';
 import {driver} from '../helpers/m01-route.js';
+import {expectPaused,SLOW_GL_TEST_TIMEOUT} from '../helpers/m01-browser-boot.js';
 import {eyePosition,aimDirection,traceObstruction} from '../../src/world/spatial.js';
 import {WZ29_FEEL,adsEase,adsFieldOfView,wallLowerTarget} from '../../src/render/m01-wz29-presentation.js';
 
@@ -10,7 +11,7 @@ import {WZ29_FEEL,adsEase,adsFieldOfView,wallLowerTarget} from '../../src/render
 const key='cod-guerra:checkpoint:m01:v2';
 const REGION={x:320,y:260,width:960,height:460};            // lower right of the 1280x720 viewport: rifle, hands, sleeves
 const HIDE='#pause,#hud{visibility:hidden !important}';       // overlays are not part of the weapon region
-const TIMEOUT=()=>process.env.CI?240000:120000;
+const TIMEOUT=()=>SLOW_GL_TEST_TIMEOUT;
 
 function route(){
   const d=driver();d.step({skip:true});for(let i=0;i<20;i++)d.step();
@@ -18,7 +19,9 @@ function route(){
   const nav=(x,z)=>{for(let i=0;i<3000;i++){const p=d.sim.player,dx=x-p.x,dz=z-p.z;if(Math.hypot(dx,dz)<1.2)return;
     let turn=Math.atan2(dz,dx)-p.angle;turn=Math.atan2(Math.sin(turn),Math.cos(turn));d.step({lookX:turn/.0022,forward:1,sprint:true});}throw new Error('route: walk');};
   const face=angle=>{let turn=angle-d.sim.player.angle;turn=Math.atan2(Math.sin(turn),Math.cos(turn));d.step({lookX:turn/.0022});};
-  nav(-10.9,32.8);face(0);
+  // Since the body physics (P0, D44) the west road abutment (x -22..10, z 29.5..50.5, top -0.35 m) is a 1.1 m ledge from the lowland at z 32.8: not steppable (stepUp 0.45 m).
+  // The player climbs the road embankment (crest at the approach line, z 40) and then walks to the fixture, exactly as tests/helpers/m01-route.js does (walk(-30,40);walk(-10,40)).
+  nav(-30,40);nav(-10.9,32.8);face(0);
   // Walk up to the road portal wall (face at x = -7) and stop about a metre short of it, like a player would.
   let guard=0;while(-7-d.sim.player.x>1.05&&guard++<80)d.step({forward:1});
   for(let i=0;i<10;i++)d.step({});
@@ -41,7 +44,7 @@ async function open(page,snapshot,quality='low'){
   return {errors,failed};
 }
 const diag=page=>page.evaluate(()=>window.gameDiagnostics());
-const pause=async page=>{await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();};
+const pause=async page=>{await page.evaluate(()=>document.exitPointerLock());await expectPaused(page);};
 const resume=async page=>{await page.locator('#resume').click();await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');};
 const weapon=page=>page.screenshot({clip:REGION,style:HIDE});
 // Pause freezes the weapon region: the clock, the viewmodel stats and the pixels stay exactly as they were.
@@ -55,7 +58,7 @@ async function expectFrozen(page){
 // Records every rendered frame (inside the game's own rAF chain, after it drew) and, when asked, pauses on the first frame
 // whose aim is clearly mid-transition. Pausing uses the game's own blur/pointer-lock path, synchronously, so a slow software
 // renderer cannot step past the moment. Nothing is injected into the simulation.
-const install=page=>page.evaluate(()=>{
+const patchFrames=page=>page.evaluate(()=>{
   const raf=window.requestAnimationFrame.bind(window),state=window.__feel={recording:false,captureMid:false,frames:[],mid:null};
   window.requestAnimationFrame=callback=>raf(time=>{
     callback(time);
@@ -70,6 +73,13 @@ const install=page=>page.evaluate(()=>{
     }
   });
 });
+const install=async page=>{
+  await patchFrames(page);
+  // The game's next frame was queued through the unpatched requestAnimationFrame, so that one frame escapes the hook (and re-queues itself through it).
+  // At the software-GL cadence the simulation advances at most 0.25 s per rendered frame, so the 0.30 s aim transition is only TWO frames long and the
+  // escaped frame would be the mid-transition one. Two frames of our own (the first queues the second through the patch) prove that every later frame is observed.
+  await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+};
 // Every consecutive pair of rendered frames obeys the curve: progress moves by dt/0.30 in, dt/0.22 out, exactly, whatever the
 // frame rate was; and the world FOV of every frame is the shared ease of that progress.
 function expectCurve(frames){
@@ -91,6 +101,9 @@ function expectCurve(frames){
 test('hip, mid-ADS and ADS by real right-mouse aim: 70 -> 48 on the shared eased curve; pause freezes the weapon region',async({page},info)=>{
   test.setTimeout(TIMEOUT());
   const {errors,failed}=await open(page,saves.hip);
+  // T40: the dedicated FP rig arrives asynchronously and rebuilds the presentation from authoritative flags (visual=null).
+  // Measure the eased input transition on the resident rig; late arrival is covered by the delayed-residency test in m01-fp-arms.spec.js.
+  await page.waitForFunction(()=>{const g=window.gameDiagnostics(),m=g.m01,v=m.viewModel;return m.characters.loaded.includes('fp:0')&&v.fpVariant==='fp-arms-v2'&&v.clock===g.clock;});
   // HIP: nothing aimed, world FOV 70, no wall in reach.
   const hip=await diag(page);
   expect(hip.player.aiming).toBe(false);expect(hip.m01.viewModel.aimBlend).toBe(0);expect(hip.m01.viewModel.presentation.fov).toBe(70);
@@ -103,8 +116,9 @@ test('hip, mid-ADS and ADS by real right-mouse aim: 70 -> 48 on the shared eased
   await install(page);
   await page.evaluate(()=>{window.__feel.frames=[];window.__feel.recording=true;window.__feel.captureMid=true;});
   await page.mouse.down({button:'right'});
-  await page.waitForFunction(()=>window.__feel.mid,null,{timeout:60000});
-  await expect(page.locator('#pause')).toBeVisible();
+  try{await page.waitForFunction(()=>window.__feel.mid,null,{timeout:60000});}
+  finally{await info.attach('mid-ads-frames.json',{body:JSON.stringify(await page.evaluate(()=>({frames:window.__feel.frames,mid:window.__feel.mid,clock:window.gameDiagnostics().clock,loaded:window.gameDiagnostics().m01.characters.loaded}))),contentType:'application/json'});}
+  await expectPaused(page);
   const mid=await page.evaluate(()=>window.__feel.mid);
   expect(mid.aiming).toBe(true);expect(mid.aim).toBeGreaterThanOrEqual(.25);expect(mid.aim).toBeLessThan(1);
   expect(mid.camFov).toBeGreaterThan(48);expect(mid.camFov).toBeLessThan(70);

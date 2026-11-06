@@ -1,3 +1,4 @@
+import {spatialPredecessorBytes} from './helpers/m01-spatial-byte-guard.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -6,6 +7,7 @@ import * as THREE from 'three';
 import {M01ViewModel} from '../src/render/m01-viewmodel.js';
 import {M01ViewModel as BaseViewModel} from '../tools/verification/fixtures/m01-wz29-base-viewmodel.mjs';
 import {WZ29_VISUAL,recoilEnvelope,presentationPose,advanceVisualBlend} from '../src/render/m01-wz29-presentation.js';
+import {WZ29_HANDS} from '../src/render/m01-fp-hands.js';
 import {M01Simulation} from '../src/game/m01-simulation.js';
 import {Wz29} from '../src/game/wz29.js';
 import {muzzlePosition,actorHitboxes} from '../src/world/spatial.js';
@@ -46,6 +48,7 @@ test('integration keeps Wz29/muzzle/hitboxes/RNG bytes and locks the approved si
       // Partials T07 (generic prone geometry/eye/hitboxes) and T36 (MG34 reload curve sample) are the only approved deltas.
       // Revert exactly those strings, each found once, and every other byte must still hash to the protected original.
       assert.equal(createHash('sha256').update(spatialWithoutPartialsDelta(readFileSync(new URL('../'+path,import.meta.url),'utf8'))).digest('hex'),hash,path);
+      assert.equal(createHash('sha256').update(spatialPredecessorBytes(readFileSync(new URL('../'+path,import.meta.url)))).digest('hex'),hash,`${path} predecessor byte guard`);
     }else assert.equal(createHash('sha256').update(readFileSync(new URL('../'+path,import.meta.url))).digest('hex'),hash,path);
   }
 });
@@ -85,8 +88,12 @@ test('local arm skin/pose/material changes leave source geometry, bones, clips a
     assert.deepEqual(Array.from(body.geometry.getAttribute('skinWeight').data?.array??body.geometry.getAttribute('skinWeight').array),weights);
     assert.deepEqual(Array.from(body.geometry.index.array),indices);assert.deepEqual(body.skeleton.bones.map(b=>({p:b.position.toArray(),q:b.quaternion.toArray()})),bones);
     assert.ok(rifle.material.color.equals(material.color));assert.equal(rifle.material.onBeforeCompile,material.onBeforeCompile);
-    const weapon=v.root.getObjectByName('weapon'),target=weapon.localToWorld(new THREE.Vector3(.055,-.025,.065));
-    assert.ok(target.distanceTo(v.root.getObjectByName('hand_r').getWorldPosition(new THREE.Vector3()))<1e-6,'corrected right grip contact');
+    // R6-a: the right wrist is exactly the authored clip pose plus the wz.29 hold offset (m01-fp-hands.js). The previous fixed wrist target at
+    // weapon (.055,-.025,.065) put the palm 5 cm under the stock and the index finger 6 cm below the trigger (tests/m01-fp-hand-grip.test.js).
+    const weapon=v.root.getObjectByName('weapon'),hand=v.root.getObjectByName('hand_r'),held=weapon.worldToLocal(hand.getWorldPosition(new THREE.Vector3()));
+    v.play(v.root,v.mixer,'aim',0);
+    const authored=weapon.worldToLocal(hand.getWorldPosition(new THREE.Vector3())).add(new THREE.Vector3(...WZ29_HANDS.hold.r.offset));
+    assert.ok(held.distanceTo(authored)<1e-5,'right grip = authored grip + per-weapon hold');
   }finally{v.dispose();material.dispose();c.dispose();}
 });
 test('pause freezes phase, transition, arms and mechanics including clamped clip endpoint',async()=>{

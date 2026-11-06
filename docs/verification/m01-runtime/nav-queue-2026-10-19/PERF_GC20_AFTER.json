@@ -1,0 +1,260 @@
+{
+ "tool": "tools/verification/m01-nav-perf.mjs",
+ "root": "navq",
+ "mode": "gc",
+ "node": "v22.22.0",
+ "arch": "x64",
+ "cpus": 4,
+ "loadAverageAtStart": [
+  6.25,
+  5.91,
+  5.14
+ ],
+ "routes": [
+  {
+   "seed": 19390901,
+   "support": false,
+   "ticks": 23839,
+   "tickMs": {
+    "mean": 0.6285,
+    "p50": 0.3886,
+    "p99": 4.3626,
+    "p999": 8.9728,
+    "max": 24.241
+   },
+   "over": {
+    "ms5": 165,
+    "ms16": 5,
+    "ms50": 0,
+    "ms100": 0
+   },
+   "route": {
+    "calls": 5,
+    "maxPerTick": 1,
+    "totalMs": 60.19,
+    "maxMs": 20.09
+   },
+   "slowest": [
+    {
+     "ms": 24.241,
+     "clock": 464.75,
+     "battle": 19800,
+     "routes": 1,
+     "events": []
+    },
+    {
+     "ms": 23.382,
+     "clock": 17.8,
+     "battle": 16390,
+     "routes": 1,
+     "events": []
+    },
+    {
+     "ms": 17.383,
+     "clock": 0.05,
+     "battle": 16244,
+     "routes": 0,
+     "events": [
+      "checkpoint"
+     ]
+    },
+    {
+     "ms": 16.787,
+     "clock": 96.5,
+     "battle": 16540,
+     "routes": 0,
+     "events": []
+    },
+    {
+     "ms": 16.039,
+     "clock": 776.05,
+     "battle": 22170,
+     "routes": 0,
+     "events": [
+      "round-impact"
+     ]
+    }
+   ],
+   "allocBytesPerTick": {
+    "sampled": 1191,
+    "mean": 469816,
+    "p50": 313544,
+    "p99": 2869056,
+    "max": 3482536,
+    "discarded": 0
+   },
+   "wallSec": 26.5
+  },
+  {
+   "seed": 7,
+   "support": true,
+   "ticks": 23051,
+   "tickMs": {
+    "mean": 0.5402,
+    "p50": 0.3599,
+    "p99": 3.2962,
+    "p999": 6.8739,
+    "max": 21.36
+   },
+   "over": {
+    "ms5": 78,
+    "ms16": 2,
+    "ms50": 0,
+    "ms100": 0
+   },
+   "route": {
+    "calls": 5,
+    "maxPerTick": 1,
+    "totalMs": 55.37,
+    "maxMs": 20.06
+   },
+   "slowest": [
+    {
+     "ms": 21.36,
+     "clock": 439.05,
+     "battle": 19800,
+     "routes": 1,
+     "events": []
+    },
+    {
+     "ms": 20.286,
+     "clock": 509.2,
+     "battle": 21005,
+     "routes": 0,
+     "events": [
+      "enemy-fire",
+      "message"
+     ]
+    },
+    {
+     "ms": 13.691,
+     "clock": 17.8,
+     "battle": 16390,
+     "routes": 1,
+     "events": []
+    },
+    {
+     "ms": 12.896,
+     "clock": 862.7,
+     "battle": 22510,
+     "routes": 0,
+     "events": [
+      "enemy-fire"
+     ]
+    },
+    {
+     "ms": 12.68,
+     "clock": 829.3,
+     "battle": 22226,
+     "routes": 1,
+     "events": []
+    }
+   ],
+   "allocBytesPerTick": {
+    "sampled": 1152,
+    "mean": 469109,
+    "p50": 309040,
+    "p99": 2317016,
+    "max": 4768752,
+    "discarded": 0
+   },
+   "wallSec": 23.5
+  }
+ ],
+ "free": {
+  "walks": 150,
+  "failed": 0,
+  "arrivedTicksTotal": 72031,
+  "ticks": 72031,
+  "tickMs": {
+   "mean": 0.1571,
+   "p50": 0.1185,
+   "p99": 0.5776,
+   "p999": 3.2812,
+   "max": 42.198
+  },
+  "over": {
+   "ms5": 34,
+   "ms16": 8,
+   "ms50": 0,
+   "ms100": 0
+  },
+  "route": {
+   "calls": 50,
+   "maxPerTick": 1,
+   "totalMs": 354.48,
+   "maxMs": 41.13
+  },
+  "slowest": [
+   {
+    "ms": 42.198,
+    "clock": 0.1,
+    "battle": 16244,
+    "routes": 1,
+    "events": [
+     "checkpoint"
+    ]
+   },
+   {
+    "ms": 26.756,
+    "clock": 0.1,
+    "battle": 16244,
+    "routes": 1,
+    "events": [
+     "checkpoint"
+    ]
+   },
+   {
+    "ms": 23.143,
+    "clock": 0.1,
+    "battle": 16244,
+    "routes": 1,
+    "events": [
+     "checkpoint"
+    ]
+   },
+   {
+    "ms": 22.831,
+    "clock": 0.1,
+    "battle": 16244,
+    "routes": 1,
+    "events": [
+     "checkpoint"
+    ]
+   },
+   {
+    "ms": 19.273,
+    "clock": 0.1,
+    "battle": 16244,
+    "routes": 1,
+    "events": [
+     "checkpoint"
+    ]
+   }
+  ],
+  "allocBytesPerTick": {
+   "sampled": 3600,
+   "mean": 173786,
+   "p50": 164824,
+   "p99": 201808,
+   "max": 6326498,
+   "discarded": 1
+  },
+  "constructionMs": {
+   "mean": 5.682,
+   "p50": 4.453,
+   "max": 13.644
+  },
+  "firstTickMs": {
+   "mean": 2.117,
+   "p50": 1.716,
+   "max": 6.866
+  },
+  "wallSec": 39.3
+ },
+ "loadAverageAtEnd": [
+  5.07,
+  5.61,
+  5.11
+ ]
+}

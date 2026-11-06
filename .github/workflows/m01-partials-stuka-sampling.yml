@@ -1,0 +1,67 @@
+name: M01 isolated Stuka sampling verification
+
+on:
+  push:
+    branches: [codex/m01-partials-browser-sampling-repair-v1]
+    paths-ignore:
+      - "docs/**"
+      - ".agent/**"
+      - "DEVELOPMENT_STATUS.md"
+      - "RUNBOOK.md"
+      - "IMPLEMENTATION_PLAN.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m01-partials-stuka-sampling-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  stuka-sampling:
+    if: github.ref == 'refs/heads/codex/m01-partials-browser-sampling-repair-v1'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - name: Strict identity with verified production and assets
+        run: |
+          set -o pipefail
+          mkdir -p evidence
+          git merge-base --is-ancestor 9a679c50cdbe9a19330aba72961cb51cda808a5d HEAD
+          git diff --exit-code 9a679c50cdbe9a19330aba72961cb51cda808a5d HEAD -- src missions assets tools 'package*.json' 2>&1 | tee evidence/production-identity-before.log
+      - name: Install dependencies
+        run: |
+          set -o pipefail
+          npm ci 2>&1 | tee evidence/npm-ci.log
+      - name: Production build
+        run: |
+          set -o pipefail
+          npm run build 2>&1 | tee evidence/build.log
+      - name: Install Chromium
+        run: |
+          set -o pipefail
+          npx playwright install --with-deps chromium 2>&1 | tee evidence/chromium-install.log
+      - name: Full original five-case Stuka spec
+        run: |
+          set -o pipefail
+          PLAYWRIGHT_JSON_OUTPUT_NAME="$GITHUB_WORKSPACE/evidence/stuka-report.json" npx playwright test --config playwright.config.js tests/browser/m01-stuka-dive.spec.js --output test-results/m01-partials-stuka-sampling --workers=1 --retries=0 --reporter=line,json 2>&1 | tee evidence/stuka.log
+          node --input-type=module -e 'import fs from "node:fs"; import assert from "node:assert/strict"; const r=JSON.parse(fs.readFileSync("evidence/stuka-report.json")); assert.equal(r.stats.expected,5); assert.equal(r.stats.unexpected,0); assert.equal(r.stats.flaky,0); assert.equal(r.stats.skipped,0); console.log("All five original Stuka cases passed without retries or skips");'
+      - name: Production and assets remained identical
+        if: always()
+        run: |
+          set -o pipefail
+          mkdir -p evidence
+          git diff --exit-code 9a679c50cdbe9a19330aba72961cb51cda808a5d -- src missions assets tools 'package*.json' 2>&1 | tee evidence/production-identity-after.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: m01-partials-stuka-sampling-${{ github.sha }}
+          path: |
+            evidence/
+            test-results/m01-partials-stuka-sampling/
+          if-no-files-found: error

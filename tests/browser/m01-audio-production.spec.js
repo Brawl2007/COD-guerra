@@ -47,9 +47,13 @@ test('M01 battlefield audio follows real rifle/MG/impact/blast events and surviv
   const afterMG=await page.evaluate(()=>window.gameDiagnostics());
   expect(count(afterMG,'mg34')).toBeGreaterThan(0);
 
-  // Player rifle and material impact through the real Input event path. Aim steeply into nearby ground and
-  // avoid native pointer repositioning, which can change the locked look vector before the click is consumed.
-  await page.evaluate(()=>window.dispatchEvent(new MouseEvent('mousemove',{movementX:0,movementY:430,bubbles:true})));
+  // Player rifle and material impact through the real Input event path. Aim steeply into nearby ground.
+  // The first mouse sample after pointer re-lock can be discarded to avoid a camera jump; prime that
+  // sample with zero movement before sending the actual aiming input (no game state injection).
+  await page.evaluate(()=>{
+    window.dispatchEvent(new MouseEvent('mousemove',{movementX:0,movementY:0,bubbles:true}));
+    window.dispatchEvent(new MouseEvent('mousemove',{movementX:0,movementY:430,bubbles:true}));
+  });
   await page.waitForFunction(()=>window.gameDiagnostics().player.pitch<-.75);
   const beforeShot=await page.evaluate(()=>window.gameDiagnostics());
   await page.evaluate(()=>{window.dispatchEvent(new MouseEvent('mousedown',{button:0,bubbles:true}));window.dispatchEvent(new MouseEvent('mouseup',{button:0,bubbles:true}));});

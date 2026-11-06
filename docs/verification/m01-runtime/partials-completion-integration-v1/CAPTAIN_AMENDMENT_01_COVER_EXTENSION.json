@@ -1,0 +1,16 @@
+{
+  "id": "CAPTAIN-AMENDMENT-01-COVER-EXTENSION",
+  "at": "2026-10-15T18:08:09.368290+00:00",
+  "authority": "D34 and existing CAPTAIN-AMENDMENT-01 T36 WEST-readiness policy; same correction1/3",
+  "reason": "The former exact raw cover-summary comparison includes active duration and enemy issued rounds; approved finite delivery hold changes these quantities. Repeating that obsolete expectation would deterministically fail. No actual result is relabelled.",
+  "decision": "For all12 original cover seeds and both player modes, retain unmodified predecessor/current complete reports and explicit deltas. Compare every current stat and summary exactly to immutable predecessor with ONLY the named WEST carry-hold readiness policy replay. No global clock/RNG/event/health masks.",
+  "rawInvariants": "Repair outcomes, player shots, health/survivors, checkpoints and historical battle-clock event instants remain equal to raw predecessor. Any changed combat exposure/duration/counters is measured and must be explained by the same hold; unexplained difference is FAIL.",
+  "replayRequirements": [
+    "Exact source and hash of replay/helper provenance retained.",
+    "Candidate carry pending captured at start of each matching tick, only west_demolition readiness may be held.",
+    "Raw predecessor reports and changed fields never dropped from evidence.",
+    "Independent verifier/reviewer assess sufficiency; no acceptance conferred."
+  ],
+  "knownTwoOriginalRouteDeltas": "Implementer reports64.05sec and20/8additional rounds; cover12seed measurements still pending.",
+  "budget": "same formal correction1/3, review rejections0/2"
+}

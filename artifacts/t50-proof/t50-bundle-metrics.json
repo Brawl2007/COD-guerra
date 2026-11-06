@@ -1,0 +1,29 @@
+{
+  "entry": {
+    "name": "index-CbFzTIMN.js",
+    "bytes": 13335
+  },
+  "total": 1985693,
+  "chunks": [
+    {
+      "name": "game-DUIJFTAX.js",
+      "bytes": 1281771
+    },
+    {
+      "name": "three-core-DHJZDzJU.js",
+      "bytes": 626268
+    },
+    {
+      "name": "three-loaders-xoHaYwaR.js",
+      "bytes": 63176
+    },
+    {
+      "name": "index-CbFzTIMN.js",
+      "bytes": 13335
+    },
+    {
+      "name": "asset-progress-B1UdpVEN.js",
+      "bytes": 1143
+    }
+  ]
+}

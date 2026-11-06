@@ -1,0 +1,18 @@
+{
+  "scope": "Verbatim CI-schema guard validation; synthetic24fixture is not actual24route proof. Fresh CI remains mandatory.",
+  "codeHead": "ddd84abe63fd495c4ade340e2400ef6116f9522a",
+  "files": [
+    {
+      "name": "schema-guard-check.mjs",
+      "sha256": "6ad46e555ce0cf03fbe0c5572225635211f83fc2d7f1f120fa78c44b5000da23",
+      "bytes": 5664,
+      "originalPath": "/workspace/scratch/m01-partials-correction3/schema-guard-check.mjs"
+    },
+    {
+      "name": "result.json",
+      "sha256": "89c91287e537e3ae6d2875a96bdc90c00735cf9d857a724bbe5b6aeaef4ec061",
+      "bytes": 5052,
+      "originalPath": "/workspace/scratch/m01-partials-correction3/result.json"
+    }
+  ]
+}

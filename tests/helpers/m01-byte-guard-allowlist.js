@@ -14,6 +14,9 @@ export const integratedPresentation=new Set([
  // T23 (M01-EAST-FRONT-VISIBLE-V1): the east platoon holds the deck and six reserve men fall by attrition rounds. The mission data (hold, attrition,
  // display profiles) and the round kinds (m01-fire.js) change by design; the per-tick gameplay golden was re-baselined on x86 for it.
  'missions/m01-tczew/mission.json','src/game/m01-fire.js',
+ // T47 (M01-T47-CKM-LIVE-FIRE-V1): mission.json documents the new ckm post and its fire window (grp_ckm_crew); the simulation, the renderer, the audio wiring and
+ // game.js change by design and the per-tick gameplay golden was re-baselined with a named-delta audit (tools/verification/m01-t47-ckm-fire-audit.mjs).
+ // map-layout.json is NOT allowlisted: it differs from the base by exactly the three hunks of tests/helpers/m01-layout-t47-delta.js, which each guard reverts.
  // PT05 (D33): yard-wagon colliders change world collision only (4-line hunk); gameplay is locked by the per-tick golden traces (animation-contract) and tests/m01-yard-wagon-colliders.test.js.
  'src/world/tczew-world.js',
  // T50 (loading/bundle, PR #66) modifies asset transfer observability only; original loader API is guarded

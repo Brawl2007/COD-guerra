@@ -1,0 +1,85 @@
+{
+  "sampleRate": 22050,
+  "repeats": 8,
+  "srcRoot": ".",
+  "classes": {
+    "wz29-player-shot": {
+      "meanLsdDb": 4.325879312607034,
+      "minLsdDb": 2.8515430099503187,
+      "peakSdDb": 1.1966369075933747,
+      "peakDbMean": -12.69491007232724
+    },
+    "kar98k-40m": {
+      "meanLsdDb": 4.214084515994663,
+      "minLsdDb": 2.8252685847209555,
+      "peakSdDb": 2.4627256130168638,
+      "peakDbMean": -17.42081082676973
+    },
+    "ally-rifle-40m": {
+      "meanLsdDb": 4.212337135661566,
+      "minLsdDb": 2.519875839474614,
+      "peakSdDb": 1.6929805411903984,
+      "peakDbMean": -21.500950854999793
+    },
+    "mg34-burst5-40m": {
+      "meanLsdDb": 3.1970811159128467,
+      "minLsdDb": 2.572866560851281,
+      "peakSdDb": 1.2749682644913614,
+      "peakDbMean": -18.79413869959689
+    },
+    "ckm-burst4-60m": {
+      "meanLsdDb": 3.407492454755198,
+      "minLsdDb": 2.837627612826948,
+      "peakSdDb": 0.9716532315073092,
+      "peakDbMean": -24.713647405769137
+    },
+    "impact-wood": {
+      "meanLsdDb": 6.234001550080828,
+      "minLsdDb": 2.7088767703358956,
+      "peakSdDb": 1.1102568466549363,
+      "peakDbMean": -28.540043199748222
+    },
+    "impact-metal": {
+      "meanLsdDb": 12.199149722593786,
+      "minLsdDb": 4.661535362249618,
+      "peakSdDb": 1.3378967837938596,
+      "peakDbMean": -21.34713076634422
+    },
+    "impact-earth": {
+      "meanLsdDb": 5.860055596606245,
+      "minLsdDb": 3.071629475084802,
+      "peakSdDb": 1.6737782164790211,
+      "peakDbMean": -30.199762501124535
+    },
+    "impact-stone": {
+      "meanLsdDb": 5.783435483559956,
+      "minLsdDb": 2.367081574139578,
+      "peakSdDb": 0.934638422341674,
+      "peakDbMean": -27.499068088567384
+    },
+    "grenade-30m": {
+      "meanLsdDb": 4.550121745688495,
+      "minLsdDb": 3.494564552244929,
+      "peakSdDb": 1.1364871964111218,
+      "peakDbMean": -14.23251219104622
+    },
+    "wz29-bolt-cycle": {
+      "meanLsdDb": 9.455163970484842,
+      "minLsdDb": 4.407541511140518,
+      "peakSdDb": 1.2249414964621774,
+      "peakDbMean": -33.88822688056085
+    },
+    "player-hit": {
+      "meanLsdDb": 3.618687446028481,
+      "minLsdDb": 2.215752431627523,
+      "peakSdDb": 2.0410785906910576,
+      "peakDbMean": -23.562694116875782
+    },
+    "landing-8mps": {
+      "meanLsdDb": 2.9187181106373106,
+      "minLsdDb": 2.1948124728664706,
+      "peakSdDb": 1.1536518630184407,
+      "peakDbMean": -17.62789289871519
+    }
+  }
+}

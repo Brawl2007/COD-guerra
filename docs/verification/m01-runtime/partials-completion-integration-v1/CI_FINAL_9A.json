@@ -1,0 +1,168 @@
+{
+  "sourceHead": "9a679c50cdbe9a19330aba72961cb51cda808a5d",
+  "codeCorrection2": "d7266b3d347045597f384f3df1320ec99070e693",
+  "workflowCorrection3": "ddd84abe63fd495c4ade340e2400ef6116f9522a",
+  "normal": {
+    "run": 38824982012,
+    "job": 116730625762,
+    "result": "PASS",
+    "node": {
+      "passed": 874,
+      "total": 874,
+      "durationMs": 377475.205503
+    },
+    "tooling": {
+      "passed": 173,
+      "total": 173
+    },
+    "build": "PASS"
+  },
+  "custom": {
+    "run": 38824981887,
+    "attempt1Result": "FAIL",
+    "shards": [
+      {
+        "shard": 1,
+        "passed": 15,
+        "total": 15,
+        "job": 116731431729
+      },
+      {
+        "shard": 2,
+        "passed": 15,
+        "total": 15,
+        "job": 116731431570
+      },
+      {
+        "shard": 3,
+        "passed": 12,
+        "total": 14,
+        "job": 116731431562
+      }
+    ],
+    "initialBrowser": {
+      "passed": 42,
+      "total": 44,
+      "extraCrewsPassed": 6
+    },
+    "authority": {
+      "job": 116731431613,
+      "result": "PASS",
+      "strictGoldenRoutes": 2,
+      "causalCoverRoutes": 24,
+      "protectedFiles": 299,
+      "currentOwnerFutures": 24
+    },
+    "bridge": {
+      "job": 116731431254,
+      "result": "PASS",
+      "offCases": 1,
+      "onCases": 4,
+      "phaseViews": 6,
+      "wholeFrameControls": 2,
+      "wholeFrameControlChangedPixels": [
+        0,
+        0
+      ],
+      "coupledCases": 44
+    },
+    "boundedRetry": {
+      "runAttempt": 2,
+      "job": 116860048172,
+      "sourceUnchanged": true,
+      "wholeShardCases": 14,
+      "workers": 1,
+      "playwrightRetries": 0,
+      "maxJobRetries": 1,
+      "result": "FAIL",
+      "justification": "Independent actual traces prove Stuka impactendpoint sampled after2.810s poll installation delay; station ready predicate can sample pre-restored-sync generation. Initial failure remains recorded; any repeat/new failure stops.",
+      "passed": 13,
+      "total": 14,
+      "station": "PASS",
+      "stuka": "FAIL: repeated original airborne assertion at ground endpoint s1 clock196",
+      "completedAt": "2026-10-16T07:36:55Z"
+    }
+  },
+  "artifacts": [
+    {
+      "name": "authority",
+      "bytes": 66548199,
+      "sha256": "5de68fc50920644496aeef9a255cf3a04266e932600ee40006f843a210ec4e0e",
+      "files": 30,
+      "path": "/workspace/scratch/partials-ci9a679/authority",
+      "artifactId": 12016141976
+    },
+    {
+      "name": "bridge",
+      "bytes": 192720086,
+      "sha256": "d4986bdde16a8d817ade65da0f5ce267375bc9ac451bdeb6421c35a1b450772b",
+      "files": 400,
+      "path": "/workspace/scratch/partials-ci9a679/bridge",
+      "artifactId": 12020265852
+    },
+    {
+      "name": "browser1",
+      "bytes": 63757892,
+      "sha256": "a9de827eff577b370b06ececbb768b665c6dbb099a3c0df5f0013272c917b2d8",
+      "files": 207,
+      "path": "/workspace/scratch/partials-ci9a679/browser1",
+      "artifactId": 12015688891
+    },
+    {
+      "name": "browser2",
+      "bytes": 85240290,
+      "sha256": "1dac3b09a1888cb4d56407b61c370a0bbbcec592b3be2aa74bb418dcbd99d10f",
+      "files": 191,
+      "path": "/workspace/scratch/partials-ci9a679/browser2",
+      "artifactId": 12015574748
+    },
+    {
+      "name": "browser3-initial-failed",
+      "bytes": 49175846,
+      "sha256": "a750404c14630e43e99f47d3dfd9027fbe73395eb61a432b4ad8fbfff7af2580",
+      "files": 102,
+      "path": "/workspace/scratch/partials-ci9a679/browser3",
+      "artifactId": 12015701675
+    },
+    {
+      "artifact": 12032445151,
+      "kind": "browser3-retry",
+      "bytes": 29632412,
+      "sha256": "c7919b1adea192128038166f976ac62fe3e8939a9255514826f29e531dcb2452",
+      "crc": "PASS",
+      "entries": 100
+    }
+  ],
+  "logs": [
+    {
+      "path": "/workspace/scratch/partials-ci9a679/node.log",
+      "sha256": "7f2936fd6f0abd75ef20b2151a29997bc41dcedd0eb52efdf7152cec7a7f5bb0"
+    },
+    {
+      "path": "/workspace/scratch/partials-ci9a679/authority.log",
+      "sha256": "58b53ff74cafa2eb6675d383c67ce02a62865fa89e83ebd4b641ced585265f2f"
+    },
+    {
+      "path": "/workspace/scratch/partials-ci9a679/bridge.log",
+      "sha256": "955ba7cbd84723c8aad7100406629310c63eab1f7089067e5b9381249cb1d8e9"
+    },
+    {
+      "path": "/workspace/scratch/partials-ci9a679/browser1.log",
+      "sha256": "53870eb03cb3ac0e672c446aad6619e894c01b0cbecd32a936d71d2e1f8817ad"
+    },
+    {
+      "path": "/workspace/scratch/partials-ci9a679/browser2.log",
+      "sha256": "ff863e7ff5dd25ad8243a4a483d3f0276ea159c433866c1aa224c1526260ca21"
+    },
+    {
+      "path": "/workspace/scratch/partials-ci9a679/browser3.log",
+      "sha256": "82239eb8e0a8d9bec108ef159bb6d2d5f368dad712c1a64f9629231c17736767"
+    },
+    {
+      "kind": "browser3-retry",
+      "path": "/workspace/scratch/partials-ci9a679/browser3-retry.log",
+      "sha256": "3049d0388978c9e4dc3ac77357cc736ccaf9c3fc68ead2f64c882854b30a1103"
+    }
+  ],
+  "acceptance": "FAIL independent verifier phase4; originalfix3of3 and boundedretry1of1 spent. Prospective separate CAPTAIN_EXTENSION_04 targets only sampling test, no source changes/acceptance yet."
+}

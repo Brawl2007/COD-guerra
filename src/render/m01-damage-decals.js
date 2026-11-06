@@ -20,7 +20,10 @@ export const M01_DAMAGE_DECAL_LIMITS=Object.freeze({
     high:Object.freeze({marks:144,debris:192,embers:40,range:130,cluster:6})
   }),
   // Persistent aftermath: saved blasts drawn at once, merged triangles and the share of the debris pool they may use.
-  blasts:16,residueTriangles:6000,residueDebrisShare:.7,
+  // R1-a (2026-10-23): 16 -> 24. A mission now saves up to 22 craters (3 of the 04:34 event + 11 of the 04:34-04:44 schedule + 6 of the
+  // 05:30 raid + 2 demolitions); with 16 the station bomb, the forward post and the cable crater lost their aftermath after 05:30.
+  // The cost stays bounded by residueTriangles (22 saved craters measure 1645 of 6000 triangles) and by the debris and ember pools.
+  blasts:24,residueTriangles:6000,residueDebrisShare:.7,
   // Extra draw calls (marks, residue, debris, embers) and textures (colour atlas, height atlas).
   drawCalls:4,textures:2,
   // Marks smaller than ~1 px are never spawned: range = min(quality range, size × pxRange).
@@ -115,7 +118,7 @@ function cellTriangles(world,ix,iz){
 }
 const underWater=(x,y)=>x>M01_TERRAIN_MESH.water.x0&&x<M01_TERRAIN_MESH.water.x1&&y<M01_TERRAIN_MESH.water.top+.03;
 /** True when the drawn terrain under `point` lies below the river surface and the impact is at or under it. */
-const overWater=(world,point)=>underWater(point.x,point.y)&&underWater(point.x,renderedTerrainHeight(world,point.x,point.z)??Infinity);
+export const overWater=(world,point)=>underWater(point.x,point.y)&&underWater(point.x,renderedTerrainHeight(world,point.x,point.z)??Infinity);
 
 // ——— Track beds ———
 const SEGMENTS=new WeakMap();

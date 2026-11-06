@@ -2,9 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {M01Simulation} from '../src/game/m01-simulation.js';
 import {route} from './helpers/m01-route.js';
+import {CkmNeutralSimulation} from './helpers/m01-ckm-neutral.js';
 
 let result;
-const flow=()=>result??=route();
+// T47: the cue (its text, its expiry on active time, the west blast) does not depend on the ckm. The route is the one of the build before the gun fired, tick for
+// tick (CkmNeutralSimulation; tools/verification/m01-t47-ckm-fire-audit.mjs): with the live gun the German fire after the blast lands one 8-point hit
+// inside the 13 s these tests tick without input, which the second test (health unchanged) would take for the cue's doing.
+const flow=()=>result??=route(19390901,{Simulation:CkmNeutralSimulation});
 const load=snapshot=>{const sim=new M01Simulation();sim.restoreSnapshot(snapshot);return sim;};
 const turn=(sim,angle)=>sim.tick(.05,{lookX:Math.atan2(Math.sin(angle-sim.player.angle),Math.cos(angle-sim.player.angle))/.0022});
 

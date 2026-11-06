@@ -1,0 +1,723 @@
+{
+  "validation": "LOCAL headless Chromium/SwiftShader 1280x720; real M01Characters, GLBs and atlases; existing actors in staged poses. Draw calls = renderer.info.render.calls of one frame (scene + shadow pass). Not FPS.",
+  "samples": [
+    {
+      "name": "pl-5m-high",
+      "kind": "pl",
+      "distance": 5,
+      "quality": "high",
+      "ids": [
+        "marek_zielinski",
+        "pawel_krawiec",
+        "jozef_bak",
+        "szymon_kowal",
+        "tadeusz_nowicki"
+      ],
+      "fov": 37.55606644489108,
+      "before": {
+        "calls": 73,
+        "triangles": 148552,
+        "lods": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "instances": 5,
+        "stats": {
+          "submittedMeshes": 36,
+          "submittedDrawCalls": 36
+        }
+      },
+      "after": {
+        "calls": 23,
+        "triangles": 148552,
+        "lods": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "instances": 5,
+        "stats": {
+          "submittedMeshes": 36,
+          "submittedDrawCalls": 11
+        }
+      },
+      "pixelDiff": {
+        "max": 0,
+        "differingPixels": 0,
+        "totalPixels": 921600,
+        "meanDiffOverDiffering": 0
+      },
+      "repeatNoise": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "drawOrderTieProbe": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "mergedPartOrderReversedVsBefore": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "mergedPartOrderReversedVsMerged": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "sameInstanceUnmergedVsBefore": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "sameInstanceUnmergedVsMerged": {
+        "max": 0,
+        "differingPixels": 0
+      }
+    },
+    {
+      "name": "de-5m-high",
+      "kind": "de",
+      "distance": 5,
+      "quality": "high",
+      "ids": [
+        "de_east_2",
+        "de_east_3",
+        "de_east_5",
+        "de_east_6",
+        "de_east_7"
+      ],
+      "fov": 37.55606644489108,
+      "before": {
+        "calls": 61,
+        "triangles": 160212,
+        "lods": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "instances": 5,
+        "stats": {
+          "submittedMeshes": 30,
+          "submittedDrawCalls": 30
+        }
+      },
+      "after": {
+        "calls": 21,
+        "triangles": 160212,
+        "lods": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "instances": 5,
+        "stats": {
+          "submittedMeshes": 30,
+          "submittedDrawCalls": 10
+        }
+      },
+      "pixelDiff": {
+        "max": 24,
+        "differingPixels": 4,
+        "totalPixels": 921600,
+        "meanDiffOverDiffering": 14.75
+      },
+      "repeatNoise": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "drawOrderTieProbe": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "mergedPartOrderReversedVsBefore": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "mergedPartOrderReversedVsMerged": {
+        "max": 24,
+        "differingPixels": 4
+      },
+      "sameInstanceUnmergedVsBefore": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "sameInstanceUnmergedVsMerged": {
+        "max": 24,
+        "differingPixels": 4
+      }
+    },
+    {
+      "name": "pl-30m-high",
+      "kind": "pl",
+      "distance": 30,
+      "quality": "high",
+      "ids": [
+        "marek_zielinski",
+        "pawel_krawiec",
+        "jozef_bak",
+        "szymon_kowal",
+        "tadeusz_nowicki"
+      ],
+      "fov": 6.48658456555239,
+      "before": {
+        "calls": 73,
+        "triangles": 61154,
+        "lods": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "instances": 5,
+        "stats": {
+          "submittedMeshes": 36,
+          "submittedDrawCalls": 36
+        }
+      },
+      "after": {
+        "calls": 23,
+        "triangles": 61154,
+        "lods": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "instances": 5,
+        "stats": {
+          "submittedMeshes": 36,
+          "submittedDrawCalls": 11
+        }
+      },
+      "pixelDiff": {
+        "max": 85,
+        "differingPixels": 9,
+        "totalPixels": 921600,
+        "meanDiffOverDiffering": 45.44444444444444
+      },
+      "repeatNoise": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "drawOrderTieProbe": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "mergedPartOrderReversedVsBefore": {
+        "max": 70,
+        "differingPixels": 37
+      },
+      "mergedPartOrderReversedVsMerged": {
+        "max": 85,
+        "differingPixels": 46
+      },
+      "sameInstanceUnmergedVsBefore": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "sameInstanceUnmergedVsMerged": {
+        "max": 85,
+        "differingPixels": 9
+      }
+    },
+    {
+      "name": "de-30m-high",
+      "kind": "de",
+      "distance": 30,
+      "quality": "high",
+      "ids": [
+        "de_east_2",
+        "de_east_3",
+        "de_east_5",
+        "de_east_6",
+        "de_east_7"
+      ],
+      "fov": 6.48658456555239,
+      "before": {
+        "calls": 61,
+        "triangles": 64194,
+        "lods": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "instances": 5,
+        "stats": {
+          "submittedMeshes": 30,
+          "submittedDrawCalls": 30
+        }
+      },
+      "after": {
+        "calls": 21,
+        "triangles": 64194,
+        "lods": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "instances": 5,
+        "stats": {
+          "submittedMeshes": 30,
+          "submittedDrawCalls": 10
+        }
+      },
+      "pixelDiff": {
+        "max": 140,
+        "differingPixels": 59,
+        "totalPixels": 921600,
+        "meanDiffOverDiffering": 41.23728813559322
+      },
+      "repeatNoise": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "drawOrderTieProbe": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "mergedPartOrderReversedVsBefore": {
+        "max": 113,
+        "differingPixels": 7
+      },
+      "mergedPartOrderReversedVsMerged": {
+        "max": 140,
+        "differingPixels": 66
+      },
+      "sameInstanceUnmergedVsBefore": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "sameInstanceUnmergedVsMerged": {
+        "max": 140,
+        "differingPixels": 59
+      }
+    },
+    {
+      "name": "pl-80m-high",
+      "kind": "pl",
+      "distance": 80,
+      "quality": "high",
+      "ids": [
+        "marek_zielinski",
+        "pawel_krawiec",
+        "jozef_bak",
+        "szymon_kowal",
+        "tadeusz_nowicki"
+      ],
+      "fov": 2.4347041997200436,
+      "before": {
+        "calls": 37,
+        "triangles": 9414,
+        "lods": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "instances": 5,
+        "stats": {
+          "submittedMeshes": 36,
+          "submittedDrawCalls": 36
+        }
+      },
+      "after": {
+        "calls": 12,
+        "triangles": 9414,
+        "lods": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "instances": 5,
+        "stats": {
+          "submittedMeshes": 36,
+          "submittedDrawCalls": 11
+        }
+      },
+      "pixelDiff": {
+        "max": 149,
+        "differingPixels": 91,
+        "totalPixels": 921600,
+        "meanDiffOverDiffering": 62.934065934065934
+      },
+      "repeatNoise": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "drawOrderTieProbe": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "mergedPartOrderReversedVsBefore": {
+        "max": 151,
+        "differingPixels": 697
+      },
+      "mergedPartOrderReversedVsMerged": {
+        "max": 151,
+        "differingPixels": 786
+      },
+      "sameInstanceUnmergedVsBefore": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "sameInstanceUnmergedVsMerged": {
+        "max": 149,
+        "differingPixels": 91
+      }
+    },
+    {
+      "name": "de-80m-high",
+      "kind": "de",
+      "distance": 80,
+      "quality": "high",
+      "ids": [
+        "de_east_2",
+        "de_east_3",
+        "de_east_5",
+        "de_east_6",
+        "de_east_7"
+      ],
+      "fov": 2.4347041997200436,
+      "before": {
+        "calls": 31,
+        "triangles": 10265,
+        "lods": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "instances": 5,
+        "stats": {
+          "submittedMeshes": 30,
+          "submittedDrawCalls": 30
+        }
+      },
+      "after": {
+        "calls": 11,
+        "triangles": 10265,
+        "lods": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "instances": 5,
+        "stats": {
+          "submittedMeshes": 30,
+          "submittedDrawCalls": 10
+        }
+      },
+      "pixelDiff": {
+        "max": 162,
+        "differingPixels": 226,
+        "totalPixels": 921600,
+        "meanDiffOverDiffering": 82.65486725663717
+      },
+      "repeatNoise": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "drawOrderTieProbe": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "mergedPartOrderReversedVsBefore": {
+        "max": 180,
+        "differingPixels": 14
+      },
+      "mergedPartOrderReversedVsMerged": {
+        "max": 180,
+        "differingPixels": 240
+      },
+      "sameInstanceUnmergedVsBefore": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "sameInstanceUnmergedVsMerged": {
+        "max": 162,
+        "differingPixels": 226
+      }
+    },
+    {
+      "name": "pl-5m-medium",
+      "kind": "pl",
+      "distance": 5,
+      "quality": "medium",
+      "ids": [
+        "marek_zielinski",
+        "pawel_krawiec",
+        "jozef_bak",
+        "szymon_kowal",
+        "tadeusz_nowicki"
+      ],
+      "fov": 37.55606644489108,
+      "before": {
+        "calls": 73,
+        "triangles": 61154,
+        "lods": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "instances": 5,
+        "stats": {
+          "submittedMeshes": 36,
+          "submittedDrawCalls": 36
+        }
+      },
+      "after": {
+        "calls": 23,
+        "triangles": 61154,
+        "lods": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "instances": 5,
+        "stats": {
+          "submittedMeshes": 36,
+          "submittedDrawCalls": 11
+        }
+      },
+      "pixelDiff": {
+        "max": 24,
+        "differingPixels": 1,
+        "totalPixels": 921600,
+        "meanDiffOverDiffering": 24
+      },
+      "repeatNoise": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "drawOrderTieProbe": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "mergedPartOrderReversedVsBefore": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "mergedPartOrderReversedVsMerged": {
+        "max": 24,
+        "differingPixels": 1
+      },
+      "sameInstanceUnmergedVsBefore": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "sameInstanceUnmergedVsMerged": {
+        "max": 24,
+        "differingPixels": 1
+      }
+    },
+    {
+      "name": "de-30m-medium",
+      "kind": "de",
+      "distance": 30,
+      "quality": "medium",
+      "ids": [
+        "de_east_2",
+        "de_east_3",
+        "de_east_5",
+        "de_east_6",
+        "de_east_7"
+      ],
+      "fov": 6.48658456555239,
+      "before": {
+        "calls": 61,
+        "triangles": 20528,
+        "lods": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "instances": 5,
+        "stats": {
+          "submittedMeshes": 30,
+          "submittedDrawCalls": 30
+        }
+      },
+      "after": {
+        "calls": 21,
+        "triangles": 20528,
+        "lods": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "instances": 5,
+        "stats": {
+          "submittedMeshes": 30,
+          "submittedDrawCalls": 10
+        }
+      },
+      "pixelDiff": {
+        "max": 141,
+        "differingPixels": 28,
+        "totalPixels": 921600,
+        "meanDiffOverDiffering": 75.57142857142857
+      },
+      "repeatNoise": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "drawOrderTieProbe": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "mergedPartOrderReversedVsBefore": {
+        "max": 118,
+        "differingPixels": 3
+      },
+      "mergedPartOrderReversedVsMerged": {
+        "max": 141,
+        "differingPixels": 31
+      },
+      "sameInstanceUnmergedVsBefore": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "sameInstanceUnmergedVsMerged": {
+        "max": 141,
+        "differingPixels": 28
+      }
+    },
+    {
+      "name": "pl-80m-low",
+      "kind": "pl",
+      "distance": 80,
+      "quality": "low",
+      "ids": [
+        "marek_zielinski",
+        "pawel_krawiec",
+        "jozef_bak",
+        "szymon_kowal",
+        "tadeusz_nowicki"
+      ],
+      "fov": 2.4347041997200436,
+      "before": {
+        "calls": 37,
+        "triangles": 9414,
+        "lods": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "instances": 5,
+        "stats": {
+          "submittedMeshes": 36,
+          "submittedDrawCalls": 36
+        }
+      },
+      "after": {
+        "calls": 12,
+        "triangles": 9414,
+        "lods": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "instances": 5,
+        "stats": {
+          "submittedMeshes": 36,
+          "submittedDrawCalls": 11
+        }
+      },
+      "pixelDiff": {
+        "max": 149,
+        "differingPixels": 91,
+        "totalPixels": 921600,
+        "meanDiffOverDiffering": 62.934065934065934
+      },
+      "repeatNoise": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "drawOrderTieProbe": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "mergedPartOrderReversedVsBefore": {
+        "max": 151,
+        "differingPixels": 697
+      },
+      "mergedPartOrderReversedVsMerged": {
+        "max": 151,
+        "differingPixels": 786
+      },
+      "sameInstanceUnmergedVsBefore": {
+        "max": 0,
+        "differingPixels": 0
+      },
+      "sameInstanceUnmergedVsMerged": {
+        "max": 149,
+        "differingPixels": 91
+      }
+    }
+  ],
+  "errors": [],
+  "drawOrder": {
+    "note": "Order in which WebGLRenderer draws the parts of one soldier (onBeforeRender). Opaque parts are sorted by material id, then by the view depth of each part's bounding-sphere centre, so the order between coplanar parts changes with the camera on the former path; the merged mesh fixes it by index order.",
+    "de": {
+      "before": [
+        "clip#8758:40",
+        "rifle#8757:40",
+        "head_de_c#8754:313",
+        "helmet_m35#8755:313",
+        "gear#8756:313",
+        "body#8751:313"
+      ],
+      "after": [
+        "batch_weapon#8832:40",
+        "batch_body#8831:354"
+      ]
+    },
+    "pl": {
+      "before": [
+        "rifle#8915:42",
+        "head_zielinski#8898:42",
+        "nco#8911:42",
+        "rank_sierzant#8913:42",
+        "clip#8916:42",
+        "helmet_wz31#8905:69",
+        "body#8896:69",
+        "gear#8908:69"
+      ],
+      "after": [
+        "batch_weapon#9013:42",
+        "batch_body#9012:200"
+      ]
+    }
+  }
+}

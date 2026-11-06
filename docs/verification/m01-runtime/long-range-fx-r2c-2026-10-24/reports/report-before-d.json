@@ -1,0 +1,336 @@
+{
+  "label": "before",
+  "quality": "medium",
+  "viewport": [
+    1366,
+    768
+  ],
+  "from": 0.5,
+  "step": 0.4,
+  "count": 10,
+  "shots": [
+    {
+      "name": "deck-mg",
+      "errors": [],
+      "files": [
+        {
+          "file": "deck-mg-before-00.png",
+          "clock": 577.2499000000228,
+          "offset": 0.75,
+          "fx": {
+            "muzzle": 1,
+            "tracer": 0,
+            "puff": 13,
+            "spark": 0,
+            "smoke": 1,
+            "chip": 8
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              29.05124221269727,
+              1.6404597582522438,
+              39.999885073935104
+            ],
+            "quaternion": [
+              0.00004581530323792032,
+              -0.7071496097396183,
+              -0.00004580975326506051,
+              0.7070639470709352
+            ],
+            "fov": 70
+          },
+          "draw": 501,
+          "triangles": 779274
+        },
+        {
+          "file": "deck-mg-before-01.png",
+          "clock": 577.4999000000225,
+          "offset": 1,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 0,
+            "puff": 18,
+            "spark": 0,
+            "smoke": 1,
+            "chip": 10
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              29.051372774889135,
+              1.6400415922601101,
+              39.999885073935104
+            ],
+            "quaternion": [
+              0.000005057282912031318,
+              -0.7071496112056912,
+              -0.000005056670283042257,
+              0.7070639485368306
+            ],
+            "fov": 70
+          },
+          "draw": 500,
+          "triangles": 778812
+        },
+        {
+          "file": "deck-mg-before-02.png",
+          "clock": 577.8832000000223,
+          "offset": 1.383,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 0,
+            "puff": 15,
+            "spark": 0,
+            "smoke": 2,
+            "chip": 4
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              29.05133696759856,
+              1.6399997954121144,
+              39.999885073935104
+            ],
+            "quaternion": [
+              -3.556861810111286e-8,
+              -0.7071496112237743,
+              3.55643093908966e-8,
+              0.7070639485549115
+            ],
+            "fov": 70
+          },
+          "draw": 500,
+          "triangles": 778784
+        },
+        {
+          "file": "deck-mg-before-03.png",
+          "clock": 578.233200000022,
+          "offset": 1.733,
+          "fx": {
+            "muzzle": 2,
+            "tracer": 0,
+            "puff": 20,
+            "spark": 0,
+            "smoke": 4,
+            "chip": 8
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              29.050910764537424,
+              1.640193378740805,
+              39.999885073935104
+            ],
+            "quaternion": [
+              -0.000010993536795090064,
+              -0.707149611138321,
+              0.000010992205060352236,
+              0.7070639484694685
+            ],
+            "fov": 70
+          },
+          "draw": 501,
+          "triangles": 779854
+        },
+        {
+          "file": "deck-mg-before-04.png",
+          "clock": 578.6166000000217,
+          "offset": 2.117,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 0,
+            "puff": 20,
+            "spark": 0,
+            "smoke": 5,
+            "chip": 6
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              29.05135094390036,
+              1.639952808004944,
+              39.999885073935104
+            ],
+            "quaternion": [
+              -0.000010442911473852814,
+              -0.7071496111466667,
+              0.000010441646440748999,
+              0.7070639484778133
+            ],
+            "fov": 70
+          },
+          "draw": 500,
+          "triangles": 778810
+        },
+        {
+          "file": "deck-mg-before-05.png",
+          "clock": 579.2165000000211,
+          "offset": 2.716,
+          "fx": {
+            "muzzle": 1,
+            "tracer": 0,
+            "puff": 20,
+            "spark": 0,
+            "smoke": 5,
+            "chip": 8
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              29.05133705909752,
+              1.64,
+              39.999885073935104
+            ],
+            "quaternion": [
+              0,
+              -0.7071496112237752,
+              0,
+              0.7070639485549124
+            ],
+            "fov": 70
+          },
+          "draw": 501,
+          "triangles": 779340
+        },
+        {
+          "file": "deck-mg-before-06.png",
+          "clock": 579.4665000000209,
+          "offset": 2.966,
+          "fx": {
+            "muzzle": 1,
+            "tracer": 0,
+            "puff": 30,
+            "spark": 0,
+            "smoke": 5,
+            "chip": 12
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              29.05133705909752,
+              1.64,
+              39.999885073935104
+            ],
+            "quaternion": [
+              0,
+              -0.7071496112237752,
+              0,
+              0.7070639485549124
+            ],
+            "fov": 70
+          },
+          "draw": 501,
+          "triangles": 779376
+        },
+        {
+          "file": "deck-mg-before-07.png",
+          "clock": 580.0498000000204,
+          "offset": 3.55,
+          "fx": {
+            "muzzle": 1,
+            "tracer": 0,
+            "puff": 40,
+            "spark": 0,
+            "smoke": 5,
+            "chip": 16
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              29.05133705909752,
+              1.64,
+              39.999885073935104
+            ],
+            "quaternion": [
+              0,
+              -0.7071496112237752,
+              0,
+              0.7070639485549124
+            ],
+            "fov": 70
+          },
+          "draw": 501,
+          "triangles": 779412
+        },
+        {
+          "file": "deck-mg-before-08.png",
+          "clock": 580.2998000000201,
+          "offset": 3.8,
+          "fx": {
+            "muzzle": 2,
+            "tracer": 1,
+            "puff": 55,
+            "spark": 0,
+            "smoke": 4,
+            "chip": 18
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              29.05133705909752,
+              1.64,
+              39.999885073935104
+            ],
+            "quaternion": [
+              0,
+              -0.7071496112237752,
+              0,
+              0.7070639485549124
+            ],
+            "fov": 70
+          },
+          "draw": 502,
+          "triangles": 780488
+        },
+        {
+          "file": "deck-mg-before-09.png",
+          "clock": 580.6331000000198,
+          "offset": 4.133,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 0,
+            "puff": 75,
+            "spark": 0,
+            "smoke": 5,
+            "chip": 28
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              29.05133705909752,
+              1.64,
+              39.999885073935104
+            ],
+            "quaternion": [
+              0,
+              -0.7071496112237752,
+              0,
+              0.7070639485549124
+            ],
+            "fov": 70
+          },
+          "draw": 500,
+          "triangles": 779010
+        }
+      ],
+      "diag": {
+        "clock": 580.9830000000195,
+        "drawCalls": 500,
+        "triangles": 778964,
+        "player": {
+          "x": 29.05133705909752,
+          "y": 0,
+          "z": 39.999885073935104,
+          "angle": 0.00012114530817196701,
+          "pitch": 0,
+          "health": 100,
+          "crouched": false,
+          "aiming": false
+        },
+        "longRange": null,
+        "memory": null
+      }
+    }
+  ]
+}

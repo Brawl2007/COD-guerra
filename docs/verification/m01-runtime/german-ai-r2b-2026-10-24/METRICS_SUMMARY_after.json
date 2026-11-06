@@ -1,0 +1,105 @@
+{
+ "tool": "tools/verification/m01-german-ai-metrics.mjs --summary",
+ "summary": {
+  "after": {
+   "routes": 24,
+   "fightRealSec": {
+    "mean": 275.7,
+    "min": 176.8,
+    "max": 360.7
+   },
+   "toPlayerM": {
+    "minOfMin": 229.8,
+    "meanOfMin": 337.82,
+    "meanOfMedian": 616.32,
+    "pctUnder300": 5.15,
+    "pctUnder150": 0,
+    "routesUnder300": 11,
+    "routesUnder150": 0
+   },
+   "toPostM": {
+    "minOfMin": 83.1,
+    "meanOfMin": 181.33,
+    "meanOfMedian": 382.9,
+    "pctUnder300": 27.46,
+    "pctUnder150": 5.02,
+    "pctUnder100": 1.29,
+    "routesUnder150": 11,
+    "routesUnder100": 8
+   },
+   "germanCasualtiesPerRoute": {
+    "assaultDead": 2.17,
+    "bySource": {
+     "player": 0.25,
+     "rearguard": 1.83,
+     "section": 0.08,
+     "ckm": 0,
+     "demolition": 4,
+     "grenade": 0,
+     "other": 0
+    },
+    "routesWithBreakOut": 6,
+    "assaultAliveAtEnd": 3.83
+   },
+   "polishRounds": {
+    "section": {
+     "shots": 21.63,
+     "hits": 0.21
+    },
+    "rearguard": {
+     "shots": 138.5,
+     "hits": 2.38
+    },
+    "player": {
+     "shots": 59.67,
+     "hits": 0.25
+    },
+    "kowalBursts": 31.83
+   },
+   "pressure": {
+    "assaultSuppressedPct": 37.15,
+    "polesPinnedPct": 58.04
+   },
+   "germanFire": {
+    "roundsPerRoute": 152.67,
+    "collisionsOnPlayer": 4.42,
+    "woundsOnPlayer": 1.17,
+    "minHealthInWindow": 52,
+    "meanMinHealth": 87.33
+   },
+   "grenades": {
+    "thrownPerRoute": 0,
+    "routesWithAny": 0,
+    "exploded": 0,
+    "playerWounds": 0,
+    "playerDamage": 0
+   },
+   "twoLinesPct": 61.52,
+   "stages": {
+    "maxStageReachedMean": 1.33,
+    "routesAtStage1": 19,
+    "routesAtStage2": 13,
+    "pullBacks": 0.25,
+    "searches": 0
+   },
+   "integrity": {
+    "complete": "24/24",
+    "checkpoints4": "24/24",
+    "survivors": {
+     "12": 12,
+     "18": 12
+    },
+    "demolitionRealSec": {
+     "mean": 870.96,
+     "min": 751,
+     "max": 987.8
+    },
+    "routeRealSec": {
+     "mean": 1201.66
+    },
+    "clippingEvents": 0,
+    "stackedPairs": 0
+   }
+  }
+ }
+}

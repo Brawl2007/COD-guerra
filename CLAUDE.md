@@ -1,6 +1,6 @@
 @AGENTS.md
 
-**Antes de delegar qualquer TASK_ID da M01**, consultar a mesma fonte de tarefas `.agent/m01-task-registry.json` e executar `python3 .agent/tools/m01_task_registry.py check TXX --live`. Entregas existentes devem ser revistas/integradas, não recriadas. Para tarefa `UNKNOWN` e livre, exigir `claim TXX --sha "$(git rev-parse HEAD)"` antes de implementação, com confirmação atómica no GitHub. Em caso de erro de rede ou conflito, não duplicar. O **PR #76** já contém a candidata principal V2–V7; não criar outra candidata paralela. Ver `AGENTS.md` e issue #72.
+**Antes de delegar qualquer TASK_ID da M01**, consultar a mesma fonte de tarefas `.agent/m01-task-registry.json` e executar `python3 .agent/tools/m01_task_registry.py check TXX --live`. Entregas existentes devem ser revistas/integradas, não recriadas. Para tarefa `UNKNOWN` e livre, exigir `claim TXX --sha "$(git rev-parse HEAD)"` antes de implementação, com confirmação atómica no GitHub. Em caso de erro de rede ou conflito, não duplicar. O **PR #76** (V2–V7) já está na `main`; a candidata única atual está em `docs/direction/M01_INTEGRATION_LEDGER.md` (PR #80). Não criar outra candidata paralela. Política de integração única e economia de tokens: secção «uma IA entrega, um jogo recebe» do `AGENTS.md`. Ver `AGENTS.md` e issue #72.
 
 ## Missão permanente da Routine Cloud — M01 completa
 

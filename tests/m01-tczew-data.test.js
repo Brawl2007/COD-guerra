@@ -3,6 +3,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import { RETIRED_CASEMATE } from './helpers/m01-retired-casemate.js';
 
 const read = path => fs.readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 const mission = JSON.parse(read('missions/m01-tczew/mission.json'));
@@ -264,16 +265,15 @@ function audioLayoutProblems(l) {
 const emitters = mission.sectors.flatMap(s => (s.audioEmitters ?? []).map(e => ({ sector: s.id, ...e })));
 const emitterContext = { weapons: mission.allowedEquipment, lo: clockSeconds(mission.clock.start), hi: clockSeconds(mission.clock.end) };
 
-test('M01 audio emitters require activeFrom, keep valid windows and include the casemate ckm as display-only dramatization', () => {
-  assert.deepEqual(emitters.map(e => e.id).sort(), ['ae_s1_ckm_casemate', 'ae_s2_ckm_east', 'ae_s2_mg_dike', 'ae_s2_mg_train']);
+test('M01 audio emitters require activeFrom and keep valid windows; T47 retired the display-only casemate ckm (the real gun of post S2 is the only ckm of the west bridgehead)', () => {
+  assert.deepEqual(emitters.map(e => e.id).sort(), ['ae_s2_ckm_east', 'ae_s2_mg_dike', 'ae_s2_mg_train']);
   for (const e of emitters) assert.deepEqual(audioEmitterProblems(e, emitterContext), [], e.id);
-  const casemate = emitters.find(e => e.id === 'ae_s1_ckm_casemate');
-  assert.equal(casemate.sector, 's1_west_bridgehead');
-  assert.equal(casemate.weapon, 'ckm_wz30');
-  assert.deepEqual(casemate.position, layout.features.find(f => f.id === 'casemates_west').embrasures[1], 'ckm na seteira sul da casamata');
-  assert.equal(casemate.certainty, 'GAMEPLAY_DRAMATIZATION');
-  assert.equal(casemate.displayOnly, true, 'Anexo B7: fogo de apresentação, nunca supressão');
-  assert.ok(clockSeconds(casemate.activeUntil) <= clockSeconds(eventById('evt_m01_west_demolition').trigger.at), 'tripulação sai antes da demolição oeste');
+  assert.deepEqual(mission.sectors.find(s => s.id === 's1_west_bridgehead').audioEmitters, [], 'no dramatized ckm at the old casemate: it would double the real gun of post S2');
+  assert.ok(emitters.every(e => e.displayOnly !== true && e.certainty !== 'GAMEPLAY_DRAMATIZATION'), 'no display-only emitter is left in the authored data');
+  // The data the audio tests put back into a copy of the mission (tests/helpers/m01-retired-casemate.js) is still valid under the same validator and the same clock bounds,
+  // so the crew gate and the scheduling tests keep exercising a real, valid dramatized emitter.
+  assert.deepEqual(audioEmitterProblems(RETIRED_CASEMATE, emitterContext), []);
+  assert.ok(clockSeconds(RETIRED_CASEMATE.activeUntil) <= clockSeconds(eventById('evt_m01_west_demolition').trigger.at), 'tripulação sai antes da demolição oeste');
   assert.equal(emitters.find(e => e.id === 'ae_s2_ckm_east').activeUntil, '06:00:00', 'valor anterior preservado');
   const sectorEvents = id => mission.sectors.find(s => s.id === id).schedule.map(s => s.at);
   assert.ok(sectorEvents('s2_east_bridgehead').includes(emitters.find(e => e.id === 'ae_s2_mg_train').activeFrom), 'ae_s2_mg_train começa num passo da agenda de s2');

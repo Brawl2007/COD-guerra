@@ -49,5 +49,15 @@
     "note": "main moved externally since initial audit; this execution neither writes main nor requires main to stay at its old audited head. Integration target remains unchanged."
   },
   "implementationCommit": "e0d494e51e367383952719d577207c233c290fbb",
-  "stage": "implemented candidate; independent verification/review pending"
+  "stage": "ACCEPTED by independent verifier5 and critical reviewer; publication uses same source-identical package on work/integration refs",
+  "accepted_code_head": "e377a0739906507dee63cd4006a3428efd22c56b",
+  "production_identity_head": "9a679c50cdbe9a19330aba72961cb51cda808a5d",
+  "work_branch": "codex/m01-partials-browser-sampling-repair-v1",
+  "integration_target": "claude/m01-integration",
+  "final_remote_audit": {
+    "previous_target_head": "8a0c3622f5375f2c5b5e847db71f4f6e8352ae39",
+    "main_head_observed": "ecaebd3463c81e3b11aa9d30e14f52122b1bc3a8",
+    "main_modified_by_task": false,
+    "publication": "Normal atomic fast-forward of work and integration refs to the same reviewed package; exact published tip in PR body and operational terminal trace. Revalidate live refs."
+  }
 }

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "task_id": "M01-PARTIALS-COMPLETION-INTEGRATION-V1",
+  "accepted_head": "e377a0739906507dee63cd4006a3428efd22c56b",
+  "status": "ACCEPTED",
+  "obligations": [
+    {
+      "id": "m01-partials-pause-reload-finite-phases",
+      "kind": "browser",
+      "check": "node --test tests/m01-partials-completion.test.js tests/m01-partials-correction-01.test.js && npx playwright test --config tools/verification/playwright.partials-completion.config.js --workers=1 --retries=0",
+      "reason": "Preserve optional schema2/legacy atomicity, finite carry/feed phases and genuine delivery before WEST, saved free-scene cues, train arrival/anchors, grenade expiry and paused damage/graphics clocks. Keep actual drawn-frame/native-pause assertions and existing coupled cases."
+    },
+    {
+      "id": "m01-partials-current-owner-and-sandbox-authority",
+      "kind": "test",
+      "check": "node tools/verification/m01-bridge-finish-v2-authority.mjs --current-authority && node tools/verification/m01-bridge-finish-v2-futures.mjs --current-authority --out test-results/m01-partials-owner-futures.json",
+      "reason": "Preserve the protected French sandbox/original assets and actual presentation-only bridge-owner ON/OFF full save/event/control/checkpoint futures across both routes and twelve seeds. No renderer may decide gameplay or consume simulation RNG."
+    }
+  ]
+}

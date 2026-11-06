@@ -1,0 +1,78 @@
+<!doctype html><html lang="pt"><meta charset="utf-8"><link rel="icon" href="data:,"><title>M01 R8-a soldier batching A/B</title><style>body{margin:0;overflow:hidden;background:#8d969a}canvas{display:block}</style><script type="module">
+// Staged A/B of the soldier renderer for package R8-a: the same existing actors, poses, lights and camera drawn once by the former one-mesh-per-part
+// path (M01Characters {batching:false}) and once by the merged path, with the real GLBs/atlases. Reports renderer.info draw calls / triangles of each
+// and the pixel difference of the two frames. Presentation only; no simulation state is written.
+import * as THREE from 'three';
+import {M01Characters} from '../../src/render/m01-characters.js';
+import {M01Simulation} from '../../src/game/m01-simulation.js';
+import {mergeSoldierGeometries} from '../../src/render/m01-soldier-batching.js';
+import {soldierVisualVariant} from '../../src/render/m01-soldier-variation.js';
+const W=1280,H=720;
+const renderer=new THREE.WebGLRenderer({antialias:false,preserveDrawingBuffer:true});renderer.setSize(W,H);renderer.setPixelRatio(1);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.shadowMap.enabled=true;document.body.appendChild(renderer.domElement);
+const scene=new THREE.Scene();scene.background=new THREE.Color('#8d969a');scene.add(new THREE.HemisphereLight('#d7e2ea','#4d4433',1.4));
+const sun=new THREE.DirectionalLight('#fff1dc',2.4);sun.position.set(-3,6,-4);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-5,right:5,top:5,bottom:-5,near:.5,far:30});scene.add(sun);
+const fill=new THREE.DirectionalLight('#c9d6ff',.6);fill.position.set(4,2,3);scene.add(fill);
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshStandardMaterial({color:'#6f6a58',roughness:1}));floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor);
+const camera=new THREE.PerspectiveCamera(40,W/H,.05,400),sim=new M01Simulation();
+const after=new M01Characters(scene,{batching:true}),before=new M01Characters(scene,{batching:false});window.ready=false;
+await after.load('high');before.sources=after.sources;before.clips=after.clips;
+const scratch=document.createElement('canvas');scratch.width=W;scratch.height=H;const ctx=scratch.getContext('2d',{willReadFrequently:true});
+const pixels=()=>{ctx.drawImage(renderer.domElement,0,0);return ctx.getImageData(0,0,W,H);};
+function roster(kind){
+  if(kind==='pl')return ['marek_zielinski','pawel_krawiec','jozef_bak','szymon_kowal','tadeusz_nowicki'].map(id=>sim.actor(id));
+  const seen=new Set();return sim.actors.filter(a=>a.team==='enemy'&&a.id.startsWith('de_east_')&&a.role==='RIFLEMAN').filter(a=>{const id=soldierVisualVariant(a).id;if(seen.has(id))return false;seen.add(id);return true;}).slice(0,5);
+}
+function stage(c,other,actors,player,quality){
+  for(const v of other.instances.values())v.root.visible=false;
+  for(const v of c.instances.values())v.root.visible=true;
+  c.update(actors.map(a=>({...a})),12,player,quality,sim.battleClock);
+}
+window.stage={
+  drawOrder(kind,distance=5){
+    const raw=roster(kind),actors=raw.slice(0,1).map(a=>({...a,active:true,alive:true,state:'GUARD',crouched:false,carriedBy:null,stationDrag:null,target:null,shot:0,firedAt:-1e9,x:0,y:0,z:0,facing:-Math.PI/2}));
+    const player={x:0,z:-distance};camera.position.set(0,1.7,-distance);camera.lookAt(0,.9,0);camera.updateProjectionMatrix();const out={};
+    for(const [name,c,other] of [['before',before,after],['after',after,before]]){stage(c,other,actors,player,'high');const order=[];const v=[...c.instances.values()][0];
+      v.root.traverse(m=>{if(m.isMesh)m.onBeforeRender=(r,s,cam)=>{if(cam===camera)order.push(`${m.name}#${m.id}:${m.material.id}`);};});
+      renderer.render(scene,camera);out[name]=order;v.root.traverse(m=>{if(m.isMesh)m.onBeforeRender=()=>{};});}
+    return out;
+  },
+  capture({kind='pl',distance=5,quality='high'}){
+    const raw=roster(kind),actors=raw.map((a,i)=>({...a,active:true,alive:true,state:'GUARD',crouched:false,carriedBy:null,stationDrag:null,target:null,shot:0,firedAt:-1e9,x:(i-(raw.length-1)/2)*.66,y:0,z:0,facing:-Math.PI/2+(i%3-1)*.14}));
+    const player={x:-distance*.2,z:-distance},fov=2*Math.atan(1.7/distance)*180/Math.PI;
+    camera.fov=fov;camera.position.set(player.x,1.7,player.z);camera.lookAt(new THREE.Vector3(0,.9,0));camera.updateProjectionMatrix();
+    const shots={};
+    // 'before' is drawn first and again last: the pair (before, before) measures the renderer's own frame-to-frame noise (none expected, deterministic).
+    for(const [name,c,other] of [['before',before,after],['after',after,before],['before2',before,after]]){
+      stage(c,other,actors,player,quality);
+      renderer.info.autoReset=false;renderer.info.reset();renderer.render(scene,camera);
+      shots[name]={pixels:pixels(),calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,url:renderer.domElement.toDataURL('image/png'),lods:c.diagnostics.actors.map(a=>a.lod),
+        instances:c.instances.size,stats:{submittedMeshes:c.stats.submittedMeshes,submittedDrawCalls:c.stats.submittedDrawCalls}};
+    }
+    const diff=(a,b)=>{const A=a.data,B=b.data;let max=0,count=0,sum=0;const out=ctx.createImageData(W,H);
+      for(let i=0;i<A.length;i+=4){const d=Math.max(Math.abs(A[i]-B[i]),Math.abs(A[i+1]-B[i+1]),Math.abs(A[i+2]-B[i+2]));if(d>0){count++;sum+=d;if(d>max)max=d;}
+        const v=Math.min(255,d*32);out.data[i]=out.data[i+1]=out.data[i+2]=255-v;out.data[i+3]=255;}
+      return {max,differingPixels:count,meanDiffOverDiffering:count?sum/count:0,image:out};};
+    // Bisect probe: the merged instance, with its logical parts put back in the scene and the merged meshes hidden (same Skeleton, same pose).
+    stage(after,before,actors,player,quality);
+    const undo=[];for(const v of after.instances.values())for(const b of v.batches){b.mesh.visible=false;undo.push(b);for(const p of b.parts)b.mesh.parent.add(p);v.root.updateMatrixWorld(true);}
+    renderer.info.reset();renderer.render(scene,camera);const unmerged=pixels();
+    for(const b of undo){for(const p of b.parts)b.mesh.parent.children.find(o=>o.name==='m01_batched_parts').add(p);b.mesh.visible=true;}
+    // Order probe: the merged body batch rebuilt with its parts in reverse order. A change here means depth ties between coplanar parts decide those pixels.
+    stage(after,before,actors,player,quality);const kept=[];
+    for(const v of after.instances.values())for(const b of v.batches){const g=mergeSoldierGeometries(b.parts.map(p=>p.geometry).reverse());kept.push([b.mesh,b.mesh.geometry,g]);b.mesh.geometry=g;}
+    renderer.info.reset();renderer.render(scene,camera);const reversed=pixels();for(const [m,g,tmp] of kept){m.geometry=g;tmp.dispose();}
+    const d=diff(shots.before.pixels,shots.after.pixels),reverseOrder=diff(shots.after.pixels,reversed),reverseVsBefore=diff(shots.before.pixels,reversed),viaParts=diff(shots.before.pixels,unmerged),viaPartsVsAfter=diff(unmerged,shots.after.pixels),noise=diff(shots.before.pixels,shots.before2.pixels);
+    // Tie probe: the former path again, but with the heads drawn first (renderOrder -1). Any pixel that changes here is a depth tie between coplanar parts
+    // (neck seam, hand on sleeve) that depends on draw order alone, not on the merge.
+    stage(before,after,actors,player,quality);for(const v of before.instances.values())for(const m of v.meshes)if(m.name.startsWith('head_'))m.renderOrder=-1;
+    renderer.info.reset();renderer.render(scene,camera);const tie=diff(shots.before.pixels,pixels());for(const v of before.instances.values())for(const m of v.meshes)m.renderOrder=0;
+    ctx.putImageData(d.image,0,0);const diffUrl=scratch.toDataURL('image/png');
+    return {kind,distance,quality,ids:actors.map(a=>a.id),fov,
+      before:{calls:shots.before.calls,triangles:shots.before.triangles,lods:shots.before.lods,instances:shots.before.instances,stats:shots.before.stats,url:shots.before.url},
+      after:{calls:shots.after.calls,triangles:shots.after.triangles,lods:shots.after.lods,instances:shots.after.instances,stats:shots.after.stats,url:shots.after.url},
+      pixelDiff:{max:d.max,differingPixels:d.differingPixels,totalPixels:W*H,meanDiffOverDiffering:d.meanDiffOverDiffering,url:diffUrl},
+      repeatNoise:{max:noise.max,differingPixels:noise.differingPixels},drawOrderTieProbe:{max:tie.max,differingPixels:tie.differingPixels},
+      mergedPartOrderReversedVsBefore:{max:reverseVsBefore.max,differingPixels:reverseVsBefore.differingPixels},mergedPartOrderReversedVsMerged:{max:reverseOrder.max,differingPixels:reverseOrder.differingPixels},sameInstanceUnmergedVsBefore:{max:viaParts.max,differingPixels:viaParts.differingPixels},sameInstanceUnmergedVsMerged:{max:viaPartsVsAfter.max,differingPixels:viaPartsVsAfter.differingPixels}};
+  }
+};window.ready=true;
+</script></html>

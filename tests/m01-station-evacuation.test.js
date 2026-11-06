@@ -52,7 +52,10 @@ test('legacy schema 2 saves with an already consumed station event do not replay
   for(const a of legacy.actors)if(['generic_rifleman','leon_dudek'].includes(a.id)){delete a.task;delete a.carriedBy;delete a.stationDrag;a.crouched=false;}
   const old=legacy.actors.find(a=>a.id==='generic_rifleman');Object.assign(old,{health:100,state:'GUARD',x:-95,z:24});
   const copy=new M01Simulation();copy.restoreSnapshot(legacy);for(let i=0;i<100;i++)copy.tick(.05);
-  assert.equal(patient(copy).health,100);assert.equal(patient(copy).task,undefined);assert.equal(medic(copy).task,undefined);
+  // 2026-11-04 (package 2, golden amendment 21): a medic who is free of the station may now take the first aid job of the wounded men of the garrison (src/game/m01-aid.js, task 'aid'); what an old save must never bring back
+  // is the station's own drag (no station task, no carry, no stationDrag record, the casualty untouched).
+  assert.equal(patient(copy).health,100);assert.equal(patient(copy).task,undefined);assert.ok([undefined,'aid'].includes(medic(copy).task),`the medic's task is ${medic(copy).task}`);
+  assert.equal(medic(copy).stationDrag,undefined);assert.equal(patient(copy).carriedBy??null,null);
 });
 test('station care coexists with Bąk, all objectives, checkpoints and both historical demolitions on supported and ignored routes',()=>{
   for(const support of [false,true]){

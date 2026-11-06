@@ -1,0 +1,48 @@
+{
+  "scope": "Controlled actual late paintAtlas completion on same frozen06:10save reproduces historical frames byte-for-byte; GPU stale uploads are identified without changing gameplay, original station meshes, camera or depth.",
+  "files": {
+    "controlledStale": "test-results/partials-correction-02/atlas-cache/old-pending.png",
+    "controlledReady": "test-results/partials-correction-02/atlas-cache/old-forced-ready.png",
+    "historicalOff": "/workspace/scratch/partials-bridge-ci5b/test-results/partials-bridge-paired/off/base-0610-control.png",
+    "historicalOn": "/workspace/scratch/partials-bridge-ci5b/test-results/partials-bridge-paired/on/current-0610-control.png"
+  },
+  "sha256": {
+    "controlledStale": "769f783b8c7cf5ca4ab773a5e501aed3cd791f8dac72f0977fabaafbeb203407",
+    "controlledReady": "b68c335b2b328ed0d19dd23ce3a35aa0cb274856d716e6108c25406604c6e32c",
+    "historicalOff": "b68c335b2b328ed0d19dd23ce3a35aa0cb274856d716e6108c25406604c6e32c",
+    "historicalOn": "769f783b8c7cf5ca4ab773a5e501aed3cd791f8dac72f0977fabaafbeb203407"
+  },
+  "staleVsHistoricalOn": {
+    "pixels": 0,
+    "max": 0,
+    "sum": 0,
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 800
+    }
+  },
+  "readyVsHistoricalOff": {
+    "pixels": 0,
+    "max": 0,
+    "sum": 0,
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 800
+    }
+  },
+  "realLateAtlasChange": {
+    "pixels": 318,
+    "max": 58,
+    "sum": 7349,
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 800
+    }
+  }
+}

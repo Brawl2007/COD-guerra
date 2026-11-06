@@ -1,0 +1,50 @@
+{
+ "lull": {
+  "act": "act_vii_a_north",
+  "scene": null,
+  "phase": "NP_ATTACK",
+  "complete": false,
+  "clock": 101.54999999999637,
+  "player": {
+   "x": -410.01242546324204,
+   "y": -3,
+   "z": -1158.6955261923713,
+   "angle": -1.5707963267948966,
+   "pitch": 0.015,
+   "health": 100,
+   "crouched": false,
+   "aiming": false
+  },
+  "alive": 21,
+  "clockText": "MANHÃ · ~07:00",
+  "objective": "Repila o ataque vindo do norte",
+  "status": "Linha norte · pausa · 2 atiradores na orla · 10 caídos",
+  "card": "",
+  "frames": 8,
+  "errors": []
+ },
+ "ech2": {
+  "act": "act_vii_a_north",
+  "scene": null,
+  "phase": "NP_ATTACK",
+  "complete": false,
+  "clock": 136.5499999999968,
+  "player": {
+   "x": -410.01242546324204,
+   "y": -3,
+   "z": -1158.6955261923713,
+   "angle": -1.5707963267948966,
+   "pitch": 0.015,
+   "health": 100,
+   "crouched": false,
+   "aiming": false
+  },
+  "alive": 19,
+  "clockText": "MANHÃ · ~07:00",
+  "objective": "Repila o ataque vindo do norte",
+  "status": "Linha norte · 2.ª vaga · 16 atacantes no campo · 12 caídos",
+  "card": "",
+  "frames": 7,
+  "errors": []
+ }
+}

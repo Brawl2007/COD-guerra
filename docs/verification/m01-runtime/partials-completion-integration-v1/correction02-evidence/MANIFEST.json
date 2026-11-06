@@ -1,0 +1,67 @@
+{
+  "sourceHead": "d7266b3d347045597f384f3df1320ec99070e693",
+  "scope": "Retained local controlled diagnostic proof and bounded final production checks; not independent acceptance or complete fresh certification. Historical CAP02 full24 FAIL retained separately.",
+  "files": [
+    {
+      "originalPath": "test-results/partials-correction-02/atlas-cache/proof.json",
+      "archive": "correction02-evidence/atlas-cache/proof.json",
+      "bytes": 3290266,
+      "sha256": "d87b967721e9bdac5a707aa1364c9c4041d58077c70f62c0ae2232b5aafdaef7"
+    },
+    {
+      "originalPath": "test-results/partials-correction-02/atlas-cache/historical-identification.json",
+      "archive": "correction02-evidence/atlas-cache/historical-identification.json",
+      "bytes": 1541,
+      "sha256": "0ef48b6c538d46bd69fed8476ab786ee7655685e14ed9871f172047da59760c1"
+    },
+    {
+      "originalPath": "test-results/partials-correction-02/atlas-cache/temporary-instrumentation.patch",
+      "archive": "correction02-evidence/atlas-cache/temporary-instrumentation.patch",
+      "bytes": 6641,
+      "sha256": "b304ce7f571cb4414b8d0af9725b33e0fe09b6515d53fbaa760376e9955a15bb"
+    },
+    {
+      "originalPath": "test-results/partials-correction-02/atlas-cache/temporary-m01-view.mjs.txt",
+      "archive": "correction02-evidence/atlas-cache/temporary-m01-view.mjs.txt",
+      "bytes": 83878,
+      "sha256": "d8a9cd11b67edad1f2bd3df5ad25c0a1dfe5c7005b867d04da5bfc4f68b354ad"
+    },
+    {
+      "originalPath": "test-results/partials-correction-02/atlas-paused-cache.mjs",
+      "archive": "correction02-evidence/atlas-paused-cache.mjs",
+      "bytes": 4738,
+      "sha256": "56f8e78dd57a0b2ea475f67f638598332038d09a17ab06f4996bce3a012f5fd0"
+    },
+    {
+      "originalPath": "test-results/partials-correction-02/seed6-raw-impact.json",
+      "archive": "correction02-evidence/seed6-raw-impact.json",
+      "bytes": 3612,
+      "sha256": "ec5062f597d500912b0260ac44fa82759346e2959f0bd0503c7c60b437762072"
+    },
+    {
+      "originalPath": "test-results/partials-correction-02/seed6-raw-impact.mjs",
+      "archive": "correction02-evidence/seed6-raw-impact.mjs",
+      "bytes": 1314,
+      "sha256": "5da60dbf606ebcca7486e958d39ad293bbc7c622aae1c91fd61f6955d2d6d5f4"
+    },
+    {
+      "originalPath": "test-results/partials-correction-02/cap03-seed1.json",
+      "archive": "correction02-evidence/cap03-seed1.json",
+      "bytes": 28576,
+      "sha256": "0302ce522b77fbe3919c229fb41924995618515b8152e72b4707067fa861c83c"
+    },
+    {
+      "originalPath": "test-results/partials-correction-02/cap03-seed6.json",
+      "archive": "correction02-evidence/cap03-seed6.json",
+      "bytes": 40465,
+      "sha256": "5b00e6db17d25611adc6d16b54e36b37a02851cd0cde73595e8ae62f704a2907"
+    },
+    {
+      "originalPath": "test-results/partials-correction-02/warm-final/proof.json",
+      "archive": "correction02-evidence/warm-final/proof.json",
+      "bytes": 1002476,
+      "sha256": "d81faecc09a3fa475cbda437c454b3b8ceb3c6a56ac77fe551a53e67c16140b7"
+    }
+  ],
+  "fullRouteRows": "Focused indices reference their original local route files; full CAP03 raw/current/policy rows for all24 must be published in the fresh simulation-authority CI artifact. Local originals are preserved, not committed as hundreds of MB."
+}

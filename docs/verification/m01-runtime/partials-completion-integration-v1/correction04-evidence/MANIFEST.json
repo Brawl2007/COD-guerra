@@ -1,0 +1,86 @@
+{
+  "source_head": "e377a0739906507dee63cd4006a3428efd22c56b",
+  "artifact_id": 12032822544,
+  "artifact_sha256": "662061d9a53e030fe912b1cdf5208c129d2cf11edd32f94fed729ea64070650f",
+  "provenance": "Verbatim selected JSON/PNG from independently verified successful5case CI artifact; raw source archive19entries retained externally.",
+  "files": [
+    {
+      "path": "stuka-report.json",
+      "original_path": "evidence/stuka-report.json",
+      "sha256": "25165dc7ea013b9a8cb135b91b8d185f23bda38cddd18cbb3ca6ed281342c092",
+      "bytes": 34905
+    },
+    {
+      "path": "m01-stuka-gone-sample.json",
+      "original_path": "test-results/m01-partials-stuka-sampling/m01-stuka-dive-45-s-after--613ac-is-empty-nothing-loops-back/m01-stuka-gone-sample.json",
+      "sha256": "d931301ccf1ce03c1c701d0a5757bdcbe1cee88e7d23a7c68a1f7a645700613d",
+      "bytes": 3074
+    },
+    {
+      "path": "m01-stuka-gone.png",
+      "original_path": "test-results/m01-partials-stuka-sampling/m01-stuka-dive-45-s-after--613ac-is-empty-nothing-loops-back/m01-stuka-gone.png",
+      "sha256": "d70925f7d85b13363b26f418926fd0674cbb2949234f298ddfd766cda2823e3c",
+      "bytes": 494503
+    },
+    {
+      "path": "m01-stuka-gone-diagnostics.json",
+      "original_path": "test-results/m01-partials-stuka-sampling/m01-stuka-dive-45-s-after--613ac-is-empty-nothing-loops-back/m01-stuka-gone-diagnostics.json",
+      "sha256": "53b518a5ac74ab75bbf80491136ea18fadd54faa2e5d76eb33ef9a57c8659159",
+      "bytes": 3426
+    },
+    {
+      "path": "m01-stuka-formation.png",
+      "original_path": "test-results/m01-partials-stuka-sampling/m01-stuka-dive-formation-t-70692-s-apart-close-to-the-player/m01-stuka-formation.png",
+      "sha256": "55499db0bfdb1b5b653540664f4ce1b4e7c39b4c247be4dd3ed2b0062d4a1ead",
+      "bytes": 421860
+    },
+    {
+      "path": "m01-stuka-formation-sample.json",
+      "original_path": "test-results/m01-partials-stuka-sampling/m01-stuka-dive-formation-t-70692-s-apart-close-to-the-player/m01-stuka-formation-sample.json",
+      "sha256": "5218dba509b7a0d6622dd3d102095a16511d2ba621bbf4913749a4c1818b8568",
+      "bytes": 3331
+    },
+    {
+      "path": "m01-stuka-formation-diagnostics.json",
+      "original_path": "test-results/m01-partials-stuka-sampling/m01-stuka-dive-formation-t-70692-s-apart-close-to-the-player/m01-stuka-formation-diagnostics.json",
+      "sha256": "a581fda608c0714ccc487b99a9449badae7ca0d49924211ee6eedc51d1e1a98f",
+      "bytes": 6421
+    },
+    {
+      "path": "m01-stuka-bomb-diagnostics.json",
+      "original_path": "test-results/m01-partials-stuka-sampling/m01-stuka-dive-bomb-the-fi-8e837-oint-1-5-s-before-its-blast/m01-stuka-bomb-diagnostics.json",
+      "sha256": "3951bca318777c6765f48c634476572b9a36b4a94cc9dc53397fb29a1fc194ae",
+      "bytes": 5401
+    },
+    {
+      "path": "m01-stuka-bomb.png",
+      "original_path": "test-results/m01-partials-stuka-sampling/m01-stuka-dive-bomb-the-fi-8e837-oint-1-5-s-before-its-blast/m01-stuka-bomb.png",
+      "sha256": "bf1c892faccd30990e7a50eeea0e7cba1f1b92f5edf97a6830a55b867a49280d",
+      "bytes": 340128
+    },
+    {
+      "path": "m01-stuka-bomb-sample.json",
+      "original_path": "test-results/m01-partials-stuka-sampling/m01-stuka-dive-bomb-the-fi-8e837-oint-1-5-s-before-its-blast/m01-stuka-bomb-sample.json",
+      "sha256": "5203b1513eb58f1cdd553639d56d4decf6f3c89144d4e18f637ad38c76701cef",
+      "bytes": 2865
+    },
+    {
+      "path": "m01-stuka-0435-diagnostics.json",
+      "original_path": "test-results/m01-partials-stuka-sampling/m01-stuka-dive-04-35-resto-cfcc9-chored-to-the-saved-bombing/m01-stuka-0435-diagnostics.json",
+      "sha256": "5de92bd3d0e094ad20324b6d744e49eadcb5c0e62b484243b5cb6f6cce983d1d",
+      "bytes": 3465
+    },
+    {
+      "path": "m01-stuka-0435-sample.json",
+      "original_path": "test-results/m01-partials-stuka-sampling/m01-stuka-dive-04-35-resto-cfcc9-chored-to-the-saved-bombing/m01-stuka-0435-sample.json",
+      "sha256": "d3d0698c9cac81dcb48c30416d0d1d8481f08000320049048e790a1b740ca965",
+      "bytes": 3110
+    },
+    {
+      "path": "m01-stuka-0435.png",
+      "original_path": "test-results/m01-partials-stuka-sampling/m01-stuka-dive-04-35-resto-cfcc9-chored-to-the-saved-bombing/m01-stuka-0435.png",
+      "sha256": "2a193740def4dd33b5068b90cbc30768156ac6927ee8759d4fa90f1b4c53bb06",
+      "bytes": 657707
+    }
+  ]
+}

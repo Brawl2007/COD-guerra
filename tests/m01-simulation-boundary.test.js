@@ -17,6 +17,7 @@ const FORBIDDEN_CODE = [
   [/(?<![.$\w])document\./, 'DOM access'],
   [/(?<![.$\w])window\./, 'window access'],
   [/\bglobalThis\b|\bself\.(?:document|window|location)\b/, 'global object access'],
+  [/(?<![\w$.])(?:globalThis\.)?window\s*\./, 'window access'],
   [/\brequestAnimationFrame\b/, 'frame callbacks'],
   [/\blocalStorage\b/, 'browser storage'],
   [/\bMath\.random\b/, 'Math.random (use the seeded Random)'],

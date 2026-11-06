@@ -1,0 +1,279 @@
+[
+  {
+    "name": "binoculars",
+    "view": "front",
+    "diag": [
+      {
+        "id": "pl_west_2",
+        "clip": "standing_idle_c",
+        "opening": {
+          "act": "binoculars",
+          "pose": true,
+          "props": [
+            "binoculars"
+          ]
+        },
+        "lod": 0
+      }
+    ]
+  },
+  {
+    "name": "smoke-a",
+    "view": "front",
+    "diag": [
+      {
+        "id": "east_platoon_voice",
+        "clip": "standing_idle_b",
+        "opening": {
+          "act": "smoke",
+          "pose": true,
+          "props": [
+            "cigarette"
+          ]
+        },
+        "lod": 0
+      }
+    ]
+  },
+  {
+    "name": "coffee-b",
+    "view": "front",
+    "diag": [
+      {
+        "id": "jozef_bak",
+        "clip": "standing_idle_b",
+        "opening": {
+          "act": "coffee",
+          "pose": true,
+          "props": [
+            "mug"
+          ]
+        },
+        "lod": 0
+      }
+    ]
+  },
+  {
+    "name": "map",
+    "view": "front",
+    "diag": [
+      {
+        "id": "marek_zielinski",
+        "clip": "standing_idle_c",
+        "opening": {
+          "act": "map",
+          "pose": true,
+          "props": [
+            "map"
+          ]
+        },
+        "lod": 0
+      }
+    ]
+  },
+  {
+    "name": "phone",
+    "view": "front",
+    "diag": [
+      {
+        "id": "staszek_pawlak",
+        "clip": "standing_idle",
+        "opening": {
+          "act": "phone",
+          "pose": true,
+          "props": [
+            "handset",
+            "phone"
+          ]
+        },
+        "lod": 0
+      }
+    ]
+  },
+  {
+    "name": "ammo",
+    "view": "front",
+    "diag": [
+      {
+        "id": "pl_west_0",
+        "clip": "standing_idle",
+        "opening": {
+          "act": "ammo_check",
+          "pose": true,
+          "props": [
+            "box"
+          ]
+        },
+        "lod": 0
+      }
+    ]
+  },
+  {
+    "name": "aid",
+    "view": "front",
+    "diag": [
+      {
+        "id": "leon_dudek",
+        "clip": "standing_idle",
+        "opening": {
+          "act": "aid_kit",
+          "pose": true,
+          "props": [
+            "bag"
+          ]
+        },
+        "lod": 0
+      }
+    ]
+  },
+  {
+    "name": "track",
+    "view": "front",
+    "diag": [
+      {
+        "id": "franciszek_lipski",
+        "clip": "crouched_idle",
+        "opening": {
+          "act": "track_check",
+          "pose": true,
+          "props": []
+        },
+        "lod": 0
+      }
+    ]
+  },
+  {
+    "name": "lookup",
+    "view": "front",
+    "diag": [
+      {
+        "id": "pl_west_3",
+        "clip": "standing_idle_c",
+        "opening": {
+          "act": "look_up",
+          "pose": true,
+          "props": []
+        },
+        "lod": 0
+      }
+    ]
+  },
+  {
+    "name": "point",
+    "view": "front",
+    "diag": [
+      {
+        "id": "pl_west_3",
+        "clip": "standing_idle_c",
+        "opening": {
+          "act": "point",
+          "pose": true,
+          "props": []
+        },
+        "lod": 0
+      }
+    ]
+  },
+  {
+    "name": "deliver",
+    "view": "front",
+    "diag": [
+      {
+        "id": "pl_west_1",
+        "clip": "standing_idle_c",
+        "opening": {
+          "act": "deliver",
+          "pose": true,
+          "props": [
+            "note"
+          ]
+        },
+        "lod": 0
+      }
+    ]
+  },
+  {
+    "name": "cover",
+    "view": "front",
+    "diag": [
+      {
+        "id": "jozef_bak",
+        "clip": "crouched_idle",
+        "opening": {
+          "act": "cover",
+          "pose": true,
+          "props": []
+        },
+        "lod": 0
+      }
+    ]
+  },
+  {
+    "name": "shout",
+    "view": "front",
+    "diag": [
+      {
+        "id": "marek_zielinski",
+        "clip": "call_out",
+        "opening": {
+          "act": "shout",
+          "pose": false,
+          "props": []
+        },
+        "lod": 0
+      }
+    ]
+  },
+  {
+    "name": "brace",
+    "view": "front",
+    "diag": [
+      {
+        "id": "pl_west_4",
+        "clip": "standing_idle",
+        "opening": {
+          "act": "brace",
+          "pose": true,
+          "props": []
+        },
+        "lod": 0
+      }
+    ]
+  },
+  {
+    "name": "inspect",
+    "view": "front",
+    "diag": [
+      {
+        "id": "pawel_krawiec",
+        "clip": "sapper_work",
+        "opening": {
+          "act": "cable_inspect",
+          "pose": false,
+          "props": [
+            "meter"
+          ]
+        },
+        "lod": 0
+      }
+    ]
+  },
+  {
+    "name": "hold",
+    "view": "front",
+    "diag": [
+      {
+        "id": "sapper_2",
+        "clip": "crouched_idle_b",
+        "opening": {
+          "act": "cable_hold",
+          "pose": false,
+          "props": [
+            "coil"
+          ]
+        },
+        "lod": 0
+      }
+    ]
+  }
+]

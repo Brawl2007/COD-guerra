@@ -1,0 +1,398 @@
+# after 19390901:0
+0.00 ENTRY
+114.30 TACTIC stage de_spans_7 {}
+114.30 TACTIC stage de_spans_9 {}
+120.55 TACTIC stage de_spans_8 {}
+137.25 TACTIC stage de_spans_5 {}
+137.25 TACTIC stage de_spans_6 {}
+147.45 TACTIC stage de_spans_4 {}
+153.85 TACTIC stage de_spans_9 {}
+162.15 TACTIC stage de_spans_7 {}
+170.05 TACTIC stage de_spans_5 {}
+170.55 PLAYER WOUND -8 by de_spans_7 (kar98k/squad) health 92
+170.85 TACTIC stage de_spans_8 {}
+179.35 TACTIC stage de_spans_4 {}
+184.40 TACTIC stage de_spans_6 {}
+211.80 CASUALTY de_spans_5 by rearguard at x 322 (cover, speed 0.0)
+211.85 TACTIC pullback de_spans_8 {}
+235.40 CASUALTY de_spans_6 by rearguard at x 468 (fallback, speed 5.2)
+248.45 CASUALTY de_spans_4 by rearguard at x 381 (fallback, speed 5.2)
+257.15 CASUALTY de_spans_8 by rearguard at x 567 (fallback, speed 5.2)
+326.85 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+326.85 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+326.85 CASUALTY de_spans_2 by demolition at x 960 (clear, speed 0.0)
+326.85 CASUALTY de_spans_3 by demolition at x 954 (clear, speed 0.0)
+326.85 DEMOLITION
+# after 19390901:1
+0.00 ENTRY
+126.55 CASUALTY de_spans_8 by player at x 792 (fallback, speed 5.2)
+134.75 CASUALTY de_spans_5 by rearguard at x 507 (hold, speed 0.0)
+234.10 PLAYER WOUND -8 by de_east_14 (kar98k/player) health 84
+239.95 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+239.95 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+239.95 CASUALTY de_spans_2 by demolition at x 951 (clear, speed 0.0)
+239.95 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+239.95 DEMOLITION
+# after 1:0
+0.00 ENTRY
+110.90 TACTIC stage de_spans_9 {}
+114.60 TACTIC stage de_spans_7 {}
+122.20 TACTIC stage de_spans_8 {}
+129.95 TACTIC stage de_spans_5 {}
+140.00 TACTIC stage de_spans_6 {}
+154.00 CASUALTY de_spans_6 by rearguard at x 447 (advance, speed 5.2)
+154.05 TACTIC pullback de_spans_9 {}
+174.05 TACTIC stage de_spans_4 {}
+174.05 TACTIC stage de_spans_5 {}
+174.05 TACTIC stage de_spans_7 {}
+174.05 TACTIC stage de_spans_8 {}
+174.05 TACTIC stage de_spans_9 {}
+204.05 TACTIC stage de_spans_9 {}
+204.10 TACTIC stage de_spans_4 {}
+218.70 PLAYER WOUND -8 by de_spans_2 (kar98k/player) health 84
+258.95 CASUALTY de_spans_4 by rearguard at x 495 (fallback, speed 5.2)
+351.55 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+351.55 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+351.55 CASUALTY de_spans_2 by demolition at x 954 (clear, speed 0.0)
+351.55 CASUALTY de_spans_3 by demolition at x 948 (clear, speed 0.0)
+351.55 DEMOLITION
+# after 1:1
+0.00 ENTRY
+61.00 CASUALTY de_spans_8 by player at x 767 (advance, speed 5.2)
+129.95 TACTIC stage de_spans_5 {}
+161.35 CASUALTY de_spans_5 by rearguard at x 421 (advance, speed 5.2)
+178.80 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+178.80 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+178.80 CASUALTY de_spans_2 by demolition at x 951 (clear, speed 0.0)
+178.80 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+178.80 DEMOLITION
+# after 2:0
+0.00 ENTRY
+91.80 PLAYER WOUND -8 by de_spans_2 (kar98k/player) health 92
+109.40 TACTIC stage de_spans_9 {}
+116.20 TACTIC stage de_spans_7 {}
+117.65 TACTIC stage de_spans_8 {}
+130.15 TACTIC stage de_spans_5 {}
+137.50 TACTIC stage de_spans_4 {}
+137.70 TACTIC stage de_spans_6 {}
+141.95 PLAYER WOUND -8 by de_spans_4 (kar98k/squad) health 84
+143.50 TACTIC stage de_spans_9 {}
+159.00 TACTIC stage de_spans_7 {}
+164.95 TACTIC stage de_spans_5 {}
+166.85 TACTIC stage de_spans_8 {}
+175.90 TACTIC stage de_spans_4 {}
+186.20 TACTIC stage de_spans_6 {}
+234.20 CASUALTY de_spans_4 by rearguard at x 307 (fallback, speed 5.2)
+242.55 CASUALTY de_spans_5 by rearguard at x 398 (fallback, speed 5.2)
+353.70 PLAYER WOUND -8 by de_east_17 (kar98k/player) health 76
+356.15 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+356.15 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+356.15 CASUALTY de_spans_2 by demolition at x 954 (clear, speed 0.0)
+356.15 CASUALTY de_spans_3 by demolition at x 951 (clear, speed 0.0)
+356.15 DEMOLITION
+# after 2:1
+0.00 ENTRY
+51.30 PLAYER WOUND -8 by de_spans_2 (kar98k/player) health 84
+134.70 CASUALTY de_spans_5 by rearguard at x 507 (hold, speed 0.0)
+178.75 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+178.75 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+178.75 CASUALTY de_spans_2 by demolition at x 951 (clear, speed 0.0)
+178.75 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+178.75 DEMOLITION
+# after 3:0
+0.00 ENTRY
+110.90 TACTIC stage de_spans_9 {}
+111.00 TACTIC stage de_spans_7 {}
+124.20 TACTIC stage de_spans_8 {}
+130.35 TACTIC stage de_spans_5 {}
+141.20 TACTIC stage de_spans_6 {}
+141.25 TACTIC stage de_spans_4 {}
+149.60 TACTIC stage de_spans_9 {}
+158.40 TACTIC stage de_spans_7 {}
+160.20 TACTIC stage de_spans_5 {}
+165.85 TACTIC stage de_spans_8 {}
+169.50 TACTIC stage de_spans_4 {}
+191.75 TACTIC stage de_spans_6 {}
+254.15 PLAYER WOUND -8 by de_spans_1 (kar98k/player) health 84
+280.00 CASUALTY de_spans_4 by rearguard at x 545 (fallback, speed 5.2)
+304.50 CASUALTY de_spans_6 by rearguard at x 696 (fallback, speed 5.2)
+345.35 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+345.35 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+345.35 CASUALTY de_spans_2 by demolition at x 954 (clear, speed 0.0)
+345.35 CASUALTY de_spans_3 by demolition at x 948 (clear, speed 0.0)
+345.35 DEMOLITION
+# after 3:1
+0.00 ENTRY
+120.80 CASUALTY de_spans_8 by player at x 756 (fallback, speed 5.2)
+135.85 CASUALTY de_spans_5 by section at x 507 (hold, speed 0.0)
+178.10 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+178.10 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+178.10 CASUALTY de_spans_2 by demolition at x 951 (clear, speed 0.0)
+178.10 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+178.10 DEMOLITION
+# after 4:0
+0.00 ENTRY
+39.50 PLAYER WOUND -8 by de_spans_3 (kar98k/player) health 84
+111.30 TACTIC stage de_spans_9 {}
+115.65 TACTIC stage de_spans_7 {}
+120.85 TACTIC stage de_spans_8 {}
+131.45 TACTIC stage de_spans_5 {}
+137.05 TACTIC stage de_spans_6 {}
+144.75 TACTIC stage de_spans_4 {}
+150.55 TACTIC stage de_spans_9 {}
+168.95 TACTIC stage de_spans_7 {}
+169.35 TACTIC stage de_spans_5 {}
+171.65 TACTIC stage de_spans_8 {}
+180.85 TACTIC stage de_spans_4 {}
+186.80 TACTIC stage de_spans_6 {}
+244.60 CASUALTY de_spans_5 by rearguard at x 409 (fallback, speed 5.2)
+252.20 CASUALTY de_spans_6 by rearguard at x 424 (fallback, speed 5.2)
+328.20 PLAYER WOUND -8 by de_spans_3 (kar98k/player) health 76
+358.65 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+358.65 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+358.65 CASUALTY de_spans_2 by demolition at x 954 (clear, speed 0.0)
+358.65 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+358.65 DEMOLITION
+# after 4:1
+0.00 ENTRY
+185.50 CASUALTY de_spans_5 by rearguard at x 661 (fallback, speed 5.2)
+189.25 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+189.25 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+189.25 CASUALTY de_spans_2 by demolition at x 951 (clear, speed 0.0)
+189.25 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+189.25 DEMOLITION
+# after 5:0
+0.00 ENTRY
+112.60 TACTIC stage de_spans_9 {}
+115.00 TACTIC stage de_spans_7 {}
+126.70 TACTIC stage de_spans_8 {}
+126.90 TACTIC stage de_spans_5 {}
+132.75 TACTIC stage de_spans_6 {}
+142.55 TACTIC stage de_spans_4 {}
+145.20 TACTIC stage de_spans_9 {}
+150.60 TACTIC stage de_spans_7 {}
+154.50 TACTIC stage de_spans_5 {}
+162.95 PLAYER WOUND -8 by de_east_21 (kar98k/player) health 92
+169.35 TACTIC stage de_spans_6 {}
+176.10 TACTIC stage de_spans_8 {}
+180.95 TACTIC stage de_spans_4 {}
+181.40 PLAYER WOUND -8 by de_east_18 (kar98k/player) health 84
+188.25 PLAYER WOUND -8 by de_east_20 (kar98k/player) health 76
+284.40 PLAYER WOUND -8 by de_spans_1 (kar98k/player) health 68
+287.30 CASUALTY de_spans_6 by rearguard at x 631 (fallback, speed 5.2)
+299.40 PLAYER WOUND -8 by de_east_14 (kar98k/player) health 60
+359.10 PLAYER WOUND -8 by de_spans_1 (kar98k/player) health 52
+360.75 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+360.75 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+360.75 CASUALTY de_spans_2 by demolition at x 948 (clear, speed 0.0)
+360.75 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+360.75 DEMOLITION
+# after 5:1
+0.00 ENTRY
+245.90 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+245.90 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+245.90 CASUALTY de_spans_2 by demolition at x 948 (clear, speed 0.0)
+245.90 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+245.90 DEMOLITION
+# after 6:0
+0.00 ENTRY
+91.15 PLAYER WOUND -8 by de_spans_2 (kar98k/player) health 92
+108.85 TACTIC stage de_spans_9 {}
+109.45 PLAYER WOUND -8 by de_east_20 (kar98k/player) health 84
+116.35 TACTIC stage de_spans_7 {}
+121.15 TACTIC stage de_spans_8 {}
+127.80 TACTIC stage de_spans_5 {}
+139.85 TACTIC stage de_spans_6 {}
+142.00 TACTIC stage de_spans_4 {}
+143.05 TACTIC stage de_spans_9 {}
+163.80 TACTIC stage de_spans_5 {}
+166.20 TACTIC stage de_spans_7 {}
+171.10 TACTIC stage de_spans_8 {}
+175.00 PLAYER WOUND -8 by de_spans_0 (kar98k/player) health 76
+187.95 TACTIC stage de_spans_4 {}
+187.95 TACTIC stage de_spans_6 {}
+221.60 CASUALTY de_spans_5 by rearguard at x 338 (fallback, speed 5.2)
+221.65 TACTIC pullback de_spans_6 {}
+227.35 CASUALTY de_spans_6 by rearguard at x 313 (fallback, speed 5.2)
+229.40 CASUALTY de_spans_4 by rearguard at x 297 (fallback, speed 5.2)
+240.35 PLAYER WOUND -8 by de_spans_1 (kar98k/player) health 68
+243.45 CASUALTY de_spans_8 by rearguard at x 483 (fallback, speed 5.2)
+323.45 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+323.45 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+323.45 CASUALTY de_spans_2 by demolition at x 960 (clear, speed 0.0)
+323.45 CASUALTY de_spans_3 by demolition at x 954 (clear, speed 0.0)
+323.45 DEMOLITION
+# after 6:1
+0.00 ENTRY
+123.50 TACTIC stage de_spans_7 {}
+130.40 TACTIC stage de_spans_5 {}
+156.50 TACTIC stage de_spans_4 {}
+157.65 TACTIC stage de_spans_5 {}
+186.35 CASUALTY de_spans_5 by rearguard at x 358 (advance, speed 5.2)
+281.20 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+281.20 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+281.20 CASUALTY de_spans_2 by demolition at x 951 (clear, speed 0.0)
+281.20 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+281.20 DEMOLITION
+# after 7:0
+0.00 ENTRY
+106.40 TACTIC stage de_spans_9 {}
+118.75 TACTIC stage de_spans_7 {}
+119.35 TACTIC stage de_spans_8 {}
+132.20 TACTIC stage de_spans_5 {}
+133.90 TACTIC stage de_spans_6 {}
+143.15 TACTIC stage de_spans_9 {}
+145.80 TACTIC stage de_spans_4 {}
+156.20 PLAYER WOUND -8 by de_east_18 (kar98k/player) health 92
+160.00 CASUALTY de_spans_9 by rearguard at x 432 (advance, speed 5.2)
+180.25 TACTIC stage de_spans_4 {}
+183.40 TACTIC stage de_spans_6 {}
+230.95 CASUALTY de_spans_4 by rearguard at x 469 (fallback, speed 5.2)
+268.85 PLAYER WOUND -8 by de_spans_2 (kar98k/player) health 84
+296.40 CASUALTY de_spans_6 by rearguard at x 666 (fallback, speed 5.2)
+300.15 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+300.15 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+300.15 CASUALTY de_spans_2 by demolition at x 954 (clear, speed 0.0)
+300.15 CASUALTY de_spans_3 by demolition at x 948 (clear, speed 0.0)
+300.15 DEMOLITION
+# after 7:1
+0.00 ENTRY
+124.40 TACTIC stage de_spans_7 {}
+129.40 TACTIC stage de_spans_5 {}
+153.15 CASUALTY de_spans_5 by rearguard at x 454 (advance, speed 5.2)
+155.40 CASUALTY de_spans_7 by rearguard at x 472 (cover, speed 0.0)
+178.75 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+178.75 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+178.75 CASUALTY de_spans_2 by demolition at x 951 (clear, speed 0.0)
+178.75 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+178.75 DEMOLITION
+# after 8:0
+0.00 ENTRY
+113.40 TACTIC stage de_spans_9 {}
+114.80 TACTIC stage de_spans_7 {}
+122.65 TACTIC stage de_spans_8 {}
+128.00 TACTIC stage de_spans_5 {}
+134.15 TACTIC stage de_spans_6 {}
+144.60 TACTIC stage de_spans_4 {}
+144.60 TACTIC stage de_spans_9 {}
+163.25 TACTIC stage de_spans_5 {}
+164.70 TACTIC stage de_spans_7 {}
+169.20 TACTIC stage de_spans_8 {}
+178.50 TACTIC stage de_spans_4 {}
+182.25 TACTIC stage de_spans_6 {}
+235.40 CASUALTY de_spans_4 by rearguard at x 313 (fallback, speed 5.2)
+236.15 PLAYER WOUND -8 by de_east_19 (kar98k/player) health 92
+237.80 CASUALTY de_spans_6 by rearguard at x 349 (fallback, speed 5.2)
+256.75 CASUALTY de_spans_5 by rearguard at x 472 (fallback, speed 5.2)
+259.75 PLAYER WOUND -8 by de_east_21 (kar98k/player) health 84
+284.70 CASUALTY de_spans_8 by rearguard at x 668 (fallback, speed 5.2)
+287.80 PLAYER WOUND -8 by de_spans_1 (kar98k/player) health 76
+329.35 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+329.35 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+329.35 CASUALTY de_spans_2 by demolition at x 960 (clear, speed 0.0)
+329.35 CASUALTY de_spans_3 by demolition at x 954 (clear, speed 0.0)
+329.35 DEMOLITION
+# after 8:1
+0.00 ENTRY
+127.25 TACTIC stage de_spans_7 {}
+130.20 TACTIC stage de_spans_5 {}
+158.20 CASUALTY de_spans_5 by rearguard at x 432 (advance, speed 5.2)
+173.05 CASUALTY de_spans_7 by rearguard at x 562 (fallback, speed 5.2)
+176.80 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+176.80 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+176.80 CASUALTY de_spans_2 by demolition at x 951 (clear, speed 0.0)
+176.80 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+176.80 DEMOLITION
+# after 9:0
+0.00 ENTRY
+77.80 PLAYER WOUND -8 by de_east_17 (kar98k/player) health 92
+112.90 TACTIC stage de_spans_9 {}
+116.65 TACTIC stage de_spans_7 {}
+121.30 TACTIC stage de_spans_8 {}
+128.70 TACTIC stage de_spans_5 {}
+133.95 TACTIC stage de_spans_6 {}
+140.75 TACTIC stage de_spans_4 {}
+143.20 TACTIC stage de_spans_9 {}
+153.40 CASUALTY de_spans_7 by rearguard at x 472 (cover, speed 0.0)
+173.45 TACTIC stage de_spans_5 {}
+173.45 TACTIC stage de_spans_8 {}
+179.40 TACTIC stage de_spans_4 {}
+184.95 TACTIC stage de_spans_6 {}
+188.80 PLAYER WOUND -8 by de_spans_6 (kar98k/player) health 84
+237.05 CASUALTY de_spans_4 by rearguard at x 330 (fallback, speed 5.2)
+356.15 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+356.15 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+356.15 CASUALTY de_spans_2 by demolition at x 951 (clear, speed 0.0)
+356.15 CASUALTY de_spans_3 by demolition at x 948 (clear, speed 0.0)
+356.15 DEMOLITION
+# after 9:1
+0.00 ENTRY
+127.75 TACTIC stage de_spans_5 {}
+175.05 CASUALTY de_spans_5 by rearguard at x 463 (fallback, speed 5.2)
+220.60 CASUALTY de_spans_4 by rearguard at x 696 (fallback, speed 5.2)
+224.35 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+224.35 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+224.35 CASUALTY de_spans_2 by demolition at x 954 (clear, speed 0.0)
+224.35 CASUALTY de_spans_3 by demolition at x 951 (clear, speed 0.0)
+224.35 DEMOLITION
+# after 10:0
+0.00 ENTRY
+110.15 TACTIC stage de_spans_9 {}
+115.25 TACTIC stage de_spans_7 {}
+120.55 TACTIC stage de_spans_8 {}
+127.25 TACTIC stage de_spans_5 {}
+138.95 TACTIC stage de_spans_4 {}
+139.10 TACTIC stage de_spans_6 {}
+143.60 TACTIC stage de_spans_9 {}
+165.00 TACTIC stage de_spans_5 {}
+165.25 TACTIC stage de_spans_7 {}
+168.10 TACTIC stage de_spans_8 {}
+182.95 CASUALTY de_spans_8 by rearguard at x 379 (cover, speed 0.0)
+183.00 TACTIC pullback de_spans_4 {}
+183.00 TACTIC pullback de_spans_9 {}
+201.00 CASUALTY de_spans_4 by rearguard at x 457 (hold, speed 0.0)
+201.05 TACTIC pullback de_spans_7 {}
+214.50 CASUALTY de_spans_5 by rearguard at x 307 (hold, speed 0.0)
+318.30 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+318.30 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+318.30 CASUALTY de_spans_2 by demolition at x 954 (clear, speed 0.0)
+318.30 CASUALTY de_spans_3 by demolition at x 951 (clear, speed 0.0)
+318.30 DEMOLITION
+# after 10:1
+0.00 ENTRY
+93.20 CASUALTY de_spans_9 by player at x 679 (advance, speed 5.2)
+146.25 PLAYER WOUND -8 by de_east_14 (kar98k/player) health 92
+155.05 TACTIC stage de_spans_5 {}
+290.80 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+290.80 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+290.80 CASUALTY de_spans_2 by demolition at x 948 (clear, speed 0.0)
+290.80 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+290.80 DEMOLITION
+# after 11:0
+0.00 ENTRY
+109.00 TACTIC stage de_spans_9 {}
+112.70 TACTIC stage de_spans_7 {}
+118.65 TACTIC stage de_spans_8 {}
+130.80 CASUALTY de_spans_6 by rearguard at x 506 (advance, speed 5.2)
+130.80 TACTIC stage de_spans_5 {}
+150.05 CASUALTY de_spans_9 by section at x 478 (hold, speed 0.0)
+170.10 TACTIC stage de_spans_5 {}
+170.10 TACTIC stage de_spans_7 {}
+171.55 CASUALTY de_spans_7 by rearguard at x 448 (cover, speed 0.0)
+174.30 CASUALTY de_spans_5 by rearguard at x 432 (fallback, speed 5.2)
+176.65 CASUALTY de_spans_8 by rearguard at x 478 (fallback, speed 5.2)
+266.40 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+266.40 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+266.40 CASUALTY de_spans_2 by demolition at x 935 (clear, speed 0.0)
+266.40 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+266.40 DEMOLITION
+# after 11:1
+0.00 ENTRY
+32.25 CASUALTY de_spans_8 by player at x 871 (advance, speed 5.2)
+143.95 TACTIC stage de_spans_5 {}
+153.00 CASUALTY de_spans_9 by player at x 703 (fallback, speed 5.2)
+261.75 CASUALTY de_spans_0 by demolition at x 927 (clear, speed 0.0)
+261.75 CASUALTY de_spans_1 by demolition at x 931 (clear, speed 0.0)
+261.75 CASUALTY de_spans_2 by demolition at x 948 (clear, speed 0.0)
+261.75 CASUALTY de_spans_3 by demolition at x 945 (clear, speed 0.0)
+261.75 DEMOLITION

@@ -1,0 +1,49 @@
+{
+  "id": "CAPTAIN-AMENDMENT-02",
+  "at": "2026-10-15T19:15:36.524771+00:00",
+  "authority": "Permanent user D34; existing approved T36 timing rule, explicit user request to complete all partial tasks and integrate.",
+  "supersedes": "Only the raw player-health equality added by CAPTAIN_AMENDMENT_01_COVER_EXTENSION.json; all original reports/criteria remain historical and unchanged.",
+  "preservedFailure": "Independent attempt2 at5b76d24f57fdcfd0b0bd2b099aba3800eed0a9cf is FAIL and remains FAIL; new decision is prospective, not acceptance.",
+  "finding": {
+    "seed": 1,
+    "mode": "ignore",
+    "rawHealth": 84,
+    "currentHealth": 76,
+    "policyReplayHealth": 76,
+    "rawCompleteClock": 1031.7499999996094,
+    "currentCompleteClock": 1095.7999999995511,
+    "extraSeconds": 64.04999999994175,
+    "round": "m01_round_1982",
+    "shooter": "de_east_11",
+    "weapon": "kar98k",
+    "fired": 1046.4,
+    "arrival": 1048.567741,
+    "applied": 1048.6,
+    "battleClock": "06:44:30",
+    "holdSeconds": 9.3,
+    "actualDamage": 8,
+    "cause": "Actual player-hit and character round-impact while Bak is carried; raw route already complete. Same immutable predecessor with only approved WEST hold reproduces every current stat and control hash exactly.",
+    "evidence": "test-results/partials-independent-attempt2/seed1-health-cause.json"
+  },
+  "decision": "Keep the existing combat active during the approved delivery wait. Real additional projectiles can consequently injure the player; preserve algorithms/cadences/damage values/RNG operations and fixed battle instants. No gameplay implementation change is authorised merely to hide this exposure.",
+  "newVariance": {
+    "id": "T36-EXPOSURE-01",
+    "scope": "Only player-health outcome attributable to additional real projectiles emitted as a consequence of the approved WEST carry hold.",
+    "requirements": [
+      "Retain full raw predecessor/current/policy reports for all12seeds×2routes, all health/events/RNG/control values and exact replay stats/summary, with no global masks.",
+      "Identify each permitted extra health delta using actual projectile ID/shooter/weapon/issue and arrival time/hit event/health before-after/hold context. Current and policy impacts must agree; unexplained loss is FAIL.",
+      "Compare player health exactly against both full policy replay and raw health minus the causally attributed extra real damage; do not drop the field from verification.",
+      "Keep raw repair, player shots, survivors/casualty times, historical battle instants, checkpoints and lethal rounds exact, and every other original actor health/alive unchanged.",
+      "All24 complete routes must finish without death/restore or unfinished carry. Save/load and legacy/death gate release remain mandatory.",
+      "Record every measured per-seed difference; a pending/unknown case cannot pass. Independent verifier/reviewer must assess the attribution and policy."
+    ]
+  },
+  "otherFailures": "Correction2 must meaningfully fix the old runtime safety-gate fixture, MG fallback exactcount2 after two new loaders, and still-unresolved full-matrix bridge control318pixels. Cold0 does not prove the matrix; preserve fullframe/patch zero thresholds and original assets/geometry/depth.",
+  "budget": {
+    "fixAttempt": 2,
+    "maxFixAttempts": 3,
+    "reviewRejections": 0,
+    "maxReviewRejections": 2
+  },
+  "acceptance": "NONE; source and criteria must be re-pinned and independently verified then reviewed."
+}

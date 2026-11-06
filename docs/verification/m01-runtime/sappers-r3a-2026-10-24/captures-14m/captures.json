@@ -1,0 +1,147 @@
+{
+  "seed": 19390901,
+  "dist": 14,
+  "quality": "high",
+  "views": [
+    {
+      "view": "05-splice",
+      "quality": "high",
+      "clock": 17092.983449997286,
+      "player": {
+        "x": -115.39,
+        "z": 22.59
+      },
+      "sappers": [
+        {
+          "id": "pawel_krawiec",
+          "clip": "sapper_work",
+          "lod": 0,
+          "clipTime": 1.94
+        },
+        {
+          "id": "sapper_2",
+          "clip": "sapper_work",
+          "lod": 1,
+          "clipTime": 1.98
+        },
+        {
+          "id": "sapper_3",
+          "clip": "cover_low_idle",
+          "lod": 1,
+          "clipTime": 2.31
+        }
+      ],
+      "hud": {
+        "objective": "Proteja o reparo da linha",
+        "status": "Reparo 27% · sapadores a emendar o cabo",
+        "subtitle": ""
+      },
+      "errors": []
+    },
+    {
+      "view": "07-fail",
+      "quality": "high",
+      "clock": 17418.000600000512,
+      "player": {
+        "x": -115.39,
+        "z": 22.59
+      },
+      "sappers": [
+        {
+          "id": "pawel_krawiec",
+          "clip": "standing_idle_c",
+          "lod": 0,
+          "clipTime": 3.01
+        },
+        {
+          "id": "sapper_2",
+          "clip": "crouched_idle_b",
+          "lod": 1,
+          "clipTime": 1.71
+        },
+        {
+          "id": "sapper_3",
+          "clip": "cover_low_idle",
+          "lod": 1,
+          "clipTime": 2.74
+        }
+      ],
+      "hud": {
+        "objective": "Proteja o reparo da linha",
+        "status": "Reparo 49% · sem passagem · falta o segundo corte",
+        "subtitle": ""
+      },
+      "errors": []
+    },
+    {
+      "view": "08-relocate",
+      "quality": "high",
+      "clock": 17512.799400000666,
+      "player": {
+        "x": -128.79,
+        "z": 22.44
+      },
+      "sappers": [
+        {
+          "id": "pawel_krawiec",
+          "clip": "walk",
+          "lod": 0,
+          "clipTime": 0.36
+        },
+        {
+          "id": "sapper_2",
+          "clip": "prone_idle",
+          "lod": 1,
+          "clipTime": 0.72
+        },
+        {
+          "id": "sapper_3",
+          "clip": "prone_idle",
+          "lod": 1,
+          "clipTime": 0.37
+        }
+      ],
+      "hud": {
+        "objective": "Proteja o reparo da linha",
+        "status": "Reparo 54% · sapadores a seguir o cabo até ao segundo corte",
+        "subtitle": ""
+      },
+      "errors": []
+    },
+    {
+      "view": "11-test2",
+      "quality": "high",
+      "clock": 18151.4997000017,
+      "player": {
+        "x": -131.59,
+        "z": 22.59
+      },
+      "sappers": [
+        {
+          "id": "pawel_krawiec",
+          "clip": "sapper_work",
+          "lod": 0,
+          "clipTime": 2.98
+        },
+        {
+          "id": "sapper_2",
+          "clip": "crouched_idle_b",
+          "lod": 1,
+          "clipTime": 1.65
+        },
+        {
+          "id": "sapper_3",
+          "clip": "cover_low_idle",
+          "lod": 1,
+          "clipTime": 1.21
+        }
+      ],
+      "hud": {
+        "objective": "Proteja o reparo da linha",
+        "status": "Reparo 97% · sapadores a testar a linha inteira",
+        "subtitle": ""
+      },
+      "errors": []
+    }
+  ]
+}

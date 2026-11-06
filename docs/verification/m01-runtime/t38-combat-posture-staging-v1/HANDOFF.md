@@ -1,0 +1,63 @@
+# HANDOFF T38 — `M01-COMBAT-POSTURE-STAGING-V1` (estado: ENTREGUE NA BRANCH, NÃO ACEITE)
+
+Retoma de 2026-10-17 (sessão Sonnet) do trabalho parado do PR #82. Branch `claude/busy-ritchie-3fkvk2-t38` (publicada até `65145c9` pelo Capitão; os commits seguintes, a «Retoma 3» abaixo, são locais), base = cabeça do PR #82 (`2bc623c`,
+branch `claude/quirky-heisenberg-iytxsy`) fundida com a candidata #80 (`813f163`) e com a correcção de teste do #89 (`b449007`). Reserva `claims/m01-t38`.
+Nesta sessão não se publicou nada: sem push, sem PR novo, sem comentário no GitHub (a issue #72 fica por actualizar pelo Capitão), sem deploy; o único merge é o local da «Retoma 3», pedido pelo Capitão.
+Resultados e números: `README.md` (efeitos no jogo, golden, verificação, capturas), `GOLDEN_AMENDMENT_01.json` e `GOLDEN_AMENDMENT_02.json`.
+
+## Retoma 3 (2026-10-17): segunda revisão crítica, REQUEST_CHANGES sem defeito de código — o que se fez
+
+A revisão crítica de `65145c9` não encontrou defeito de código; pedia prova, decisão e integração. Em ordem (commits locais na branch; nada publicado além de `65145c9`):
+1. **Prova do desvio da MG34** (`d171fd1`): a auditoria de invariantes mede agora, por rota e por MG34, as rajadas por tipo de alvo (`squad` = Kowal, `area` = posto avançado, outras) e os pedidos de
+   `co_m01_enemy_mg_fire_on_squad`, predecessor contra candidata (subclasse que só conta e delega; todos os campos antigos das 24 rotas ficam iguais). Resultado: o README estava **errado** ao dizer que o desvio é só do RNG.
+   Com a secção de joelhos atrás dos sacos nenhum alemão dos portões a vê e o alvo das MG34 cai de `squad` para `area` (rotas sem apoio: 499 → 146 e 0 → 351; exemplo 42 → 14, 0 → 27, pedidos 82 → 55). README e
+   `DEVELOPMENT_STATUS.md` corrigidos; **decisão do Captain D40** (`docs/direction/DECISIONS.md`): aceite como efeito pretendido da cobertura.
+2. **Migração de saves** (`9f7945b`): `migrateT38Staging` já não move um atirador dos portões caído (faltava `alive`); teste com `de_east_6` caído (vermelho antes, verde depois). Sem efeito por tick.
+3. **Fusão com a base T48** (`f02e06b`, `git merge --no-ff origin/claude/busy-ritchie-3fkvk2` = `5a169ba`: candidata #80 + #89 + retirada alemã): sem conflitos de texto; a árvore fundida partia 8 testes do contrato de animação
+   (pins do golden parcial `83a907ca`/`00964436` → `a29c1ac9`/`c06c1b1b`, simulação nova) e 1 da retirada (ticks da demolição leste). Re-baseline só com as ferramentas do repositório:
+   a auditoria de T38 com predecessor `5a169ba` regenerou o golden T38 (**emenda 02**, `GOLDEN_AMENDMENT_02.json`; o golden anterior fica byte a byte em `tests/fixtures/m01-t38-gameplay-baseline-before-amendment-02.json`);
+   a ferramenta de T48 (`tools/verification/m01-german-retreat-golden-audit.mjs`, agora com BASE `65145c9`) provou em paralelo, tick a tick que a retirada só muda os alemães do tabuleiro depois da demolição
+   (`german-retreat-regroup-v1/GOLDEN_AMENDMENT_03.json`). O golden parcial de T48 (emenda 02 de T48) fica como história, fixado por `sha256` em `tests/m01-animation-contract.test.js`.
+   Em `tests/m01-german-retreat.test.js` o teste «golden amendment 02» passou a história (sem simulação viva) e o novo «golden amendment 03» faz a mesma afirmação sobre o golden T38 e a demolição viva: nenhuma asserção foi
+   enfraquecida, as de dados migraram para o ficheiro que descreve a simulação viva.
+Resultados e comandos em `README.md` (secções «Golden por tick» e «Verificação local»).
+
+## O que se fez, passo a passo (os passos 1–4 do handoff anterior)
+1. **Testes focados** (`m01-combat-posture-staging`, `m01-east-front`, `m01-cover-threat`, `m01-animation-contract`) sobre `25ed12f`: 84 testes, 77 passam, 7 falham. As 7
+   falhas eram todas do golden (os 2 testes por tick e 5 testes do mesmo ficheiro que dependem da variável `completed` que só o primeiro teste do golden preenche). Os
+   itens 4, 5, 8 e 10 do handoff (secção atrás dos sacos por linha de visão; casos negativos, validação e «back rank» estrito; sapadores ajoelhados em x −170; saves
+   antigos) já estavam verdes: **nenhuma alteração de código ou de asserção foi precisa**, nenhum teste foi enfraquecido ou saltado.
+2. **Golden.** `src/game/m01-simulation.js` não mudou (o `sha256` fixado coincide), por isso não houve commit de simulação. O golden estava desactualizado por uma única razão:
+   `4772b24` moveu os 12 lugares dos atiradores dos portões em `mission.json` sem o regenerar. Regenerado em x86 **só com a ferramenta do repositório**
+   (`m01-combat-posture-staging-audit.mjs --write-golden --candidate 25ed12f`) contra o predecessor `ef35c7a`; as 24 rotas passaram todas as invariantes; segunda execução
+   da ferramenta sem `--write-golden` reproduziu os dois percursos byte a byte; `m01-animation-contract` 21/21. Documentado em `GOLDEN_AMENDMENT_01.json` (valores
+   exactos que mudam e porquê) e `GOLDEN_DIVERGENCE_01.json` (onde as duas simulações divergem primeiro); golden antigo guardado byte a byte e fixado por `sha256`.
+3. **Build, specs de browser, capturas e `npm test`.** `npm run build` OK. `npm test`: **967/967**, exit 0. Browser (`CI=1`, sob `flock`): `m01.spec.js` + `m01-mg34-prone.spec.js` 30/32,
+   com **`m01.spec.js:196` (Kowal) e `m01-mg34-prone.spec.js:45` a passar** — os dois que a revisão crítica tinha apontado; as duas falhas são `m01.spec.js:50` (atraso de frame; repetido isolado,
+   passa) e `m01.spec.js:426` («German fire on the repair»; **falha igual na base `813f163`, sem T38**, na mesma linha, nesta máquina). `m01-anim-resolver` + `m01-distant-front-impostors`: 7/7.
+   Capturas `after/` regeneradas (6 vistas, vista 22 dos portões inspeccionada: lugares em profundidade, uns de joelhos e uns poucos de pé a disparar). Pormenores no `README.md`.
+
+## Os 10 defeitos da revisão crítica de `8bb0372`, verificados agora por testes (não pelo que o implementador disse ao parar)
+| # | Defeito | Prova actual |
+| --- | --- | --- |
+| 1 | Kowal deitado partia `m01.spec.js:196` e `m01-mg34-prone.spec.js:45` | Kowal está de joelhos (`crouched`), levanta-se só para a rajada; teste `renderer: Kowal kneels…`, estatísticas da rota (`kowalUp`, `sectionKneel`) e as duas specs de browser passam: `m01.spec.js:196` e as 4 de `m01-mg34-prone.spec.js` (incluindo `:45`) |
+| 2 | Specs de browser nunca corridas | corridas agora (sob `flock`, `CI=1`): `m01.spec.js` + `m01-mg34-prone.spec.js` 30/32, `anim-resolver` + `distant-front` 7/7, capturas 6/6; as 2 falhas não são do Kowal nem do deitado (ver README) |
+| 3 | Envelope do terreno | `collisions: … terrain envelope protects every staged place` e `m01-terrain-envelope.test.js` |
+| 4 | Secção atrás dos sacos, por linha de visão | `behind the sandbags the kneeling section is hidden from every German position…` (40 posições alemãs) |
+| 5 | Casos negativos, validação de dados, «back rank» estrito | `stage data: … a data error stops the game` (≈30 casos) e `m01-east-front` (reservas atrás de todos) |
+| 6 | Atirador de atrição de pé | a rota afirma que cada bala de atrição sai do olho de um homem de pé |
+| 7 | Profundidade dos portões (x 1053,2–1058,3, mesmas linhas de visão) | `no row…` e `the gate riflemen keep their lines of sight…` |
+| 8 | Sapadores ajoelhados em x −170 | estatística `sapperWest` da rota |
+| 9 | README incompleto | README reescrito com os números novos, o golden, a verificação e as capturas |
+| 10 | Saves antigos | `saves from before T38 load onto the new places…` |
+
+## Por decidir / por fazer (nada disto foi decidido nesta sessão)
+- **Decisão de design:** cobertura real vinda de oeste para os atiradores dos portões exige novos props de cobertura (o único colisor ali é o portal de 1912, atrás deles).
+  Sem props, a melhoria é profundidade, alturas diferentes e postura; foi isso que se fez.
+- Revisão crítica independente da versão final (a anterior, sobre `8bb0372`, foi REJECT), CI x86 completo (4 shards) e playtest humano. As capturas são SwiftShader, não medem
+  FPS e não são playtest.
+- `m01.spec.js:426` («German fire on the repair») falha nesta máquina também na base `813f163`, sem T38 (mesma linha); se passa no CI x86 está por confirmar.
+- `m01-postprocess-grading` (9 testes) exige `M01_GRADING_BEFORE_DIR` (ver `DEVELOPMENT_STATUS.md`, grupo A); não é T38 e não foi corrido.
+- Registo T00–T52: T38 continua `DELIVERED_BRANCH` (nota actualizada). Issue #72: por actualizar pelo Capitão.
+
+Sem merge na `main`, alterações na #80 nem deploy.

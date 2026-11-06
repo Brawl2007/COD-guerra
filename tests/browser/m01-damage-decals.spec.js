@@ -1,6 +1,7 @@
 import {test,expect} from '@playwright/test';
 import {M01Simulation} from '../../src/game/m01-simulation.js';
 import {route} from '../helpers/m01-route.js';
+import {slowGlTestTimeout} from '../helpers/m01-browser-boot.js';
 import {eyePosition} from '../../src/world/spatial.js';
 import {M01_DAMAGE_DECAL_LIMITS as LIMITS} from '../../src/render/m01-damage-decals.js';
 
@@ -16,7 +17,8 @@ const hidden={style:'#pause,#hud,#menu {visibility:hidden!important}',timeout:12
 // (8.25 s), inside its in-world scene (in the route the roll call follows at 15 s and moves the player; from the staged
 // pose, away from the shelter, it does not fire). No scripted change reaches a probe for at least 6.75 s of mission time
 // (27 frames at the game's 0.25 s step cap): from the station-facade pose the west demolition fires 6.75 s after
-// preWest, and the east-deck-end pose (x > 401) is restored out of bounds 8.1 s after it.
+// preWest, and the east-deck-end pose (x > 401) is restored out of bounds 8.1 s after it. That pose is at x 440, the edge of the playable area: the player's body physics
+// (16383eb6) clamps x to the edge + 10 m = 450, so the old pose at x 650 was moved 200 m on the first tick the page ran before the pause (a race that the full run of 2026-11-05 lost).
 const start=new M01Simulation(19390901);start.tick(.05,{skip:true});const opening=start.snapshot();
 let preWest=null,postWest=null,step=0;
 const flow=route(19390901,{onStep:({sim})=>{
@@ -77,7 +79,9 @@ for(const view of [
   {name:'track-bed',label:'near rail head, a sleeper, ballast and the far rail on the west embankment',snapshot:opening,...(({x,z})=>({x,z}))(track(86.4,3.6,0)),
     shots:[track(86.7,.72,.18),track(86.4,.1,.105),track(87.075,.3,.042),track(86,-.72,.18)],kinds:['rail','sleeper','ballast'],need:2}
 ])test(`player fire leaves bounded ${view.name} marks; pause freezes them and a checkpoint restore clears them`,async({browser},info)=>{
-  test.setTimeout(process.env.CI?240000:120000);
+  // Frame-bound: the decal atlas is painted in timer slices, then four aimed shots (a bolt cycle of 1.05 s of simulated time each, 4 frames at the very least), the sights, the pause, the capture
+  // and a restart. portal-brick failed at the 120 s of the non-CI limit twice on a quiet machine (2026-11-05), track-bed took 102 s.
+  test.setTimeout(slowGlTestTimeout({simSeconds:12,frames:24}));
   const {page,errors,failed}=await open(browser,staged(view.snapshot,{...view,target:view.shots[0]}));
   // Aimed (sights up, as a player would for precise shots); released before the capture.
   await mouse(page,'mousedown',2);await page.waitForFunction(()=>window.gameDiagnostics().player.aiming,null,{timeout:30000});
@@ -110,7 +114,7 @@ test('saved blasts draw their persistent aftermath on load (frozen probes of gen
   const probes=[
     {name:'repair-crater',snapshot:preWest,id:'repair_crater',x:-49,z:15.5,target:{x:-40,y:-4.2,z:10}},
     {name:'station-facade',snapshot:preWest,id:'station_bomb',x:-400,z:17.5,target:{x:-400,y:-4.3,z:26.4}},
-    {name:'east-deck-end',snapshot:preWest,id:'east_demolition',x:650,z:40,target:{x:662,y:-4.2,z:40}},
+    {name:'east-deck-end',snapshot:preWest,id:'east_demolition',x:440,z:40,target:{x:662,y:-4.2,z:40}},   // x 440 = the east edge of the playable area; at x 650 the body physics (16383eb6) moves the player to 450 on the first tick
     {name:'west-bridgehead',snapshot:postWest,id:'west_demolition',x:-30,z:2,target:{x:-12,y:-2.9,z:2}}
   ],samples={};
   for(const probe of probes){

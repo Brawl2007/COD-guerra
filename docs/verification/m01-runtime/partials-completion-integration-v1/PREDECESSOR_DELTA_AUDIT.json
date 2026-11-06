@@ -4,11 +4,17 @@
   "historicalGoldenSha256": "e0fb4ecbc1e483f9d9e177fd63c8a5a063529787238500d5a8a91e80e696b958",
   "projectionSource": "function projection(raw){const s=structuredClone(raw);delete s.resumeCheckpoint;\n for(const key of ['dialogueConsumed','dialogueQueue','subtitle','scene','sceneDone'])delete s[key];\n s.actors=s.actors.filter(a=>!AUXILIARY_IDS.includes(a.id));\n const carrying=Object.hasOwn(raw.consumed,'evt_m01_dudek_retrieves_bak')||raw.flags['m01.bak_status']==='rescued_by_player';\n const exiting=Object.hasOwn(raw.consumed,'evt_m01_east_demolition');\n for(const a of s.actors){for(const key of PRESENTATION_FIELDS)delete a[key];\n  // T36 loader/belt/reload/fade are optional presentation data; issued rounds remain exact below.\n  delete a.mg34Prone;\n  if(a.weapon==='kar98k')delete a.rounds;\n  if(carrying&&['jozef_bak','leon_dudek'].includes(a.id)){for(const k of ['x','y','z','state','facing','carriedBy','task','target','crouched','suppressedUntil'])delete a[k];}\n  if(a.ckm){delete a.ckm;if(exiting)for(const k of ['x','y','z','state','facing'])delete a[k];}\n }\n for(const d of s.sectors.damage)delete d.smokeSeconds;\n return s;\n}",
   "eventProjectionSource": "function eventProjection(events,sim){const transport=Object.hasOwn(sim.consumed,'evt_m01_dudek_retrieves_bak')||sim.flags['m01.bak_status']==='rescued_by_player';\n const preActions=sim.definition.cutscenes.flatMap(c=>c.preRoll?.timeline??[]).map(b=>b.action).filter(Boolean);\n return structuredClone(events).filter(e=>!e.continuity&&!(e.type==='message'&&preActions.includes(e.message))).map(e=>{\n  if(e.type==='m01-blast')delete e.kind;if(e.type==='npc-shot')delete e.weapon;if(e.type==='round-impact'){delete e.pass;if(transport)e.pinned=e.pinned.filter(id=>!['jozef_bak','leon_dudek'].includes(id));}return e;\n });\n}",
+  "westReadinessPolicy": {
+    "authority": "CAPTAIN-AMENDMENT-01",
+    "source": "function westCarryHoldReplay(originalReady,id,pendingAtTickStart){return originalReady(id)&&(id!=='evt_m01_west_demolition'||!pendingAtTickStart);}",
+    "candidateTickCapture": "tick(dt,controls){const bak=this.actor('jozef_bak');this.westCarryPendingAtTickStart=Boolean(bak.carry||bak.carriedBy);return super.tick(dt,controls);}",
+    "meaning": "Original predecessor readiness AND candidate carry/putdown absent at start of the same tick. No other readiness, clock, RNG, health or event changes. Raw unmodified predecessor summaries and timing/count deltas remain explicit."
+  },
   "routes": [
     {
       "seed": 19390901,
       "support": false,
-      "ticks": 20966,
+      "ticks": 22247,
       "strictAuthority": "PASS",
       "firstDifference": null,
       "phaseTimes": {
@@ -101,19 +107,19 @@
           "battleClock": 22440.12499999959
         },
         "evt_m01_west_demolition": {
-          "clock": 1033.249999999608,
+          "clock": 1097.2999999995498,
           "battleClock": 24300
         },
         "evt_m01_roll_call": {
-          "clock": 1048.2499999995944,
+          "clock": 1112.299999999536,
           "battleClock": 25500
         },
         "evt_m01_kozliny_attack_distant": {
-          "clock": 1048.2499999995944,
+          "clock": 1112.299999999536,
           "battleClock": 25500
         },
         "evt_m01_debrief": {
-          "clock": 1048.2999999995943,
+          "clock": 1112.349999999536,
           "battleClock": 25500
         }
       },
@@ -2187,8 +2193,29 @@
           "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
         },
         {
-          "clock": 1032.049999999609,
-          "battleClock": 24290.14999999642,
+          "clock": 1055.8499999995875,
+          "battleClock": 24270,
+          "kind": "bak_delivery_hold",
+          "slot": 60,
+          "text": "Dudek leva Bąk para a estação. Corredor livre; faltam cerca de 60 metros."
+        },
+        {
+          "clock": 1074.2499999995707,
+          "battleClock": 24270,
+          "kind": "bak_delivery_hold",
+          "slot": 30,
+          "text": "Dudek leva Bąk para a estação. Corredor livre; faltam cerca de 30 metros."
+        },
+        {
+          "clock": 1086.7499999995593,
+          "battleClock": 24270,
+          "kind": "bak_delivery_hold",
+          "slot": 10,
+          "text": "Dudek leva Bąk para a estação. Corredor livre; faltam cerca de 10 metros."
+        },
+        {
+          "clock": 1096.1499999995508,
+          "battleClock": 24290.399999999965,
           "kind": "corridor",
           "slot": 38,
           "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
@@ -2216,11 +2243,1079 @@
           "battleClock": 23910.199999997072
         }
       },
-      "westReadyAt": 23521.324999997738,
+      "westReadyAt": 24270,
+      "rawUnmodifiedPredecessor": {
+        "clock": 1048.2999999995943,
+        "battleClock": 25500,
+        "rng": 3312583128,
+        "issuedRounds": 1991,
+        "eventCounts": {
+          "checkpoint": 4,
+          "message": 34,
+          "m01-blast": 11,
+          "distant-shot": 3,
+          "npc-shot": 127,
+          "enemy-fire": 1968,
+          "round-impact": 899,
+          "player-hit": 2,
+          "complete": 1
+        },
+        "phaseTimes": {
+          "evt_m01_intro_card": 0,
+          "evt_m01_prelude_start": 0.05,
+          "evt_m01_railway_worker_report": 16.000000000000092,
+          "evt_m01_planes_heard": 17.750000000000117,
+          "evt_m01_bombing_0434": 67.7499999999983,
+          "evt_m01_cable_cut": 67.7499999999983,
+          "evt_m01_forward_post_bombed": 69.89999999999817,
+          "evt_m01_nowicki_lost": 72.79999999999801,
+          "evt_m01_wounded_dragged": 93.54999999999683,
+          "evt_m01_second_air_pass": 170.70000000000456,
+          "evt_m01_train963_arrives": 256.400000000024,
+          "evt_m01_panzerzug_arrives": 303.10000000003464,
+          "evt_m01_repair_complete": 448.1500000000676,
+          "evt_m01_order_demolish": 484.25000000007583,
+          "evt_m01_bombing_0530": 484.25000000007583,
+          "evt_m01_runner_pressure_report": 559.2500000000391,
+          "evt_m01_north_contact_distant": 634.2499999999709,
+          "evt_m01_east_platoon_withdraws": 709.2499999999027,
+          "evt_m01_bak_wounded": 739.2499999998754,
+          "evt_m01_germans_on_east_spans": 746.7499999998686,
+          "evt_m01_east_demolition": 786.1499999998327,
+          "evt_m01_dudek_retrieves_bak": 814.399999999807,
+          "evt_m01_west_demolition": 1033.249999999608,
+          "evt_m01_roll_call": 1048.2499999995944,
+          "evt_m01_kozliny_attack_distant": 1048.2499999995944,
+          "evt_m01_debrief": 1048.2999999995943
+        },
+        "player": {
+          "id": "jan_wrona",
+          "space": "metres",
+          "x": -260.5,
+          "y": -4,
+          "z": 68.2,
+          "team": "player",
+          "health": 84,
+          "alive": true,
+          "active": true,
+          "state": "GUARD",
+          "facing": 0,
+          "shot": 0,
+          "radius": 0.36,
+          "crouched": true,
+          "suppressedUntil": 0,
+          "cooldown": 0,
+          "rounds": 5,
+          "angle": 1.4576453452044118,
+          "pitch": -0.06,
+          "aiming": false,
+          "moveBlend": 0,
+          "sprinting": false,
+          "weaponShotAt": -1000000000,
+          "carrying": null,
+          "headgear": "pl_helmet_wz31"
+        },
+        "actors": [
+          {
+            "id": "marek_zielinski",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pawel_krawiec",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "tadeusz_nowicki",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "szymon_kowal",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "jozef_bak",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "leon_dudek",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "staszek_pawlak",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "franciszek_lipski",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "sapper_2",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "sapper_3",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "east_platoon_voice",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "generic_rifleman",
+            "health": 45,
+            "alive": true
+          },
+          {
+            "id": "de_east_0",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_1",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_2",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_3",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_4",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_5",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_6",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_7",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_8",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_9",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_10",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_11",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_12",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_13",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_14",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_15",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_16",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_17",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_18",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_19",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_20",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_21",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_22",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_23",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_24",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_25",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_26",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_27",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_28",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_29",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_30",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_31",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_32",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_33",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_34",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_35",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_36",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_37",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_38",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_39",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_spans_0",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "de_spans_1",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "de_spans_2",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "de_spans_3",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "de_spans_4",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_spans_5",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_spans_6",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_spans_7",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_spans_8",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_spans_9",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_0",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_1",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_2",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_3",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_4",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_5",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_6",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_7",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_8",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_9",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_10",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_11",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_12",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_13",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_14",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_15",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_16",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_17",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_18",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_19",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_20",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_21",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_22",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_23",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "ckm_gunner",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "ckm_loader",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "ckm_reserve",
+            "health": 100,
+            "alive": true
+          }
+        ]
+      },
+      "delivery": {
+        "clock": 1093.749999999553,
+        "battleClock": 24270,
+        "x": -329.9343356686433,
+        "z": 24.751116486309378
+      },
+      "gateRelease": {
+        "clock": 1093.799999999553,
+        "battleClock": 24270.425
+      },
+      "policyEventCounts": {},
       "maxNarrativeGapSec": 56.24999999998181,
       "activityDefinition": "Authored task-specific narrative messages only; excludes bullets, distant emitters, simulation ticks and RNG-driven ambient events.",
+      "maxNarrativeRealGapSec": 30.249999999972488,
+      "policyReplayPredecessor": {
+        "clock": 1112.349999999536,
+        "battleClock": 25500,
+        "rng": 3612259737,
+        "issuedRounds": 2011,
+        "eventCounts": {
+          "checkpoint": 4,
+          "message": 34,
+          "m01-blast": 11,
+          "distant-shot": 3,
+          "npc-shot": 127,
+          "enemy-fire": 1988,
+          "round-impact": 919,
+          "player-hit": 2,
+          "complete": 1
+        },
+        "phaseTimes": {
+          "evt_m01_intro_card": 0,
+          "evt_m01_prelude_start": 0.05,
+          "evt_m01_railway_worker_report": 16.000000000000092,
+          "evt_m01_planes_heard": 17.750000000000117,
+          "evt_m01_bombing_0434": 67.7499999999983,
+          "evt_m01_cable_cut": 67.7499999999983,
+          "evt_m01_forward_post_bombed": 69.89999999999817,
+          "evt_m01_nowicki_lost": 72.79999999999801,
+          "evt_m01_wounded_dragged": 93.54999999999683,
+          "evt_m01_second_air_pass": 170.70000000000456,
+          "evt_m01_train963_arrives": 256.400000000024,
+          "evt_m01_panzerzug_arrives": 303.10000000003464,
+          "evt_m01_repair_complete": 448.1500000000676,
+          "evt_m01_order_demolish": 484.25000000007583,
+          "evt_m01_bombing_0530": 484.25000000007583,
+          "evt_m01_runner_pressure_report": 559.2500000000391,
+          "evt_m01_north_contact_distant": 634.2499999999709,
+          "evt_m01_east_platoon_withdraws": 709.2499999999027,
+          "evt_m01_bak_wounded": 739.2499999998754,
+          "evt_m01_germans_on_east_spans": 746.7499999998686,
+          "evt_m01_east_demolition": 786.1499999998327,
+          "evt_m01_dudek_retrieves_bak": 814.399999999807,
+          "evt_m01_west_demolition": 1097.2999999995498,
+          "evt_m01_roll_call": 1112.299999999536,
+          "evt_m01_kozliny_attack_distant": 1112.299999999536,
+          "evt_m01_debrief": 1112.349999999536
+        },
+        "player": {
+          "id": "jan_wrona",
+          "space": "metres",
+          "x": -260.5,
+          "y": -4,
+          "z": 68.2,
+          "team": "player",
+          "health": 84,
+          "alive": true,
+          "active": true,
+          "state": "GUARD",
+          "facing": 0,
+          "shot": 0,
+          "radius": 0.36,
+          "crouched": true,
+          "suppressedUntil": 0,
+          "cooldown": 0,
+          "rounds": 5,
+          "angle": 1.4576453452044118,
+          "pitch": -0.06,
+          "aiming": false,
+          "moveBlend": 0,
+          "sprinting": false,
+          "weaponShotAt": -1000000000,
+          "carrying": null,
+          "headgear": "pl_helmet_wz31"
+        },
+        "actors": [
+          {
+            "id": "marek_zielinski",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pawel_krawiec",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "tadeusz_nowicki",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "szymon_kowal",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "jozef_bak",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "leon_dudek",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "staszek_pawlak",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "franciszek_lipski",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "sapper_2",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "sapper_3",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "east_platoon_voice",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "generic_rifleman",
+            "health": 45,
+            "alive": true
+          },
+          {
+            "id": "de_east_0",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_1",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_2",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_3",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_4",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_5",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_6",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_7",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_8",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_9",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_10",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_11",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_12",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_13",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_14",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_15",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_16",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_17",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_18",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_19",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_20",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_21",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_22",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_23",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_24",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_25",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_26",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_27",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_28",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_29",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_30",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_31",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_32",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_33",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_34",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_35",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_36",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_37",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_38",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_39",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_spans_0",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "de_spans_1",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "de_spans_2",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "de_spans_3",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "de_spans_4",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_spans_5",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_spans_6",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_spans_7",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_spans_8",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_spans_9",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_0",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_1",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_2",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_3",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_4",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_5",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_6",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_7",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_8",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_9",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_10",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_11",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_12",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_13",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_14",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_15",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_16",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_17",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_18",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_19",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_20",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_21",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_22",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_23",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "ckm_gunner",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "ckm_loader",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "ckm_reserve",
+            "health": 100,
+            "alive": true
+          }
+        ]
+      },
+      "policyDeltaAgainstRaw": {
+        "realSeconds": 64.04999999994175,
+        "ticks": 1281,
+        "rngBefore": 3312583128,
+        "rngAfter": 3612259737,
+        "issuedRounds": 20,
+        "eventCounts": {
+          "checkpoint": 0,
+          "message": 0,
+          "m01-blast": 0,
+          "distant-shot": 0,
+          "npc-shot": 0,
+          "enemy-fire": 20,
+          "round-impact": 20,
+          "player-hit": 0,
+          "complete": 0
+        }
+      },
       "final": {
-        "rng": 3312583128,
+        "rng": 3612259737,
         "checkpoints": [
           "cp_m01_a_orientacao",
           "cp_m01_b_reorganizacao",
@@ -2228,7 +3323,7 @@
           "cp_m01_d_retirada"
         ],
         "westDemolition": {
-          "clock": 1033.249999999608,
+          "clock": 1097.2999999995498,
           "battleClock": 24300
         },
         "complete": true
@@ -2237,7 +3332,7 @@
     {
       "seed": 7,
       "support": true,
-      "ticks": 20097,
+      "ticks": 21378,
       "strictAuthority": "PASS",
       "firstDifference": null,
       "phaseTimes": {
@@ -2330,19 +3425,19 @@
           "battleClock": 22440.12499999959
         },
         "evt_m01_west_demolition": {
-          "clock": 989.7999999996475,
+          "clock": 1053.8499999995893,
           "battleClock": 24300
         },
         "evt_m01_roll_call": {
-          "clock": 1004.7999999996339,
+          "clock": 1068.8499999995756,
           "battleClock": 25500
         },
         "evt_m01_kozliny_attack_distant": {
-          "clock": 1004.7999999996339,
+          "clock": 1068.8499999995756,
           "battleClock": 25500
         },
         "evt_m01_debrief": {
-          "clock": 1004.8499999996338,
+          "clock": 1068.8999999995756,
           "battleClock": 25500
         }
       },
@@ -3533,8 +4628,29 @@
           "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
         },
         {
-          "clock": 988.5999999996486,
-          "battleClock": 24290.14999999642,
+          "clock": 1012.399999999627,
+          "battleClock": 24270,
+          "kind": "bak_delivery_hold",
+          "slot": 60,
+          "text": "Dudek leva Bąk para a estação. Corredor livre; faltam cerca de 60 metros."
+        },
+        {
+          "clock": 1030.7999999996102,
+          "battleClock": 24270,
+          "kind": "bak_delivery_hold",
+          "slot": 30,
+          "text": "Dudek leva Bąk para a estação. Corredor livre; faltam cerca de 30 metros."
+        },
+        {
+          "clock": 1043.2999999995989,
+          "battleClock": 24270,
+          "kind": "bak_delivery_hold",
+          "slot": 10,
+          "text": "Dudek leva Bąk para a estação. Corredor livre; faltam cerca de 10 metros."
+        },
+        {
+          "clock": 1052.6999999995903,
+          "battleClock": 24290.399999999965,
           "kind": "corridor",
           "slot": 38,
           "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
@@ -3562,11 +4678,1085 @@
           "battleClock": 23910.199999997072
         }
       },
-      "westReadyAt": 23521.324999997738,
+      "westReadyAt": 24270,
+      "rawUnmodifiedPredecessor": {
+        "clock": 1004.8499999996338,
+        "battleClock": 25500,
+        "rng": 1663516278,
+        "issuedRounds": 1235,
+        "eventCounts": {
+          "checkpoint": 4,
+          "message": 24,
+          "m01-blast": 11,
+          "distant-shot": 3,
+          "player-shot": 35,
+          "npc-shot": 116,
+          "enemy-fire": 1229,
+          "round-impact": 272,
+          "reload": 6,
+          "player-hit": 1,
+          "complete": 1
+        },
+        "phaseTimes": {
+          "evt_m01_intro_card": 0,
+          "evt_m01_prelude_start": 0.05,
+          "evt_m01_railway_worker_report": 16.000000000000092,
+          "evt_m01_planes_heard": 17.750000000000117,
+          "evt_m01_bombing_0434": 67.7499999999983,
+          "evt_m01_cable_cut": 67.7499999999983,
+          "evt_m01_forward_post_bombed": 69.89999999999817,
+          "evt_m01_nowicki_lost": 72.79999999999801,
+          "evt_m01_wounded_dragged": 93.54999999999683,
+          "evt_m01_second_air_pass": 170.70000000000456,
+          "evt_m01_train963_arrives": 256.400000000024,
+          "evt_m01_panzerzug_arrives": 303.10000000003464,
+          "evt_m01_repair_complete": 382.9500000000528,
+          "evt_m01_order_demolish": 440.80000000006595,
+          "evt_m01_bombing_0530": 440.80000000006595,
+          "evt_m01_runner_pressure_report": 515.8000000000786,
+          "evt_m01_north_contact_distant": 590.8000000000104,
+          "evt_m01_east_platoon_withdraws": 665.7999999999422,
+          "evt_m01_bak_wounded": 695.7999999999149,
+          "evt_m01_germans_on_east_spans": 703.2999999999081,
+          "evt_m01_east_demolition": 742.6999999998723,
+          "evt_m01_dudek_retrieves_bak": 770.9499999998466,
+          "evt_m01_west_demolition": 989.7999999996475,
+          "evt_m01_roll_call": 1004.7999999996339,
+          "evt_m01_kozliny_attack_distant": 1004.7999999996339,
+          "evt_m01_debrief": 1004.8499999996338
+        },
+        "player": {
+          "id": "jan_wrona",
+          "space": "metres",
+          "x": -260.5,
+          "y": -4,
+          "z": 68.2,
+          "team": "player",
+          "health": 92,
+          "alive": true,
+          "active": true,
+          "state": "GUARD",
+          "facing": 0,
+          "shot": 0,
+          "radius": 0.36,
+          "crouched": true,
+          "suppressedUntil": 0,
+          "cooldown": 0,
+          "rounds": 5,
+          "angle": 1.4576453452044118,
+          "pitch": -0.06,
+          "aiming": false,
+          "moveBlend": 0,
+          "sprinting": false,
+          "weaponShotAt": 742449.9999998725,
+          "carrying": null,
+          "headgear": "pl_helmet_wz31"
+        },
+        "actors": [
+          {
+            "id": "marek_zielinski",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pawel_krawiec",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "tadeusz_nowicki",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "szymon_kowal",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "jozef_bak",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "leon_dudek",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "staszek_pawlak",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "franciszek_lipski",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "sapper_2",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "sapper_3",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "east_platoon_voice",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "generic_rifleman",
+            "health": 45,
+            "alive": true
+          },
+          {
+            "id": "de_east_0",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "de_east_1",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "de_east_2",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_3",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_4",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_5",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_6",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_7",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_8",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_9",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_10",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_11",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_12",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_13",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_14",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_15",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_16",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_17",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_18",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_19",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_20",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_21",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_22",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_23",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_24",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_25",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_26",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_27",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_28",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_29",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_30",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_31",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_32",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_33",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_34",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_35",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_36",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_37",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_38",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_39",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_spans_0",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "de_spans_1",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "de_spans_2",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "de_spans_3",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "de_spans_4",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_spans_5",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_spans_6",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_spans_7",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_spans_8",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_spans_9",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_0",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_1",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_2",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_3",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_4",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_5",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_6",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_7",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_8",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_9",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_10",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_11",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_12",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_13",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_14",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_15",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_16",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_17",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_18",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_19",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_20",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_21",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_22",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_23",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "ckm_gunner",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "ckm_loader",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "ckm_reserve",
+            "health": 100,
+            "alive": true
+          }
+        ]
+      },
+      "delivery": {
+        "clock": 1050.2999999995925,
+        "battleClock": 24270,
+        "x": -329.9343356686433,
+        "z": 24.751116486309378
+      },
+      "gateRelease": {
+        "clock": 1050.3499999995925,
+        "battleClock": 24270.425
+      },
+      "policyEventCounts": {},
       "maxNarrativeGapSec": 55.350000000089494,
       "activityDefinition": "Authored task-specific narrative messages only; excludes bullets, distant emitters, simulation ticks and RNG-driven ambient events.",
+      "maxNarrativeRealGapSec": 30.249999999972488,
+      "policyReplayPredecessor": {
+        "clock": 1068.8999999995756,
+        "battleClock": 25500,
+        "rng": 3461484509,
+        "issuedRounds": 1243,
+        "eventCounts": {
+          "checkpoint": 4,
+          "message": 24,
+          "m01-blast": 11,
+          "distant-shot": 3,
+          "player-shot": 35,
+          "npc-shot": 116,
+          "enemy-fire": 1237,
+          "round-impact": 280,
+          "reload": 6,
+          "player-hit": 1,
+          "complete": 1
+        },
+        "phaseTimes": {
+          "evt_m01_intro_card": 0,
+          "evt_m01_prelude_start": 0.05,
+          "evt_m01_railway_worker_report": 16.000000000000092,
+          "evt_m01_planes_heard": 17.750000000000117,
+          "evt_m01_bombing_0434": 67.7499999999983,
+          "evt_m01_cable_cut": 67.7499999999983,
+          "evt_m01_forward_post_bombed": 69.89999999999817,
+          "evt_m01_nowicki_lost": 72.79999999999801,
+          "evt_m01_wounded_dragged": 93.54999999999683,
+          "evt_m01_second_air_pass": 170.70000000000456,
+          "evt_m01_train963_arrives": 256.400000000024,
+          "evt_m01_panzerzug_arrives": 303.10000000003464,
+          "evt_m01_repair_complete": 382.9500000000528,
+          "evt_m01_order_demolish": 440.80000000006595,
+          "evt_m01_bombing_0530": 440.80000000006595,
+          "evt_m01_runner_pressure_report": 515.8000000000786,
+          "evt_m01_north_contact_distant": 590.8000000000104,
+          "evt_m01_east_platoon_withdraws": 665.7999999999422,
+          "evt_m01_bak_wounded": 695.7999999999149,
+          "evt_m01_germans_on_east_spans": 703.2999999999081,
+          "evt_m01_east_demolition": 742.6999999998723,
+          "evt_m01_dudek_retrieves_bak": 770.9499999998466,
+          "evt_m01_west_demolition": 1053.8499999995893,
+          "evt_m01_roll_call": 1068.8499999995756,
+          "evt_m01_kozliny_attack_distant": 1068.8499999995756,
+          "evt_m01_debrief": 1068.8999999995756
+        },
+        "player": {
+          "id": "jan_wrona",
+          "space": "metres",
+          "x": -260.5,
+          "y": -4,
+          "z": 68.2,
+          "team": "player",
+          "health": 92,
+          "alive": true,
+          "active": true,
+          "state": "GUARD",
+          "facing": 0,
+          "shot": 0,
+          "radius": 0.36,
+          "crouched": true,
+          "suppressedUntil": 0,
+          "cooldown": 0,
+          "rounds": 5,
+          "angle": 1.4576453452044118,
+          "pitch": -0.06,
+          "aiming": false,
+          "moveBlend": 0,
+          "sprinting": false,
+          "weaponShotAt": 742449.9999998725,
+          "carrying": null,
+          "headgear": "pl_helmet_wz31"
+        },
+        "actors": [
+          {
+            "id": "marek_zielinski",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pawel_krawiec",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "tadeusz_nowicki",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "szymon_kowal",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "jozef_bak",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "leon_dudek",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "staszek_pawlak",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "franciszek_lipski",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "sapper_2",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "sapper_3",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "east_platoon_voice",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "generic_rifleman",
+            "health": 45,
+            "alive": true
+          },
+          {
+            "id": "de_east_0",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "de_east_1",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "de_east_2",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_3",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_4",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_5",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_6",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_7",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_8",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_9",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_10",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_11",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_12",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_13",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_14",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_15",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_16",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_17",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_18",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_19",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_20",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_21",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_22",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_23",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_24",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_25",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_26",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_27",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_28",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_29",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_30",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_31",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_32",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_33",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_34",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_35",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_36",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_37",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_38",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_east_39",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_spans_0",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "de_spans_1",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "de_spans_2",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "de_spans_3",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "de_spans_4",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_spans_5",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_spans_6",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_spans_7",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_spans_8",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "de_spans_9",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_0",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_1",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_2",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_3",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_4",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_5",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_6",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_7",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_8",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_9",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_10",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_11",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_12",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_13",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_14",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_15",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_16",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_17",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "pl_east_18",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_19",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_20",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_21",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_22",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "pl_east_23",
+            "health": 0,
+            "alive": false
+          },
+          {
+            "id": "ckm_gunner",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "ckm_loader",
+            "health": 100,
+            "alive": true
+          },
+          {
+            "id": "ckm_reserve",
+            "health": 100,
+            "alive": true
+          }
+        ]
+      },
+      "policyDeltaAgainstRaw": {
+        "realSeconds": 64.04999999994175,
+        "ticks": 1281,
+        "rngBefore": 1663516278,
+        "rngAfter": 3461484509,
+        "issuedRounds": 8,
+        "eventCounts": {
+          "checkpoint": 0,
+          "message": 0,
+          "m01-blast": 0,
+          "distant-shot": 0,
+          "player-shot": 0,
+          "npc-shot": 0,
+          "enemy-fire": 8,
+          "round-impact": 8,
+          "reload": 0,
+          "player-hit": 0,
+          "complete": 0
+        }
+      },
       "final": {
-        "rng": 1663516278,
+        "rng": 3461484509,
         "checkpoints": [
           "cp_m01_a_orientacao",
           "cp_m01_b_reorganizacao",
@@ -3574,7 +5764,7 @@
           "cp_m01_d_retirada"
         ],
         "westDemolition": {
-          "clock": 989.7999999996475,
+          "clock": 1053.8499999995893,
           "battleClock": 24300
         },
         "complete": true

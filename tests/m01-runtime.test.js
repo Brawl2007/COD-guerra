@@ -1,3 +1,5 @@
+import {DECK_SAFE_X} from '../src/game/m01-deck-assault.js';
+import {checkpointApplies} from '../src/game/m01-difficulty.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { M01Simulation, seconds, validateM01Snapshot } from '../src/game/m01-simulation.js';
@@ -45,9 +47,12 @@ test('M01 complete control route reaches debrief, all required objectives, uniqu
   assert.equal(sim.mission.complete,true);assert.equal(sim.flags['m01.completed'],true);assert.equal(sim.battleClock,seconds('07:05'));
   assert.equal(Object.keys(sim.consumed).length,sim.definition.events.length);
   for(const o of sim.definition.objectives.filter(o=>o.required))assert.equal(sim.objectives[o.id].state,'done',o.id);
-  assert.deepEqual(Object.keys(checkpoints),sim.definition.checkpoints.map(c=>c.id));
+  // 2026-10-22 (H9 D3): mission.json gained CP-B2 ("Reparo"), which exists on soldado and veterano only; this route runs on recruta, so it reaches exactly the ids that apply to its level.
+  assert.deepEqual(Object.keys(checkpoints),sim.definition.checkpoints.map(c=>c.id).filter(id=>checkpointApplies(id,sim.difficulty)));
+  assert.equal(sim.difficulty,'recruta');assert.ok(!Object.hasOwn(checkpoints,'cp_m01_b2_reparo'),'recruta never saves CP-B2');
   assert.equal(events.filter(e=>e.type==='complete').length,1);
-  assert.ok(sim.enemies.every(a=>a.x>=690));assert.equal(sim.flags['m01.nowicki_status'],'missing');
+  // Combat slice 2 (versioned save rule, deck record v1): the deck assault may reach the safety line x 450; every other German stays at x >= 690.
+  assert.ok(sim.enemies.every(a=>a.x>=(a.group==='grp_de_spans'&&a.deck?DECK_SAFE_X:690)));assert.equal(sim.flags['m01.nowicki_status'],'missing');
   const c=checkpoints.cp_m01_c_engenheiros,d=checkpoints.cp_m01_d_retirada;
   assert.ok(c.battleClock>=seconds('05:34'));assert.equal(c.flags['m01.second_raid_state'],'ended');
   assert.ok(d.battleClock>=seconds('06:10'));assert.ok(d.player.x<-20);assert.equal(d.player.carrying,null);
@@ -88,11 +93,16 @@ test('a late message never rewinds battle time and every aerial impact stays at 
   assert.equal(sim.flags['m01.forward_post_state'],'intact_near_miss');
   for(const d of sim.sectors.damage)if(d.id==='forward_post')assert.ok(Math.hypot(d.x-sim.player.x,d.z-sim.player.z)>=30);
 });
-test('west demolition waits inside the safety zone, then releases once the player and allies have left',()=>{
+test('west demolition requires actual delivery and waits while the player remains inside the safety zone',()=>{
   const sim=new M01Simulation();sim.restoreSnapshot(full().checkpoints.cp_m01_d_retirada);
   for(const a of sim.allies)if(a.alive&&a.active&&!a.civilian){a.x=-170;a.z=22;}
   sim.player.x=-40;sim.player.z=32;sim.battleClock=seconds('06:44:30');
-  run(sim,3);assert.equal(sim.battleClock,seconds('06:44:30'));assert.equal(sim.consumedEvent(E('west_demolition')),false);
+  const bak=sim.actor('jozef_bak'),carrier=sim.actor('leon_dudek');
+  run(sim,3);assert.ok(bak.carry||bak.carriedBy);assert.equal(bak.carriedBy,carrier.id);assert.equal(sim.battleClock,seconds('06:44:30'));assert.equal(sim.consumedEvent(E('west_demolition')),false);
+  // Complete the real finite putdown at the actual evacuation destination; do not clear the carry flag.
+  Object.assign(carrier,{x:-332,z:24});run(sim,.1);assert.equal(bak.carry.phase,'putdown');
+  run(sim,2);assert.equal(bak.carry,undefined);assert.equal(bak.carriedBy,null);
+  assert.equal(sim.battleClock,seconds('06:44:30'));assert.equal(sim.consumedEvent(E('west_demolition')),false);
   sim.player.x=-120;run(sim,4);assert.equal(sim.consumedEvent(E('west_demolition')),true);assert.ok(sim.player.alive);
 });
 test('boundary warning precedes failure and its eight second timer resets when the player returns',()=>{

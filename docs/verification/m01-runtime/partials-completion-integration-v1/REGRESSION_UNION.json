@@ -1,0 +1,511 @@
+{
+  "schema_version": 1,
+  "record_count": 12,
+  "obligation_count": 34,
+  "records": [
+    {
+      "task_id": "M01-ANIM-LOCOMOTION-RESOLVER-V1",
+      "accepted_head": "46b210f45b87608e0372d84922f8e9a15c41deae",
+      "path": ".agent/regression/records/M01-ANIM-LOCOMOTION-RESOLVER-V1.json"
+    },
+    {
+      "task_id": "M01-DISTANT-FRONT-IMPOSTORS-V1",
+      "accepted_head": "676a4557fcaaad59711e8edcd2f0934f7ad681cf",
+      "path": ".agent/regression/records/M01-DISTANT-FRONT-IMPOSTORS-V1.json"
+    },
+    {
+      "task_id": "M01-LIGHTING-DAWN-V1",
+      "accepted_head": "3386fc2921158136663993ea29aa47ffd58c9918",
+      "path": ".agent/regression/records/M01-LIGHTING-DAWN-V1.json"
+    },
+    {
+      "task_id": "M01-PARTIALS-COMPLETION-INTEGRATION-V1",
+      "accepted_head": "e377a0739906507dee63cd4006a3428efd22c56b",
+      "path": ".agent/regression/records/M01-PARTIALS-COMPLETION-INTEGRATION-V1.json"
+    },
+    {
+      "task_id": "M01-POSTPROCESS-GRADING-V1",
+      "accepted_head": "4f27f90e265447e8a1cb67dc17310751a045b2e5",
+      "path": ".agent/regression/records/M01-POSTPROCESS-GRADING-V1.json"
+    },
+    {
+      "task_id": "M01-T09-T28-MATERIALS-CLOSEOUT-V1",
+      "accepted_head": "c739b08549d5f08963984eb644b40bebcb91cfd8",
+      "path": ".agent/regression/records/M01-T09-T28-MATERIALS-CLOSEOUT-V1.json"
+    },
+    {
+      "task_id": "M01-T10-T29-VEGETATION-V2",
+      "accepted_head": "cc3f459cea8cf7ad1f797808cb0461d142d20a79",
+      "path": ".agent/regression/records/M01-T10-T29-VEGETATION-V2.json"
+    },
+    {
+      "task_id": "M01-T13-T32-FIELD-STRUCTURES-V1",
+      "accepted_head": "cbbe0d7624d39e444f02ac0bd200037a71b3cf8e",
+      "path": ".agent/regression/records/M01-T13-T32-FIELD-STRUCTURES-V1.json"
+    },
+    {
+      "task_id": "M01-T27-T30-RELIEF-HORIZON-V1",
+      "accepted_head": "4e5389b314f3e02b3197139cca953b79a5464d8f",
+      "path": ".agent/regression/records/M01-T27-T30-RELIEF-HORIZON-V1.json"
+    },
+    {
+      "task_id": "M01-T31-T33-RAIL-PROPS-V1",
+      "accepted_head": "6878d01e895787342d5f43b98524d47d53475943",
+      "path": ".agent/regression/records/M01-T31-T33-RAIL-PROPS-V1.json"
+    },
+    {
+      "task_id": "M01-VIEWMODEL-FEEL-V2",
+      "accepted_head": "29ba3cf70479a8c2bd3c304af07d424cb2d4b9a3",
+      "path": ".agent/regression/records/M01-VIEWMODEL-FEEL-V2.json"
+    },
+    {
+      "task_id": "M01-WATER-VISTULA-V1",
+      "accepted_head": "71ad06762526075fd62bf11dc90cf3de850f4c60",
+      "path": ".agent/regression/records/M01-WATER-VISTULA-V1.json"
+    }
+  ],
+  "obligations": [
+    {
+      "id": "m01-actual-glb-track-contact-owner",
+      "kind": "test",
+      "check": "node --test tests/m01-track-bed.test.js tests/m01-train-consist-polish.test.js",
+      "sources": [
+        {
+          "task_id": "M01-T31-T33-RAIL-PROPS-V1",
+          "accepted_head": "6878d01e895787342d5f43b98524d47d53475943",
+          "reason": "Use immutable actual span/support/floor metadata, preserve fixed train wheel contact, bounded floor reveal and borrowed material restoration, one owner for approach and train extension, four track batches and sleeper/gauge profiles.",
+          "record": ".agent/regression/records/M01-T31-T33-RAIL-PROPS-V1.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-actual-prop-instancing-ownership",
+      "kind": "test",
+      "check": "node --test tests/m01-props-runtime.test.js",
+      "sources": [
+        {
+          "task_id": "M01-T31-T33-RAIL-PROPS-V1",
+          "accepted_head": "6878d01e895787342d5f43b98524d47d53475943",
+          "reason": "42 original GLBs remain actual indexed heterogeneous geometry in bounded atlases, partial/hung/late completion releases once, borrowed inputs untouched, same-capacity world restores reuse GPU attributes.",
+          "record": ".agent/regression/records/M01-T31-T33-RAIL-PROPS-V1.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-anim-resolver-browser",
+      "kind": "browser",
+      "check": "npx playwright test tests/browser/m01-anim-resolver.spec.js --workers=1 --retries=0",
+      "sources": [
+        {
+          "task_id": "M01-ANIM-LOCOMOTION-RESOLVER-V1",
+          "accepted_head": "46b210f45b87608e0372d84922f8e9a15c41deae",
+          "reason": "Proves in production UI that blends are valid, pause and reload keep poses identical, the live sapper crouch follows smoothstep over 0.3 s and the MG34 gunner death blends into fallen; later character/LOD/IK work (T36-T38, T43) must keep it.",
+          "record": ".agent/regression/records/M01-ANIM-LOCOMOTION-RESOLVER-V1.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-animation-resolver-model",
+      "kind": "test",
+      "check": "node --test tests/m01-animation-resolver.test.js tests/m01-animation-player.test.js",
+      "sources": [
+        {
+          "task_id": "M01-ANIM-LOCOMOTION-RESOLVER-V1",
+          "accepted_head": "46b210f45b87608e0372d84922f8e9a15c41deae",
+          "reason": "Pins soldier blend weights as a pure function of sim time (sum 1, smoothstep fades, mid-fade continuity), full fallen clip from diedAt, odometer locomotion phase, pause freeze, identical bone matrices after LOD swap, and no stopAllAction/RNG/wall clock in pose modules.",
+          "record": ".agent/regression/records/M01-ANIM-LOCOMOTION-RESOLVER-V1.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-distant-front-impostors-browser",
+      "kind": "browser",
+      "check": "npx playwright test tests/browser/m01-distant-front-impostors.spec.js --workers=1 --retries=0",
+      "sources": [
+        {
+          "task_id": "M01-DISTANT-FRONT-IMPOSTORS-V1",
+          "accepted_head": "676a4557fcaaad59711e8edcd2f0934f7ad681cf",
+          "reason": "Proves in the built page that soldiers beyond about 350 m are drawn as impostors only on the sightline-free figures (12 Germans per view; the Polish platoon has no sightline from the test views), with the on/off A/B thresholds unchanged, pause freeze (maxDiff 0) and a zero-diff control; later LOD, lighting or water passes must keep it.",
+          "record": ".agent/regression/records/M01-DISTANT-FRONT-IMPOSTORS-V1.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-field-gallery-feature-visibility",
+      "kind": "browser",
+      "check": "npx playwright test -c tools/verification/playwright.m01-field-structures.config.js tools/verification/m01-field-structures-gallery.spec.js",
+      "sources": [
+        {
+          "task_id": "M01-T13-T32-FIELD-STRUCTURES-V1",
+          "accepted_head": "cbbe0d7624d39e444f02ac0bd200037a71b3cf8e",
+          "reason": "All original field types, LODs and destroyed variant must remain renderable and within declared triangle budgets. Runtime post views and supplemental authoring angles make otherwise occluded details reviewable.",
+          "record": ".agent/regression/records/M01-T13-T32-FIELD-STRUCTURES-V1.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-field-kit-world-bounds",
+      "kind": "test",
+      "check": "node --test tests/m01-field-structures.test.js; node tools/assets/m01-field-structures/build.mjs --check",
+      "sources": [
+        {
+          "task_id": "M01-T13-T32-FIELD-STRUCTURES-V1",
+          "accepted_head": "cbbe0d7624d39e444f02ac0bd200037a71b3cf8e",
+          "reason": "Actual binary collision-backed surfaces must match current world boxes, preserve open entry, bounded decreasing LODs and original licence/raw SHA. Decorative envelopes remain explicitly separate.",
+          "record": ".agent/regression/records/M01-T13-T32-FIELD-STRUCTURES-V1.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-field-partial-stale-ownership",
+      "kind": "test",
+      "check": "node --test tests/m01-field-structures.test.js",
+      "sources": [
+        {
+          "task_id": "M01-T13-T32-FIELD-STRUCTURES-V1",
+          "accepted_head": "cbbe0d7624d39e444f02ac0bd200037a71b3cf8e",
+          "reason": "Release fulfilled partial assets immediately on failure/dispose even when sibling hangs; late completion releases once, world replacement and destruction preserve controller residency.",
+          "record": ".agent/regression/records/M01-T13-T32-FIELD-STRUCTURES-V1.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-field-paused-runtime-and-restore",
+      "kind": "browser",
+      "check": "npx playwright test tests/browser/m01-field-structures.spec.js",
+      "sources": [
+        {
+          "task_id": "M01-T13-T32-FIELD-STRUCTURES-V1",
+          "accepted_head": "cbbe0d7624d39e444f02ac0bd200037a71b3cf8e",
+          "reason": "Real models must visibly replace both proxy paths in paused frame without changing authoritative state; optional failure keeps proxies, quality/world restore keep one visible LOD and warmed identical restores plateau.",
+          "record": ".agent/regression/records/M01-T13-T32-FIELD-STRUCTURES-V1.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-impostors-model",
+      "kind": "test",
+      "check": "node --test tests/m01-impostors.test.js",
+      "sources": [
+        {
+          "task_id": "M01-DISTANT-FRONT-IMPOSTORS-V1",
+          "accepted_head": "676a4557fcaaad59711e8edcd2f0934f7ad681cf",
+          "reason": "Pins the distant-front impostor model: hand-off at 350 m (exactly one representation), per-nation capacity 128 High / 96 Medium / 64 Low with one draw call per nation, minimum 3 px / 1.7 m silhouettes, distinct postures, sim-clock step phase, minimum contrast against the backdrop, backlight only 05:30-06:40 facing the sun, one InstancedMesh per nation, and the wiring rule that the sim never imports the module.",
+          "record": ".agent/regression/records/M01-DISTANT-FRONT-IMPOSTORS-V1.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-lighting-dawn-browser",
+      "kind": "browser",
+      "check": "npx playwright test tests/browser/m01-lighting-dawn.spec.js --workers=1 --retries=0",
+      "sources": [
+        {
+          "task_id": "M01-LIGHTING-DAWN-V1",
+          "accepted_head": "3386fc2921158136663993ea29aa47ffd58c9918",
+          "reason": "Proves in the built page that Low keeps shadows disabled with one cascade, Medium/High cast shadows from 04:30 with two cascades, sky shader compiles with no page errors.",
+          "record": ".agent/regression/records/M01-LIGHTING-DAWN-V1.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-lighting-model",
+      "kind": "test",
+      "check": "node --test tests/m01-lighting.test.js",
+      "sources": [
+        {
+          "task_id": "M01-LIGHTING-DAWN-V1",
+          "accepted_head": "3386fc2921158136663993ea29aa47ffd58c9918",
+          "reason": "Pins fog 420/2800, C01 sun keyframe interpolation, five distinct ordered dawn phases, intensity split wide+near == total key, Low cascade plan (no extra shadow map).",
+          "record": ".agent/regression/records/M01-LIGHTING-DAWN-V1.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-material-atlas-viewer",
+      "kind": "browser",
+      "check": "npx playwright test --config tools/verification/playwright.m01-materials.config.js --workers=1 --retries=0",
+      "sources": [
+        {
+          "task_id": "M01-T09-T28-MATERIALS-CLOSEOUT-V1",
+          "accepted_head": "c739b08549d5f08963984eb644b40bebcb91cfd8",
+          "reason": "Render all sixteen original albedo/normal/ORM material families at both quality tiers and 1/5/20 metres, without HTTP or shader errors; preserve family/distance on replacement.",
+          "record": ".agent/regression/records/M01-T09-T28-MATERIALS-CLOSEOUT-V1.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-materials-generation-and-ownership",
+      "kind": "test",
+      "check": "node --test tests/m01-material-atlas.test.js tests/m01-material-authority.test.js tests/m01-terrain-mask.test.js tests/m01-terrain-material.test.js tests/m01-terrain-textures.test.js tests/m01-props-kit.test.js",
+      "sources": [
+        {
+          "task_id": "M01-T09-T28-MATERIALS-CLOSEOUT-V1",
+          "accepted_head": "c739b08549d5f08963984eb644b40bebcb91cfd8",
+          "reason": "Keep deterministic licensed atlases, cell isolation, decoded memory limits, terrain mapping, original surface/mesh sampling and exactly-once ownership of resident and partially completed loads. Prop reproduction permits only near-zero NORMAL residuals, with all other data strict.",
+          "record": ".agent/regression/records/M01-T09-T28-MATERIALS-CLOSEOUT-V1.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-partials-current-owner-and-sandbox-authority",
+      "kind": "test",
+      "check": "node tools/verification/m01-bridge-finish-v2-authority.mjs --current-authority && node tools/verification/m01-bridge-finish-v2-futures.mjs --current-authority --out test-results/m01-partials-owner-futures.json",
+      "sources": [
+        {
+          "task_id": "M01-PARTIALS-COMPLETION-INTEGRATION-V1",
+          "accepted_head": "e377a0739906507dee63cd4006a3428efd22c56b",
+          "reason": "Preserve the protected French sandbox/original assets and actual presentation-only bridge-owner ON/OFF full save/event/control/checkpoint futures across both routes and twelve seeds. No renderer may decide gameplay or consume simulation RNG.",
+          "record": ".agent/regression/records/M01-PARTIALS-COMPLETION-INTEGRATION-V1.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-partials-pause-reload-finite-phases",
+      "kind": "browser",
+      "check": "node --test tests/m01-partials-completion.test.js tests/m01-partials-correction-01.test.js && npx playwright test --config tools/verification/playwright.partials-completion.config.js --workers=1 --retries=0",
+      "sources": [
+        {
+          "task_id": "M01-PARTIALS-COMPLETION-INTEGRATION-V1",
+          "accepted_head": "e377a0739906507dee63cd4006a3428efd22c56b",
+          "reason": "Preserve optional schema2/legacy atomicity, finite carry/feed phases and genuine delivery before WEST, saved free-scene cues, train arrival/anchors, grenade expiry and paused damage/graphics clocks. Keep actual drawn-frame/native-pause assertions and existing coupled cases.",
+          "record": ".agent/regression/records/M01-PARTIALS-COMPLETION-INTEGRATION-V1.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-postprocess-grading-browser",
+      "kind": "browser",
+      "check": "npx playwright test tests/browser/m01-postprocess-grading.spec.js --workers=1 --retries=0",
+      "sources": [
+        {
+          "task_id": "M01-POSTPROCESS-GRADING-V1",
+          "accepted_head": "4f27f90e265447e8a1cb67dc17310751a045b2e5",
+          "reason": "Proves in the built page that the vignette leaves the centre identical, AO only darkens, mean luminance stays >= 85 % of BEFORE, there is no display-black crush (luma<3), and the same-frame A/B holds with the decal atlas ready (same checksum before/after); later passes must keep it.",
+          "record": ".agent/regression/records/M01-POSTPROCESS-GRADING-V1.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-postprocess-grading-model",
+      "kind": "test",
+      "check": "node --test tests/m01-grading.test.js",
+      "sources": [
+        {
+          "task_id": "M01-POSTPROCESS-GRADING-V1",
+          "accepted_head": "4f27f90e265447e8a1cb67dc17310751a045b2e5",
+          "reason": "Pins grade, vignette and AO parameters per phase (dawn), the single-pass composition on Medium/High and Low unchanged (no grade, vignette or AO).",
+          "record": ".agent/regression/records/M01-POSTPROCESS-GRADING-V1.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-protected-ground-envelope-and-future",
+      "kind": "test",
+      "check": "node --test tests/m01-terrain-envelope.test.js tests/m01-terrain-relief.test.js tests/m01-material-authority.test.js; node tools/verification/m01-relief-horizon-futures.mjs --baseline /path/to/293a4f116b9b28818b7ff3bda4d83cc49b01014f --out test-results/m01-relief-horizon-futures.json",
+      "sources": [
+        {
+          "task_id": "M01-T27-T30-RELIEF-HORIZON-V1",
+          "accepted_head": "4e5389b314f3e02b3197139cca953b79a5464d8f",
+          "reason": "Preserve complete participant hull union plus20m, original crossing/normal/UV/contact geometry and immutable physics; both real-control routes for12 seeds preserve all tick saves/events and checkpoint backups, without consuming simulation RNG.",
+          "record": ".agent/regression/records/M01-T27-T30-RELIEF-HORIZON-V1.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-rail-props-frozen-render-and-resources",
+      "kind": "browser",
+      "check": "npx playwright test --config tools/verification/playwright.m01-rail-props.config.js",
+      "sources": [
+        {
+          "task_id": "M01-T31-T33-RAIL-PROPS-V1",
+          "accepted_head": "6878d01e895787342d5f43b98524d47d53475943",
+          "reason": "Real model/track replacements must visibly render at fixed save/camera/clock, original closed gates preserved, all15 controls stable, Low/High and checkpoint resource plateau, failure fallback and paused late residency.",
+          "record": ".agent/regression/records/M01-T31-T33-RAIL-PROPS-V1.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-rail-props-gameplay-authority",
+      "kind": "test",
+      "check": "npm run assets:m01:colliders -- --check; node tools/verify-m01-route.mjs",
+      "sources": [
+        {
+          "task_id": "M01-T31-T33-RAIL-PROPS-V1",
+          "accepted_head": "6878d01e895787342d5f43b98524d47d53475943",
+          "reason": "No presentation owner may change colliders, gameplay routes, train anchors, bridge source geometry or deterministic mission future.",
+          "record": ".agent/regression/records/M01-T31-T33-RAIL-PROPS-V1.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-relief-horizon-lifecycle-and-far-seating",
+      "kind": "test",
+      "check": "node --test tests/m01-terrain-relief.test.js tests/m01-far-landscape.test.js",
+      "sources": [
+        {
+          "task_id": "M01-T27-T30-RELIEF-HORIZON-V1",
+          "accepted_head": "4e5389b314f3e02b3197139cca953b79a5464d8f",
+          "reason": "Far objects seat on actual submitted triangle surfaces outside complete envelope; owners rebind world/revision and quality without steady rebuild, release owned resources once and preserve borrowed inputs.",
+          "record": ".agent/regression/records/M01-T27-T30-RELIEF-HORIZON-V1.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-relief-horizon-render-budget-and-pixels",
+      "kind": "browser",
+      "check": "npx playwright test --config tools/verification/playwright.m01-relief-horizon.config.js",
+      "sources": [
+        {
+          "task_id": "M01-T27-T30-RELIEF-HORIZON-V1",
+          "accepted_head": "4e5389b314f3e02b3197139cca953b79a5464d8f",
+          "reason": "Actual canonical01/09/17 ground submissions remain <=52000 triangles; far owner <=10 submissions; required relief01/09/17 and far01/10/17 pixels visible at identical paused state/camera/clock and zero control delta.",
+          "record": ".agent/regression/records/M01-T27-T30-RELIEF-HORIZON-V1.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-relief-preserves-rail-contact-and-restores",
+      "kind": "test",
+      "check": "node --test tests/m01-terrain-material.test.js tests/m01-track-bed.test.js tests/m01-props-runtime.test.js; npx playwright test --config tools/verification/playwright.m01-relief-horizon.config.js",
+      "sources": [
+        {
+          "task_id": "M01-T27-T30-RELIEF-HORIZON-V1",
+          "accepted_head": "4e5389b314f3e02b3197139cca953b79a5464d8f",
+          "reason": "Accepted T31 bounded ground hooks and prior owners remain intact; Low/High, paused debug invalidation, four restores and equally warmed reload preserve exact clock/save and geometry/texture plateau.",
+          "record": ".agent/regression/records/M01-T27-T30-RELIEF-HORIZON-V1.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-terrain-frozen-frame-and-quality",
+      "kind": "browser",
+      "check": "npx playwright test tests/browser/m01-terrain-war-ground.spec.js --workers=1 --retries=0",
+      "sources": [
+        {
+          "task_id": "M01-T09-T28-MATERIALS-CLOSEOUT-V1",
+          "accepted_head": "c739b08549d5f08963984eb644b40bebcb91cfd8",
+          "reason": "Preserve actual material changes at 1/5/50 metres, wet banks/ballast/tracks, frozen material A/B geometry/save/clock, Low macro-only and texture recovery after quality churn.",
+          "record": ".agent/regression/records/M01-T09-T28-MATERIALS-CLOSEOUT-V1.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-vegetation-lod-clock-wind-and-banks",
+      "kind": "browser",
+      "check": "npx playwright test --config tools/verification/m01-vegetation-v2-runtime.config.mjs; npx playwright test tests/browser/m01-vegetation-lod.spec.js --workers=1 --retries=0",
+      "sources": [
+        {
+          "task_id": "M01-T10-T29-VEGETATION-V2",
+          "accepted_head": "cc3f459cea8cf7ad1f797808cb0461d142d20a79",
+          "reason": "Retain genuine both-bank silhouettes and unchanged canonical saves/cameras, 120m impostors with return116m, strict40m ground cutoff, useful Low/Medium/High and mission-clock-only anchored wind. Paused and restored pixels stay identical; resumed foliage visibly moves.",
+          "record": ".agent/regression/records/M01-T10-T29-VEGETATION-V2.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-vegetation-native-budget-and-lifecycle",
+      "kind": "test",
+      "check": "node --test tests/m01-vegetation-runtime.test.js tests/m01-vegetation-lod.test.js; npx playwright test --config tools/verification/m01-vegetation-v2-runtime.config.mjs",
+      "sources": [
+        {
+          "task_id": "M01-T10-T29-VEGETATION-V2",
+          "accepted_head": "cc3f459cea8cf7ad1f797808cb0461d142d20a79",
+          "reason": "Measure actual main/shadow submissions including padded indices and transparent passes, ignore empty native callbacks and distinguish capacity. Enforce preset/alpha budgets; retain partial/hung/late paused invalidation, failure fallback, same-capacity restore and exclusive once-only disposal with borrowed resources untouched.",
+          "record": ".agent/regression/records/M01-T10-T29-VEGETATION-V2.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-vegetation-original-kit-and-budget",
+      "kind": "test",
+      "check": "node tools/assets/m01-vegetation/build.mjs --check; node --test tests/m01-vegetation-glb.test.js; npx playwright test --config tools/verification/m01-vegetation-v2-kit.config.mjs",
+      "sources": [
+        {
+          "task_id": "M01-T10-T29-VEGETATION-V2",
+          "accepted_head": "cc3f459cea8cf7ad1f797808cb0461d142d20a79",
+          "reason": "Retain deterministic original GLB accessors, distinct eight-tree/four-tier, six-shrub and five-ground identities, authored alpha/wind and actual geometry/atlas budgets; do not replace production geometry with residency-labelled proxies.",
+          "record": ".agent/regression/records/M01-T10-T29-VEGETATION-V2.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-vegetation-physical-layout-and-futures",
+      "kind": "test",
+      "check": "node --test tests/m01-vegetation-layout.test.js tests/m01-vegetation-runtime.test.js tests/m01-damage-decals.test.js; node tools/verification/m01-vegetation-v2-future-batch.mjs --baseline /path/to/b2430fac3504aa6d0ce7d0ad664076c26f90d6f7 --out test-results/m01-vegetation-v2-futures.json",
+      "sources": [
+        {
+          "task_id": "M01-T10-T29-VEGETATION-V2",
+          "accepted_head": "cc3f459cea8cf7ad1f797808cb0461d142d20a79",
+          "reason": "Preserve complete immutable layout, all 17 actual Lathe trunk buffers/transforms and decal receiver fields. Both real-control routes for twelve seeds must preserve every tick save/event and checkpoint backup with actual GLB owner bound, without consuming simulation RNG.",
+          "record": ".agent/regression/records/M01-T10-T29-VEGETATION-V2.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-vegetation-preserves-coupled-presentation",
+      "kind": "browser",
+      "check": "npx playwright test --config tools/verification/playwright.m01-relief-horizon.config.js; npx playwright test --config tools/verification/playwright.m01-rail-props.config.js; npx playwright test tests/browser/m01-terrain-war-ground.spec.js --workers=1 --retries=0; npx playwright test --config tools/verification/playwright.m01-materials.config.js",
+      "sources": [
+        {
+          "task_id": "M01-T10-T29-VEGETATION-V2",
+          "accepted_head": "cc3f459cea8cf7ad1f797808cb0461d142d20a79",
+          "reason": "Retain submitted-triangle seating outside protected union, terrain/far budgets, actual rail/props geometry and contact ownership, material frozen A/B and quality recovery. All previous applicable owners remain resident and authoritative state/clock stay exact.",
+          "record": ".agent/regression/records/M01-T10-T29-VEGETATION-V2.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-viewmodel-feel-browser",
+      "kind": "browser",
+      "check": "npx playwright test tests/browser/m01-viewmodel-feel.spec.js --workers=1 --retries=0",
+      "sources": [
+        {
+          "task_id": "M01-VIEWMODEL-FEEL-V2",
+          "accepted_head": "29ba3cf70479a8c2bd3c304af07d424cb2d4b9a3",
+          "reason": "Proves in the production UI that ADS entry and exit take the specified time and curve, the FOV follows the same curve, the view freezes under pause, and the rifle lowers near an obstacle while raised in clear space; later viewmodel, arm and posture work (T40, T38) must keep it.",
+          "record": ".agent/regression/records/M01-VIEWMODEL-FEEL-V2.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-viewmodel-feel-model",
+      "kind": "test",
+      "check": "node --test tests/m01-viewmodel-feel.test.js",
+      "sources": [
+        {
+          "task_id": "M01-VIEWMODEL-FEEL-V2",
+          "accepted_head": "29ba3cf70479a8c2bd3c304af07d424cb2d4b9a3",
+          "reason": "Pins the first-person weapon feel: ADS progress linear in sim time (0.30 s in, 0.22 s out) with one smoothstep curve shared by the weapon pose and the camera FOV (70 to 48); breath and walk/run/crouch bob as closed-form functions of the sim clock; pause freezes the view; recoil unchanged per shot; wall/tree/cover lowering is a read-only probe; no RNG and no wall clock in the presentation modules.",
+          "record": ".agent/regression/records/M01-VIEWMODEL-FEEL-V2.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-water-model",
+      "kind": "test",
+      "check": "node --test tests/m01-water.test.js",
+      "sources": [
+        {
+          "task_id": "M01-WATER-VISTULA-V1",
+          "accepted_head": "71ad06762526075fd62bf11dc90cf3de850f4c60",
+          "reason": "Pins water uniforms as a pure function of the sim clock, fresnel/sky mix, flow toward -z, pier foam and bank masks, Low policy (no reflection, tint, no render target) and the unchanged water mesh line.",
+          "record": ".agent/regression/records/M01-WATER-VISTULA-V1.json"
+        }
+      ]
+    },
+    {
+      "id": "m01-water-vistula-browser",
+      "kind": "browser",
+      "check": "npx playwright test tests/browser/m01-water-vistula.spec.js --workers=1 --retries=0",
+      "sources": [
+        {
+          "task_id": "M01-WATER-VISTULA-V1",
+          "accepted_head": "71ad06762526075fd62bf11dc90cf3de850f4c60",
+          "reason": "Proves pause-freeze (maxDiff 0), Low water not darker than the old box (mean >= 50), sky-tinted grazing field and the foam/bank on-vs-off A/B with a zero-diff control; later grading/LOD passes must keep it.",
+          "record": ".agent/regression/records/M01-WATER-VISTULA-V1.json"
+        }
+      ]
+    }
+  ]
+}

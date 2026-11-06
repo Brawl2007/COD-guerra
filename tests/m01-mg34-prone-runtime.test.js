@@ -119,7 +119,7 @@ test('inactivity discards pending combat and the optional display loader leaves 
   const s=firing(),a=s.actor(GUNNER);a.active=false;s.updateMG34Posture(a);
   assert.equal(a.mg34Prone,undefined);assert.equal(a.shot,0);
   at(s,s.clock+.05);const loader=s.actor('de_mg34_loader_0');assert.equal(loader.loaderFor,GUNNER);assert.equal(loader.mg34Loader.phase,'leave');assert.equal(loader.shot,0);assert.ok(s.enemies.every(x=>!x.displayOnly));
-  assert.equal(s.actors.length,97);assert.equal(s.snapshot().schema,2);
+  assert.equal(s.actors.length,103);assert.equal(s.snapshot().schema,2);   // 2026-10-23 (R1-a, golden amendment 16): 97 + the six unnamed men of the west garrison
 });
 
 test('legacy missing prone data resumes safely with no marker; 86 roster/CKM migration stays unchanged',()=>{
@@ -131,7 +131,7 @@ test('legacy missing prone data resumes safely with no marker; 86 roster/CKM mig
   s.updateMG34Posture(s.actor(GUNNER));assert.equal(phase(s),'enter');
   const oldest=new M01Simulation().snapshot();oldest.actors=oldest.actors.filter(a=>!a.ckm);
   const r=new M01Simulation();r.restoreSnapshot(oldest);
-  assert.equal(r.actors.length,97);assert.deepEqual(r.actors.filter(a=>!a.ckm),oldest.actors);assert.equal(r.rng.state,oldest.rng);
+  assert.equal(r.actors.length,103);assert.deepEqual(r.actors.filter(a=>!a.ckm),oldest.actors);assert.equal(r.rng.state,oldest.rng);   // 2026-10-23 (R1-a, amendment 16): 97 -> 103, the west garrison
 });
 
 test('invalid partial/impossible prone fields reject atomically without changing source or target',()=>{
@@ -156,15 +156,18 @@ test('invalid partial/impossible prone fields reject atomically without changing
   }
 });
 
-test('movement and S3 station evacuation bodies remain byte-for-byte identical to the fixed base',()=>{
+test('the old straight walk and S3 station evacuation bodies remain byte-for-byte identical to the fixed base',()=>{
   const current=readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url),'utf8');
   const base=execFileSync('git',['show','2cfa9520a09c68629e3d98d6e7f4dc0d8f9e6732:src/game/m01-simulation.js'],{encoding:'utf8'});
-  for(const [start,end] of [['  moveActor(','  updateActors('],['  evacuateStation(','  evacuate(']]){
-    const old=base.slice(base.indexOf(start),base.indexOf(end,base.indexOf(start)));
-    const now=current.slice(current.indexOf(start),current.indexOf(end,current.indexOf(start)));
-    // New posture methods precede updateActors, leaving moveActor itself intact.
-    const body=now.slice(0,old.length);assert.equal(body,old);
+  // NPC navigation (M01-NPC-NAVIGATION-V1, golden amendment 04): moveActor is now the navigating walker. The walk it used to be is kept verbatim as walkStraight,
+  // which moveActor calls whenever no solid and no man is in the way; only the name on the first line differs. evacuateStation is untouched and still calls moveActor.
+  for(const [start,end,renamed] of [['  moveActor(','  updateActors(','  walkStraight('],['  evacuateStation(','  evacuate(',null]]){
+    const old0=base.slice(base.indexOf(start),base.indexOf(end,base.indexOf(start))),old=renamed?old0.replace(start,renamed):old0;
+    const from=renamed??start,at=current.indexOf(from);
+    // New posture methods precede updateActors, leaving the old walk itself intact.
+    const now=current.slice(at,current.indexOf(end,at));const body=now.slice(0,old.length);assert.equal(body,old);
   }
+  assert.match(current,/moveActor\(a,target,dt,speed=3\.6\)\{[^]*?this\.walkStraight\(a,target,dt,speed\)/,'moveActor walks the old walk whenever nothing is in the way');
 });
 
  test('a nonlethal hit interrupts the remaining burst and stays low with a valid snapshot',()=>{

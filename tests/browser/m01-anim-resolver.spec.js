@@ -2,6 +2,7 @@ import {test,expect} from '@playwright/test';
 import {writeFileSync} from 'node:fs';
 import {driver,toRepair} from '../helpers/m01-route.js';
 import {FADE,fadeDuration,smoothstep} from '../../src/render/m01-animation-resolver.js';
+import {SIM_STEP} from '../../src/game/frame-catchup.js';
 
 // Production UI, real GLBs. The page is frozen at the exact saved clock (pause), so every pose is a pure function of
 // (saved actor data, sim clock): the animation resolver must give the same blend while paused and after a reload.
@@ -15,11 +16,13 @@ const key='cod-guerra:checkpoint:m01:v2',snapshot=toRepair(driver()).sim.snapsho
 function buildScenes(){
   const d=driver(19390901,{support:true}),{sim,step,until,walk}=d;
   step({skip:true});
-  walk(-66,26);walk(-15,26);walk(-15,2);walk(16,2);step({interact:true});
+  // 2026-10-18 (integration integ-pc): the player body physics (D44) made the old waypoint x -15 run into a solid on the way to (-15,2) and the repair-cluster and hut-door solids; this is the detour of
+  // tests/helpers/m01-route.js (toRepair), which the Node routes already use. Only the path to the post changed, not what the test asserts.
+  walk(-66,26);walk(-30,26);walk(-30,2);walk(16,2);step({interact:true});
   until(()=>sim.active('follow_sergeant'),120);
-  walk(-15,2);walk(-15,11);walk(-147,11);walk(-50,11);walk(-44,11);
-  walk(-245,9);walk(-274,9);walk(-274,21);walk(-265,21);step({interact:true});
-  walk(-274,21);walk(-274,8);walk(-123,8);
+  walk(-30,2);walk(-30,11);walk(-147,11);walk(-50,11);walk(-44,11);
+  walk(-150,15.5);walk(-245,9);walk(-275.5,9);walk(-275.5,21);walk(-265,21);step({interact:true});
+  walk(-275.5,21);walk(-275.5,8);walk(-155,15.5);walk(-123,8);
   const drop=sim.snapshot(false);                    // identical to toRepair() up to here; the next step is its final interact
   step({interact:true});
   if(!sim.active('cover_repair'))throw new Error('Route did not deliver the crate');
@@ -111,7 +114,7 @@ test('production UI: every visible soldier carries a valid clip blend, and pause
 // (a) Posture fade, live path. The page gets a virtual frame clock (requestAnimationFrame callbacks receive 1/30 s per
 // frame, whatever the host speed) so a slow software-GL frame cannot skip the 0.3 s fade; Game.loop is unchanged and
 // the simulation is stepped by the real game loop. The player presses E to deliver the crate, which makes the sappers
-// crouch (postureSince = sim clock). A sampler reads window.gameDiagnostics() after every game frame and takes canvas
+// crouch (postureSince = sim clock, in the tick after the repair phase starts). A sampler reads window.gameDiagnostics() after every game frame and takes canvas
 // snapshots of the first sapper that is mid-fade. Everything is presentation-side; no src hook was added.
 const FRAME=1000/30,SPAN=4;
 function installSampler({frame,span,prefer}){
@@ -154,6 +157,9 @@ test('production UI, live: sappers cross-fade into the crouched work pose with e
   await page.locator('#continue').click();
   await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');
   const sampling=Date.now();
+  // Press E only after the renderer has drawn the live scene once. Before that its newest blend record is the menu's (clock 0, far older than GAP), so a
+  // sapper whose first drawn frame is already the work pose has no earlier pose to fade from and is drawn at full weight: no fade to measure.
+  await page.waitForFunction(()=>window.__animLive.frames.some(f=>f.actors>0),null,{timeout:60000});
   // The route stands one tick before delivering the crate; E is the same key the real route sends as `interact`.
   for(let attempt=0;attempt<3;attempt++){
     await page.keyboard.press('KeyE',{delay:40});
@@ -166,25 +172,44 @@ test('production UI, live: sappers cross-fade into the crouched work pose with e
   const live=await page.evaluate(()=>({...window.__animLive,shots:window.__animLive.shots.map(({url,...rest})=>({...rest,url}))}));
   const state=await page.evaluate(()=>window.gameVerificationState());
   const since=Object.fromEntries(state.snapshot.actors.map(a=>[a.id,{postureSince:a.postureSince,posture:a.posture,crouched:a.crouched}]));
-  // Weights of every two-layer posture fade must equal smoothstep((clock-postureSince)/0.3); only those whose clips really change
-  // posture (fadeDuration == FADE.posture) and whose sim stamp lies inside the fade are comparable.
-  const checks=[];
-  for(const f of live.frames)for(const a of f.fading){
-    if(a.blend.length!==2)continue;
-    const to=a.blend.find(b=>b.clip===a.clip),from=a.blend.find(b=>b!==to);
-    if(!to||!from||fadeDuration(from.clip,to.clip)!==FADE.posture)continue;
-    const stamp=since[a.id]?.postureSince;
-    if(!(stamp>0)||f.clock<stamp-1e-6||f.clock-stamp>=FADE.posture)continue;
-    const expected=smoothstep((f.clock-stamp)/FADE.posture);
-    checks.push({id:a.id,clock:f.clock,sinceStamp:+(f.clock-stamp).toFixed(4),from:from.clip,to:to.clip,weight:to.weight,expected,error:Math.abs(to.weight-expected)});
-  }
+  // Weights of every two-layer posture fade must equal smoothstep((clock-start)/0.3); only fades whose clips really change posture
+  // (fadeDuration == FADE.posture) and that the sim's posture stamp explains are comparable. Where a fade starts is the renderer's rule in
+  // retarget(): the sim stamp when it lies in the observation interval (after the previous drawn frame, up to the frame that first shows the
+  // new clip), otherwise the first drawn frame that shows it. A sapper's clip is chosen from sim.sapperOps.phase (R3-a, e3611c3f:
+  // m01-sapper-pose.js sapperSample), which flips in the tick of the player's E; his `crouched` flag, and so postureSince, is set by the NEXT tick
+  // (m01-simulation.js tick(): updatePosture runs before updateObjectives). When both ticks fall in one game frame the stamp is in the
+  // interval and starts the fade; when the E tick closes a frame, the first drawn frame already shows sapper_work with the old stamp, the fade
+  // starts at that draw and the stamp, at most one SIM_STEP later, cannot move it. Which of the two a run gets depends on how the virtual
+  // frames fall, so both are accepted and each is held to the exact smoothstep from its own start; a stamp that explains neither is not compared.
+  // E is pressed after the first sampled frame, so every fade has a sampled predecessor; the loaded save (scenes.drop.clock) only bounds a first frame.
+  const checks=[],episodes=new Map();
+  live.frames.forEach((f,i)=>{
+    const before=i>0?live.frames[i-1].clock:scenes.drop.clock;
+    for(const a of f.fading){
+      if(a.blend.length!==2)continue;
+      const to=a.blend.find(b=>b.clip===a.clip),from=a.blend.find(b=>b!==to);
+      if(!to||!from||fadeDuration(from.clip,to.clip)!==FADE.posture)continue;
+      const stamp=since[a.id]?.postureSince;
+      if(!(stamp>0))continue;
+      let ep=episodes.get(a.id);
+      if(!ep||ep.last!==before){   // not mid posture fade in the previous drawn frame: a new fade, first shown now
+        const inside=stamp>=before-1e-6&&stamp<=f.clock+1e-6,late=stamp>f.clock+1e-6&&stamp-f.clock<=SIM_STEP+1e-6;
+        ep={last:f.clock,from:inside?stamp:late?f.clock:null,source:inside?'stamp-in-interval':late?'first-draw (stamp one tick later)':null};
+        episodes.set(a.id,ep);
+      }
+      ep.last=f.clock;
+      if(ep.from===null)continue;
+      const expected=smoothstep((f.clock-ep.from)/FADE.posture);
+      checks.push({id:a.id,clock:f.clock,fadeStart:ep.from,startedBy:ep.source,sinceStart:+(f.clock-ep.from).toFixed(4),from:from.clip,to:to.clip,weight:to.weight,expected,error:Math.abs(to.weight-expected)});
+    }
+  });
   const shots=[];
   for(const sh of live.shots){
     const file=info.outputPath(`anim-live-posture-${sh.tag}.jpg`);writeFileSync(file,Buffer.from(sh.url.split(',')[1],'base64'));
     await info.attach(`anim-live-posture-${sh.tag}`,{path:file,contentType:'image/jpeg'});shots.push({tag:sh.tag,id:sh.id,clock:sh.clock,file});
   }
   const report={kind:'live posture cross-fade of the production renderer, sim stepped by the real game loop under a virtual 1/30 s frame clock (state determinism / presentation evidence, not a visual quality claim)',
-    path:'retarget() + transitionStamp(): posture stamp from the simulation, no wall clock',
+    path:'retarget() + transitionStamp(): the fade starts at the sim posture stamp inside the observation interval, else at the first drawn frame; no wall clock',
     frameSeconds:FRAME/1000,dropClock:scenes.drop.clock,framesSampled:live.frames.length,firstClock:live.first,lastClock:live.last,focus:live.focus,
     maxSumError:live.maxSumError,shotError:live.shotError??null,shots,phaseMs:phase,wallPerFrameMs:live.wall.slice(1).map((w,i)=>w-live.wall[i]),
     postureSince:Object.fromEntries(Object.entries(since).filter(([id])=>['pawel_krawiec','sapper_2','sapper_3'].includes(id))),
@@ -194,7 +219,7 @@ test('production UI, live: sappers cross-fade into the crouched work pose with e
   expect(errors).toEqual([]);
   expect(live.maxSumError,'weights sum to one in every sampled frame').toBeLessThan(1e-6);
   expect(live.focus,'a sapper must be seen mid cross-fade').not.toBeNull();
-  expect(checks.length,'frames compared against smoothstep((clock-postureSince)/0.3)').toBeGreaterThanOrEqual(2);
+  expect(checks.length,'frames compared against smoothstep((clock-fadeStart)/0.3)').toBeGreaterThanOrEqual(2);
   for(const c of checks)expect(c.error,`${c.id} at ${c.clock}`).toBeLessThan(1e-3);
   expect(shots.map(s=>s.tag)).toContain('start');
 });

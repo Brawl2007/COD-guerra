@@ -1,0 +1,325 @@
+{
+ "task": "M01-DIALOGUE-V1",
+ "trees": {
+  "after": {
+   "simulationSha256": "c9118414abd2be8cbfe3db449756e522d25420ebb5b82efdb7eeac650eb43119"
+  },
+  "before": {
+   "label": "167dccc9194b6062947d02e0a0cc30176cc57461",
+   "simulationSha256": "4a44a6338d9911e8bf0679e91936ea819a9a96f5e29ee3baa36d970165c3e374"
+  }
+ },
+ "what": "lines per minute, reactive lines per minute, busiest 60 s, longest silence in combat, voices alive; deterministic (no clock, no path)",
+ "definitions": {
+  "scriptedLines": "with --before: every scripted line the predecessor said is still said, in order (lost must be empty, orderKept true)",
+  "line": "first tick a subtitle (id, until) appears",
+  "combat": "real time while the battle clock is in [04:45:00, 06:10:00), edges included",
+  "busiest60s": "largest number of line starts in any [t, t+60) real seconds"
+ },
+ "routes": [
+  {
+   "seed": 19390901,
+   "support": false,
+   "after": {
+    "realSeconds": 1191.95,
+    "all": {
+     "lines": 83,
+     "perMinute": 4.18,
+     "busiest60s": {
+      "n": 10,
+      "from": 865.35
+     },
+     "minStartGapSec": 2.3
+    },
+    "barks": {
+     "lines": 34,
+     "perMinute": 1.71,
+     "busiest60s": {
+      "n": 7,
+      "from": 316.5
+     },
+     "minStartGapSec": 2.55,
+     "byPriority": {
+      "1": 17,
+      "2": 11,
+      "3": 6
+     },
+     "distinct": 23,
+     "perLine": {
+      "104": 1,
+      "106": 1,
+      "111": 1,
+      "112": 1,
+      "116": 1,
+      "117": 1,
+      "120": 2,
+      "123": 1,
+      "124": 1,
+      "125": 3,
+      "127": 3,
+      "128": 2,
+      "129": 1,
+      "132": 3,
+      "133": 1,
+      "134": 1,
+      "135": 3,
+      "144": 1,
+      "145": 1,
+      "151": 1,
+      "153": 2,
+      "154": 1,
+      "036": 1
+     }
+    },
+    "combat": {
+     "from": "04:45:00",
+     "to": "06:10:00",
+     "realSeconds": 609.2,
+     "lines": 50,
+     "perMinute": 4.92,
+     "silence": {
+      "longestSec": 64.8,
+      "startsAtReal": 678.15
+     }
+    },
+    "maxReactiveVoicesAlive": 2,
+    "scriptedStartedOverAnother": 0,
+    "reactiveCutByTheNextLine": 1
+   },
+   "before": {
+    "realSeconds": 1191.95,
+    "all": {
+     "lines": 46,
+     "perMinute": 2.32,
+     "busiest60s": {
+      "n": 8,
+      "from": 256.4
+     },
+     "minStartGapSec": 2.5
+    },
+    "barks": {
+     "lines": 0,
+     "perMinute": 0,
+     "busiest60s": null,
+     "minStartGapSec": null,
+     "byPriority": {
+      "1": 0,
+      "2": 0,
+      "3": 0
+     },
+     "distinct": 0,
+     "perLine": {}
+    },
+    "combat": {
+     "from": "04:45:00",
+     "to": "06:10:00",
+     "realSeconds": 609.2,
+     "lines": 23,
+     "perMinute": 2.27,
+     "silence": {
+      "longestSec": 84.65,
+      "startsAtReal": 658.3
+     }
+    },
+    "maxReactiveVoicesAlive": 0,
+    "scriptedStartedOverAnother": 0,
+    "reactiveCutByTheNextLine": 0
+   },
+   "scriptedLines": {
+    "before": 46,
+    "after": 49,
+    "lost": [],
+    "gained": [
+     "dlg_m01_067",
+     "dlg_m01_042",
+     "dlg_m01_047"
+    ],
+    "orderKept": true
+   }
+  },
+  {
+   "seed": 7,
+   "support": true,
+   "after": {
+    "realSeconds": 1152.55,
+    "all": {
+     "lines": 82,
+     "perMinute": 4.27,
+     "busiest60s": {
+      "n": 10,
+      "from": 825.95
+     },
+     "minStartGapSec": 2.5
+    },
+    "barks": {
+     "lines": 27,
+     "perMinute": 1.41,
+     "busiest60s": {
+      "n": 6,
+      "from": 316.45
+     },
+     "minStartGapSec": 4.1,
+     "byPriority": {
+      "1": 12,
+      "2": 8,
+      "3": 7
+     },
+     "distinct": 18,
+     "perLine": {
+      "108": 1,
+      "111": 2,
+      "116": 1,
+      "125": 1,
+      "127": 1,
+      "128": 1,
+      "132": 3,
+      "133": 2,
+      "134": 3,
+      "135": 3,
+      "139": 1,
+      "144": 1,
+      "145": 1,
+      "151": 1,
+      "153": 2,
+      "154": 1,
+      "036": 1,
+      "co_m01_cover_rotation": 1
+     }
+    },
+    "combat": {
+     "from": "04:45:00",
+     "to": "06:10:00",
+     "realSeconds": 569.8,
+     "lines": 49,
+     "perMinute": 5.16,
+     "silence": {
+      "longestSec": 37.75,
+      "startsAtReal": 668.75
+     }
+    },
+    "maxReactiveVoicesAlive": 1,
+    "scriptedStartedOverAnother": 0,
+    "reactiveCutByTheNextLine": 0
+   },
+   "before": {
+    "realSeconds": 1152.55,
+    "all": {
+     "lines": 52,
+     "perMinute": 2.71,
+     "busiest60s": {
+      "n": 8,
+      "from": 256.4
+     },
+     "minStartGapSec": 2.5
+    },
+    "barks": {
+     "lines": 0,
+     "perMinute": 0,
+     "busiest60s": null,
+     "minStartGapSec": null,
+     "byPriority": {
+      "1": 0,
+      "2": 0,
+      "3": 0
+     },
+     "distinct": 0,
+     "perLine": {}
+    },
+    "combat": {
+     "from": "04:45:00",
+     "to": "06:10:00",
+     "realSeconds": 569.8,
+     "lines": 29,
+     "perMinute": 3.05,
+     "silence": {
+      "longestSec": 74.65,
+      "startsAtReal": 305.6
+     }
+    },
+    "maxReactiveVoicesAlive": 0,
+    "scriptedStartedOverAnother": 0,
+    "reactiveCutByTheNextLine": 0
+   },
+   "scriptedLines": {
+    "before": 52,
+    "after": 55,
+    "lost": [],
+    "gained": [
+     "dlg_m01_067",
+     "dlg_m01_042",
+     "dlg_m01_047"
+    ],
+    "orderKept": true
+   }
+  }
+ ],
+ "probe": {
+  "route": "control route, player at the squad post during the repair and the hold (not a golden)",
+  "after": {
+   "realSeconds": 1176.15,
+   "all": {
+    "lines": 82,
+    "perMinute": 4.18,
+    "busiest60s": {
+     "n": 10,
+     "from": 864.6
+    },
+    "minStartGapSec": 1
+   },
+   "barks": {
+    "lines": 34,
+    "perMinute": 1.73,
+    "busiest60s": {
+     "n": 8,
+     "from": 316.4
+    },
+    "minStartGapSec": 2.65,
+    "byPriority": {
+     "1": 19,
+     "2": 9,
+     "3": 6
+    },
+    "distinct": 23,
+    "perLine": {
+     "106": 1,
+     "108": 1,
+     "111": 1,
+     "112": 1,
+     "116": 1,
+     "117": 1,
+     "120": 3,
+     "123": 1,
+     "124": 1,
+     "125": 2,
+     "127": 1,
+     "128": 2,
+     "132": 3,
+     "133": 1,
+     "134": 3,
+     "135": 3,
+     "139": 1,
+     "144": 1,
+     "145": 1,
+     "151": 1,
+     "153": 2,
+     "154": 1,
+     "036": 1
+    }
+   },
+   "combat": {
+    "from": "04:45:00",
+    "to": "06:10:00",
+    "realSeconds": 608.45,
+    "lines": 50,
+    "perMinute": 4.93,
+    "silence": {
+     "longestSec": 69.7,
+     "startsAtReal": 672.45
+    }
+   },
+   "maxReactiveVoicesAlive": 1,
+   "scriptedStartedOverAnother": 0,
+   "reactiveCutByTheNextLine": 2
+  }
+ }
+}
