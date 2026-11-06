@@ -249,8 +249,8 @@ describe('M02 C10-C11: as sementes em que Gruca caía na marcha (MissionBot, rec
   // Medição de 2026-11-06 (dt 0,1, recruta): antes 5 quedas de Gruca em 40 sementes, todas na marcha para (-32, 18); depois 0. A sobrevivência de
   // Piotr continua caótica (e não é o que se prova aqui): só se afirma que Gruca nunca cai nestas sementes, com ou sem Piotr a chegar a C12.
   // Merge M02 único (2026-11-06): com a linha Codex integrada o fluxo caótico do bot mudou; 28 e 38 já não chegam à marcha (morrem em
-  // C09/C06 antes dela). Medição com o código final (sementes 1..40, dt 0,1, recruta): chegam à marcha sem Gruca cair 1, 3, 6, 7, 9,
-  // 11, 15, 18, 21, 22, 23, 25, 27, 29, 32, 34, 36, 37, 38 e 40. Fica a 3 (das de antes) e as quatro menores dessa lista.
+  // C09/C06 antes dela). Medição com o código final (sementes 1..40, dt 0,1, recruta): 38 de 40 chegam à marcha sem Gruca cair
+  // (falham 4 e 25). Fica a 3 (das de antes) e quatro sementes pequenas dessa lista (1, 6, 7, 9).
   for (const seed of [3, 1, 6, 7, 9]) {
     it(`semente ${seed}: Gruca nunca fica fora de combate`, () => {
       const sim = new M02BenchSimulation(seed, { startScene: 'C01', difficulty: 'recruta' });

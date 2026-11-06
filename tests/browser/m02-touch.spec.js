@@ -106,6 +106,11 @@ test.describe('M02 bancada por toque · iPhone 13 em paisagem', () => {
     await page.screenshot({ path: path.join(SHOT_DIR, 'landscape-01-hud-compacto.png') });
 
     // 2. joystick: empurrar para a frente move o Piotr; empurrar até ao fim corre; largar pára
+    // Merge M02 único: `sprinting` só fica ativo com deslocação real (Codex dd8358bf: correr encostado a um obstáculo não é correr).
+    // Do início da bancada (0, −80) o parapeito de partida (z −78,6) parava o Piotr antes do fim do curso; a prova passa para campo
+    // aberto na aproximação norte, virado a sul, com mais de 20 m livres à frente.
+    await page.evaluate(() => window.m02Bench.sim.teleportPlayer(0, -100, Math.PI / 2, 0));
+    await waitSimSeconds(page, 0.2);
     const before = await state(page);
     await touch.start([{ x: 140, y: 270, id: 1 }]);
     await touch.move([{ x: 140, y: 240, id: 1 }]);
@@ -115,7 +120,9 @@ test.describe('M02 bancada por toque · iPhone 13 em paisagem', () => {
     expect(walking.sprinting).toBe(false); // meio curso = andar
     await touch.move([{ x: 140, y: 212, id: 1 }]); // até ao fim (58 px) = correr
     await waitSimSeconds(page, 0.5);
-    expect((await state(page)).sprinting).toBe(true);
+    const running = await state(page);
+    expect(Math.hypot(running.x - walking.x, running.z - walking.z)).toBeGreaterThan(0.3); // continua a andar de verdade
+    expect(running.sprinting).toBe(true);
     await page.screenshot({ path: path.join(SHOT_DIR, 'landscape-02-joystick-correr.png') });
     await touch.end();
     await waitSimSeconds(page, 0.3);
