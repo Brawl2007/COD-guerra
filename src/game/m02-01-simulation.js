@@ -1302,25 +1302,57 @@ export class M02BenchSimulation {
     for (const a of this.allies) {
       if (!isRescuable(this, a)) continue;
       const d = Math.hypot(a.x - p.x, a.z - p.z);
-      if (d <= RESCUE_REACH_M && (!best || d < best.d)) best = { a, d };
+      // quem Piotr já está a levantar tem prioridade sobre qualquer outro ao alcance (um levantar de cada vez); senão, o mais próximo
+      const mine = a.rescue.by === PLAYER_ID && a.rescue.liftStartedAt !== null;
+      if (d <= RESCUE_REACH_M && (!best || (mine && !best.mine) || (mine === best.mine && d < best.d))) best = { a, d, mine };
     }
     if (!best) return null;
     const { a, d } = best;
     const name = RESCUE_NAMES[a.id] ?? a.id;
     const lifting = a.rescue.by === PLAYER_ID && a.rescue.liftStartedAt !== null;
+    // um aliado a meio de levantar o caído: o [E] não lhe tira a vez (recomeçava a contagem); só se mostra o progresso
+    const allyLifting = !lifting && a.rescue.by !== null && a.rescue.liftStartedAt !== null;
+    const busy = !lifting && !allyLifting && this.allies.some((o) => o !== a && o.rescue?.by === PLAYER_ID && o.rescue.liftStartedAt !== null);
     const safe = lifting || rescueSpotIsSafe(this, a);
-    const left = lifting ? Math.max(0, RESCUE_LIFT_SEC - (this.clock - a.rescue.liftStartedAt)) : null;
+    const left = lifting || allyLifting ? Math.max(0, RESCUE_LIFT_SEC - (this.clock - a.rescue.liftStartedAt)) : null;
+    const byName = allyLifting ? (RESCUE_NAMES[a.rescue.by] ?? a.rescue.by) : null;
     return {
       actorId: a.id,
       distance: Number(d.toFixed(2)),
       safe,
       lifting,
+      allyLifting,
+      busy,
       prompt: lifting
         ? `A levantar ${name}… ${Math.ceil(left)} s (fica ao lado dele)`
-        : safe
-          ? `[E] Socorrer ${name} (levantar o caído; fica com pouca vida)`
-          : `Socorro adiado: ${name} está à vista de um hostil`,
+        : allyLifting
+          ? `${byName} está a levantar ${name}… ${Math.ceil(left)} s`
+          : busy
+            ? `Já estás a levantar outro caído: acaba esse primeiro`
+            : safe
+              ? `[E] Socorrer ${name} (levantar o caído; fica com pouca vida)`
+              : `Socorro adiado: ${name} está à vista de um hostil`,
     };
+  }
+
+  /**
+   * O que o [E] faz agora: o alvo interativo MAIS PRÓXIMO de Piotr (caído a socorrer, poste de giz, volume largado, porta), em vez de o socorro
+   * ter prioridade fixa a ≤ RESCUE_REACH_M (antes um caído ao lado, mesmo à vista de um hostil, tirava ao [E] abrir a porta ou apanhar o
+   * volume). Empate: socorro, giz, volume, porta. Devolve `{ kind, prompt }` ou null; a bancada mostra o mesmo aviso que o [E] executa.
+   */
+  currentInteractPrompt() {
+    const candidates = [
+      ['rescue', this.currentRescuePrompt()],
+      ['chalk', this.currentChalkPrompt()],
+      ['volume', this.currentVolumePrompt()],
+      ['door', this.currentDoorPrompt()],
+    ];
+    let best = null;
+    for (const [kind, prompt] of candidates) {
+      if (!prompt) continue;
+      if (!best || prompt.distance < best.prompt.distance - 1e-9) best = { kind, prompt };
+    }
+    return best;
   }
 
   /**
@@ -1371,20 +1403,16 @@ export class M02BenchSimulation {
 
   interactDoor(explicitDoorId = null) {
     if (!explicitDoorId) {
-      // D1: o [E] junto a um caído é socorrê-lo (só quando seguro: sem linha de vista de nenhum hostil); nunca cai para a porta mais próxima
-      const rescuePrompt = this.currentRescuePrompt();
-      if (rescuePrompt) return rescuePrompt.safe && !rescuePrompt.lifting ? beginPlayerRescue(this, rescuePrompt.actorId) : null;
-    }
-    if (!explicitDoorId) {
-      const chalkPrompt = this.currentChalkPrompt();
-      if (chalkPrompt) {
-        return this.markWoundedSoldierWithChalk();
+      // O [E] age sobre o alvo interativo mais próximo (currentInteractPrompt). Junto a um caído é socorrê-lo, só quando seguro (sem linha de
+      // vista de nenhum hostil), com um levantar de cada vez e sem tirar a vez a um levantar em curso; nunca cai para uma porta mais longe.
+      const target = this.currentInteractPrompt();
+      if (target?.kind === 'rescue') {
+        const r = target.prompt;
+        return r.safe && !r.lifting && !r.allyLifting && !r.busy ? beginPlayerRescue(this, r.actorId) : null;
       }
-    }
-    if (!explicitDoorId) {
-      const volumePrompt = this.currentVolumePrompt();
-      if (volumePrompt && runPickupSupplyVolume(this, volumePrompt.volumeId)) {
-        const evt = { type: 'supply-volume-picked', volumeId: volumePrompt.volumeId, clock: this.clock };
+      if (target?.kind === 'chalk') return this.markWoundedSoldierWithChalk();
+      if (target?.kind === 'volume' && runPickupSupplyVolume(this, target.prompt.volumeId)) {
+        const evt = { type: 'supply-volume-picked', volumeId: target.prompt.volumeId, clock: this.clock };
         this.events.push(evt);
         return evt;
       }
