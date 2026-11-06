@@ -128,6 +128,23 @@ export const M02_MISSION_FAILURE_TEXT = Object.freeze({
     'Uma personagem exigida pelo roteiro ficou fora de combate (o sierż. Gruca é essencial à resolução da missão). A missão falhou.',
 });
 
+/**
+ * Texto do painel de falha da bancada, em português, a partir do estado `missionFailed` ({ reason, at[, actorId] }): a bancada só mostra,
+ * quem decide a falha é a simulação. A razão escolhe a frase; `required_character_incapacitated` diz QUEM (`actorId`, nome curto da tabela
+ * M02_REQUIRED_CHARACTERS: «Sgt. Gruca incapacitado») em vez da frase genérica, que fixaria o nome de uma só personagem. Razão
+ * desconhecida ou `actorId` fora da tabela caem na frase genérica da razão (nunca lançam: o painel não pode falhar a mostrar a falha).
+ */
+export function describeMissionFailure(failure) {
+  if (!failure || typeof failure !== 'object') return 'A missão falhou.';
+  if (failure.reason === 'required_character_incapacitated') {
+    const who = Object.hasOwn(M02_REQUIRED_CHARACTERS, failure.actorId) ? M02_REQUIRED_CHARACTERS[failure.actorId] : null;
+    if (who?.shortName) {
+      return `${who.shortName} incapacitado. É uma personagem exigida pelo roteiro até ao fim de C12 (D1); a missão falhou.`;
+    }
+  }
+  return M02_MISSION_FAILURE_TEXT[failure.reason] ?? 'A missão falhou.';
+}
+
 // FIX-2b (PDF I4/I5): enums e relações que o restauro aceita. Valores tirados do código que os escreve.
 const ALLY_STATES = Object.freeze([
   'ACTIVE',

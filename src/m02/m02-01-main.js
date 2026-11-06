@@ -1,4 +1,4 @@
-import { M02BenchSimulation, M02_MISSION_FAILURE_TEXT } from '../game/m02-01-simulation.js';
+import { M02BenchSimulation, describeMissionFailure } from '../game/m02-01-simulation.js';
 import { SQUAD_ORDER_REJECTION_TEXT } from '../game/m02-combat-ai.js';
 import { M02BenchRenderer } from '../render/m02-01-renderer.js';
 import { M02PresentationFeed, landmarksInView } from '../render/m02-presentation.js';
@@ -260,7 +260,8 @@ function refreshMissionFailed() {
   if (elMissionFailed) elMissionFailed.hidden = !failure;
   if (failure) {
     if (elMissionFailedText) {
-      elMissionFailedText.textContent = `${M02_MISSION_FAILURE_TEXT[failure.reason] ?? 'A missão falhou.'} (${failure.at.toFixed(1)} s de simulação)`;
+      // a razão e a personagem (`actorId`) vêm do estado da simulação: «Sgt. Gruca incapacitado…», «O strz. Piotr Sokół morreu…»
+      elMissionFailedText.textContent = `${describeMissionFailure(failure)} (${failure.at.toFixed(1)} s de simulação)`;
     }
     document.exitPointerLock?.();
   }

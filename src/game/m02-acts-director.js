@@ -181,6 +181,7 @@ export const M02_REQUIRED_CHARACTERS = Object.freeze({
   pl_gruca: Object.freeze({
     id: 'pl_gruca',
     name: 'sierż. Władysław Gruca',
+    shortName: 'Sgt. Gruca', // painel de falha da bancada (em português): «Sgt. Gruca incapacitado»
     fromScene: 'C01',
     untilScene: 'C12', // até o epílogo fechar (`areaC.c12Completed`); C12 é uma elipse sem combate
   }),
