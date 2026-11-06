@@ -59,6 +59,8 @@ import {
   loseSupplyVolume as runLoseSupplyVolume,
   updateAreaB as runUpdateAreaB,
   completeC07Reorganization as runCompleteC07Reorganization,
+  resolveCasualtiesForTransition as runResolveCasualtiesForTransition,
+  markTransitionCasualty as runMarkTransitionCasualty,
   enterAreaCC09 as runEnterAreaCC09,
   unlockC09GateLatch as runUnlockC09GateLatch,
   startC10OrderChanges as runStartC10OrderChanges,
@@ -732,6 +734,8 @@ export class M02BenchSimulation {
    * e nunca sobrevivem entre ticks: não entram no snapshot e um passo que falhe a meio descarta-os.
    */
   #pendingCheckpointIds = [];
+  /** Pedidos de uma só vez (`deferWhileOut`) feitos com a personagem exigida caída: gravam-se quando ela se levanta; caem com evento se a missão falha. */
+  #deferredCheckpointIds = [];
   /** Último checkpoint gravado nesta sessão com persistência (meta-estado do F9; não é estado de jogo). */
   #lastSessionCheckpointId = null;
   /**
@@ -797,6 +801,7 @@ export class M02BenchSimulation {
 
   reset(startScene = this.defaultStartScene) {
     this.#pendingCheckpointIds = [];
+    this.#deferredCheckpointIds = [];
     this.rng = new Random(this.seed);
     this.clock = 0;
     this.events = [];
@@ -1096,6 +1101,8 @@ export class M02BenchSimulation {
     // m02.completed não é escrito aqui: «só após conclusão transacional» (PDF I4, p. 34), que é C12 (FIX-2b).
     this.flags['m02.transicao_tab_pronta'] = true;
 
+    // I2 (p. 33): as janelas de socorro e os feridos resolvem-se ANTES do payload (que regista o estado final aplicado).
+    const casualties = runResolveCasualtiesForTransition(this);
     this.transitionTABPayload = {
       transitionId: 'T-AB',
       fromCell: 'A',
@@ -1114,6 +1121,8 @@ export class M02BenchSimulation {
         this.allies.map((a) => [a.id, { alive: a.alive, state: a.state, health: a.health }]),
       ),
     };
+
+    for (const r of casualties) runMarkTransitionCasualty(this, r);
 
     this.objective = {
       id: 'T-AB',
@@ -1293,25 +1302,57 @@ export class M02BenchSimulation {
     for (const a of this.allies) {
       if (!isRescuable(this, a)) continue;
       const d = Math.hypot(a.x - p.x, a.z - p.z);
-      if (d <= RESCUE_REACH_M && (!best || d < best.d)) best = { a, d };
+      // quem Piotr já está a levantar tem prioridade sobre qualquer outro ao alcance (um levantar de cada vez); senão, o mais próximo
+      const mine = a.rescue.by === PLAYER_ID && a.rescue.liftStartedAt !== null;
+      if (d <= RESCUE_REACH_M && (!best || (mine && !best.mine) || (mine === best.mine && d < best.d))) best = { a, d, mine };
     }
     if (!best) return null;
     const { a, d } = best;
     const name = RESCUE_NAMES[a.id] ?? a.id;
     const lifting = a.rescue.by === PLAYER_ID && a.rescue.liftStartedAt !== null;
+    // um aliado a meio de levantar o caído: o [E] não lhe tira a vez (recomeçava a contagem); só se mostra o progresso
+    const allyLifting = !lifting && a.rescue.by !== null && a.rescue.liftStartedAt !== null;
+    const busy = !lifting && !allyLifting && this.allies.some((o) => o !== a && o.rescue?.by === PLAYER_ID && o.rescue.liftStartedAt !== null);
     const safe = lifting || rescueSpotIsSafe(this, a);
-    const left = lifting ? Math.max(0, RESCUE_LIFT_SEC - (this.clock - a.rescue.liftStartedAt)) : null;
+    const left = lifting || allyLifting ? Math.max(0, RESCUE_LIFT_SEC - (this.clock - a.rescue.liftStartedAt)) : null;
+    const byName = allyLifting ? (RESCUE_NAMES[a.rescue.by] ?? a.rescue.by) : null;
     return {
       actorId: a.id,
       distance: Number(d.toFixed(2)),
       safe,
       lifting,
+      allyLifting,
+      busy,
       prompt: lifting
         ? `A levantar ${name}… ${Math.ceil(left)} s (fica ao lado dele)`
-        : safe
-          ? `[E] Socorrer ${name} (levantar o caído; fica com pouca vida)`
-          : `Socorro adiado: ${name} está à vista de um hostil`,
+        : allyLifting
+          ? `${byName} está a levantar ${name}… ${Math.ceil(left)} s`
+          : busy
+            ? `Já estás a levantar outro caído: acaba esse primeiro`
+            : safe
+              ? `[E] Socorrer ${name} (levantar o caído; fica com pouca vida)`
+              : `Socorro adiado: ${name} está à vista de um hostil`,
     };
+  }
+
+  /**
+   * O que o [E] faz agora: o alvo interativo MAIS PRÓXIMO de Piotr (caído a socorrer, poste de giz, volume largado, porta), em vez de o socorro
+   * ter prioridade fixa a ≤ RESCUE_REACH_M (antes um caído ao lado, mesmo à vista de um hostil, tirava ao [E] abrir a porta ou apanhar o
+   * volume). Empate: socorro, giz, volume, porta. Devolve `{ kind, prompt }` ou null; a bancada mostra o mesmo aviso que o [E] executa.
+   */
+  currentInteractPrompt() {
+    const candidates = [
+      ['rescue', this.currentRescuePrompt()],
+      ['chalk', this.currentChalkPrompt()],
+      ['volume', this.currentVolumePrompt()],
+      ['door', this.currentDoorPrompt()],
+    ];
+    let best = null;
+    for (const [kind, prompt] of candidates) {
+      if (!prompt) continue;
+      if (!best || prompt.distance < best.prompt.distance - 1e-9) best = { kind, prompt };
+    }
+    return best;
   }
 
   /**
@@ -1362,20 +1403,16 @@ export class M02BenchSimulation {
 
   interactDoor(explicitDoorId = null) {
     if (!explicitDoorId) {
-      // D1: o [E] junto a um caído é socorrê-lo (só quando seguro: sem linha de vista de nenhum hostil); nunca cai para a porta mais próxima
-      const rescuePrompt = this.currentRescuePrompt();
-      if (rescuePrompt) return rescuePrompt.safe && !rescuePrompt.lifting ? beginPlayerRescue(this, rescuePrompt.actorId) : null;
-    }
-    if (!explicitDoorId) {
-      const chalkPrompt = this.currentChalkPrompt();
-      if (chalkPrompt) {
-        return this.markWoundedSoldierWithChalk();
+      // O [E] age sobre o alvo interativo mais próximo (currentInteractPrompt). Junto a um caído é socorrê-lo, só quando seguro (sem linha de
+      // vista de nenhum hostil), com um levantar de cada vez e sem tirar a vez a um levantar em curso; nunca cai para uma porta mais longe.
+      const target = this.currentInteractPrompt();
+      if (target?.kind === 'rescue') {
+        const r = target.prompt;
+        return r.safe && !r.lifting && !r.allyLifting && !r.busy ? beginPlayerRescue(this, r.actorId) : null;
       }
-    }
-    if (!explicitDoorId) {
-      const volumePrompt = this.currentVolumePrompt();
-      if (volumePrompt && runPickupSupplyVolume(this, volumePrompt.volumeId)) {
-        const evt = { type: 'supply-volume-picked', volumeId: volumePrompt.volumeId, clock: this.clock };
+      if (target?.kind === 'chalk') return this.markWoundedSoldierWithChalk();
+      if (target?.kind === 'volume' && runPickupSupplyVolume(this, target.prompt.volumeId)) {
+        const evt = { type: 'supply-volume-picked', volumeId: target.prompt.volumeId, clock: this.clock };
         this.events.push(evt);
         return evt;
       }
@@ -2109,11 +2146,11 @@ export class M02BenchSimulation {
     // Update campaign squad health flags
     const malek = this.allies.find((a) => a.id === 'pl_malek');
     if (malek) {
-      this.flags['m02.malek_status'] = !malek.alive || malek.state === 'DOWN' ? 'down' : malek.health < 70 ? 'shaken' : 'fit';
+      this.flags['m02.malek_status'] = malek.state === 'EVACUATED' ? 'evacuated' : !malek.alive || malek.state === 'DOWN' ? 'down' : malek.health < 70 ? 'shaken' : 'fit';
     }
     const wierzba = this.allies.find((a) => a.id === 'pl_wierzba');
     if (wierzba) {
-      this.flags['m02.wierzba_status'] = !wierzba.alive || wierzba.state === 'DOWN' ? 'down' : wierzba.health < 65 ? 'wounded' : 'fit';
+      this.flags['m02.wierzba_status'] = wierzba.state === 'EVACUATED' ? 'evacuated' : !wierzba.alive || wierzba.state === 'DOWN' ? 'down' : wierzba.health < 65 ? 'wounded' : 'fit';
     }
 
     const mgStatus = this.evaluateMgLineOfFire(this.player);
@@ -2282,11 +2319,16 @@ export class M02BenchSimulation {
    * Pede um checkpoint semântico automático. Dentro de tick()/ação atómica fica pendente e é gravado no fim; fora dela é
    * gravado já (o chamador está num ponto estável entre entradas).
    */
-  requestAutoCheckpoint(checkpointId) {
+  requestAutoCheckpoint(checkpointId, { deferWhileOut = false } = {}) {
     if (this.missionFailed) return this.#rejectCheckpointOnFailure(checkpointId);
     // D1: nunca um ponto de reinício com a personagem exigida fora de combate (o validador recusava-o, a cada pedido, com ruído): enquanto
-    // ela espera socorro adia-se em silêncio. Os pedidos repetidos (cp_b, cp_d) voltam a ser feitos quando se levantar; os de uma só vez perdem-se.
-    if (requiredCharacterOut(this, { ignoreCompletion: true })) return null;
+    // ela espera socorro os pedidos REPETIDOS (cp_b, cp_d: refeitos a cada passo) adiam-se em silêncio e voltam a ser feitos quando se levantar.
+    // Um pedido de UMA SÓ VEZ (`deferWhileOut`: cp_c, completeC07Reorganization é idempotente) não se perde: fica pendente e grava-se no fim do
+    // primeiro passo/ação em que a personagem se levantou; se a missão falha antes, cai com o evento `checkpoint-rejected` (como qualquer outro).
+    if (requiredCharacterOut(this, { ignoreCompletion: true })) {
+      if (deferWhileOut && !this.#deferredCheckpointIds.includes(checkpointId)) this.#deferredCheckpointIds.push(checkpointId);
+      return null;
+    }
     if (this.#checkpointBatchDepth === 0) return this.saveCheckpoint(checkpointId);
     if (!this.#pendingCheckpointIds.includes(checkpointId)) this.#pendingCheckpointIds.push(checkpointId);
     return null;
@@ -2316,11 +2358,16 @@ export class M02BenchSimulation {
     } finally {
       this.#checkpointBatchDepth--;
       if (this.#checkpointBatchDepth === 0) {
-        const due = this.#pendingCheckpointIds;
+        let due = this.#pendingCheckpointIds;
         this.#pendingCheckpointIds = [];
         // FIX-CD: a falha avalia-se no fim de cada passo/ação atómica, ANTES de gravar. Uma ação de bancada fora do tick (p. ex. uma
         // explosão que mata Piotr e o último defensor) gravava cp_m02_b_acesso com Piotr morto, porque a falha só se avaliava em #step.
         if (completed) this.#evaluateMissionFailure();
+        // Pedidos de uma só vez adiados enquanto a personagem exigida esperava socorro: saem com ela de pé (ou rejeitados, se a missão falhou).
+        if (completed && this.#deferredCheckpointIds.length > 0 && (this.missionFailed || !requiredCharacterOut(this, { ignoreCompletion: true }))) {
+          due = [...this.#deferredCheckpointIds.filter((id) => !due.includes(id)), ...due];
+          this.#deferredCheckpointIds = [];
+        }
         // Um passo que lançou a meio deixou estado incoerente: os pedidos desse passo são descartados, não gravados.
         if (completed) this.#saveCheckpointBatch(due);
       }
@@ -2753,6 +2800,7 @@ export class M02BenchSimulation {
   #activateRestore(p) {
     // Pedidos de checkpoint pendentes pertenciam à linha temporal descartada.
     this.#pendingCheckpointIds = [];
+    this.#deferredCheckpointIds = [];
     // O retorno da última ordem (fora do snapshot) também: com o relógio a recuar, a bancada mostrava a recusa antiga (FIX-CD).
     this.#lastOrderFeedback = null;
     this.seed = p.seed;

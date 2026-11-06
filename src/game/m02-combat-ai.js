@@ -1028,13 +1028,15 @@ export function stepActorNavigation(sim, actor, dt) {
  * canónico se tornar impossível, apresentar falha clara e restaurar o checkpoint. Esta convenção deve ser visível, não imunidade oculta.»
  * C11 (p. 14): «O socorrista procura abrigo e só atravessa com oportunidade real»; D6 (p. 18) e C7 (pp. 14-15): sem cura total («água e material
  * sanitário não são poções de regeneração instantânea»). Regras desta bancada (tudo o que não é do PDF está marcado):
- *  - QUEM: Gruca, Lis, Szymczak, Wierzba e Małek (RESCUE_ELIGIBLE: as três do PDF e as duas «consequência persistente conforme K/I»). Os
- *    auxiliares «podem morrer sem reiniciar» (D1) e quem MORRE (DEAD: rebentado por uma explosão) não tem socorro.
+ *  - QUEM: só Gruca, Lis e Szymczak (RESCUE_ELIGIBLE: D1 p. 16, «Ferimento incapacitante de Gruca/Lis/Szymczak … admite socorro quando seguro»).
+ *    Małek e Wierzba «admitem consequência persistente conforme K/I»: caídos, não abrem janela nem se levantam (ficam DOWN e, como todo o
+ *    ferido grave, são evacuados em TR01/C07: `m02.*_status` evacuated). Os auxiliares «podem morrer sem reiniciar» (D1) e quem MORRE
+ *    (DEAD: rebentado por uma explosão) não tem socorro.
  *  - QUANDO: um aliado elegível derrubado a TIRO (DOWN) abre uma janela de socorro de RESCUE_WINDOW_SEC (`ally.rescue`, visível na bancada).
  *  - SEGURO: o local do caído está seguro quando nenhum hostil combatente vivo com ele ao alcance da sua arma, até RESCUE_SAFE_RADIUS_M,
  *    tem linha de vista para ele (a mesma visão com que os hostis escolhem alvo, de joelhos); ver rescueSpotIsSafe.
  *  - POR QUEM: pelo jogador ([E] ao lado do caído, a ≤ RESCUE_REACH_M) ou por um aliado: o sanitário Szymczak (D4: «escolhe rota de socorro») e,
- *    se ele não pode, o mais próximo de Wierzba, Małek e Lis. Só vai quando o local está seguro e desiste se deixar de estar. Levantar leva
+ *    se ele não pode, o mais próximo de Wierzba, Małek e Lis (como socorristas, não como socorridos). Só vai quando o local está seguro e desiste se deixar de estar. Levantar leva
  *    RESCUE_LIFT_SEC com o socorrista ao lado e o local seguro.
  *  - RESULTADO: levanta-se com RESCUE_HEALTH de vida (valor limitado: o próximo tiro volta a derrubá-lo), de joelhos. Cada um só tem direito a
  *    RESCUE_MAX_PER_CHARACTER socorros (sem imunidade oculta): a segunda queda é definitiva.
@@ -1044,7 +1046,7 @@ export function stepActorNavigation(sim, actor, dt) {
  * VALORES SEM FONTE NO PDF: 120 m (o limite do combate principal de D1, p. 16, «entre 15 e 120 m»), 2,2 m (o alcance de interação da bancada),
  * 4 s para levantar, 60 s de janela, 25 de vida, um socorro por pessoa.
  */
-export const RESCUE_ELIGIBLE = Object.freeze(['pl_gruca', 'pl_lis', 'pl_szymczak', 'pl_wierzba', 'pl_malek']);
+export const RESCUE_ELIGIBLE = Object.freeze(['pl_gruca', 'pl_lis', 'pl_szymczak']);
 /** Nome curto (português) para o ecrã. */
 export const RESCUE_NAMES = Object.freeze({
   pl_gruca: 'Sgt. Gruca',
@@ -1066,7 +1068,7 @@ export const RESCUE_MEDIC = 'pl_szymczak';
 export const RESCUE_ASSISTANTS = Object.freeze(['pl_wierzba', 'pl_malek', 'pl_lis']);
 /** Estados que o caído tinha antes de cair e a que volta ao levantar-se (Lis ferido a regressar ou amparado em C11 retoma o seu percurso). */
 export const RESCUE_PREV_STATES = Object.freeze(['ACTIVE', 'WOUNDED_LIAISON', 'WALKING_SUPPORTED', 'CARRIED', 'EVACUATED_B12']);
-export const RESCUE_ABORT_REASONS = Object.freeze(['unsafe', 'rescuer_lost', 'rescuer_far']);
+export const RESCUE_ABORT_REASONS = Object.freeze(['unsafe', 'rescuer_lost', 'rescuer_far', 'transition']);
 const PLAYER_ACTOR_ID = 'piotr_sokol';
 
 /** A janela de socorro de um aliado (ou de um snapshot dele) está aberta no instante `clock`? Só dados: serve a simulação e o validador. */
@@ -1109,17 +1111,61 @@ export function closeRescueWindow(ally) {
   if (ally && ally.rescue) ally.rescue = null;
 }
 
-/**
- * O local é seguro para levantar alguém: nenhum hostil combatente (vivo, a combater) com o ponto ao alcance da sua arma (no máximo
- * RESCUE_SAFE_RADIUS_M) tem linha de vista para ele. A prova usa um ponto de joelhos (o socorrista), a vista dos hostis com folhagem.
- */
-export function rescueSpotIsSafe(sim, point) {
-  const probe = { space: 'metres', x: point.x, y: point.y ?? sim.world.heightAt(point.x, point.z), z: point.z, crouched: true, eyeHeight: 1.08 };
+/** Passo (m) das amostras ao longo da rota do socorrista: o menor oco de cobertura que um hostil aproveita a um corpo em passo corrido. */
+export const RESCUE_ROUTE_SAMPLE_M = 3;
+const RESCUE_PROBE_CROUCHED = Object.freeze({ crouched: true, eyeHeight: 1.08 });
+const RESCUE_PROBE_STANDING = Object.freeze({ crouched: false, eyeHeight: 1.65 });
+
+/** Algum hostil combatente vivo, com o ponto ao alcance da sua arma (máx. RESCUE_SAFE_RADIUS_M), tem linha de vista para um corpo nessa postura? */
+function pointSeenByHostile(sim, point, posture) {
+  const probe = { space: 'metres', x: point.x, y: point.y ?? sim.world.heightAt(point.x, point.z), z: point.z, ...posture };
   for (const e of sim.enemies) {
     if (!e.alive || e.nonCombatant) continue;
     const reach = Math.min(WEAPON_PROFILES[e.weapon]?.range ?? 160, RESCUE_SAFE_RADIUS_M);
     if (Math.hypot(e.x - point.x, e.z - point.z) > reach) continue;
-    if (sim.world.lineOfSight(e, probe, { includeFoliage: true })) return false;
+    if (sim.world.lineOfSight(e, probe, { includeFoliage: true })) return true;
+  }
+  return false;
+}
+
+/**
+ * O local é seguro para levantar alguém: nenhum hostil combatente (vivo, a combater) com o ponto ao alcance da sua arma (no máximo
+ * RESCUE_SAFE_RADIUS_M) tem linha de vista para ele. D1/C11 (pp. 14, 16): a oportunidade tem de ser real também para quem levanta E para o
+ * levantado, por isso prova-se o ponto de joelhos (o socorrista a trabalhar) E de pé (o caído ergue-se no fim e volta ao plano), a vista
+ * dos hostis com folhagem.
+ */
+export function rescueSpotIsSafe(sim, point) {
+  return !pointSeenByHostile(sim, point, RESCUE_PROBE_CROUCHED) && !pointSeenByHostile(sim, point, RESCUE_PROBE_STANDING);
+}
+
+/**
+ * C11 (p. 14, «o socorrista procura abrigo e só atravessa com oportunidade real») + D4 (p. 17, «escolhe rota de socorro»): o PERCURSO do
+ * socorrista aliado até ao caído também tem de estar livre de linha de vista hostil, não só o ponto do caído. Amostra a rota de navegação
+ * (a que o socorrista seguirá: a que já traz, se vai a caminho, ou a nova) de RESCUE_ROUTE_SAMPLE_M em RESCUE_ROUTE_SAMPLE_M, com o corpo
+ * de pé (corre), sem contar o ponto onde já está. Só lê o estado; sem RNG.
+ */
+export function rescueRouteIsSafe(sim, rescuer, casualty) {
+  const goalKey = `${casualty.x.toFixed(2)},${casualty.z.toFixed(2)}`;
+  let corners = rescuer.navCorners && rescuer.navGoalKey === goalKey && rescuer.navRevision === sim.world.revision ? rescuer.navCorners : null;
+  if (!corners) {
+    const from = { x: rescuer.x, y: rescuer.y, z: rescuer.z, radius: rescuer.radius ?? PLAYER_PHYSICS.radius };
+    const route = sim.navigator.route(from, { x: casualty.x, z: casualty.z });
+    corners = route && route.length ? route.map((c) => (Array.isArray(c) ? { x: c[0], z: c[1] } : c)) : [{ x: casualty.x, z: casualty.z }];
+  }
+  let px = rescuer.x;
+  let pz = rescuer.z;
+  let carry = RESCUE_ROUTE_SAMPLE_M; // metros até à próxima amostra (a primeira a um passo da origem)
+  for (const c of corners) {
+    const len = Math.hypot(c.x - px, c.z - pz);
+    let at = carry;
+    while (at <= len + 1e-9) {
+      const t = len > 0 ? at / len : 1;
+      if (pointSeenByHostile(sim, { x: px + (c.x - px) * t, z: pz + (c.z - pz) * t }, RESCUE_PROBE_STANDING)) return false;
+      at += RESCUE_ROUTE_SAMPLE_M;
+    }
+    carry = at - len;
+    px = c.x;
+    pz = c.z;
   }
   return true;
 }
@@ -1130,12 +1176,19 @@ function rescuerOf(sim, casualty) {
   return by === PLAYER_ACTOR_ID ? sim.player : (sim.allies.find((a) => a.id === by) ?? null);
 }
 
-function abortRescue(sim, casualty, reason) {
+export function abortRescue(sim, casualty, reason) {
   const byId = casualty.rescue.by;
   casualty.rescue.by = null;
   casualty.rescue.liftStartedAt = null;
   sim.combatLog.push({ clock: Number(sim.clock.toFixed(2)), type: 'rescue_aborted', actorId: casualty.id, byId, reason });
   sim.events.push({ type: 'rescue-aborted', actorId: casualty.id, byId, reason, clock: sim.clock });
+}
+
+/** Fecha a janela de um caído que a transição evacua (I2): mesmo evento do prazo esgotado, com a razão. */
+export function closeRescueForTransition(sim, casualty, reason) {
+  casualty.rescue = null;
+  sim.combatLog.push({ clock: Number(sim.clock.toFixed(2)), type: 'rescue_window_expired', actorId: casualty.id, reason });
+  sim.events.push({ type: 'rescue-window-expired', actorId: casualty.id, reason, clock: sim.clock });
 }
 
 function completeRescue(sim, casualty) {
@@ -1172,16 +1225,18 @@ function completeRescue(sim, casualty) {
 function pickAllyRescuer(sim, casualty) {
   const usable = (a) =>
     a && a.id !== casualty.id && a.alive && a.state === 'ACTIVE' && !a.detachedOutOfCell && !sim.allies.some((c) => c.rescue?.by === a.id);
+  // C11/D4: só avança quem tem a rota livre de linha de vista hostil (a rota de socorro é avaliada, não só o ponto do caído)
   const medic = sim.allies.find((a) => a.id === RESCUE_MEDIC);
-  if (usable(medic)) return medic;
-  let best = null;
+  if (usable(medic) && rescueRouteIsSafe(sim, medic, casualty)) return medic;
+  const candidates = [];
   for (const id of RESCUE_ASSISTANTS) {
     const a = sim.allies.find((x) => x.id === id);
     if (!usable(a)) continue;
-    const d = Math.hypot(a.x - casualty.x, a.z - casualty.z);
-    if (!best || d < best.d - 1e-9) best = { a, d };
+    candidates.push({ a, d: Math.hypot(a.x - casualty.x, a.z - casualty.z) });
   }
-  return best?.a ?? null;
+  candidates.sort((p, q) => p.d - q.d); // estável: empata pela ordem de RESCUE_ASSISTANTS
+  for (const { a } of candidates) if (rescueRouteIsSafe(sim, a, casualty)) return a;
+  return null;
 }
 
 /**
@@ -1213,6 +1268,8 @@ export function stepRescues(sim) {
           : Boolean(rescuer) && rescuer.alive && rescuer.state === 'ACTIVE' && !rescuer.detachedOutOfCell && rescuer.id !== c.id;
       if (!usable) abortRescue(sim, c, 'rescuer_lost');
       else if (!safe) abortRescue(sim, c, 'unsafe');
+      // a caminho (ainda não levanta): se a rota que lhe resta ficou exposta, não atravessa (C11, «só atravessa com oportunidade real»)
+      else if (c.rescue.by !== PLAYER_ACTOR_ID && c.rescue.liftStartedAt === null && !rescueRouteIsSafe(sim, rescuer, c)) abortRescue(sim, c, 'unsafe');
     }
     if (c.rescue.by === null && safe) {
       const ally = pickAllyRescuer(sim, c);
@@ -1246,7 +1303,12 @@ export function beginPlayerRescue(sim, actorId) {
   const p = sim.player;
   if (!c || !isRescuable(sim, c) || p.alive === false || !(p.health > 0)) return null;
   if (Math.hypot(p.x - c.x, p.z - c.z) > RESCUE_REACH_M || !rescueSpotIsSafe(sim, c)) return null;
-  const takenOver = c.rescue.by !== null && c.rescue.by !== PLAYER_ACTOR_ID ? c.rescue.by : null;
+  // um levantar de cada vez: Piotr só tem duas mãos (antes levantava dois caídos juntos ao carregar [E] ao lado de ambos)
+  if (sim.allies.some((o) => o !== c && o.rescue?.by === PLAYER_ACTOR_ID && o.rescue.liftStartedAt !== null)) return null;
+  // o levantar de um aliado já em curso não se interrompe: tirar-lhe a vez fazia recomeçar a contagem do zero (e perdia-se o progresso)
+  if (c.rescue.by !== null && c.rescue.by !== PLAYER_ACTOR_ID && c.rescue.liftStartedAt !== null) return null;
+  if (c.rescue.by === PLAYER_ACTOR_ID && c.rescue.liftStartedAt !== null) return null; // já a levantá-lo
+  const takenOver = c.rescue.by !== null && c.rescue.by !== PLAYER_ACTOR_ID ? c.rescue.by : null; // só a aproximação do aliado (ainda não levanta)
   c.rescue.by = PLAYER_ACTOR_ID;
   c.rescue.liftStartedAt = instantAt(sim.clock);
   const evt = { type: 'rescue-started', actorId: c.id, byId: PLAYER_ACTOR_ID, phase: 'lift', ...(takenOver ? { tookOverFrom: takenOver } : {}), clock: sim.clock };
@@ -1502,6 +1564,20 @@ function adoptBoundGoal(sim, ally, nodeIds) {
   let held = null;
   if (here < 0) {
     target = committed >= 0 ? committed : nodeIds.reduce((best, id, i) => (dist(id) < dist(nodeIds[best]) ? i : best), 0);
+    if (committed < 0) {
+      // sem nó de partida (depois de um socorro ou de uma ordem, ou C10 por atalho): o nó mais próximo só se o caminho até lá está aberto; com
+      // o percurso exposto fica onde está (agachado, abrigado) e reavalia-se a cada passo (antes ia sempre, a descoberto, ao nó mais próximo)
+      const exposure = boundHopExposure(sim, ally, boundNode(sim, nodeIds[target]));
+      if (exposure > BOUND_MAX_EXPOSURE) {
+        ally.goal = null;
+        ally.tacticalState = 'HoldCover';
+        if (ally.holdingFor !== nodeIds[target]) {
+          ally.holdingFor = nodeIds[target];
+          sim.combatLog.push({ clock: Number(sim.clock.toFixed(2)), type: 'section_bound_held', actorId: ally.id, nodeId: nodeIds[target], atNodeId: null, exposure });
+        }
+        return;
+      }
+    }
   } else if (here === last) {
     target = here;
   } else {

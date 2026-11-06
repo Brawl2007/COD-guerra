@@ -72,7 +72,8 @@ const silence = (shooter) => kill(shooter);
 
 describe('M02 D1 socorro: regras e valores documentados', () => {
   it('quem pode ser socorrido, o raio, o alcance, os tempos e o valor limitado (sem fonte no PDF, nomeados)', () => {
-    assert.deepEqual([...RESCUE_ELIGIBLE], ['pl_gruca', 'pl_lis', 'pl_szymczak', 'pl_wierzba', 'pl_malek']);
+    assert.deepEqual([...RESCUE_ELIGIBLE], ['pl_gruca', 'pl_lis', 'pl_szymczak'], 'D1 p. 16: só Gruca, Lis e Szymczak admitem socorro; Małek e Wierzba, consequência persistente');
+    assert.equal(RESCUE_ELIGIBLE.includes('pl_wierzba') || RESCUE_ELIGIBLE.includes('pl_malek'), false);
     assert.equal(RESCUE_ELIGIBLE.includes('pl_aux_01') || RESCUE_ELIGIBLE.includes('pl_aux_02'), false, 'os auxiliares podem morrer sem reiniciar (D1)');
     for (const id of RESCUE_ELIGIBLE) assert.ok(RESCUE_NAMES[id], id);
     assert.equal(RESCUE_SAFE_RADIUS_M, 120, 'o limite do combate principal de D1 (p. 16: 15-120 m)');
@@ -84,7 +85,7 @@ describe('M02 D1 socorro: regras e valores documentados', () => {
 });
 
 describe('M02 D1 socorro: a queda a tiro abre uma janela visível', () => {
-  it('Gruca, Lis, Szymczak, Wierzba e Małek abrem a janela (prazo, sem socorrista, estado anterior); os auxiliares não', () => {
+  it('Gruca, Lis e Szymczak abrem a janela (prazo, sem socorrista, estado anterior); Wierzba, Małek (consequência persistente) e os auxiliares não', () => {
     for (const id of RESCUE_ELIGIBLE) {
       const { sim, shooter } = field();
       sim.tick(DT, {});
@@ -101,7 +102,7 @@ describe('M02 D1 socorro: a queda a tiro abre uma janela visível', () => {
       assert.equal(sim.drainEvents().filter((e) => e.type === 'rescue-window-opened' && e.actorId === id).length, 1);
       assert.deepEqual(sim.rescueStatus().map((r) => r.actorId), [id]);
     }
-    for (const id of ['pl_aux_01', 'pl_aux_02']) {
+    for (const id of ['pl_wierzba', 'pl_malek', 'pl_aux_01', 'pl_aux_02']) {
       const { sim, shooter } = field();
       const a = fall(sim, shooter, id);
       assert.equal(a.rescue ?? null, null, `${id}: sem janela`);
@@ -304,8 +305,41 @@ describe('M02 D1 socorro: por um aliado, só quando o local está seguro', () =>
     assert.ok(gruca.goal === null || typeof gruca.goal.nodeId === 'string', 'volta ao plano');
     assert.deepEqual(ofType(sim, 'ally_rescued').map((e) => [e.actorId, e.byId]), [['pl_gruca', 'pl_szymczak']]);
     assert.ok(Math.hypot(start.x - gruca.x, start.z - gruca.z) > 5);
-    // enquanto levantava o sanitário não disparou nem se deslocou (levantar ocupa as mãos)
-    assert.equal(szymczak.shotsFired ?? 0, 0);
+    // (que levantar ocupa as mãos — não dispara nem se desloca — prova-se no teste seguinte, COM munição e um alvo à vista: aqui a secção está desarmada)
+  });
+
+  it('levantar ocupa as mãos: o sanitário COM munição e um hostil à vista (fora do raio de segurança) não dispara nem sai de ao pé do caído enquanto levanta; depois do levantar dispara', () => {
+    const { sim, shooter } = field();
+    const gruca = fall(sim, shooter, 'pl_gruca');
+    silence(shooter);
+    const szymczak = ally(sim, 'pl_szymczak');
+    Object.assign(szymczak, { mag: 5, reserve: 30, nextFireAt: 0, reloadingUntil: 0 });
+    place(sim, szymczak, gruca.x, gruca.z + 1);
+    // um hostil a 150 m (> RESCUE_SAFE_RADIUS_M: o local do caído segue «seguro»), ao alcance da wz. 29 do sanitário (185 m) e com linha de vista
+    Object.assign(shooter, { alive: true, nonCombatant: false, state: 'HOLD_SECTOR', health: 100, mag: 0, reserve: 0 });
+    place(sim, shooter, gruca.x + 150, gruca.z);
+    assert.equal(rescueSpotIsSafe(sim, gruca), true);
+    assert.equal(sim.world.lineOfSight(szymczak, shooter, { includeFoliage: true }), true, 'o hostil é um alvo válido para o sanitário');
+    const tick = () => {
+      szymczak.suppressed = 0.6; // o sanitário só dispara em autodefesa (suprimido)
+      sim.tick(DT, {});
+    };
+    let guard = 0;
+    while (gruca.rescue?.liftStartedAt == null && guard++ < 400) tick();
+    assert.ok(gruca.rescue.liftStartedAt != null, 'começou a levantar');
+    const at = { mag: szymczak.mag, shots: szymczak.shotsFired ?? 0 };
+    while (gruca.alive === false && guard++ < 800) {
+      tick();
+      if (gruca.alive === false) {
+        assert.equal(szymczak.shotsFired ?? 0, at.shots, 'não disparou a levantar');
+        assert.equal(szymczak.mag, at.mag);
+        assert.ok(Math.hypot(szymczak.x - gruca.x, szymczak.z - gruca.z) <= RESCUE_REACH_M, 'fica ao lado do caído (não sai a combater)');
+      }
+    }
+    assert.equal(gruca.alive, true);
+    // depois do levantar, o mesmo sanitário (suprimido, com o hostil à vista) já dispara: o hostil era mesmo um alvo
+    for (let i = 0; i < 120 && (szymczak.shotsFired ?? 0) === at.shots; i++) tick();
+    assert.ok((szymczak.shotsFired ?? 0) > at.shots, 'livre das mãos, dispara');
   });
 
   it('se o local deixa de ser seguro a caminho, o socorrista desiste e volta ao plano; quando volta a ser seguro, é de novo escolhido', () => {
@@ -352,8 +386,21 @@ describe('M02 D1 socorro: por um aliado, só quando o local está seguro', () =>
     assert.equal(ofType(sim, 'ally_rescued')[0].byId, 'piotr_sokol');
   });
 
-  it('o caído pode ser Szymczak ou outro: Wierzba e Małek também se levantam, cada um uma só vez', () => {
-    for (const id of ['pl_szymczak', 'pl_wierzba', 'pl_malek', 'pl_lis']) {
+  it('o caído pode ser Szymczak ou Lis (cada um levanta-se uma só vez); Wierzba e Małek ficam caídos (consequência persistente, D1 p. 16): [E] e os aliados não os levantam', () => {
+    for (const id of ['pl_wierzba', 'pl_malek']) {
+      const { sim, shooter } = field();
+      const a = fall(sim, shooter, id);
+      silence(shooter);
+      sim.teleportPlayer(a.x - 1.5, a.z, 0);
+      assert.equal(sim.currentRescuePrompt(), null, `${id}: sem aviso de socorro`);
+      assert.equal(sim.interactDoor(), null, id);
+      run(sim, RESCUE_LIFT_SEC + RESCUE_WINDOW_SEC);
+      assert.equal(a.alive, false, id);
+      assert.equal(a.state, 'DOWN');
+      assert.equal(ofType(sim, 'ally_rescued').length, 0);
+      assert.equal(sim.missionFailed, null, 'não são personagens exigidas');
+    }
+    for (const id of ['pl_szymczak', 'pl_lis']) {
       const { sim, shooter } = field();
       const a = fall(sim, shooter, id);
       silence(shooter);

@@ -452,7 +452,7 @@ function updateHud() {
     }
   }
 
-  const prompt = sim.currentRescuePrompt() ?? sim.currentChalkPrompt() ?? sim.currentVolumePrompt() ?? sim.currentDoorPrompt();
+  const prompt = sim.currentInteractPrompt()?.prompt ?? null; // o mesmo alvo (o mais próximo) que o [E] executa
   if (elDoorPrompt) {
     if (prompt) {
       elDoorPrompt.style.display = 'block';

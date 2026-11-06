@@ -2,7 +2,7 @@ import cellsBCLayout from '../../missions/m02-bzura/m02-cells-bc-layout.json' wi
 import { PLAYER_PHYSICS } from '../world/m01-player-physics.js';
 import { EYE_HEIGHT } from '../config.js';
 import { M01Navigator } from '../world/m01-navigation.js';
-import { stepActorNavigation, WEAPON_PROFILES, instantAt, lastGroupTargets, isLastGroupMember, isRescueWindowOpen, closeRescueWindow } from './m02-combat-ai.js';
+import { stepActorNavigation, WEAPON_PROFILES, instantAt, lastGroupTargets, isLastGroupMember, isRescueWindowOpen, closeRescueWindow, abortRescue, closeRescueForTransition } from './m02-combat-ai.js';
 
 export const M02_TR_CARTELAS = Object.freeze({
   TR01: 'Acessos de Łęczyca — noite de 9 para 10 de setembro',
@@ -373,9 +373,57 @@ function mapEnemyEntry(sim, e) {
   };
 }
 
+/**
+ * I2 (PDF p. 33, passos 1 e 3): «Terminar ou suspender de forma explícita as ações em curso; fechar destinos dos atores que deixam a área»
+ * e a transação «evacuar feridos». Uma janela de socorro (D1) é uma ação em curso: não atravessa a transição A→B (TR01) por baixo, com o
+ * caído teletransportado e levantado na outra área. Cada caído (DOWN) é resolvido AQUI, de forma explícita e visível:
+ *  - qualquer um, exceto a personagem exigida, passa a EVACUATED (ferido evacuado, como em C07: não volta ao grupo), a janela fecha-se e o
+ *    socorro em curso interrompe-se (`rescue_aborted`, razão `transition`);
+ *  - a personagem exigida (Gruca) com a janela aberta NÃO se evacua (seria a falha): mantém o caído e o prazo ABSOLUTO; só o socorro em curso
+ *    se suspende (`transition`) e recomeça na Área B se o local for seguro. (O roteiro nem chega aqui: espera pelo socorro; é o atalho de bancada.)
+ * Devolve a lista `{ id, resolution, deadlineAt? }` que o payload T-AB regista (`squadStatuses[id].rescue`).
+ */
+export function resolveCasualtiesForTransition(sim) {
+  const resolved = [];
+  for (const ally of sim.allies) {
+    if (ally.alive || ally.state !== 'DOWN') continue;
+    const windowOpen = isRescueWindowOpen(ally, sim.clock);
+    if (windowOpen && ally.rescue.by !== null) abortRescue(sim, ally, 'transition');
+    if (Object.hasOwn(M02_REQUIRED_CHARACTERS, ally.id)) {
+      if (windowOpen) resolved.push({ id: ally.id, resolution: 'kept_open', deadlineAt: ally.rescue.deadlineAt });
+      continue; // sem janela já é falha da missão (não se esconde por «evacuação»)
+    }
+    if (windowOpen) closeRescueForTransition(sim, ally, 'transition_evacuated');
+    closeRescueWindow(ally);
+    ally.state = 'EVACUATED';
+    ally.goal = null;
+    ally.navCorners = null;
+    if (ally.id === 'pl_malek') sim.flags['m02.malek_status'] = 'evacuated';
+    if (ally.id === 'pl_wierzba') sim.flags['m02.wierzba_status'] = 'evacuated';
+    sim.combatLog.push({ clock: Number(sim.clock.toFixed(2)), type: 'casualty_evacuated', actorId: ally.id, transitionId: 'TR01', hadWindow: windowOpen });
+    resolved.push({ id: ally.id, resolution: 'evacuated' });
+  }
+  return resolved;
+}
+
+/** Regista no payload T-AB a resolução de um caído (estado final e janela). */
+export function markTransitionCasualty(sim, r) {
+  const st = sim.transitionTABPayload?.squadStatuses?.[r.id];
+  const ally = sim.allies.find((a) => a.id === r.id);
+  if (!st || !ally) return;
+  st.alive = ally.alive;
+  st.state = ally.state;
+  st.health = ally.health;
+  st.rescue = r.resolution === 'kept_open' ? { resolution: 'kept_open', deadlineAt: r.deadlineAt } : { resolution: r.resolution };
+}
+
 export function enterAreaBC06(sim, { skipTransition = false } = {}) {
   if (!sim.transitionTABPayload) {
     sim.triggerTransitionTAB({ skip: skipTransition });
+  } else {
+    // o payload foi feito antes (C05); quem caiu entretanto resolve-se agora e o payload fica coerente com o que se aplica
+    const late = resolveCasualtiesForTransition(sim);
+    for (const r of late) markTransitionCasualty(sim, r);
   }
   const worldB = sim.zoneStreamer.switchToCell('B');
   sim.activeCellId = 'B';
@@ -402,6 +450,7 @@ export function enterAreaBC06(sim, { skipTransition = false } = {}) {
     [0.0, 88.0],
   ];
   sim.allies.forEach((ally, idx) => {
+    if (ally.state === 'EVACUATED') return; // evacuado na transição (I2): já não está na área
     const [ax, az] = allySpawns[idx % allySpawns.length];
     ally.x = ax;
     ally.z = az;
@@ -800,6 +849,9 @@ export function completeC07Reorganization(sim, { skip = false } = {}) {
 
   // Evaluate squad status for Małek & Wierzba (severely wounded are evacuated and do not reappear fit)
   for (const ally of sim.allies) {
+    // D1: a personagem exigida caída com a janela de socorro aberta (atalho de bancada sobre uma passagem por resolver) não é «evacuada»
+    // aqui: continua à espera de socorro até se levantar ou o prazo acabar (e o checkpoint cp_c fica adiado até lá).
+    if (Object.hasOwn(M02_REQUIRED_CHARACTERS, ally.id) && !ally.alive && isRescueWindowOpen(ally, sim.clock)) continue;
     if (!ally.alive || ally.state === 'DOWN') {
       // C07 evacua os FERIDOS GRAVES (caídos, DOWN). Quem morreu (DEAD, rebentado por explosão) não é um evacuado: «Ninguém morto ou
       // evacuado regressa ao grupo» (I6, p. 35). Antes todo o `alive` falso passava a EVACUATED: um Lis morto era tratado como ferido
@@ -830,7 +882,7 @@ export function completeC07Reorganization(sim, { skip = false } = {}) {
     status: 'completed',
   };
   // Dentro de tick()/ação atómica fica pendente e grava-se no fim; fora, grava-se já (nunca a meio de um tick).
-  sim.requestAutoCheckpoint('cp_m02_c_reorganizacao');
+  sim.requestAutoCheckpoint('cp_m02_c_reorganizacao', { deferWhileOut: true }); // uma só vez: se Gruca espera socorro, adia-se (D1)
   return c07Summary(sim);
 }
 
