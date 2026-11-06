@@ -1,5 +1,6 @@
 import { eyePosition } from '../world/spatial.js';
 import { movePlayer, PLAYER_PHYSICS } from '../world/m01-player-physics.js';
+import cellsBCLayout from '../../missions/m02-bzura/m02-cells-bc-layout.json' with { type: 'json' };
 
 /**
  * Arredonda a `digits` casas SEM devolver -0 (Number((-0.001).toFixed(2)) é -0). O JSON do save não representa -0 e o
@@ -40,6 +41,23 @@ export function areaBContactPending(sim) {
 
 export function isLastGroupMember(sim, actor) {
   return Boolean(sim.areaC?.lastGroup?.includes(actor));
+}
+
+/**
+ * I4 (PDF p. 34) `m02.fired_on_wounded`: «ação explícita após estado não combatente», «consequência de diálogo, sem recompensa» (a fala
+ * de Gruca, K3: «Baixe a arma. Ele já não combate.»); C7 (p. 15): a experiência «nunca recompensa o massacre de rendidos». Um tiro de
+ * Piotr que acerta num destes estados marca a flag: o ferido desarmado (C04: `WOUNDED_UNARMED`), o rendido (C03: «Rendição ou fuga
+ * substituem a obrigação de matar todos»: `SURRENDERED`) e o homem do posto EA0 já retirado na borda oeste (D2: `WITHDRAWN`, vivo, fora de
+ * combate e contado no roster — é `nonCombatant`, por isso o `nonCombatant` do tiro já o apanhava; o teste m02-c04-fired-on-withdrawn
+ * fixa-o, a nota do handoff de 2026-11-05 dizia o contrário e a sonda dava `true`).
+ * Quem ainda está a recuar (`WITHDRAWING`) NÃO conta: D2 classifica-o como combatente a andar para um destino (o validador exige
+ * `nonCombatant` falso), é um hostil ativo para o roteiro (a vala só fica livre quando chega à borda) e a bancada trata-o como alvo;
+ * recuar é uma decisão tática de D3 («recuo/rendição»), não a rendição nem a incapacidade de I4. A secção deixa-o ir (D2) mas não é
+ * Gruca quem condena o tiro de Piotr nas costas de um combatente que ainda não deixou o combate.
+ */
+export const NON_COMBATANT_STATES = Object.freeze(['WOUNDED_UNARMED', 'SURRENDERED', 'WITHDRAWN']);
+export function isNonCombatantTarget(actor) {
+  return Boolean(actor) && (Boolean(actor.nonCombatant) || NON_COMBATANT_STATES.includes(actor.state));
 }
 
 export const WEAPON_PROFILES = Object.freeze({
@@ -654,7 +672,13 @@ function normalizeAngleDiff(a, b) {
  * que as guardasse é restaurado como `auto`.
  * Uma ordem escolhe uma posição âncora (um nó de cobertura do layout da Área A, longe dos hostis e alcançável por Piotr) e atribui
  * a cada elemento da equipa de assalto (Gruca, Lis, Wierzba, Małek) um nó distinto à volta dela; quem fica sem nó mantém a posição.
- * O auxiliar do rkm e o sanitário seguem o seu próprio papel. As Áreas B e C não têm nós de cobertura no layout: sem ordens aí.
+ * O auxiliar do rkm e o sanitário seguem o seu próprio papel.
+ * ÁREAS B E C (mesmo contrato): o layout de B e de C não tem `coverNodes` como a Área A, por isso as posições válidas são os NÓS DERIVADOS
+ * DA COBERTURA EXISTENTE da célula (ver ORDER_NODES): as posições do plano da secção já usadas em B (B_PLAN_NODES) e em C (C09_PLAN_NODES,
+ * C_EVAC_NODES) e, por cada cobertura baixa do layout (`covers`: muros, barricada, carroça), lugares atrás dela, do lado da entrada da
+ * célula, a 2,5 m uns dos outros (B_COVER_SLOTS/C_COVER_SLOTS). Tudo o resto é igual à Área A: «cobrir aqui» à cobertura mais próxima de
+ * Piotr, «avançar para ali» à frente da mira, posições com um hostil a menos de 6 m ou sem caminho para Piotr são recusadas, a equipa
+ * de assalto ocupa nós à volta da âncora, a ordem caduca com o que Piotr faz e ao mudar de célula (`cellId` da ordem) e vive no snapshot.
  */
 export const SQUAD_ORDER_TYPES = Object.freeze(['auto', 'cover', 'advance']);
 export const LEGACY_SQUAD_ORDER_TYPES = Object.freeze(['suppress', 'flank_east']);
@@ -684,17 +708,19 @@ export const SQUAD_ORDER_REJECTION_TEXT = Object.freeze({
   inalcancavel: 'posição inalcançável',
 });
 
-/** Posições válidas para as ordens do jogador: os nós de cobertura da Área A em uso (corredor de C01 ou quinta), sem hostis em cima. */
+/**
+ * Posições válidas para as ordens do jogador, sem hostis em cima: na Área A os nós de cobertura em uso (corredor de C01 ou quinta); em B e
+ * C os nós derivados da cobertura existente da célula (ORDER_NODES).
+ */
 export function squadOrderPositions(sim) {
-  if (sim.activeCellId !== 'A') return [];
+  const taken = (node) =>
+    sim.enemies.some((e) => e.alive && !e.nonCombatant && Math.hypot(e.x - node.x, e.z - node.z) < SQUAD_ORDER_ENEMY_CLEARANCE_M);
+  if (sim.activeCellId !== 'A') return orderNodesOf(sim.activeCellId).filter((node) => !taken(node));
   const out = [];
   for (const node of sim.coverNodesById.values()) {
     if (node.id.startsWith('cv_c01_') !== Boolean(sim.c01Active)) continue;
     if (node.id === 'cv_c01_outpost_clear') continue; // o posto EA0 ainda é dos hostis
-    const taken = sim.enemies.some(
-      (e) => e.alive && !e.nonCombatant && Math.hypot(e.x - node.x, e.z - node.z) < SQUAD_ORDER_ENEMY_CLEARANCE_M,
-    );
-    if (!taken) out.push(node);
+    if (!taken(node)) out.push(node);
   }
   return out;
 }
@@ -758,7 +784,8 @@ export function resolveSquadOrder(sim, type, target = null) {
 
   const team = SQUAD_ORDER_ASSAULT_TEAM.filter((id) => {
     const a = sim.allies.find((x) => x.id === id);
-    return a && a.alive && !['DOWN', 'EVACUATED', 'MISSING'].includes(a.state) && !a.detachedOutOfCell;
+    // (só quem está ativo: Lis ferido a regressar ou amparado em C11 tem o percurso do diretor da Área C e não obedece a ordens)
+    return a && a.alive && a.state === 'ACTIVE' && !a.detachedOutOfCell;
   });
   const around = nearestPositions(positions, anchor, SQUAD_ORDER_GROUP_M); // a âncora é a primeira (distância 0)
   const assignments = {};
@@ -767,7 +794,7 @@ export function resolveSquadOrder(sim, type, target = null) {
   });
   return {
     ok: true,
-    order: { type, axis: null, issuedAt, nodeId: anchor.id, x: anchor.x, z: anchor.z, assignments },
+    order: { type, axis: null, issuedAt, nodeId: anchor.id, x: anchor.x, z: anchor.z, assignments, cellId: sim.activeCellId },
   };
 }
 
@@ -779,7 +806,7 @@ function lapseSquadOrder(sim) {
   if (!order || order.type === 'auto') return;
   const d = Math.hypot(sim.player.x - order.x, sim.player.z - order.z);
   let reason = null;
-  if (sim.activeCellId !== 'A') reason = 'celula_mudou';
+  if ((order.cellId ?? 'A') !== sim.activeCellId) reason = 'celula_mudou'; // as ordens só valem na célula em que foram dadas
   else if (order.type === 'cover' && d > SQUAD_ORDER_SNAP_M + SQUAD_ORDER_COVER_LAPSE_EXTRA_M) reason = 'piotr_afastou_se';
   else if (order.type === 'advance' && d < SQUAD_ORDER_ARRIVED_M) reason = 'piotr_chegou';
   if (!reason) return;
@@ -795,10 +822,11 @@ function lapseSquadOrder(sim) {
  */
 function squadOrderGoalFor(sim, ally) {
   const order = sim.squadOrder;
-  if (!order || order.type === 'auto' || sim.activeCellId !== 'A' || !SQUAD_ORDER_ASSAULT_TEAM.includes(ally.id)) return null;
+  if (!order || order.type === 'auto' || (order.cellId ?? 'A') !== sim.activeCellId || !SQUAD_ORDER_ASSAULT_TEAM.includes(ally.id)) return null;
+  if (ally.state !== 'ACTIVE') return null; // Lis ferido a regressar (C11): o percurso é do diretor da Área C
   const nodeId = order.assignments?.[ally.id];
   if (!nodeId) return ORDER_HOLD;
-  const node = sim.coverNodesById.get(nodeId);
+  const node = sim.activeCellId === 'A' ? sim.coverNodesById.get(nodeId) : orderNode(sim.activeCellId, nodeId);
   if (!node) return null;
   return { x: node.x, z: node.z, facing: node.facing, crouch: node.crouch, nodeId };
 }
@@ -992,6 +1020,278 @@ export function stepActorNavigation(sim, actor, dt) {
   movePlayer(sim.world, actor, vx, vz, dt);
 }
 
+// ---------------------------------------------------------------------------------------------------------------------------
+// D1 «socorro quando seguro» (PDF p. 16)
+// ---------------------------------------------------------------------------------------------------------------------------
+/**
+ * D1 (PDF p. 16, «Falhas duras»): «Ferimento incapacitante de Gruca/Lis/Szymczak fora da sequência admite socorro quando seguro; se o estado
+ * canónico se tornar impossível, apresentar falha clara e restaurar o checkpoint. Esta convenção deve ser visível, não imunidade oculta.»
+ * C11 (p. 14): «O socorrista procura abrigo e só atravessa com oportunidade real»; D6 (p. 18) e C7 (pp. 14-15): sem cura total («água e material
+ * sanitário não são poções de regeneração instantânea»). Regras desta bancada (tudo o que não é do PDF está marcado):
+ *  - QUEM: Gruca, Lis, Szymczak, Wierzba e Małek (RESCUE_ELIGIBLE: as três do PDF e as duas «consequência persistente conforme K/I»). Os
+ *    auxiliares «podem morrer sem reiniciar» (D1) e quem MORRE (DEAD: rebentado por uma explosão) não tem socorro.
+ *  - QUANDO: um aliado elegível derrubado a TIRO (DOWN) abre uma janela de socorro de RESCUE_WINDOW_SEC (`ally.rescue`, visível na bancada).
+ *  - SEGURO: o local do caído está seguro quando nenhum hostil combatente vivo com ele ao alcance da sua arma, até RESCUE_SAFE_RADIUS_M,
+ *    tem linha de vista para ele (a mesma visão com que os hostis escolhem alvo, de joelhos); ver rescueSpotIsSafe.
+ *  - POR QUEM: pelo jogador ([E] ao lado do caído, a ≤ RESCUE_REACH_M) ou por um aliado: o sanitário Szymczak (D4: «escolhe rota de socorro») e,
+ *    se ele não pode, o mais próximo de Wierzba, Małek e Lis. Só vai quando o local está seguro e desiste se deixar de estar. Levantar leva
+ *    RESCUE_LIFT_SEC com o socorrista ao lado e o local seguro.
+ *  - RESULTADO: levanta-se com RESCUE_HEALTH de vida (valor limitado: o próximo tiro volta a derrubá-lo), de joelhos. Cada um só tem direito a
+ *    RESCUE_MAX_PER_CHARACTER socorros (sem imunidade oculta): a segunda queda é definitiva.
+ *  - FALHA: Gruca é o único exigido (M02_REQUIRED_CHARACTERS). `required_character_incapacitated` só dispara quando ele fica incapacitado SEM
+ *    socorro possível: a janela esgotou-se, morreu por explosão ou já gastou o socorro. Enquanto a janela está aberta o roteiro espera e não
+ *    se grava nenhum checkpoint (nunca com Gruca fora de combate).
+ * VALORES SEM FONTE NO PDF: 120 m (o limite do combate principal de D1, p. 16, «entre 15 e 120 m»), 2,2 m (o alcance de interação da bancada),
+ * 4 s para levantar, 60 s de janela, 25 de vida, um socorro por pessoa.
+ */
+export const RESCUE_ELIGIBLE = Object.freeze(['pl_gruca', 'pl_lis', 'pl_szymczak', 'pl_wierzba', 'pl_malek']);
+/** Nome curto (português) para o ecrã. */
+export const RESCUE_NAMES = Object.freeze({
+  pl_gruca: 'Sgt. Gruca',
+  pl_lis: 'Lis',
+  pl_szymczak: 'Szymczak',
+  pl_wierzba: 'Wierzba',
+  pl_malek: 'Małek',
+});
+export const RESCUE_SAFE_RADIUS_M = 120;
+export const RESCUE_REACH_M = 2.2;
+/** O aliado socorrista começa a levantar quando chega a esta distância do caído. */
+export const RESCUE_ARRIVE_M = 1.6;
+export const RESCUE_LIFT_SEC = 4;
+export const RESCUE_WINDOW_SEC = 60;
+export const RESCUE_HEALTH = 25;
+export const RESCUE_MAX_PER_CHARACTER = 1;
+/** Socorristas aliados por ordem de preferência: o sanitário primeiro; os restantes, o mais próximo. */
+export const RESCUE_MEDIC = 'pl_szymczak';
+export const RESCUE_ASSISTANTS = Object.freeze(['pl_wierzba', 'pl_malek', 'pl_lis']);
+/** Estados que o caído tinha antes de cair e a que volta ao levantar-se (Lis ferido a regressar ou amparado em C11 retoma o seu percurso). */
+export const RESCUE_PREV_STATES = Object.freeze(['ACTIVE', 'WOUNDED_LIAISON', 'WALKING_SUPPORTED', 'CARRIED', 'EVACUATED_B12']);
+export const RESCUE_ABORT_REASONS = Object.freeze(['unsafe', 'rescuer_lost', 'rescuer_far']);
+const PLAYER_ACTOR_ID = 'piotr_sokol';
+
+/** A janela de socorro de um aliado (ou de um snapshot dele) está aberta no instante `clock`? Só dados: serve a simulação e o validador. */
+export function isRescueWindowOpen(ally, clock) {
+  return (
+    Boolean(ally) &&
+    ally.alive === false &&
+    ally.state === 'DOWN' &&
+    Boolean(ally.rescue) &&
+    clock < ally.rescue.deadlineAt &&
+    (ally.rescuedCount ?? 0) < RESCUE_MAX_PER_CHARACTER
+  );
+}
+
+/** Um aliado derrubado pode ser socorrido agora (janela aberta, na célula atual). */
+export function isRescuable(sim, ally) {
+  return !ally.detachedOutOfCell && isRescueWindowOpen(ally, sim.clock);
+}
+
+/** Abre a janela de socorro de um aliado elegível acabado de ser derrubado a tiro (fireActorBurst). Quem não é elegível ou já gastou o socorro fica sem janela. */
+export function openRescueWindow(sim, victim, prevState) {
+  victim.rescue = null;
+  if (!RESCUE_ELIGIBLE.includes(victim.id) || (victim.rescuedCount ?? 0) >= RESCUE_MAX_PER_CHARACTER) return false;
+  const downedAt = instantAt(sim.clock);
+  const deadlineAt = Number((downedAt + RESCUE_WINDOW_SEC).toFixed(3));
+  victim.rescue = {
+    downedAt,
+    deadlineAt,
+    by: null,
+    liftStartedAt: null,
+    prevState: RESCUE_PREV_STATES.includes(prevState) ? prevState : 'ACTIVE',
+  };
+  sim.combatLog.push({ clock: Number(sim.clock.toFixed(2)), type: 'rescue_window_opened', actorId: victim.id, deadlineAt });
+  sim.events.push({ type: 'rescue-window-opened', actorId: victim.id, deadlineAt, clock: sim.clock });
+  return true;
+}
+
+/** Fecha a janela de socorro (o caído foi evacuado, ficou ausente...). */
+export function closeRescueWindow(ally) {
+  if (ally && ally.rescue) ally.rescue = null;
+}
+
+/**
+ * O local é seguro para levantar alguém: nenhum hostil combatente (vivo, a combater) com o ponto ao alcance da sua arma (no máximo
+ * RESCUE_SAFE_RADIUS_M) tem linha de vista para ele. A prova usa um ponto de joelhos (o socorrista), a vista dos hostis com folhagem.
+ */
+export function rescueSpotIsSafe(sim, point) {
+  const probe = { space: 'metres', x: point.x, y: point.y ?? sim.world.heightAt(point.x, point.z), z: point.z, crouched: true, eyeHeight: 1.08 };
+  for (const e of sim.enemies) {
+    if (!e.alive || e.nonCombatant) continue;
+    const reach = Math.min(WEAPON_PROFILES[e.weapon]?.range ?? 160, RESCUE_SAFE_RADIUS_M);
+    if (Math.hypot(e.x - point.x, e.z - point.z) > reach) continue;
+    if (sim.world.lineOfSight(e, probe, { includeFoliage: true })) return false;
+  }
+  return true;
+}
+
+function rescuerOf(sim, casualty) {
+  const by = casualty.rescue?.by ?? null;
+  if (by === null) return null;
+  return by === PLAYER_ACTOR_ID ? sim.player : (sim.allies.find((a) => a.id === by) ?? null);
+}
+
+function abortRescue(sim, casualty, reason) {
+  const byId = casualty.rescue.by;
+  casualty.rescue.by = null;
+  casualty.rescue.liftStartedAt = null;
+  sim.combatLog.push({ clock: Number(sim.clock.toFixed(2)), type: 'rescue_aborted', actorId: casualty.id, byId, reason });
+  sim.events.push({ type: 'rescue-aborted', actorId: casualty.id, byId, reason, clock: sim.clock });
+}
+
+function completeRescue(sim, casualty) {
+  const r = casualty.rescue;
+  casualty.alive = true;
+  casualty.state = RESCUE_PREV_STATES.includes(r.prevState) ? r.prevState : 'ACTIVE';
+  casualty.health = Math.min(casualty.maxHealth ?? RESCUE_HEALTH, RESCUE_HEALTH);
+  casualty.rescuedCount = (casualty.rescuedCount ?? 0) + 1;
+  casualty.suppressed = 0.5;
+  casualty.crouched = true;
+  casualty.eyeHeight = 1.08;
+  casualty.moving = false;
+  casualty.reachedNodeId = null;
+  casualty.navCorners = null;
+  casualty.holdingFor = null;
+  casualty.nextFireAt = Number((sim.clock + 2).toFixed(3));
+  if (casualty.state === 'ACTIVE') casualty.goal = null; // volta ao plano; Lis retoma o percurso do diretor da Área C (o seu objetivo fica)
+  casualty.rescue = null;
+  sim.combatLog.push({
+    clock: Number(sim.clock.toFixed(2)),
+    type: 'ally_rescued',
+    actorId: casualty.id,
+    byId: r.by,
+    health: casualty.health,
+    rescuedCount: casualty.rescuedCount,
+  });
+  sim.events.push({ type: 'ally-rescued', actorId: casualty.id, byId: r.by, health: casualty.health, clock: sim.clock });
+}
+
+/**
+ * Socorrista aliado: o sanitário e, se ele não pode (caído, ausente, ocupado com outro caído), o mais próximo de Wierzba, Małek e Lis.
+ * Determinista: desempata pela ordem de RESCUE_ASSISTANTS.
+ */
+function pickAllyRescuer(sim, casualty) {
+  const usable = (a) =>
+    a && a.id !== casualty.id && a.alive && a.state === 'ACTIVE' && !a.detachedOutOfCell && !sim.allies.some((c) => c.rescue?.by === a.id);
+  const medic = sim.allies.find((a) => a.id === RESCUE_MEDIC);
+  if (usable(medic)) return medic;
+  let best = null;
+  for (const id of RESCUE_ASSISTANTS) {
+    const a = sim.allies.find((x) => x.id === id);
+    if (!usable(a)) continue;
+    const d = Math.hypot(a.x - casualty.x, a.z - casualty.z);
+    if (!best || d < best.d - 1e-9) best = { a, d };
+  }
+  return best?.a ?? null;
+}
+
+/**
+ * Um passo do socorro, no início de updatePolishSquad: fecha o que expirou, escolhe socorrista quando o local está seguro, interrompe se
+ * deixou de estar (ou se o socorrista caiu ou se afastou), conta o tempo de levantar e levanta. Sem RNG: só relógio, posições e linha de vista.
+ */
+export function stepRescues(sim) {
+  const clock = sim.clock;
+  const piotrUp = sim.player.alive !== false && sim.player.health > 0;
+  for (const c of sim.allies) {
+    if (!c.rescue) continue;
+    // invariante defensiva: a janela só existe num caído DOWN (evacuado, ausente ou de pé: já não há nada a socorrer)
+    if (c.alive || c.state !== 'DOWN' || c.detachedOutOfCell) {
+      c.rescue = null;
+      continue;
+    }
+    if (clock >= c.rescue.deadlineAt) {
+      c.rescue = null;
+      sim.combatLog.push({ clock: Number(clock.toFixed(2)), type: 'rescue_window_expired', actorId: c.id });
+      sim.events.push({ type: 'rescue-window-expired', actorId: c.id, clock });
+      continue;
+    }
+    const safe = rescueSpotIsSafe(sim, c);
+    let rescuer = rescuerOf(sim, c);
+    if (c.rescue.by !== null) {
+      const usable =
+        c.rescue.by === PLAYER_ACTOR_ID
+          ? piotrUp
+          : Boolean(rescuer) && rescuer.alive && rescuer.state === 'ACTIVE' && !rescuer.detachedOutOfCell && rescuer.id !== c.id;
+      if (!usable) abortRescue(sim, c, 'rescuer_lost');
+      else if (!safe) abortRescue(sim, c, 'unsafe');
+    }
+    if (c.rescue.by === null && safe) {
+      const ally = pickAllyRescuer(sim, c);
+      if (ally) {
+        c.rescue.by = ally.id;
+        c.rescue.liftStartedAt = null;
+        sim.combatLog.push({ clock: Number(clock.toFixed(2)), type: 'rescue_started', actorId: c.id, byId: ally.id, phase: 'approach' });
+        sim.events.push({ type: 'rescue-started', actorId: c.id, byId: ally.id, phase: 'approach', clock });
+      }
+    }
+    if (c.rescue.by === null) continue;
+    rescuer = rescuerOf(sim, c);
+    const byPlayer = c.rescue.by === PLAYER_ACTOR_ID;
+    const d = Math.hypot(rescuer.x - c.x, rescuer.z - c.z);
+    if (c.rescue.liftStartedAt === null) {
+      if (!byPlayer && d <= RESCUE_ARRIVE_M) {
+        c.rescue.liftStartedAt = instantAt(clock);
+        sim.combatLog.push({ clock: Number(clock.toFixed(2)), type: 'rescue_started', actorId: c.id, byId: c.rescue.by, phase: 'lift' });
+        sim.events.push({ type: 'rescue-started', actorId: c.id, byId: c.rescue.by, phase: 'lift', clock });
+      }
+      continue;
+    }
+    if (d > (byPlayer ? RESCUE_REACH_M : RESCUE_ARRIVE_M) + 1) abortRescue(sim, c, 'rescuer_far');
+    else if (clock - c.rescue.liftStartedAt >= RESCUE_LIFT_SEC - 1e-9) completeRescue(sim, c);
+  }
+}
+
+/** [E] de Piotr junto a um caído: começa a levantá-lo (só se o local estiver seguro e ele ao alcance). Devolve o evento ou null. */
+export function beginPlayerRescue(sim, actorId) {
+  const c = sim.allies.find((a) => a.id === actorId);
+  const p = sim.player;
+  if (!c || !isRescuable(sim, c) || p.alive === false || !(p.health > 0)) return null;
+  if (Math.hypot(p.x - c.x, p.z - c.z) > RESCUE_REACH_M || !rescueSpotIsSafe(sim, c)) return null;
+  const takenOver = c.rescue.by !== null && c.rescue.by !== PLAYER_ACTOR_ID ? c.rescue.by : null;
+  c.rescue.by = PLAYER_ACTOR_ID;
+  c.rescue.liftStartedAt = instantAt(sim.clock);
+  const evt = { type: 'rescue-started', actorId: c.id, byId: PLAYER_ACTOR_ID, phase: 'lift', ...(takenOver ? { tookOverFrom: takenOver } : {}), clock: sim.clock };
+  sim.combatLog.push({ clock: Number(sim.clock.toFixed(2)), type: 'rescue_started', actorId: c.id, byId: PLAYER_ACTOR_ID, phase: 'lift' });
+  sim.events.push(evt);
+  return evt;
+}
+
+/** Objetivo do aliado que está a socorrer (ir ao caído e ficar ao lado dele) ou null. */
+function rescueGoalFor(sim, ally) {
+  const c = sim.allies.find((x) => x.rescue?.by === ally.id);
+  if (!c) return null;
+  return { x: c.x, z: c.z, facing: Math.atan2(c.z - ally.z, c.x - ally.x), crouch: true, rescue: true };
+}
+
+/** O aliado está a levantar alguém agora (não dispara nem se desloca). */
+const isLifting = (sim, ally) => sim.allies.some((c) => c.rescue?.by === ally.id && c.rescue.liftStartedAt !== null);
+
+/**
+ * Erro (texto) dos campos de socorro de um aliado num snapshot, ou null: `rescue` (a janela) e `rescuedCount` (socorros já gastos) são
+ * campos aditivos do schema 2, ausentes nos saves anteriores. Só dados: o validador não precisa da simulação.
+ */
+export function rescueFieldsProblem(a, clock, allyIds) {
+  if ('rescuedCount' in a && a.rescuedCount !== undefined && !(Number.isInteger(a.rescuedCount) && a.rescuedCount >= 0 && a.rescuedCount <= RESCUE_MAX_PER_CHARACTER)) {
+    return `Socorros gastos (rescuedCount) inválidos no snapshot: ${a.id}`;
+  }
+  const r = a.rescue;
+  if (r === undefined || r === null) return null;
+  const bad = (why) => `Janela de socorro (rescue) inválida no snapshot: ${a.id} (${why})`;
+  if (typeof r !== 'object' || Array.isArray(r)) return bad('forma');
+  if (Object.keys(r).sort().join() !== ['by', 'deadlineAt', 'downedAt', 'liftStartedAt', 'prevState'].join()) return bad('campos');
+  if (!RESCUE_ELIGIBLE.includes(a.id)) return bad('personagem sem direito a socorro');
+  if (a.alive !== false || a.state !== 'DOWN') return bad('só um caído (DOWN) tem janela');
+  if ((a.rescuedCount ?? 0) >= RESCUE_MAX_PER_CHARACTER) return bad('socorro já gasto');
+  if (!Number.isFinite(r.downedAt) || r.downedAt < 0 || r.downedAt > clock + 1e-9) return bad('instante da queda');
+  if (!Number.isFinite(r.deadlineAt) || Math.abs(r.deadlineAt - r.downedAt - RESCUE_WINDOW_SEC) > 0.002) return bad('prazo');
+  if (r.by !== null && !(r.by === PLAYER_ACTOR_ID || (typeof r.by === 'string' && r.by !== a.id && allyIds.has(r.by)))) return bad('socorrista');
+  if (r.liftStartedAt !== null && !(r.by !== null && Number.isFinite(r.liftStartedAt) && r.liftStartedAt >= r.downedAt && r.liftStartedAt <= clock + 1e-9)) {
+    return bad('início de levantar');
+  }
+  if (r.by === PLAYER_ACTOR_ID && r.liftStartedAt === null) return bad('Piotr levanta logo ao carregar em [E]: não há fase de aproximação'); // só um aliado tem de ir ter com o caído
+  if (!RESCUE_PREV_STATES.includes(r.prevState)) return bad('estado anterior');
+  return null;
+}
+
 /**
  * D4 (PDF p. 17): «Sem ordem, Gruca conduz o plano base» mas «autonomia não é vitória garantida». O plano base (vala → casa B01 → pátio)
  * é conduzido COM o atirador, não à frente dele: Gruca fixa e suprime com a secção a partir de posições de apoio (parapeitos de partida,
@@ -1032,7 +1332,7 @@ export const SECTION_SUPPORT_NODES = Object.freeze([
  *   (< C09_WOUNDED_HEALTH) não vai: fica com Gruca. Quem fica fora da trela (D4) também não: fixa e suprime onde está (`holdingFor`,
  *   `section_holding`), por isso com Piotr parado a secção fixa a oficina mas não toma o pátio nem B09/B11.
  * Mesma trela da quinta: posições de apoio a SECTION_LEASH_M de Piotr, de assalto a SECTION_ASSAULT_LEASH_M. As ordens do jogador
- * («cobrir aqui», «avançar para ali») continuam só na Área A: as Áreas B e C não têm nós de cobertura de ordem.
+ * («cobrir aqui», «avançar para ali») também valem aqui: mandam na equipa de assalto sem trela (ORDER_NODES).
  * VALORES SEM FONTE NO PDF: as coordenadas dos nós (escolhidas pelo mapa de exposição da própria geometria), a ordem das faixas e o
  * limiar de ferido (o de C07).
  */
@@ -1080,6 +1380,209 @@ export const C09_MANEUVER_TARGETS = Object.freeze({
 
 /** Nó do plano (cell A: layout; cell C: C09_PLAN_NODES). */
 const planNode = (sim, nodeId) => sim.coverNodesById.get(nodeId) ?? C09_PLAN_NODES[nodeId] ?? null;
+
+/**
+ * Posições do plano da secção na Área B (C06): avanço por lanços da entrada a sul até ao cruzamento de B05/B06. Antes literais dentro de
+ * updatePolishSquad; agora a fonte única do plano e das ordens do jogador (D4: ORDER_NODES).
+ */
+const bnode = (x, z, facing, crouch = true) => Object.freeze({ x, z, facing, crouch });
+export const B_PLAN_NODES = Object.freeze({
+  cv_b_west_wall: bnode(-18.0, 10.0, -Math.PI / 2),
+  cv_b05_south: bnode(-32.0, -12.0, -Math.PI / 2, false),
+  cv_b_south_barricade: bnode(-6.0, 50.0, -Math.PI / 2),
+  cv_b_west_wall_2: bnode(-22.0, 10.5, -Math.PI / 2),
+  cv_b07_aid: bnode(-38.0, 38.0, 0),
+  cv_b_east_cart: bnode(11.5, 6.5, -Math.PI / 2),
+  cv_b_east_cart_2: bnode(14.0, 6.8, -Math.PI / 2),
+});
+export const B_PLAN_ROLES = Object.freeze({
+  pl_gruca: 'cv_b_west_wall',
+  pl_wierzba: 'cv_b05_south',
+  pl_lis: 'cv_b_south_barricade',
+  pl_malek: 'cv_b_west_wall_2',
+  pl_szymczak: 'cv_b07_aid',
+  pl_aux_01: 'cv_b_east_cart',
+  pl_aux_02: 'cv_b_east_cart_2',
+});
+/** Posições da secção em C10-C11 (cobrir a evacuação B09 → B12). */
+export const C_EVAC_NODES = Object.freeze({
+  cv_c_evac_gruca: c9(-32, 18, 0.4),
+  // lanços abrigados de Gruca (C_BOUND_PLAN): a nave de B09 (porta norte de B09 a oeste, paredes de tijolo a este e a sul) e atrás da porta sul
+  cv_c_b09_nave: c9(-26, -9, 0.3),
+  cv_c_b09_south: c9(-30.5, -4, Math.PI / 2),
+  cv_c_b09_east: c9(-14, -4, 0.3),
+  cv_c_evac_malek: c9(-46, 36, 0.5),
+  cv_c_b12_aid: Object.freeze({ x: -56, z: 46, facing: -Math.PI / 2, crouch: false }),
+  cv_c_yard_rkm: c9(-6, -11.5, 0.5),
+  cv_c_yard_rkm_2: c9(-4, -11.5, 0.5),
+});
+export const C_EVAC_ROLES = Object.freeze({
+  pl_gruca: 'cv_c_evac_gruca',
+  pl_wierzba: 'cv_c_b09_east',
+  pl_malek: 'cv_c_evac_malek',
+  pl_szymczak: 'cv_c_b12_aid',
+  pl_aux_01: 'cv_c_yard_rkm',
+  pl_aux_02: 'cv_c_yard_rkm_2',
+});
+/** Objetivo de plano {x, z, facing, crouch, nodeId} de um nó (objeto novo: o ator guarda-o e o snapshot copia-o). */
+const goalOfNode = (nodeId, node) => ({ x: node.x, z: node.z, facing: node.facing, crouch: node.crouch, nodeId });
+
+/**
+ * C10-C11 (PDF p. 14: «Segurem esta passagem. Só até eles saírem.»; C11: «O socorrista procura abrigo e só atravessa com oportunidade real»;
+ * D4: «Dois elementos alternam apoio e deslocação»). Gruca, o único elemento EXIGIDO (D1/K1), conduz a evacuação por LANÇOS ABRIGADOS em vez
+ * de correr ao seu ponto final: do parapeito do pátio pela nave de B09 até atrás da porta sul e daí à posição que cobre a rota (-32,18).
+ * Só dá o lanço seguinte quando ele está ABERTO: no máximo BOUND_MAX_EXPOSURE (1) hostil combatente que não esteja suprimido vê, dentro do
+ * alcance da sua arma, um homem de pé em algum ponto da rota desse lanço (amostras de BOUND_SAMPLE_M em BOUND_SAMPLE_M, a mesma vista com
+ * que os hostis escolhem alvo): um atirador isolado não abate ninguém num lanço de 20 m (32 de vida por tiro), foram 3 a 6 fuzis a abater
+ * Gruca nas 5 quedas medidas. A supressão da secção abre o lanço: quem tem supressão >= BOUND_SUPPRESSED_CLEAR (precisão e exposição
+ * reduzidas, D3) já não conta.
+ * Fechado, Gruca fica no abrigo onde está (registo `section_bound_held`, uma vez por lanço, e `holdingFor`); aberto, avança. Sem estado
+ * novo: o ponto em que está e o objetivo que já tem decidem (`goal.nodeId`), por isso um lanço começado acaba-se e o snapshot repõe-no.
+ * Os outros elementos mantêm os pontos finais de C_EVAC_ROLES: são quem avança, atrai o fogo da reserva e a suprime (a secção inteira
+ * retida, medida em 40 sementes, deixava a reserva viva e Piotr morria em mais sementes).
+ * Medido (MissionBot, recruta, sementes 1-40): Gruca caía em 5 (todas na marcha para (-32,18), a 4-10 s do início de C10, a 3-6 fuzis da
+ * reserva EC2 oeste); agora em 0.
+ * VALORES SEM FONTE NO PDF: as coordenadas dos nós (escolhidas pelo mapa de exposição da própria geometria: 0 das 12 posições finais da
+ * reserva veem a nave nem a porta sul), a tolerância (1 hostil; 0 também deixa Gruca a salvo em 40 sementes mas muda o desfecho do
+ * MissionBot em m02-18, semente 8, por pura sorte de RNG: com 0, 1, 2 ou 3 as medições de 40 sementes dão o mesmo, 21 em C12 e 0 quedas),
+ * o limiar de supressão (o mesmo ponto em que a precisão cai, D3), o passo das amostras e o raio de «estar num nó».
+ */
+export const C_BOUND_PLAN = Object.freeze({
+  pl_gruca: Object.freeze(['cv_c_yard_parapet', 'cv_c_b09_nave', 'cv_c_b09_south', 'cv_c_evac_gruca']),
+});
+export const BOUND_MAX_EXPOSURE = 1;
+export const BOUND_SUPPRESSED_CLEAR = 0.65;
+export const BOUND_SAMPLE_M = 4;
+export const BOUND_AT_NODE_M = 1.2;
+
+/** Nó de um plano de lanços (Área A: layout; Área C: plano de C09 e de evacuação). */
+const boundNode = (sim, nodeId) => planNode(sim, nodeId) ?? C_EVAC_NODES[nodeId];
+
+/**
+ * Exposição de um lanço: o maior número de hostis combatentes (não suprimidos) com linha de vista e alcance a um homem de pé em algum
+ * ponto da rota do navegador de `from` a `to`. 0 = lanço aberto.
+ */
+export function boundHopExposure(sim, from, to) {
+  const hostiles = sim.enemies.filter((e) => e.alive && !e.nonCombatant && (e.suppressed ?? 0) < BOUND_SUPPRESSED_CLEAR);
+  if (hostiles.length === 0) return 0;
+  const start = { x: from.x, y: sim.world.heightAt(from.x, from.z), z: from.z, radius: PLAYER_PHYSICS.radius };
+  const route = sim.navigator.route(start, { x: to.x, z: to.z });
+  const points = [[from.x, from.z], ...(route ?? [[to.x, to.z]])];
+  let worst = 0;
+  for (let i = 1; i < points.length; i++) {
+    const [x0, z0] = points[i - 1];
+    const [x1, z1] = points[i];
+    const steps = Math.max(1, Math.ceil(Math.hypot(x1 - x0, z1 - z0) / BOUND_SAMPLE_M));
+    for (let k = 1; k <= steps; k++) {
+      const x = x0 + ((x1 - x0) * k) / steps;
+      const z = z0 + ((z1 - z0) * k) / steps;
+      const probe = { space: 'metres', x, y: sim.world.heightAt(x, z), z, crouched: false, eyeHeight: 1.65 };
+      let seen = 0;
+      for (const e of hostiles) {
+        if (Math.hypot(e.x - x, e.z - z) > (WEAPON_PROFILES[e.weapon]?.range ?? 160)) continue;
+        if (sim.world.lineOfSight(e, probe, { includeFoliage: true })) seen += 1;
+      }
+      worst = Math.max(worst, seen);
+      if (worst > BOUND_MAX_EXPOSURE) return worst; // já fechado: não é preciso o resto
+    }
+  }
+  return worst;
+}
+
+/**
+ * Objetivo de um elemento que avança por lanços (ver C_BOUND_PLAN): num nó, o seguinte se o lanço está aberto, senão fica; a meio de um
+ * lanço continua para o nó que já tinha; sem nó de partida (C10 por atalho, depois de um socorro) vai ao nó mais próximo.
+ */
+function adoptBoundGoal(sim, ally, nodeIds) {
+  const last = nodeIds.length - 1;
+  const dist = (id) => Math.hypot(boundNode(sim, id).x - ally.x, boundNode(sim, id).z - ally.z);
+  const here = nodeIds.findIndex((id) => dist(id) <= BOUND_AT_NODE_M);
+  const committed = nodeIds.indexOf(ally.goal?.nodeId);
+  let target;
+  let held = null;
+  if (here < 0) {
+    target = committed >= 0 ? committed : nodeIds.reduce((best, id, i) => (dist(id) < dist(nodeIds[best]) ? i : best), 0);
+  } else if (here === last) {
+    target = here;
+  } else {
+    const exposure = boundHopExposure(sim, boundNode(sim, nodeIds[here]), boundNode(sim, nodeIds[here + 1]));
+    target = exposure <= BOUND_MAX_EXPOSURE ? here + 1 : here;
+    if (target === here) held = { exposure, atNodeId: nodeIds[here], wanted: nodeIds[here + 1] };
+  }
+  ally.goal = goalOfNode(nodeIds[target], boundNode(sim, nodeIds[target]));
+  ally.tacticalState = target === last ? 'AdvanceOrder' : 'HoldCover';
+  if (!held) {
+    if (ally.holdingFor) ally.holdingFor = null;
+    return;
+  }
+  if (ally.holdingFor !== held.wanted) {
+    ally.holdingFor = held.wanted;
+    sim.combatLog.push({
+      clock: Number(sim.clock.toFixed(2)),
+      type: 'section_bound_held',
+      actorId: ally.id,
+      nodeId: held.wanted,
+      atNodeId: held.atNodeId,
+      exposure: held.exposure,
+    });
+  }
+}
+
+/**
+ * D4, Áreas B e C: lugares atrás de cada cobertura baixa do layout (`covers`, altura >= 1 m: de joelhos, ficam abrigados), do lado da
+ * entrada da célula (a posição de Piotr ao entrar), ao longo do eixo maior, a COVER_SLOT_SPACING_M uns dos outros (no máximo 3), de cara
+ * para a cobertura. Derivados dos dados do layout ao carregar o módulo: determinísticos e independentes do estado (um save guarda só o id).
+ * VALORES SEM FONTE NO PDF: 2,5 m entre lugares, 0,9 m atrás da cobertura, 3 lugares no máximo, altura mínima de 1 m.
+ */
+export const COVER_SLOT_SPACING_M = 2.5;
+export const COVER_SLOT_OFFSET_M = 0.9;
+export const COVER_SLOT_MAX = 3;
+function coverSlots(cellId) {
+  const cell = cellsBCLayout.cells[cellId];
+  const spawn = cell.playerSpawn;
+  const out = {};
+  for (const cover of cell.covers ?? []) {
+    if (!(cover.height >= 1.0)) continue;
+    const [x0, x1, z0, z1] = cover.bounds;
+    const alongX = x1 - x0 >= z1 - z0;
+    const length = alongX ? x1 - x0 : z1 - z0;
+    const n = Math.max(1, Math.min(COVER_SLOT_MAX, Math.floor((length - 1.8) / COVER_SLOT_SPACING_M) + 1));
+    const cx = (x0 + x1) / 2;
+    const cz = (z0 + z1) / 2;
+    const side = alongX ? (spawn.z < cz ? -1 : 1) : spawn.x < cx ? -1 : 1; // -1: lado de coordenadas menores (o da entrada)
+    const behind = alongX ? (side < 0 ? z0 - COVER_SLOT_OFFSET_M : z1 + COVER_SLOT_OFFSET_M) : side < 0 ? x0 - COVER_SLOT_OFFSET_M : x1 + COVER_SLOT_OFFSET_M;
+    for (let i = 0; i < n; i++) {
+      const along = (i - (n - 1) / 2) * COVER_SLOT_SPACING_M;
+      const x = Number((alongX ? cx + along : behind).toFixed(2));
+      const z = Number((alongX ? behind : cz + along).toFixed(2));
+      out[`${cover.id.replace(/^cov_/, 'cv_')}_s${i}`] = Object.freeze({
+        x,
+        z,
+        // de cara para a cobertura, a direito (a direção para onde estão os hostis do outro lado)
+        facing: alongX ? (side < 0 ? Math.PI / 2 : -Math.PI / 2) : side < 0 ? 0 : Math.PI,
+        crouch: true,
+      });
+    }
+  }
+  return Object.freeze(out);
+}
+export const B_COVER_SLOTS = coverSlots('B');
+export const C_COVER_SLOTS = coverSlots('C');
+/** Nós de ordem de cada célula (id -> {x, z, facing, crouch}): o plano da secção e os lugares atrás das coberturas do layout. */
+export const ORDER_NODES = Object.freeze({
+  B: Object.freeze({ ...B_PLAN_NODES, ...B_COVER_SLOTS }),
+  C: Object.freeze({ ...C09_PLAN_NODES, ...C_EVAC_NODES, ...C_COVER_SLOTS }),
+});
+/** Os nós de ordem de uma célula B/C como lista `{ id, x, z, facing, crouch }` (a Área A usa os coverNodes do layout). */
+export function orderNodesOf(cellId) {
+  return Object.entries(ORDER_NODES[cellId] ?? {}).map(([id, node]) => ({ id, ...node }));
+}
+export function orderNode(cellId, nodeId) {
+  const node = ORDER_NODES[cellId]?.[nodeId];
+  return node ? { id: nodeId, ...node } : null;
+}
+/** Um id de nó de ordem conhecido da célula B/C (o validador do snapshot usa-o: um save não inventa posições). */
+export const isKnownOrderNode = (cellId, nodeId) => Object.hasOwn(ORDER_NODES[cellId] ?? {}, nodeId);
 
 const isSupportNode = (nodeId) =>
   SECTION_SUPPORT_NODES.includes(nodeId) || C09_SUPPORT_NODES.includes(nodeId) || String(nodeId ?? '').startsWith('cv_c01_');
@@ -1164,6 +1667,7 @@ export function updatePolishSquad(sim, dt) {
   const mgMuzzle = sim.mgAperture;
   const cm = (n) => Math.round(n * 100) / 100;
   lapseSquadOrder(sim);
+  stepRescues(sim); // D1: socorro quando seguro (janelas abertas, socorristas, levantar)
 
   // Assign tactical cover goals by squad state & elapsed time / progression
   for (const ally of sim.allies) {
@@ -1174,48 +1678,48 @@ export function updatePolishSquad(sim, dt) {
     // Lis ferido amparado/carregado/abrigado (J3): o percurso é do diretor da Área C (updateLisC11); a IA da secção não o move nem ele dispara.
     if (ally.state === 'WALKING_SUPPORTED' || ally.state === 'CARRIED' || ally.state === 'EVACUATED_B12') continue;
 
-    // D4: a ordem do jogador (cobrir aqui / avançar para ali) manda na equipa de assalto da Área A; sem ordem, o plano base.
+    // D4: a ordem do jogador (cobrir aqui / avançar para ali) manda na equipa de assalto, em A, B e C; sem ordem, o plano base.
     const orderGoal = squadOrderGoalFor(sim, ally);
+    // D1: quem foi escolhido para socorrer um caído vai ter com ele (só quando o local está seguro) e deixa o plano enquanto o faz
+    const rescueGoal = rescueGoalFor(sim, ally);
+    // o socorro acabou (levantou, interrompeu-se ou Piotr tomou a vez): o objetivo de socorro não fica a mandar no aliado
+    if (!rescueGoal && ally.goal?.rescue) ally.goal = null;
 
-    if (sim.activeCellId === 'B') {
+    if (rescueGoal) {
+      ally.goal = rescueGoal;
+      ally.tacticalState = 'SupportMedic';
+    } else if (orderGoal) {
+      if (orderGoal !== ORDER_HOLD) ally.goal = orderGoal; // ORDER_HOLD: sem nó atribuído, mantém o objetivo/posição atual
+      ally.tacticalState = sim.squadOrder.type === 'cover' ? 'HoldCover' : 'AdvanceOrder';
+    } else if (sim.activeCellId === 'B') {
       // Cell B (Łęczyca Logistics Corridor): bound from south entry toward B05 workshop & B06 shop crossroads
-      const bGoals = {
-        pl_gruca: { x: -18.0, z: 10.0, facing: -Math.PI / 2, crouch: true, nodeId: 'cv_b_west_wall' },
-        pl_wierzba: { x: -32.0, z: -12.0, facing: -Math.PI / 2, crouch: false, nodeId: 'cv_b05_south' },
-        pl_lis: { x: -6.0, z: 50.0, facing: -Math.PI / 2, crouch: true, nodeId: 'cv_b_south_barricade' },
-        pl_malek: { x: -22.0, z: 10.5, facing: -Math.PI / 2, crouch: true, nodeId: 'cv_b_west_wall_2' },
-        pl_szymczak: { x: -38.0, z: 38.0, facing: 0, crouch: true, nodeId: 'cv_b07_aid' },
-        pl_aux_01: { x: 11.5, z: 6.5, facing: -Math.PI / 2, crouch: true, nodeId: 'cv_b_east_cart' },
-        pl_aux_02: { x: 14.0, z: 6.8, facing: -Math.PI / 2, crouch: true, nodeId: 'cv_b_east_cart_2' },
-      };
-      const g = bGoals[ally.id] ?? bGoals.pl_gruca;
-      ally.goal = g;
+      const nodeId = B_PLAN_ROLES[ally.id] ?? B_PLAN_ROLES.pl_gruca;
+      ally.goal = goalOfNode(nodeId, B_PLAN_NODES[nodeId]);
       ally.tacticalState = ally.id.startsWith('pl_aux') ? 'HoldAndSuppress' : 'AdvanceOrder';
     } else if (sim.activeCellId === 'C') {
       // Cell C (Leśmierz Passage & Evacuation): secure B09/B10/B11 (C09) and then cover B09 -> B12 evacuation route (C10-C11)
       const evacPhase = sim.c10Active || sim.c11Active;
       if (evacPhase) {
-        if (ally.holdingFor) ally.holdingFor = null; // o plano de C09 acabou
-        const cGoals = {
-          pl_gruca: { x: -32.0, z: 18.0, facing: 0.4, crouch: true, nodeId: 'cv_c_evac_gruca' },
-          pl_wierzba: { x: -14.0, z: -4.0, facing: 0.3, crouch: true, nodeId: 'cv_c_b09_east' },
-          pl_malek: { x: -46.0, z: 36.0, facing: 0.5, crouch: true, nodeId: 'cv_c_evac_malek' },
-          pl_szymczak: { x: -56.0, z: 46.0, facing: -Math.PI / 2, crouch: false, nodeId: 'cv_c_b12_aid' },
-          pl_aux_01: { x: -6.0, z: -11.5, facing: 0.5, crouch: true, nodeId: 'cv_c_yard_rkm' },
-          pl_aux_02: { x: -4.0, z: -11.5, facing: 0.5, crouch: true, nodeId: 'cv_c_yard_rkm_2' },
-          pl_lis: ally.goal ?? { x: -56.0, z: 50.0, facing: Math.PI / 2, crouch: false, nodeId: 'cv_c_b12_lis' },
-        };
-        ally.goal = cGoals[ally.id] ?? cGoals.pl_gruca;
-        ally.tacticalState = ally.id.startsWith('pl_aux') ? 'HoldAndSuppress' : 'AdvanceOrder';
+        if (C_BOUND_PLAN[ally.id]) {
+          // Gruca: lanços abrigados, só com o lanço aberto (ver C_BOUND_PLAN); `holdingFor` é dele
+          adoptBoundGoal(sim, ally, C_BOUND_PLAN[ally.id]);
+        } else {
+          if (ally.holdingFor) ally.holdingFor = null; // o plano de C09 acabou
+          if (ally.id === 'pl_lis') {
+            // o percurso de Lis é do diretor da Área C; sem objetivo vai para a casa de socorro
+            ally.goal = ally.goal ?? { x: -56.0, z: 50.0, facing: Math.PI / 2, crouch: false, nodeId: 'cv_c_b12_lis' };
+          } else {
+            const nodeId = C_EVAC_ROLES[ally.id] ?? C_EVAC_ROLES.pl_gruca;
+            ally.goal = goalOfNode(nodeId, C_EVAC_NODES[nodeId]);
+          }
+          ally.tacticalState = ally.id.startsWith('pl_aux') ? 'HoldAndSuppress' : 'AdvanceOrder';
+        }
       } else {
         // C09: plano de dois grupos com a trela de D4 (ver C09_PLAN_NODES)
         adoptPlanGoal(sim, ally, c09NodeIds(sim, ally), (nodeId) =>
           ally.id.startsWith('pl_aux') ? 'HoldAndSuppress' : nodeId.startsWith('cv_c_assembly') ? 'HoldCover' : 'AdvanceOrder',
         );
       }
-    } else if (orderGoal) {
-      if (orderGoal !== ORDER_HOLD) ally.goal = orderGoal; // ORDER_HOLD: sem nó atribuído, mantém o objetivo/posição atual
-      ally.tacticalState = sim.squadOrder.type === 'cover' ? 'HoldCover' : 'AdvanceOrder';
     } else if (sim.c01Active) {
       // Os tempos contam desde que o jogador começou a avançar (a preparação em P1 não gasta o relógio da secção) e a secção só
       // toma a última cobertura, à frente do posto EA0, depois do contacto aberto (C02, PDF p. 12).
@@ -1307,7 +1811,7 @@ export function updatePolishSquad(sim, dt) {
     }
 
     // 2. Allied target acquisition & causal firing (no decorative shots!)
-    if (ally.reloadingUntil > sim.clock || ally.mag <= 0 || sim.clock < ally.nextFireAt) {
+    if (ally.reloadingUntil > sim.clock || ally.mag <= 0 || sim.clock < ally.nextFireAt || isLifting(sim, ally)) {
       continue;
     }
     if (ally.id === 'pl_szymczak' && ally.suppressed < 0.2) {

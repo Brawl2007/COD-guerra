@@ -134,7 +134,7 @@ describe('M02 D4: posições válidas e seleção contextual', () => {
     assert.equal(sim.issueSquadOrder('cover', 'cv_courtyard_consolidate').nodeId, 'cv_courtyard_consolidate');
   });
 
-  it('sem cobertura válida junto de Piotr «cobrir aqui» é recusada; Piotr caído não dá ordens; fora da Área A (sem nós no layout) também não', () => {
+  it('sem cobertura válida junto de Piotr «cobrir aqui» é recusada; Piotr caído não dá ordens; nas Áreas B e C valem as mesmas regras (ver m02-d4-orders-bc)', () => {
     const far = new M02BenchSimulation(SEED);
     far.teleportPlayer(45, 30, 0);
     assert.equal(far.issueSquadOrder('cover'), null);
@@ -144,10 +144,12 @@ describe('M02 D4: posições válidas e seleção contextual', () => {
     dead.player.health = 0;
     assert.equal(dead.issueSquadOrder('cover'), null);
     assert.equal(dead.lastOrderFeedback.reason, 'piotr_caido');
+    // (antes das Áreas B e C terem nós de ordem, «avançar» aqui era recusada com sem_posicoes_validas; agora há posições à frente da entrada)
     const b = new M02BenchSimulation(SEED);
     b.enterAreaBC06();
-    assert.equal(b.issueSquadOrder('advance'), null);
-    assert.equal(b.lastOrderFeedback.reason, 'sem_posicoes_validas');
+    assert.equal(b.issueSquadOrder('cover'), null, 'junto à entrada não há cobertura a menos de 14 m');
+    assert.equal(b.lastOrderFeedback.reason, 'sem_cobertura_aqui');
+    assert.equal(b.issueSquadOrder('advance').cellId, 'B');
     assert.equal(b.issueSquadOrder('auto').type, 'auto', 'auto (sem ordem) é sempre possível');
   });
 

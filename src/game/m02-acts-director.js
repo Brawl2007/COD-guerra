@@ -2,7 +2,7 @@ import cellsBCLayout from '../../missions/m02-bzura/m02-cells-bc-layout.json' wi
 import { PLAYER_PHYSICS } from '../world/m01-player-physics.js';
 import { EYE_HEIGHT } from '../config.js';
 import { M01Navigator } from '../world/m01-navigation.js';
-import { stepActorNavigation, WEAPON_PROFILES, instantAt, lastGroupTargets, isLastGroupMember } from './m02-combat-ai.js';
+import { stepActorNavigation, WEAPON_PROFILES, instantAt, lastGroupTargets, isLastGroupMember, isRescueWindowOpen, closeRescueWindow } from './m02-combat-ai.js';
 
 export const M02_TR_CARTELAS = Object.freeze({
   TR01: 'Acessos de Łęczyca — noite de 9 para 10 de setembro',
@@ -174,13 +174,16 @@ const CART_SHOOTER_MAX_SUPPRESSION = 0.88;
  *    têm alternativa (Piotr carrega Lis, C11 p. 14), por isso o estado canónico não se torna impossível.
  *  - pl_wierzba, pl_malek: «admitem consequência persistente conforme K/I» (D1); os auxiliares «podem morrer sem reiniciar» (D1).
  *
- * LIMITE: D1 diz que o ferimento incapacitante de Gruca/Lis/Szymczak «admite socorro quando seguro». A bancada não tem socorro
- * interativo (Piotr ou Szymczak a levantar um caído), por isso, até existir, estar fora de combate é definitivo para quem é exigido.
+ * SOCORRO: D1 diz que o ferimento incapacitante de Gruca/Lis/Szymczak «admite socorro quando seguro». Um aliado derrubado a TIRO abre uma
+ * janela de socorro (m02-combat-ai.js, RESCUE_*): Piotr ([E]) ou um aliado levanta-o quando nenhum hostil o vê. A falha só dispara quando a
+ * personagem exigida está fora de combate SEM socorro possível (`unlessRescuable`: a janela esgotou-se, morreu por explosão ou já gastou o
+ * socorro). Enquanto a janela está aberta o roteiro espera (updateScript) e não se grava nenhum checkpoint com ela fora de combate.
  */
 export const M02_REQUIRED_CHARACTERS = Object.freeze({
   pl_gruca: Object.freeze({
     id: 'pl_gruca',
     name: 'sierż. Władysław Gruca',
+    shortName: 'Sgt. Gruca', // painel de falha da bancada (em português): «Sgt. Gruca incapacitado»
     fromScene: 'C01',
     untilScene: 'C12', // até o epílogo fechar (`areaC.c12Completed`); C12 é uma elipse sem combate
   }),
@@ -192,8 +195,9 @@ export const M02_REQUIRED_CHARACTERS = Object.freeze({
  * `ignoreCompletion`: o validador de um CHECKPOINT (ponto de reinício) não aceita a personagem exigida fora de combate nem com a
  * missão concluída — o estado concluído já não faz falhar a missão (acima), mas gravá-lo como ponto de reinício seria gravar um
  * Gruca morto que faz a contagem do epílogo (C12, p. 14); o atalho KeyM com Gruca junto ao impacto do SP03 forçado gravava-o.
+ * `unlessRescuable`: a regra da FALHA (D1: «socorro quando seguro»): quem está caído com a janela de socorro ainda aberta não conta.
  */
-export function requiredCharacterOut(state, { ignoreCompletion = false } = {}) {
+export function requiredCharacterOut(state, { ignoreCompletion = false, unlessRescuable = false } = {}) {
   if (!state) return null;
   if (!ignoreCompletion && (state.areaC?.c12Completed || state.flags?.['m02.completed'])) return null;
   const allies = Array.isArray(state.allies) ? state.allies : [];
@@ -201,7 +205,7 @@ export function requiredCharacterOut(state, { ignoreCompletion = false } = {}) {
   for (const req of Object.values(M02_REQUIRED_CHARACTERS)) {
     if (scene >= 0 && (scene < M02_SCENE_IDS.indexOf(req.fromScene) || scene > M02_SCENE_IDS.indexOf(req.untilScene))) continue;
     const a = allies.find((x) => x?.id === req.id);
-    if (a && a.alive === false) return req.id;
+    if (a && a.alive === false && !(unlessRescuable && isRescueWindowOpen(a, state.clock))) return req.id;
   }
   return null;
 }
@@ -802,6 +806,7 @@ export function completeC07Reorganization(sim, { skip = false } = {}) {
       // evacuado e seguia para a M03 «presente no abrigo» (revisão adversarial). I4 (p. 34) já tem `dead` no domínio de malek/wierzba.
       const dead = ally.state === 'DEAD';
       if (!dead) ally.state = 'EVACUATED';
+      closeRescueWindow(ally); // D1: um evacuado já não espera socorro
       if (ally.id === 'pl_malek') sim.flags['m02.malek_status'] = dead ? 'dead' : 'evacuated';
       if (ally.id === 'pl_wierzba') sim.flags['m02.wierzba_status'] = dead ? 'dead' : 'evacuated';
     } else if (ally.health < 55) {
@@ -1176,6 +1181,7 @@ function markLisMissing(sim, source) {
   sim.areaC.lisOutcomeSource = source;
   sim.flags['m02.lis_status'] = 'missing';
   if (lis) {
+    closeRescueWindow(lis);
     if (lis.state !== 'DEAD') lis.state = 'MISSING'; // um morto continua morto: só o enum da campanha diz «ausente»
     lis.detachedOutOfCell = true;
     lis.goal = null;
@@ -1647,11 +1653,14 @@ function naturalNextScene(sim) {
 function c11Resolved(sim) {
   const a = sim.areaC;
   if (!a?.c11Started || a.c12Completed) return false;
+  if (requiredCharacterOut(sim)) return false; // D1: Gruca caído à espera de socorro: a passagem não fecha sem ele (ou falha no fim do prazo)
   if (a.lastGroup.some((lg) => lg.alive && !lg.evacuated)) return false;
   const evac = cellsBCLayout.cells.C.evacRoute.at(-1);
   if (Math.hypot(sim.player.x - evac[0], sim.player.z - evac[1]) > C11_EVAC_RADIUS_M) return false;
   const lis = sim.allies.find((al) => al.id === 'pl_lis');
-  if (a.lisPhase === 'supported' && lis && Math.hypot(sim.player.x - lis.x, sim.player.z - lis.z) <= cellsBCLayout.cells.C.lisReturn.supportRadius) {
+  // (só um Lis vivo "ainda a chegar" faz esperar: um Lis caído em pleno amparo (`supported`) já não anda e Piotr ao pé dele, parado ou a
+  // rondá-lo, impedia C11 de fechar para sempre; sem Lis em pé o desfecho é `missing`, deriveLisOutcome)
+  if (a.lisPhase === 'supported' && lis && lis.alive && Math.hypot(sim.player.x - lis.x, sim.player.z - lis.z) <= cellsBCLayout.cells.C.lisReturn.supportRadius) {
     return false; // Lis ainda a chegar, com Piotr ao pé
   }
   return true;
@@ -1662,6 +1671,9 @@ export function updateScript(sim) {
   const sc = sim.script;
   // D1: com a missão falhada (Piotr morto) o roteiro pára: não avança cenas nem corre ações de transição.
   if (!sc || sc.finished || sim.missionFailed) return;
+  // D1: com uma personagem exigida caída à espera de socorro (a janela aberta; senão já seria falha) o roteiro espera: nenhuma cena
+  // avança, transição corre nem evacua ninguém até ela se levantar ou o prazo acabar.
+  if (requiredCharacterOut(sim)) return;
   for (let guard = 0; guard < M02_SCENE_IDS.length; guard++) {
     const idx = sceneIndex(sc.sceneId);
     const floor = sceneIndex(stateSceneFloor(sim));
