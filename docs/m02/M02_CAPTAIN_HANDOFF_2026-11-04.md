@@ -435,3 +435,30 @@ Esta tarefa foi refeita depois de um reinício do contentor. O patch parcial do 
 - O bot leva tiros a 130 m no início do C10.
 
 **Próximo passo:** revisão adversarial independente de `0b9857b4`.
+
+### Revisão da jogabilidade 2: ACEITE COM RESSALVAS, e correções em `f0815f61`
+
+A revisão encontrou 0 P0 e 0 P1. Fuzz de restauro: cerca de 2300 comparações e 0 divergências. Os 4 checkpoints I3 aparecem em todas as corridas.
+
+Os 6 P2 foram corrigidos (`c0ebba93`…`52728298`):
+- **Checkpoints de uma só vez:** passam a ser adiados enquanto o Gruca está caído e gravam-se quando ele se levanta.
+- **Transições:** resolvem a janela de socorro (I2 p. 33). Os caídos que não são o Gruca são evacuados.
+- **Segurança do socorro:** a rota do socorrista é verificada de pé e agachado. Nas sementes do medic.mjs, os socorristas abatidos passam de 2 a 0.
+- **Socorro pelo Piotr:** um levantamento de cada vez, sem tomar o lugar de um levantamento da IA.
+- **Elegíveis para socorro:** só o Gruca, o Lis e o Szymczak (D1 p. 16). O Wierzba e o Małek ficam com a consequência persistente.
+- **Testes fracos reforçados:**
+  - um teste de mutação de `isLifting`;
+  - asserções exatas nas ordens B/C;
+  - a exigência de o bot chegar ao C10.
+- **[E]:** atua no alvo mais próximo. Um caído deixa de bloquear portas e volumes.
+
+**Testes:**
+- `tests/m02-*.test.js`: **666/666**.
+- Build: OK.
+- Browser M02: **2 passed (7,0 min)**, N0 30/30.
+
+**MissionBot, 40 sementes:** chegam ao C12 21 → 22; 0 falhas do Gruca.
+
+**Sem fonte no PDF:** passo de 3 m na amostragem da rota e sonda de pé.
+
+**Em curso:** provas N0 (vídeo das rotas) e N1 (log causal AI-01, tabela de cobertura O2).
